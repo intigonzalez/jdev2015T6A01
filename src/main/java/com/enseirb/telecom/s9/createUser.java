@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 // The Java class will be hosted at the URI path "/myresource"
-@Path("/app/account/create") //need to change to /app/account/create
+@Path("/app/account") 
 public class createUser {
 
 	// TODO: update the class to suit your needs
