@@ -72,7 +72,28 @@ public class UserDB implements CrudRepository {
 	@Override
 	public boolean exists(Serializable id) {
 		// TODO Auto-generated method stub
-		return false;
+		try {
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbUsers = db.getCollection("users");
+			
+			BasicDBObject query = new BasicDBObject("mail", id);
+			DBCursor cursor = dbUsers.find(query);
+			
+			if (cursor.hasNext()) {
+				mongoClient.close();
+				return true;
+			}
+			else {
+				mongoClient.close();
+				return false;
+			}
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");
+			return true;
+		}
 	}
 
 	@Override
