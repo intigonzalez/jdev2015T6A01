@@ -1,25 +1,29 @@
 package com.enseirb.telecom.s9.db;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.UnknownHostException;
 
+import com.enseirb.telecom.s9.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
 public class UserDB implements CrudRepository {
 
 	@Override
 	public Object save(Object entity) {
-		// Maybe the content should be checked....
 		try {
-			/* Init MangoDB */
 			MongoClient mongoClient = DbInit.Connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("users");
 			
 			dbUsers.save(DbInit.createDBObject(entity));
+			mongoClient.close();
 		} catch (UnknownHostException | JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -37,7 +41,32 @@ public class UserDB implements CrudRepository {
 	@Override
 	public Object findOne(Serializable id) {
 		// TODO Auto-generated method stub
-		return null;
+		//The id is the email address
+		try {
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbUsers = db.getCollection("users");
+			
+			BasicDBObject query = new BasicDBObject("mail", id);
+			DBCursor cursor = dbUsers.find(query);
+			User user = null;
+			ObjectMapper mapper = new ObjectMapper();
+			if (cursor.hasNext()) {
+				try {
+					user = mapper.readValue(cursor.next().toString(), User.class);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					System.err.println("User Mapping failed ! ");
+				}
+			}
+			return user;
+			
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
