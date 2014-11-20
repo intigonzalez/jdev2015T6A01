@@ -11,9 +11,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import sun.security.provider.certpath.OCSPResponse.ResponseStatus;
+
+import com.enseirb.telecom.s9.db.UserDB;
+import com.enseirb.telecom.s9.service.userManager;
+
 // The Java class will be hosted at the URI path "/myresource"
-@Path("/app/friends")
-public class FriendInterface {
+@Path("/app/video")
+public class VideoInterface {
 
 	// TODO: update the class to suit your needs
 
@@ -21,37 +26,34 @@ public class FriendInterface {
 	// The Java method will produce content identified by the MIME Media
 	// type "text/plain"
 	@GET
-	@Path("{username}")
+	@Path("{videoID}")
 	@Produces(MediaType.APPLICATION_XML)
-	public Response getFriend() {
+	public Response getIt() {
 		// need to create
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 	}
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postFriend(Friend friend) {
-		// add a friend
+	public Response postVideo(Video video) {
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
-		
-
 	}
 
 	@PUT
-	@Path("{username}")
+	@Path("{videoID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putFriend(Friend friend) {
-		// need to verify the friend
-		// and after this modifies the friend
+	public Response putVideo(Video video) {
+		// need to verfie the user
+		// and after this modifie the user
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}
 	
 	@DELETE
-	@Path("{username}")
+	@Path("{videoID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteFriend(Friend friend) {
-		// need to verify the user
+	public Response deleteVideo(Video video) {
+		// need to verfie the user
 		// and after this delete the user
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
