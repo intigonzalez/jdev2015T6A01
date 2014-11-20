@@ -11,12 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import sun.security.provider.certpath.OCSPResponse.ResponseStatus;
-
-import com.enseirb.telecom.s9.db.UserDB;
-import com.enseirb.telecom.s9.service.userManager;
-
-// The Java class will be hosted at the URI path "/myresource"
+// The Java class will be hosted at the URI path "/app/video"
 @Path("/app/video")
 public class VideoInterface {
 
@@ -43,8 +38,8 @@ public class VideoInterface {
 	@Path("{videoID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putVideo(Video video) {
-		// need to verfie the user
-		// and after this modifie the user
+		// need to verify the user
+		// and after this modifies the user
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}
@@ -53,7 +48,7 @@ public class VideoInterface {
 	@Path("{videoID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteVideo(Video video) {
-		// need to verfie the user
+		// need to verify the user
 		// and after this delete the user
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
