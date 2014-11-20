@@ -1,7 +1,6 @@
 package com.enseirb.telecom.s9.db;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.UnknownHostException;
 
 import com.enseirb.telecom.s9.User;
@@ -13,15 +12,15 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
-public class UserDB implements CrudRepository {
+public class UserRepositoryMongo implements CrudRepository<User, String> {
 
 	@Override
-	public Object save(Object entity) {
+	public <S extends User> S save(S entity) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("users");
-			
+
 			dbUsers.save(DbInit.createDBObject(entity));
 			mongoClient.close();
 		} catch (UnknownHostException | JsonProcessingException e) {
@@ -33,27 +32,22 @@ public class UserDB implements CrudRepository {
 	}
 
 	@Override
-	public Iterable save(Iterable entities) {
+	public User findOne(String id) {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object findOne(Serializable id) {
-		// TODO Auto-generated method stub
-		//The id is the email address
+		// The id is the email address
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("users");
-			
+
 			BasicDBObject query = new BasicDBObject("mail", id);
 			DBCursor cursor = dbUsers.find(query);
 			User user = null;
 			ObjectMapper mapper = new ObjectMapper();
 			if (cursor.hasNext()) {
 				try {
-					user = mapper.readValue(cursor.next().toString(), User.class);
+					user = mapper.readValue(cursor.next().toString(),
+							User.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -61,7 +55,7 @@ public class UserDB implements CrudRepository {
 				}
 			}
 			return user;
-			
+
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -70,21 +64,20 @@ public class UserDB implements CrudRepository {
 	}
 
 	@Override
-	public boolean exists(Serializable id) {
+	public boolean exists(String id) {
 		// TODO Auto-generated method stub
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("users");
-			
+
 			BasicDBObject query = new BasicDBObject("mail", id);
 			DBCursor cursor = dbUsers.find(query);
-			
+
 			if (cursor.hasNext()) {
 				mongoClient.close();
 				return true;
-			}
-			else {
+			} else {
 				mongoClient.close();
 				return false;
 			}
@@ -97,45 +90,47 @@ public class UserDB implements CrudRepository {
 	}
 
 	@Override
-	public Iterable findAll() {
-		// TODO Auto-generated method stub
-		return null;
+	public Iterable<User> findAll() {
+		throw new RuntimeException("not yet invented");
 	}
 
 	@Override
-	public Iterable findAll(Iterable ids) {
-		// TODO Auto-generated method stub
-		return null;
+	public Iterable<User> findAll(Iterable<String> ids) {
+		throw new RuntimeException("not yet invented");
 	}
 
 	@Override
 	public long count() {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new RuntimeException("not yet invented");
 	}
 
 	@Override
-	public void delete(Serializable id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void delete(Object entity) {
-		// TODO Auto-generated method stub
+	public void delete(String id) {
+		throw new RuntimeException("not yet invented");
 
 	}
 
 	@Override
-	public void delete(Iterable entities) {
-		// TODO Auto-generated method stub
+	public void delete(User entity) {
+		throw new RuntimeException("not yet invented");
+
+	}
+
+	@Override
+	public void delete(Iterable<? extends User> entities) {
+		throw new RuntimeException("not yet invented");
 
 	}
 
 	@Override
 	public void deleteAll() {
-		// TODO Auto-generated method stub
+		throw new RuntimeException("not yet invented");
 
+	}
+
+	@Override
+	public <S extends User> Iterable<S> save(Iterable<S> entities) {
+		throw new RuntimeException("not yet invented");
 	}
 
 }
