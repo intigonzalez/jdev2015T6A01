@@ -13,7 +13,7 @@ import sun.security.provider.certpath.OCSPResponse.ResponseStatus;
 import com.enseirb.telecom.s9.db.UserDB;
 import com.enseirb.telecom.s9.service.userManager;
 
-// The Java class will be hosted at the URI path "/app/account"
+// The Java class will be hosted at the URI path "/myresource"
 @Path("/app/account") 
 public class createUser {
 
