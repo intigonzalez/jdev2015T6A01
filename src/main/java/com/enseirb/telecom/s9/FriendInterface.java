@@ -11,14 +11,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import sun.security.provider.certpath.OCSPResponse.ResponseStatus;
-
-import com.enseirb.telecom.s9.db.UserDB;
-import com.enseirb.telecom.s9.service.userManager;
-
 // The Java class will be hosted at the URI path "/myresource"
-@Path("/app/account")
-public class UserInterface {
+@Path("/app/friends")
+public class FriendInterface {
 
 	// TODO: update the class to suit your needs
 
@@ -35,21 +30,17 @@ public class UserInterface {
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postUser(User user) {
-		if (userManager.userExist(user.email) == false) {
-			UserDB database = new UserDB();
-			database.save(user);
-			return Response.ok().build();
-		} else {
-			return Response.status(409).build();
-		}
+	public Response postUser(Friend friend) {
+		// ajout d'un ami
+		return null;
+		
 
 	}
 
 	@PUT
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putUser(User user) {
+	public Response putUser(Friend friend) {
 		// need to verfie the user
 		// and after this modifie the user
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
@@ -59,7 +50,7 @@ public class UserInterface {
 	@DELETE
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteUser(User user) {
+	public Response deleteUser(Friend friend) {
 		// need to verfie the user
 		// and after this delete the user
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
