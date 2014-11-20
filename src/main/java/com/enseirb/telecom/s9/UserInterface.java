@@ -15,7 +15,7 @@ import com.enseirb.telecom.s9.service.userManager;
 
 // The Java class will be hosted at the URI path "/myresource"
 @Path("/app/account") 
-public class createUser {
+public class UserInterface {
 
 	// TODO: update the class to suit your needs
 
