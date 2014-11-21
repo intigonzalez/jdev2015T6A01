@@ -23,7 +23,7 @@ import com.sun.jersey.spi.resource.Singleton;
 // The Java class will be hosted at the URI path "/app/account"
 @Path("/app/account")
 @Singleton //NHE: lifecycle for demo purpose, make only 1 endpoint per application
-public class UserInterface {
+public class UserEndPoints {
 
 	AccountService uManager = new AccountServiceImpl(new UserRepositoryMock());
 

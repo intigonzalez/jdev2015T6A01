@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:include schemaLocation="comment.xsd"></xs:include>
+    <xs:element name="contents">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="contentsID" type="xs:string"
+					maxOccurs="1" minOccurs="0">
+				</xs:element>
+				<xs:element name="name" type="xs:string" maxOccurs="1"
+					minOccurs="0" />
+				<xs:element name="login" type="xs:string" maxOccurs="1"
+					minOccurs="0" />
+
+				<xs:element name="unix_time" type="xs:long"
+					maxOccurs="1" minOccurs="0" />
+
+				<xs:element name="link" type="xs:anyURI" maxOccurs="1"
+					minOccurs="0" />
+
+				<xs:element ref="comment" maxOccurs="unbounded"
+					minOccurs="0">
+				</xs:element>
+				<xs:element name="groupe" type="xs:string" maxOccurs="unbounded" minOccurs="0"></xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+
+</xs:schema>

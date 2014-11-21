@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response.Status;
 
 // The Java class will be hosted at the URI path "/app/video"
 @Path("/app/video")
-public class VideoInterface {
+public class ContentsEndPoints {
 
 	// TODO: update the class to suit your needs
 
@@ -30,28 +30,28 @@ public class VideoInterface {
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postVideo(Video video) {
+	public Response postVideo(Contents contents) {
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 	}
-
-	@PUT
-	@Path("{videoID}")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putVideo(Video video) {
-		// need to verify the user
-		// and after this modifies the user
-		return Response.status(Status.SERVICE_UNAVAILABLE).build();
-
-	}
-	
-	@DELETE
-	@Path("{videoID}")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteVideo(Video video) {
-		// need to verify the user
-		// and after this delete the user
-		return Response.status(Status.SERVICE_UNAVAILABLE).build();
-
-	}
+//
+//	@PUT
+//	@Path("{videoID}")
+//	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+//	public Response putVideo(Contents contents) {
+//		// need to verify the user
+//		// and after this modifies the user
+//		return Response.status(Status.SERVICE_UNAVAILABLE).build();
+//
+//	}
+//	
+//	@DELETE
+//	@Path("{videoID}")
+//	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+//	public Response deleteVideo(Contents contents) {
+//		// need to verify the user
+//		// and after this delete the user
+//		return Response.status(Status.SERVICE_UNAVAILABLE).build();
+//
+//	}
 
 }
