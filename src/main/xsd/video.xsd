@@ -6,13 +6,13 @@
 		<xs:complexType>
 			<xs:sequence>
                 <xs:element name="name" type="xs:string" maxOccurs="1" minOccurs="1" />
-                <xs:element name="id" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
+                <xs:element name="videoID" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
                 <xs:element name="login" type="xs:string" maxOccurs="1"
 					minOccurs="1" />
 
 				<xs:element name="unix_time" type="xs:long"
 					maxOccurs="1" minOccurs="1" />
-				<xs:element name="link" type="xs:string" maxOccurs="1"
+				<xs:element name="link" type="xs:anyURI" maxOccurs="1"
 					minOccurs="1" />
 				<xs:element ref="comment" maxOccurs="unbounded"
 					minOccurs="0">
