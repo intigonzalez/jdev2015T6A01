@@ -4,7 +4,7 @@
 <xs:element name="friend">
   <xs:complexType>
     <xs:sequence>
-    	<xs:element name="login" type="xs:string" maxOccurs="1" minOccurs="1"/>
+    	<xs:element name="email" type="xs:string" maxOccurs="1" minOccurs="1"/>
     	<xs:element name="name" type="xs:string" maxOccurs="1" minOccurs="1"/>
     	<xs:element name="surname" type="xs:string" maxOccurs="1" minOccurs="1"/>
     	<xs:element name="pubKey" type="xs:string" maxOccurs="1" minOccurs="1"/>
