@@ -16,5 +16,7 @@ public interface AccountService {
 	public abstract User createUser(User user);
 
 	public abstract void saveUser(User user);
+	
+	public abstract void deleteUser(String email);
 
 }

@@ -56,9 +56,11 @@ public class UserInterface {
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putUser(User user) {
-		// need to verify the user
-		// and after this modifies the user
-		return Response.status(Status.SERVICE_UNAVAILABLE).build();
+		// todo : need to check the authentication of the user
+		
+		// modify the user
+		uManager.getUser(user.email);
+		return Response.status(200).build();
 
 	}
 
@@ -66,9 +68,11 @@ public class UserInterface {
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteUser(User user) {
-		// need to verify the user
-		// and after this delete the user
-		return Response.status(Status.SERVICE_UNAVAILABLE).build();
+		// todo : need to check the authentication of the user
+		
+		// delete the user
+		uManager.deleteUser(user.email);
+		return Response.status(200).build();
 
 	}
 

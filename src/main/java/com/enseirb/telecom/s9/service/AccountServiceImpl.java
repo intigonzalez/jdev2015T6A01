@@ -54,4 +54,10 @@ public class AccountServiceImpl implements AccountService {
 		this.userDatabase.save(user);
 
 	}
+
+	@Override
+	public void deleteUser(String email) {
+		this.userDatabase.delete(email);
+		
+	}
 }
