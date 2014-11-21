@@ -23,7 +23,7 @@ public class UserRepositoryMock implements CrudRepository<User, String> {
 		backupMap = new ConcurrentHashMap<String, User>();
 		User nicolas = new User();
 		nicolas.setEmail("nicolas@mirlitone.com");
-		nicolas.setLogin("nico");
+//		nicolas.setLogin("nico");
 		nicolas.setName("nicolas");
 		nicolas.setPassword("1234");
 		nicolas.setPrivateKey("private");

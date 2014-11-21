@@ -14,7 +14,6 @@ Create a user
 
     {
     "email": "vince@onehear.nl",
-    "login": "vincent",
     "name": "vincent",
     "password": "1234",
     "privateKey": "private",
