@@ -10,7 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
+//test
 // The Java class will be hosted at the URI path "/myresource"
 @Path("/app/friends")
 public class FriendInterface {
