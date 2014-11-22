@@ -3,7 +3,6 @@ package com.enseirb.telecom.s9.db;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import com.enseirb.telecom.s9.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
@@ -12,10 +11,10 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
-public class UserRepositoryMongo implements CrudRepository<User, String> {
+public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject, String> {
 
 	@Override
-	public <S extends User> S save(S entity) {
+	public <S extends UserRepositoryObject> S save(S entity) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DB db = mongoClient.getDB("mediahome");
@@ -32,22 +31,20 @@ public class UserRepositoryMongo implements CrudRepository<User, String> {
 	}
 
 	@Override
-	public User findOne(String id) {
-		// TODO Auto-generated method stub
+	public UserRepositoryObject findOne(String id) {
 		// The id is the email address
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("users");
 
-			BasicDBObject query = new BasicDBObject("mail", id);
+			BasicDBObject query = new BasicDBObject("email", id);
 			DBCursor cursor = dbUsers.find(query);
-			User user = null;
+			UserRepositoryObject user = null;
 			ObjectMapper mapper = new ObjectMapper();
 			if (cursor.hasNext()) {
 				try {
-					user = mapper.readValue(cursor.next().toString(),
-							User.class);
+					user = mapper.readValue(cursor.next().toString(), UserRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -71,7 +68,7 @@ public class UserRepositoryMongo implements CrudRepository<User, String> {
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("users");
 
-			BasicDBObject query = new BasicDBObject("mail", id);
+			BasicDBObject query = new BasicDBObject("email", id);
 			DBCursor cursor = dbUsers.find(query);
 
 			if (cursor.hasNext()) {
@@ -90,12 +87,12 @@ public class UserRepositoryMongo implements CrudRepository<User, String> {
 	}
 
 	@Override
-	public Iterable<User> findAll() {
+	public Iterable<UserRepositoryObject> findAll() {
 		throw new RuntimeException("not yet invented");
 	}
 
 	@Override
-	public Iterable<User> findAll(Iterable<String> ids) {
+	public Iterable<UserRepositoryObject> findAll(Iterable<String> ids) {
 		throw new RuntimeException("not yet invented");
 	}
 
@@ -106,18 +103,28 @@ public class UserRepositoryMongo implements CrudRepository<User, String> {
 
 	@Override
 	public void delete(String id) {
+		try {
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbUsers = db.getCollection("users");
+
+			BasicDBObject query = new BasicDBObject("email", id);
+			dbUsers.remove(query);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");
+		}
+
+	}
+
+	@Override
+	public void delete(UserRepositoryObject entity) {
 		throw new RuntimeException("not yet invented");
 
 	}
 
 	@Override
-	public void delete(User entity) {
-		throw new RuntimeException("not yet invented");
-
-	}
-
-	@Override
-	public void delete(Iterable<? extends User> entities) {
+	public void delete(Iterable<? extends UserRepositoryObject> entities) {
 		throw new RuntimeException("not yet invented");
 
 	}
@@ -129,7 +136,7 @@ public class UserRepositoryMongo implements CrudRepository<User, String> {
 	}
 
 	@Override
-	public <S extends User> Iterable<S> save(Iterable<S> entities) {
+	public <S extends UserRepositoryObject> Iterable<S> save(Iterable<S> entities) {
 		throw new RuntimeException("not yet invented");
 	}
 

@@ -13,9 +13,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
-import com.enseirb.telecom.s9.db.UserRepositoryMock;
+import com.enseirb.telecom.s9.db.UserRepositoryMongo;
 import com.enseirb.telecom.s9.service.AccountService;
 import com.enseirb.telecom.s9.service.AccountServiceImpl;
 import com.sun.jersey.spi.resource.Singleton;
@@ -25,7 +24,7 @@ import com.sun.jersey.spi.resource.Singleton;
 @Singleton //NHE: lifecycle for demo purpose, make only 1 endpoint per application
 public class UserEndPoints {
 
-	AccountService uManager = new AccountServiceImpl(new UserRepositoryMock());
+	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo());
 
 	// TODO: update the class to suit your needs
 
@@ -65,13 +64,13 @@ public class UserEndPoints {
 	}
 
 	@DELETE
-	@Path("{username}")
+	@Path("{email}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteUser(User user) {
+	public Response deleteUser(@PathParam("email") String email) {
 		// todo : need to check the authentication of the user
 		
 		// delete the user
-		uManager.deleteUser(user.email);
+		uManager.deleteUser(email);
 		return Response.status(200).build();
 
 	}
