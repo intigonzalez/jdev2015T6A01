@@ -58,8 +58,12 @@ public class UserEndPoints {
 		// todo : need to check the authentication of the user
 		
 		// modify the user
-		uManager.getUser(user.email);
-		return Response.status(200).build();
+		if (uManager.userExist(user.email) == false) {
+			uManager.saveUser(user);
+			return Response.status(200).build();
+		} else {
+			return Response.status(409).build();
+		}
 
 	}
 
