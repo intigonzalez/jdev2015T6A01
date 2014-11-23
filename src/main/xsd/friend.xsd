@@ -17,7 +17,7 @@
     	<xs:element name="unix_time" type="xs:long" maxOccurs="1"
     		minOccurs="0" />
     	<!--     	<xs:element name="groupeID" type="xs:string" maxOccurs="unbounded" minOccurs="0"></xs:element> -->
-    	<xs:element name="groupID" type="xs:string" maxOccurs="unbounded" minOccurs="0"></xs:element>
+    	<xs:element name="groupID" type="xs:int" maxOccurs="unbounded" minOccurs="0"></xs:element>
     </xs:sequence>
   </xs:complexType>
 </xs:element>
