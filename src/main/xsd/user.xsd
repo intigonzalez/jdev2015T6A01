@@ -2,7 +2,9 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
-	<xs:include schemaLocation="friend.xsd"></xs:include>
+    <xs:include schemaLocation="contents.xsd"></xs:include>
+    <xs:include schemaLocation="groupe.xsd"></xs:include>
+    <xs:include schemaLocation="friend.xsd"></xs:include>
 	<xs:element name="user">
 
 		<xs:complexType>
@@ -11,20 +13,29 @@
 					minOccurs="1" />
 				<xs:element name="name" type="xs:string" maxOccurs="1"
 					minOccurs="0" />
-				<xs:element name="surname" type="xs:string" maxOccurs="1"
-					minOccurs="0" />
+				<xs:element name="surname" type="xs:string"
+					maxOccurs="1" minOccurs="0" />
 
-				<xs:element name="password" type="xs:string" maxOccurs="1"
-					minOccurs="0" />
+				<xs:element name="password" type="xs:string"
+					maxOccurs="1" minOccurs="0" />
 
 				<xs:element name="pubKey" type="xs:string" maxOccurs="1"
 					minOccurs="0">
 				</xs:element>
 
-				<xs:element name="privateKey" type="xs:string" maxOccurs="1"
-					minOccurs="0"></xs:element>
-				<xs:element ref="friend" maxOccurs="unbounded" minOccurs="0"></xs:element>
-            </xs:sequence>
+				<xs:element name="privateKey" type="xs:string"
+					maxOccurs="1" minOccurs="0">
+				</xs:element>
+				<xs:element ref="friend" maxOccurs="unbounded"
+					minOccurs="0">
+				</xs:element>
+
+				<xs:element ref="groupe" maxOccurs="unbounded"
+					minOccurs="0">
+				</xs:element>
+
+				<xs:element ref="contents" maxOccurs="unbounded" minOccurs="0"></xs:element>
+			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 
