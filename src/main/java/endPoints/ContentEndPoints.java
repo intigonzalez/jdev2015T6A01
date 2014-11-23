@@ -1,4 +1,4 @@
-package com.enseirb.telecom.s9;
+package endPoints;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,6 +18,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.enseirb.telecom.s9.Box;
+import com.enseirb.telecom.s9.Content;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 

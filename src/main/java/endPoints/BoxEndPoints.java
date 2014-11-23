@@ -1,4 +1,4 @@
-package com.enseirb.telecom.s9;
+package endPoints;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -13,9 +13,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.enseirb.telecom.s9.Box;
+
 // The Java class will be hosted at the URI path "/myresource"
-@Path("/app/group")
-public class GroupEndPoints {
+@Path("/app/box")
+public class BoxEndPoints {
 
 	// TODO: update the class to suit your needs
 
@@ -23,37 +25,35 @@ public class GroupEndPoints {
 	// The Java method will produce content identified by the MIME Media
 	// type "text/plain"
 	@GET
-	@Path("{groupID}")
 	@Produces(MediaType.APPLICATION_XML)
-	public Group getGroupe() {
-		// TODO: get the list of relation if null return all relation
-		//Return the list of mender group
+	public Box getBox() {
 		// NHE: easy way to return an error for a rest api: throw an WebApplicationException
 		throw new WebApplicationException(Status.CONFLICT);
 	}
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postBox(Group group) {
-		// TODO: crée un groupe 
+	public Response postBox(Box box) {
+		// add a comment
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}
 
 	@PUT
-	@Path("{groupID}")
+	@Path("{commentID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putBox(Group group) {
-		// TODO: modifie le nom d'un groupe 
+	public Response putBox(Box box) {
+		// need to verify user
+		// and after this modifies the comment
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}
 
 	@DELETE
-	@Path("{groupID}")
-	public Response deleteBox(@PathParam("groupId") String boxId) {
+	@Path("{boxId}")
+	public Response deleteBox(@PathParam("boxId") String boxId) {
 		// need to verify user
-		// TODO: del the group
+		// and after this delete the comment
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}

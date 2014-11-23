@@ -1,4 +1,4 @@
-package com.enseirb.telecom.s9;
+package endPoints;
 
 import java.util.ListResourceBundle;
 
@@ -13,6 +13,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import com.enseirb.telecom.s9.Friend;
 
 // The Java class will be hosted at the URI path "/app/friends"
 @Path("/app/friends")

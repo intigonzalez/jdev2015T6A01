@@ -1,4 +1,4 @@
-package com.enseirb.telecom.s9;
+package endPoints;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.db.UserRepositoryMongo;
 import com.enseirb.telecom.s9.service.AccountService;
 import com.enseirb.telecom.s9.service.AccountServiceImpl;
@@ -41,10 +42,10 @@ public class UserEndPoints {
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postUser(User user) throws URISyntaxException {
-		if (uManager.userExist(user.userID) == false) {
+		if (uManager.userExist(user.getUserID()) == false) {
 			uManager.saveUser(user);
 			//NHE that the answer we expect from a post (see location header)
-			return Response.created(new URI(user.userID)).build();
+			return Response.created(new URI(user.getUserID())).build();
 		} else {
 			return Response.status(409).build();
 		}
@@ -58,7 +59,7 @@ public class UserEndPoints {
 		// TODO: need to check the authentication of the user
 		
 		// modify the user
-		if (uManager.userExist(user.userID) == false) {
+		if (uManager.userExist(user.getUserID()) == false) {
 			uManager.saveUser(user);
 			return Response.status(200).build();
 		} else {
