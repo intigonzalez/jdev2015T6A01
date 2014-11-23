@@ -1,5 +1,7 @@
 package com.enseirb.telecom.s9;
 
+import java.util.ListResourceBundle;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -7,30 +9,38 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-// The Java class will be hosted at the URI path "/myresource"
+// The Java class will be hosted at the URI path "/app/friends"
 @Path("/app/friends")
 public class FriendEndPoints {
 
-	// TODO: update the class to suit your needs
-
-	// The Java method will process HTTP GET requests
-	// The Java method will produce content identified by the MIME Media
-	// type "text/plain"
+	
+// move in groupe
+//	@GET
+//	@Produces(MediaType.APPLICATION_XML)
+//	public ListRelation getFriendliste() {
+//		// TODO: get the list of relation
+//		// NHE: easy way to return an error for a rest api: throw an WebApplicationException
+//		throw new WebApplicationException(Status.CONFLICT);
+//	}
+//	
 	@GET
 	@Path("{username}")
 	@Produces(MediaType.APPLICATION_XML)
-	public Response getFriend() {
-		// need to create
-		return Response.status(Status.SERVICE_UNAVAILABLE).build();
+	public Friend getFriend() {
+		// TODO: get info of username relation
+		// NHE: easy way to return an error for a rest api: throw an WebApplicationException
+		throw new WebApplicationException(Status.CONFLICT);
 	}
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postFriend(Friend friend) {
+		// TODO: ajout un ami
 		// add a friend
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 		
@@ -41,6 +51,7 @@ public class FriendEndPoints {
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putFriend(Friend friend) {
+		// TODO: change de groupe et confirmé une demande d'ajout
 		// need to verify the friend
 		// and after this modifies the friend
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
@@ -51,7 +62,7 @@ public class FriendEndPoints {
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteFriend(Friend friend) {
-		// need to verify the user
+		// TODO: delete this friends thinks to send a message to the over box
 		// and after this delete the user
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 

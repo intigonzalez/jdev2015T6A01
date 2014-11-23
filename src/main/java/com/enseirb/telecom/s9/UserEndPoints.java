@@ -32,10 +32,10 @@ public class UserEndPoints {
 	// The Java method will produce content identified by the MIME Media
 	// type "text/plain"
 	@GET
-	@Path("{email}")
+	@Path("{userID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public User getIt(@PathParam("email") String email) {
-		return uManager.getUser(email);
+	public User getIt(@PathParam("userID") String userID) {
+		return uManager.getUser(userID);
 	}
 
 	@POST
@@ -68,13 +68,13 @@ public class UserEndPoints {
 	}
 
 	@DELETE
-	@Path("{email}")
+	@Path("{userID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteUser(@PathParam("email") String email) {
+	public Response deleteUser(@PathParam("userID") String userID) {
 		// todo : need to check the authentication of the user
 		
 		// delete the user
-		uManager.deleteUser(email);
+		uManager.deleteUser(userID);
 		return Response.status(200).build();
 
 	}
