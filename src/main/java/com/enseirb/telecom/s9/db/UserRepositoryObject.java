@@ -90,8 +90,8 @@ public class UserRepositoryObject {
     protected String password;
     protected String pubKey;
     protected String privateKey;
-	public String getEmail() {
-		return email;
+	public String getUserID() {
+		return userID;
 	}
 
 }

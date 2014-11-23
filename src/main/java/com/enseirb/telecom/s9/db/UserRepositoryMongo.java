@@ -15,8 +15,8 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 	@Override
 	public <S extends UserRepositoryObject> S save(S entity) {
-		if (exists(entity.getEmail())) {
-			delete(entity.getEmail());
+		if (exists(entity.getUserID())) {
+			delete(entity.getUserID());
 		}
 		try {
 			MongoClient mongoClient = DbInit.Connect();
@@ -41,7 +41,7 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("users");
 
-			BasicDBObject query = new BasicDBObject("email", id);
+			BasicDBObject query = new BasicDBObject("userID", id);
 			DBCursor cursor = dbUsers.find(query);
 			UserRepositoryObject user = null;
 			ObjectMapper mapper = new ObjectMapper();
@@ -71,7 +71,7 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("users");
 
-			BasicDBObject query = new BasicDBObject("email", id);
+			BasicDBObject query = new BasicDBObject("userID", id);
 			DBCursor cursor = dbUsers.find(query);
 
 			if (cursor.hasNext()) {
@@ -111,7 +111,7 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("users");
 
-			BasicDBObject query = new BasicDBObject("email", id);
+			BasicDBObject query = new BasicDBObject("userID", id);
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
