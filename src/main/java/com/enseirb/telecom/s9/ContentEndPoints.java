@@ -22,7 +22,7 @@ import com.sun.jersey.multipart.FormDataParam;
 
 // The Java class will be hosted at the URI path "/app/video"
 @Path("/app/video")
-public class ContentsEndPoints {
+public class ContentEndPoints {
 
 	// TODO: update the class to suit your needs
 
@@ -39,7 +39,7 @@ public class ContentsEndPoints {
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postVideo(Contents contents) {
+	public Response postVideo(Content content) {
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 	}
 	

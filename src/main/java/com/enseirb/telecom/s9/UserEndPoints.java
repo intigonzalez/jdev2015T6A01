@@ -41,10 +41,10 @@ public class UserEndPoints {
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postUser(User user) throws URISyntaxException {
-		if (uManager.userExist(user.email) == false) {
+		if (uManager.userExist(user.userID) == false) {
 			uManager.saveUser(user);
 			//NHE that the answer we expect from a post (see location header)
-			return Response.created(new URI(user.email)).build();
+			return Response.created(new URI(user.userID)).build();
 		} else {
 			return Response.status(409).build();
 		}
@@ -58,7 +58,7 @@ public class UserEndPoints {
 		// todo : need to check the authentication of the user
 		
 		// modify the user
-		if (uManager.userExist(user.email) == false) {
+		if (uManager.userExist(user.userID) == false) {
 			uManager.saveUser(user);
 			return Response.status(200).build();
 		} else {

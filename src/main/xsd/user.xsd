@@ -2,6 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
+    <xs:include schemaLocation="content.xsd"></xs:include>
     <xs:include schemaLocation="contents.xsd"></xs:include>
     <xs:include schemaLocation="group.xsd"></xs:include>
     <xs:include schemaLocation="friend.xsd"></xs:include>
@@ -9,7 +10,7 @@
 
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="email" type="xs:string" maxOccurs="1"
+				<xs:element name="userID" type="xs:string" maxOccurs="1"
 					minOccurs="1" />
 				<xs:element name="name" type="xs:string" maxOccurs="1"
 					minOccurs="0" />
@@ -34,7 +35,7 @@
 					minOccurs="0">
 				</xs:element>
 
-				<xs:element ref="contents" maxOccurs="unbounded" minOccurs="0"></xs:element>
+				<xs:element ref="content" maxOccurs="unbounded" minOccurs="0"></xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

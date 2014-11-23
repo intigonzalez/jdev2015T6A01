@@ -1,23 +1,23 @@
 package com.enseirb.telecom.s9.service;
 
-import com.enseirb.telecom.s9.Contents;
+import com.enseirb.telecom.s9.Content;
 
 public class VideoServiceImpl implements VideoService {
 
 	@Override
-	public Contents getVideo(String contentsID) {
+	public Content getVideo(String contentsID) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Contents createVideo(Contents video) {
+	public Content createVideo(Content video) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void saveVideo(Contents video) {
+	public void saveVideo(Content video) {
 		// TODO Auto-generated method stub
 		
 	}

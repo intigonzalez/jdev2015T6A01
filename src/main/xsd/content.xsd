@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
     <xs:include schemaLocation="comment.xsd"></xs:include>
-    <xs:element name="contents">
+    <xs:element name="content">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="contentsID" type="xs:string"
@@ -19,10 +19,16 @@
 				<xs:element name="link" type="xs:anyURI" maxOccurs="1"
 					minOccurs="0" />
 
+				<xs:element name="previewLink" type="xs:anyURI" maxOccurs="unbounded" minOccurs="0"></xs:element>
 				<xs:element ref="comment" maxOccurs="unbounded"
 					minOccurs="0">
 				</xs:element>
-				<xs:element name="groupe" type="xs:string" maxOccurs="unbounded" minOccurs="0"></xs:element>
+				<xs:element name="groupe" type="xs:string"
+					maxOccurs="unbounded" minOccurs="0">
+				</xs:element>
+				<xs:element name="action" type="xs:string"
+					maxOccurs="unbounded" minOccurs="0">
+				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

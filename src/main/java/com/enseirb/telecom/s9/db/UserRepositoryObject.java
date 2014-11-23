@@ -12,7 +12,7 @@ public class UserRepositoryObject {
 	
 	public UserRepositoryObject(String email, String name, String surname, String password, String pubKey, String privateKey) {
 		super();
-		this.email = email;
+		this.userID = userID;
 		this.name = name;
 		this.surname = surname;
 		this.password = password;
@@ -21,7 +21,7 @@ public class UserRepositoryObject {
 	}
 	
 	public UserRepositoryObject(User user) {
-		this.email = user.getEmail();
+		this.userID = user.getUserID();
 		this.name = user.getName();
 		this.surname = user.getSurname();
 		this.password = user.getPassword();
@@ -69,13 +69,13 @@ public class UserRepositoryObject {
 		this.privateKey = privateKey;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUserID(String userID) {
+		this.userID = userID;
 	}
 	
 	public User toUser() {
 		User user = new User();
-		user.setEmail(email);
+		user.setUserID(userID);
 		user.setName(name);
 		user.setSurname(surname);
 		user.setPassword(password);
@@ -84,7 +84,7 @@ public class UserRepositoryObject {
 		return user;
 	}
 
-	protected String email;
+	protected String userID;
     protected String name;
     protected String surname;
     protected String password;
