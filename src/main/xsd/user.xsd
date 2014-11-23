@@ -3,7 +3,7 @@
 
 
     <xs:include schemaLocation="contents.xsd"></xs:include>
-    <xs:include schemaLocation="groupe.xsd"></xs:include>
+    <xs:include schemaLocation="group.xsd"></xs:include>
     <xs:include schemaLocation="friend.xsd"></xs:include>
 	<xs:element name="user">
 
@@ -30,7 +30,7 @@
 					minOccurs="0">
 				</xs:element>
 
-				<xs:element ref="groupe" maxOccurs="unbounded"
+				<xs:element ref="group" maxOccurs="unbounded"
 					minOccurs="0">
 				</xs:element>
 

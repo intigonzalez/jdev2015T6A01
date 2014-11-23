@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-<xs:element name="groupe">
+<xs:element name="group">
   <xs:complexType>
     <xs:sequence>
-                <xs:element name="groupeID" type="xs:int" maxOccurs="1" minOccurs="0"></xs:element>
-    	<xs:element name="groupeName" type="xs:string" maxOccurs="1"
+                <xs:element name="groupID" type="xs:int" maxOccurs="1" minOccurs="1"></xs:element>
+    	<xs:element name="groupName" type="xs:string" maxOccurs="1"
     		minOccurs="0" />
                 <xs:element name="info" type="xs:string" maxOccurs="1" minOccurs="0" />
     </xs:sequence>
