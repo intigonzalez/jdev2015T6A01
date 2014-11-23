@@ -12,7 +12,7 @@ public class UserRepositoryObject {
 	
 	public UserRepositoryObject(String email, String name, String surname, String password, String pubKey, String privateKey) {
 		super();
-		this.userID = userID;
+		this.userID = email;
 		this.name = name;
 		this.surname = surname;
 		this.password = password;

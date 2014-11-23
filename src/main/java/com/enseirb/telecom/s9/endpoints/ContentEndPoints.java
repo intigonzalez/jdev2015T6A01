@@ -1,4 +1,4 @@
-package endPoints;
+package com.enseirb.telecom.s9.endpoints;
 
 import java.io.File;
 import java.io.FileOutputStream;

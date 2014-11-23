@@ -1,4 +1,4 @@
-package endPoints;
+package com.enseirb.telecom.s9.endpoints;
 
 import java.net.URI;
 import java.net.URISyntaxException;
