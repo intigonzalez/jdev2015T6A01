@@ -15,6 +15,9 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 	@Override
 	public <S extends UserRepositoryObject> S save(S entity) {
+		if (exists(entity.getEmail())) {
+			delete(entity.getEmail());
+		}
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DB db = mongoClient.getDB("mediahome");
