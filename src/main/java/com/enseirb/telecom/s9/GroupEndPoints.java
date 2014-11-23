@@ -53,7 +53,7 @@ public class GroupEndPoints {
 	@Path("{groupID}")
 	public Response deleteBox(@PathParam("groupId") String boxId) {
 		// need to verify user
-		// del the group
+		// TODO: del the group
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}

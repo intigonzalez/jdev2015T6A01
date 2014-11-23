@@ -18,22 +18,23 @@ import javax.ws.rs.core.Response.Status;
 @Path("/app/friends")
 public class FriendEndPoints {
 
-	
-// move in groupe
-//	@GET
-//	@Produces(MediaType.APPLICATION_XML)
-//	public ListRelation getFriendliste() {
-//		// TODO: get the list of relation
-//		// NHE: easy way to return an error for a rest api: throw an WebApplicationException
-//		throw new WebApplicationException(Status.CONFLICT);
-//	}
-//	
+	// move in groupe
+	// @GET
+	// @Produces(MediaType.APPLICATION_XML)
+	// public ListRelation getFriendliste() {
+	// // TODO: get the list of relation
+	// // NHE: easy way to return an error for a rest api: throw an
+	// WebApplicationException
+	// throw new WebApplicationException(Status.CONFLICT);
+	// }
+	//
 	@GET
 	@Path("{username}")
 	@Produces(MediaType.APPLICATION_XML)
 	public Friend getFriend() {
 		// TODO: get info of username relation
-		// NHE: easy way to return an error for a rest api: throw an WebApplicationException
+		// NHE: easy way to return an error for a rest api: throw an
+		// WebApplicationException
 		throw new WebApplicationException(Status.CONFLICT);
 	}
 
@@ -43,7 +44,6 @@ public class FriendEndPoints {
 		// TODO: ajout un ami
 		// add a friend
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
-		
 
 	}
 
@@ -52,12 +52,17 @@ public class FriendEndPoints {
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putFriend(Friend friend) {
 		// TODO: change de groupe et confirmé une demande d'ajout
+		// Pour confirmé un ami, il faut : regarder la valeur qui existe dans la
+		// data base si on a décidé quelle serait sous la forme zéro demande
+		// émise, une demande reçue et deux demande accepter alors si c'est
+		// l'user local qui fait la demande pour passer à deux la valeur et
+		// quelle était à un OK sinon refus
 		// need to verify the friend
 		// and after this modifies the friend
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}
-	
+
 	@DELETE
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

@@ -55,7 +55,7 @@ public class UserEndPoints {
 	@Path("{email}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putUser(User user) {
-		// todo : need to check the authentication of the user
+		// TODO: need to check the authentication of the user
 		
 		// modify the user
 		if (uManager.userExist(user.userID) == false) {
@@ -71,7 +71,7 @@ public class UserEndPoints {
 	@Path("{userID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteUser(@PathParam("userID") String userID) {
-		// todo : need to check the authentication of the user
+		// TODO: need to check the authentication of the user
 		
 		// delete the user
 		uManager.deleteUser(userID);
