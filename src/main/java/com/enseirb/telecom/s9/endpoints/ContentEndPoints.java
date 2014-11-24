@@ -41,15 +41,14 @@ public class ContentEndPoints {
 		throw new WebApplicationException(Status.CONFLICT);
 	}
 
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postVideo(Content content) {
-		return Response.status(Status.SERVICE_UNAVAILABLE).build();
-	}
+//	@POST
+//	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+//	public Response postVideo(Content content) {
+//		return Response.status(Status.SERVICE_UNAVAILABLE).build();
+//	}
 	
 
 	@POST
-	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response uploadFile(
 			@FormDataParam("file") InputStream uploadedInputStream,
