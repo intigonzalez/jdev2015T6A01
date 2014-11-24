@@ -40,7 +40,7 @@ public class BoxEndPoints {
 	}
 
 	@PUT
-	@Path("{commentID}")
+	@Path("{boxId}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putBox(Box box) {
 		// need to verify user

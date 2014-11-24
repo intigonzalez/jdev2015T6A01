@@ -1,7 +1,5 @@
 package com.enseirb.telecom.s9.endpoints;
 
-import java.util.ListResourceBundle;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
