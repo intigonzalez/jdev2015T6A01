@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
+    <xs:include schemaLocation="authorization.xsd"></xs:include>
     <xs:include schemaLocation="comment.xsd"></xs:include>
     <xs:element name="content">
 		<xs:complexType>
@@ -19,16 +20,18 @@
 				<xs:element name="link" type="xs:anyURI" maxOccurs="1"
 					minOccurs="0" />
 
-				<xs:element name="previewLink" type="xs:anyURI" maxOccurs="unbounded" minOccurs="0"></xs:element>
-				<xs:element ref="comment" maxOccurs="unbounded"
+				<xs:element name="previewLink" type="xs:anyURI"
+					maxOccurs="1" minOccurs="0">
+				</xs:element>
+                <xs:element name="status" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
+                <xs:element ref="comment" maxOccurs="unbounded"
 					minOccurs="0">
 				</xs:element>
-				<xs:element name="groupe" type="xs:string"
-					maxOccurs="unbounded" minOccurs="0">
-				</xs:element>
-				<xs:element name="action" type="xs:string"
-					maxOccurs="unbounded" minOccurs="0">
-				</xs:element>
+
+
+				<xs:element ref="authorization" maxOccurs="unbounded"
+					minOccurs="0">
+				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
