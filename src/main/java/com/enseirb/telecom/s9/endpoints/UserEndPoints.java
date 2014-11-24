@@ -3,6 +3,7 @@ package com.enseirb.telecom.s9.endpoints;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -18,11 +19,9 @@ import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.db.UserRepositoryMongo;
 import com.enseirb.telecom.s9.service.AccountService;
 import com.enseirb.telecom.s9.service.AccountServiceImpl;
-import com.sun.jersey.spi.resource.Singleton;
 
 // The Java class will be hosted at the URI path "/app/account"
 @Path("/app/account")
-@Singleton //NHE: lifecycle for demo purpose, make only 1 endpoint per application
 public class UserEndPoints {
 
 	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo());
@@ -44,7 +43,7 @@ public class UserEndPoints {
 	public Response postUser(User user) throws URISyntaxException {
 		if (uManager.userExist(user.getUserID()) == false) {
 			uManager.saveUser(user);
-			//NHE that the answer we expect from a post (see location header)
+			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(user.getUserID())).build();
 		} else {
 			return Response.status(409).build();
@@ -57,7 +56,7 @@ public class UserEndPoints {
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putUser(User user) {
 		// TODO: need to check the authentication of the user
-		
+
 		// modify the user
 		if (uManager.userExist(user.getUserID()) == false) {
 			uManager.saveUser(user);
@@ -73,7 +72,7 @@ public class UserEndPoints {
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteUser(@PathParam("userID") String userID) {
 		// TODO: need to check the authentication of the user
-		
+
 		// delete the user
 		uManager.deleteUser(userID);
 		return Response.status(200).build();
