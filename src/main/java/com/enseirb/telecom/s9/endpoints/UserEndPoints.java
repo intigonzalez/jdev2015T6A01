@@ -1,4 +1,4 @@
-package com.enseirb.telecom.s9;
+package com.enseirb.telecom.s9.endpoints;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -13,9 +13,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
-import com.enseirb.telecom.s9.db.UserRepositoryMock;
+import com.enseirb.telecom.s9.User;
+import com.enseirb.telecom.s9.db.UserRepositoryMongo;
 import com.enseirb.telecom.s9.service.AccountService;
 import com.enseirb.telecom.s9.service.AccountServiceImpl;
 import com.sun.jersey.spi.resource.Singleton;
@@ -25,7 +25,7 @@ import com.sun.jersey.spi.resource.Singleton;
 @Singleton //NHE: lifecycle for demo purpose, make only 1 endpoint per application
 public class UserEndPoints {
 
-	AccountService uManager = new AccountServiceImpl(new UserRepositoryMock());
+	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo());
 
 	// TODO: update the class to suit your needs
 
@@ -33,19 +33,19 @@ public class UserEndPoints {
 	// The Java method will produce content identified by the MIME Media
 	// type "text/plain"
 	@GET
-	@Path("{email}")
+	@Path("{userID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public User getIt(@PathParam("email") String email) {
-		return uManager.getUser(email);
+	public User getIt(@PathParam("userID") String userID) {
+		return uManager.getUser(userID);
 	}
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postUser(User user) throws URISyntaxException {
-		if (uManager.userExist(user.email) == false) {
+		if (uManager.userExist(user.getUserID()) == false) {
 			uManager.saveUser(user);
 			//NHE that the answer we expect from a post (see location header)
-			return Response.created(new URI(user.email)).build();
+			return Response.created(new URI(user.getUserID())).build();
 		} else {
 			return Response.status(409).build();
 		}
@@ -53,25 +53,29 @@ public class UserEndPoints {
 	}
 
 	@PUT
-	@Path("{username}")
+	@Path("{email}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putUser(User user) {
-		// todo : need to check the authentication of the user
+		// TODO: need to check the authentication of the user
 		
 		// modify the user
-		uManager.getUser(user.email);
-		return Response.status(200).build();
+		if (uManager.userExist(user.getUserID()) == false) {
+			uManager.saveUser(user);
+			return Response.status(200).build();
+		} else {
+			return Response.status(409).build();
+		}
 
 	}
 
 	@DELETE
-	@Path("{username}")
+	@Path("{userID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteUser(User user) {
-		// todo : need to check the authentication of the user
+	public Response deleteUser(@PathParam("userID") String userID) {
+		// TODO: need to check the authentication of the user
 		
 		// delete the user
-		uManager.deleteUser(user.email);
+		uManager.deleteUser(userID);
 		return Response.status(200).build();
 
 	}

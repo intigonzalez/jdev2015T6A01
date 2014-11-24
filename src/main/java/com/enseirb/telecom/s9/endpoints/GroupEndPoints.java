@@ -1,4 +1,4 @@
-package com.enseirb.telecom.s9;
+package com.enseirb.telecom.s9.endpoints;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -6,14 +6,18 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.enseirb.telecom.s9.Group;
+
 // The Java class will be hosted at the URI path "/myresource"
-@Path("/app/friends")
-public class FriendEndPoints {
+@Path("/app/group")
+public class GroupEndPoints {
 
 	// TODO: update the class to suit your needs
 
@@ -21,38 +25,37 @@ public class FriendEndPoints {
 	// The Java method will produce content identified by the MIME Media
 	// type "text/plain"
 	@GET
-	@Path("{username}")
+	@Path("{groupID}")
 	@Produces(MediaType.APPLICATION_XML)
-	public Response getFriend() {
-		// need to create
-		return Response.status(Status.SERVICE_UNAVAILABLE).build();
+	public Group getGroupe() {
+		// TODO: get the list of relation if null return all relation
+		//Return the list of mender group
+		// NHE: easy way to return an error for a rest api: throw an WebApplicationException
+		throw new WebApplicationException(Status.CONFLICT);
 	}
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postFriend(Friend friend) {
-		// add a friend
+	public Response postBox(Group group) {
+		// TODO: crée un groupe 
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
-		
 
 	}
 
 	@PUT
-	@Path("{username}")
+	@Path("{groupID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putFriend(Friend friend) {
-		// need to verify the friend
-		// and after this modifies the friend
+	public Response putBox(Group group) {
+		// TODO: modifie le nom d'un groupe 
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}
-	
+
 	@DELETE
-	@Path("{username}")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteFriend(Friend friend) {
-		// need to verify the user
-		// and after this delete the user
+	@Path("{groupID}")
+	public Response deleteBox(@PathParam("groupId") String boxId) {
+		// need to verify user
+		// TODO: del the group
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}

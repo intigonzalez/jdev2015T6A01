@@ -22,7 +22,7 @@ public class UserRepositoryMock implements CrudRepository<User, String> {
 	{
 		backupMap = new ConcurrentHashMap<String, User>();
 		User nicolas = new User();
-		nicolas.setEmail("nicolas@mirlitone.com");
+		nicolas.setUserID("nicolas@mirlitone.com");
 //		nicolas.setLogin("nico");
 		nicolas.setName("nicolas");
 		nicolas.setPassword("1234");
@@ -30,14 +30,14 @@ public class UserRepositoryMock implements CrudRepository<User, String> {
 		nicolas.setPubKey("pub");
 		nicolas.setSurname("Hrb");
 
-		backupMap.put(nicolas.getEmail(), nicolas);
+		backupMap.put(nicolas.getUserID(), nicolas);
 
 	}
 
 	@Override
 	public <S extends User> S save(S entity) {
 
-		backupMap.put(entity.getEmail(), entity);
+		backupMap.put(entity.getUserID(), entity);
 		return entity;
 
 	}
@@ -74,7 +74,7 @@ public class UserRepositoryMock implements CrudRepository<User, String> {
 		Set<User> users = new HashSet<User>();
 		Set<String> keys = Sets.newHashSet(ids);
 		for (User u : this.findAll()) {
-			if (keys.contains(u.getEmail())) {
+			if (keys.contains(u.getUserID())) {
 				users.add(u);
 			}
 		}
@@ -97,7 +97,7 @@ public class UserRepositoryMock implements CrudRepository<User, String> {
 
 	@Override
 	public void delete(User entity) {
-		this.delete(entity.getEmail());
+		this.delete(entity.getUserID());
 		;
 
 	}
@@ -110,7 +110,7 @@ public class UserRepositoryMock implements CrudRepository<User, String> {
 
 					@Override
 					public String apply(User arg0) {
-						return arg0.getEmail();
+						return arg0.getUserID();
 					}
 
 				}))) {

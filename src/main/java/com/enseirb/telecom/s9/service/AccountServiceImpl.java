@@ -2,13 +2,13 @@ package com.enseirb.telecom.s9.service;
 
 import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.db.CrudRepository;
-import com.enseirb.telecom.s9.db.UserRepositoryMongo;
+import com.enseirb.telecom.s9.db.UserRepositoryObject;
 
 public class AccountServiceImpl implements AccountService {
 
-	CrudRepository<User, String> userDatabase;
+	CrudRepository<UserRepositoryObject, String> userDatabase;
 
-	public AccountServiceImpl(CrudRepository<User, String> userDatabase) {
+	public AccountServiceImpl(CrudRepository<UserRepositoryObject, String> userDatabase) {
 		this.userDatabase = userDatabase;
 	}
 
@@ -32,8 +32,14 @@ public class AccountServiceImpl implements AccountService {
 	 */
 	@Override
 	public User getUser(String email) {
-
-		return userDatabase.findOne(email);
+		UserRepositoryObject user =userDatabase.findOne(email);
+		if (user == null ) {
+			return null;
+		}
+		else {
+			return user.toUser();
+		}
+		
 	}
 
 	/*
@@ -45,13 +51,13 @@ public class AccountServiceImpl implements AccountService {
 	 */
 	@Override
 	public User createUser(User user) {
-		return userDatabase.save(user);
+		return userDatabase.save(new UserRepositoryObject(user)).toUser();
 
 	}
 
 	@Override
 	public void saveUser(User user) {
-		this.userDatabase.save(user);
+		userDatabase.save(new UserRepositoryObject(user));
 
 	}
 

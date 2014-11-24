@@ -1,4 +1,4 @@
-package com.enseirb.telecom.s9;
+package com.enseirb.telecom.s9.endpoints;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -12,6 +12,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import com.enseirb.telecom.s9.Box;
 
 // The Java class will be hosted at the URI path "/myresource"
 @Path("/app/box")
