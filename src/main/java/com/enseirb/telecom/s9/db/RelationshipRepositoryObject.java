@@ -1,8 +1,7 @@
 package com.enseirb.telecom.s9.db;
 
 import java.util.List;
-
-import com.enseirb.telecom.s9.Friend;
+import com.enseirb.telecom.s9.Relation;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
@@ -21,15 +20,15 @@ public class RelationshipRepositoryObject {
 		this.unixTime = unixTime;
 		this.group = group;
 	}
-	public RelationshipRepositoryObject(String userId, Friend friend) {
+	public RelationshipRepositoryObject(String userId, Relation relation) {
 		this.userId = userId;
-		this.email = friend.getEmail();
-		this.name = friend.getName();
-		this.surname = friend.getSurname();
-		this.pubKey = friend.getPubKey();
-		this.aprouve = friend.isAprouve();
-		this.unixTime = friend.getUnixTime();
-		this.group = friend.getGroupID();
+		this.email = relation.getEmail();
+		this.name = relation.getName();
+		this.surname = relation.getSurname();
+		this.pubKey = relation.getPubKey();
+		this.aprouve = relation.isAprouve();
+		this.unixTime = relation.getUnixTime();
+		this.group = relation.getGroupID();
 		
 	}
 	String userId;
@@ -88,15 +87,15 @@ public class RelationshipRepositoryObject {
 	public void setGroup(List<Integer> group) {
 		this.group = group;
 	}
-	public void toFriend() {
-		Friend friend = new Friend();
-		friend.setEmail(email);
-		friend.setName(name);
-		friend.setSurname(surname);
-		friend.setPubKey(pubKey);
-		friend.setUnixTime(unixTime);
-		friend.setAprouve(aprouve);
-		friend.getGroupID().addAll(group);
+	public void toRelation() {
+		Relation relation = new Relation();
+		relation.setEmail(email);
+		relation.setName(name);
+		relation.setSurname(surname);
+		relation.setPubKey(pubKey);
+		relation.setUnixTime(unixTime);
+		relation.setAprouve(aprouve);
+		relation.getGroupID().addAll(group);
 		
 	}
 }
