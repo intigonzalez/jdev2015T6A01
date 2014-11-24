@@ -65,7 +65,6 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 	@Override
 	public boolean exists(String id) {
-		// TODO Auto-generated method stub
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DB db = mongoClient.getDB("mediahome");
@@ -122,7 +121,16 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 	@Override
 	public void delete(UserRepositoryObject entity) {
-		throw new RuntimeException("not yet invented");
+		try {
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbUsers = db.getCollection("users");
+			BasicDBObject query = new BasicDBObject("userID", entity.getUserID());
+			dbUsers.remove(query);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");
+		}
 
 	}
 
