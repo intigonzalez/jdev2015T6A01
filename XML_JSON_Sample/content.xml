@@ -6,12 +6,15 @@
   <unix_time>0</unix_time>
   <link>http://tempuri.org</link>
   <previewLink>http://tempuri.org</previewLink>
+  <status>status</status>
   <comment>
     <commentID>commentID</commentID>
     <login>login</login>
     <unix_time>0.0</unix_time>
     <comment>comment</comment>
   </comment>
-  <groupe>groupe</groupe>
-  <action>action</action>
+  <authorization>
+    <group>0</group>
+    <action>action</action>
+  </authorization>
 </content>
