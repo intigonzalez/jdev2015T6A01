@@ -12,7 +12,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.enseirb.telecom.s9.Friend;
+import com.enseirb.telecom.s9.Relation;
+
+//import com.enseirb.telecom.s9.Relation;
 
 // The Java class will be hosted at the URI path "/app/friends"
 @Path("/app/{userID}/friends")
@@ -31,7 +33,7 @@ public class RelationEndPoints {
 	@GET
 	@Path("{username}")
 	@Produces(MediaType.APPLICATION_XML)
-	public Friend getFriend() {
+	public Relation getRelation() {
 		// TODO: get info of username relation
 		// NHE: easy way to return an error for a rest api: throw an
 		// WebApplicationException
@@ -40,7 +42,7 @@ public class RelationEndPoints {
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postFriend(Friend friend) {
+	public Response postFriend(Relation relation) {
 		// TODO: ajout un ami
 		// add a friend
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
@@ -50,7 +52,7 @@ public class RelationEndPoints {
 	@PUT
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putFriend(Friend friend) {
+	public Response putFriend(Relation relation) {
 		// TODO: change de groupe et confirmé une demande d'ajout
 		// Pour confirmé un ami, il faut : regarder la valeur qui existe dans la
 		// data base si on a décidé quelle serait sous la forme zéro demande
@@ -66,7 +68,7 @@ public class RelationEndPoints {
 	@DELETE
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteFriend(Friend friend) {
+	public Response deleteFriend(Relation relation) {
 		// TODO: delete this friends thinks to send a message to the over box
 		// and after this delete the user
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
