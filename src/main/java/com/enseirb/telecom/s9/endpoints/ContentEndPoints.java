@@ -49,6 +49,7 @@ public class ContentEndPoints {
 	
 
 	@POST
+	@Path("{email}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response uploadFile(
 			@FormDataParam("file") InputStream uploadedInputStream,
@@ -61,6 +62,7 @@ public class ContentEndPoints {
 		writeToFile(uploadedInputStream, uploadedFileLocation);
 
 		String output = "File uploaded to : " + uploadedFileLocation;
+		
 
 		return Response.status(200).entity(output).build();
 

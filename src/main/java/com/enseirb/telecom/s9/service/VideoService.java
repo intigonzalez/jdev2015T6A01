@@ -5,6 +5,8 @@ import com.enseirb.telecom.s9.Content;
 
 public interface VideoService {
 
+	public abstract boolean videoExist(String contentsID);
+	
 	public abstract Content getVideo(String contentsID);
 
 	public abstract Content createVideo(Content video);
