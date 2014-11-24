@@ -2,6 +2,8 @@ package com.enseirb.telecom.s9.db;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
+
 import com.enseirb.telecom.s9.Authorization;
 import com.enseirb.telecom.s9.Comment;
 import com.enseirb.telecom.s9.Content;
@@ -12,7 +14,7 @@ public class ContentRepositoryObject {
 
 	}
 
-	public ContentRepositoryObject(MongoId id, String name, String userId, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<Authorization> authorizations) {
+	public ContentRepositoryObject(ObjectId id, String name, String userId, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<Authorization> authorizations) {
 		super();
 		_id = id;
 		this.name = name;
@@ -27,7 +29,7 @@ public class ContentRepositoryObject {
 
 	public ContentRepositoryObject(Content content) {
 		if (content.getContentsID() != null) {
-			_id.set$oid(content.getContentsID());
+			_id = new ObjectId(content.getContentsID());
 		}		
 		name = content.getName();
 		userId = content.getLogin();
@@ -39,7 +41,7 @@ public class ContentRepositoryObject {
 		this.authorizations = content.getAuthorization();
 	}
 	@JsonProperty("_id")
-	MongoId _id;
+	ObjectId _id;
 	String name;
 	String userId;
 	Long unixTime;
@@ -49,11 +51,11 @@ public class ContentRepositoryObject {
 	List<Comment> comment;
 	List<Authorization> authorizations;
 
-	public MongoId getId() {
+	public ObjectId getId() {
 		return _id;
 	}
 
-	public void setId(MongoId id) {
+	public void setId(ObjectId id) {
 		_id = id;
 	}
 
@@ -120,7 +122,7 @@ public class ContentRepositoryObject {
 
 	public Content toContent() {
 		Content content = new Content();
-		content.setContentsID(this.getId().get$oid());
+		content.setContentsID(this.getId().toString());
 		content.setName(this.getName());
 		content.setLogin(this.getUserId());
 		content.setLink(this.getLink());

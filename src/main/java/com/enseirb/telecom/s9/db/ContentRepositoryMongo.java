@@ -3,24 +3,29 @@ package com.enseirb.telecom.s9.db;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import org.bson.types.ObjectId;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
 public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryObject, String> {
 
 	@Override
 	public <S extends ContentRepositoryObject> S save(S entity) {
-		if (entity.getId() != null && exists(entity.getId().get$oid())) {
-			delete(entity.getId().get$oid());
+		if (entity.getId() != null && exists(entity.getId().toString())) {
+			delete(entity.getId().toString());
 		}
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DBCollection db = mongoClient.getDB("mediahome").getCollection("contents");
-			db.save(DbInit.createDBObject(entity));
+			DBObject objectToSave = DbInit.createDBObject(entity);
+			db.save(objectToSave);
+			entity.setId((ObjectId)objectToSave.get( "_id" ));
 			mongoClient.close();
 		} catch (UnknownHostException | JsonProcessingException e) {
 			// TODO Auto-generated catch block
