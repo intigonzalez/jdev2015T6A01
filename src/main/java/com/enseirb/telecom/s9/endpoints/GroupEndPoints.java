@@ -13,10 +13,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.enseirb.telecom.s9.Friend;
 import com.enseirb.telecom.s9.Group;
+import com.enseirb.telecom.s9.ListRelation;
 
 // The Java class will be hosted at the URI path "/myresource"
-@Path("/app/group")
+@Path("/app/{userID}/group")
 public class GroupEndPoints {
 
 	// TODO: update the class to suit your needs
@@ -27,17 +29,29 @@ public class GroupEndPoints {
 	@GET
 	@Path("{groupID}")
 	@Produces(MediaType.APPLICATION_XML)
-	public Group getGroupe() {
+	public ListRelation getGroupe(@PathParam("userID") String userID,
+			@PathParam("groupID") String groupID) {
 		// TODO: get the list of relation if null return all relation
-		//Return the list of mender group
-		// NHE: easy way to return an error for a rest api: throw an WebApplicationException
-		throw new WebApplicationException(Status.CONFLICT);
+		// Return the list of mender group
+		// NHE: easy way to return an error for a rest api: throw an
+		// WebApplicationException
+		boolean test = true;
+		if (test) {
+			Friend friend = new Friend();
+			friend.setEmail("dbourasseau@enseirb.fr");
+			ListRelation group = new ListRelation();
+			group.getFriend().add(friend);
+			return group;
+		} else {
+			throw new WebApplicationException(Status.CONFLICT);
+		}
+
 	}
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postBox(Group group) {
-		// TODO: crée un groupe 
+		// TODO: crée un groupe
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}
@@ -46,7 +60,7 @@ public class GroupEndPoints {
 	@Path("{groupID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putBox(Group group) {
-		// TODO: modifie le nom d'un groupe 
+		// TODO: modifie le nom d'un groupe
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}
