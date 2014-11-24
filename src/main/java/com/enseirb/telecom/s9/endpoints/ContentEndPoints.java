@@ -68,8 +68,7 @@ public class ContentEndPoints {
 
 		String output = "File uploaded to : " + uploadedFileLocation;
 		
-
-		uManager.saveContent(content); // save ou create ???
+		content = uManager.createContent(content); 
 		// return Response.status(200).entity(output).build();
 		return Response.created(new URI(content.getContentsID())).build();
 
