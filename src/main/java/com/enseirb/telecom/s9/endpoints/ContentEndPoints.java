@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -55,18 +56,25 @@ public class ContentEndPoints {
 	@Path("{email}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response postcontent(
-			Content content,
+			@PathParam("{email}") String email,
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) throws URISyntaxException {
 		
 		// Le uploadedFileLocation doit être changé suivant le besoin
-		String uploadedFileLocation = "Desktop/"
+		String uploadedFileLocation = "/content/"
 				+ fileDetail.getFileName();
 
 		// save it
 		writeToFile(uploadedInputStream, uploadedFileLocation);
 
 		String output = "File uploaded to : " + uploadedFileLocation;
+		Content content = new Content();
+		content.setName(fileDetail.getFileName());
+		content.setLogin(email);
+		content.setStatus("In progress");
+		content.setLink("/content/" + fileDetail.getFileName());
+		long unixTime = System.currentTimeMillis() / 1000L;
+		content.setUnixTime(unixTime);
 		
 		content = uManager.createContent(content); 
 		// return Response.status(200).entity(output).build();
