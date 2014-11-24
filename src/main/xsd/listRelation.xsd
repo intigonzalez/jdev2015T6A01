@@ -3,7 +3,6 @@
 
 
     <xs:include schemaLocation="relation.xsd"></xs:include>
-    <xs:include schemaLocation="friend.xsd"></xs:include>
 	<xs:element name="listRelation">
 
 		<xs:complexType>
