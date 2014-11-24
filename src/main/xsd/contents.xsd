@@ -10,7 +10,7 @@
 				</xs:element>
 				<xs:element name="name" type="xs:string" maxOccurs="1"
 					minOccurs="0" />
-				<xs:element name="login" type="xs:string" maxOccurs="1"
+				<xs:element name="email" type="xs:string" maxOccurs="1"
 					minOccurs="0" />
 
 				<xs:element name="unix_time" type="xs:long"
@@ -22,7 +22,10 @@
 				<xs:element ref="comment" maxOccurs="unbounded"
 					minOccurs="0">
 				</xs:element>
-				<xs:element name="groupe" type="xs:string" maxOccurs="unbounded" minOccurs="0"></xs:element>
+				<xs:element name="list" type="xs:string"
+					maxOccurs="unbounded" minOccurs="0">
+				</xs:element>
+				<xs:element name="action" type="xs:string" maxOccurs="unbounded" minOccurs="0"></xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
