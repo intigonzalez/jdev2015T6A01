@@ -2,16 +2,11 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
-    <xs:include schemaLocation="content.xsd"></xs:include>
-    <xs:include schemaLocation="contents.xsd"></xs:include>
-    <xs:include schemaLocation="group.xsd"></xs:include>
-    <xs:include schemaLocation="friend.xsd"></xs:include>
+	<xs:include schemaLocation="content.xsd"></xs:include>
 	<xs:element name="listContent">
 
 		<xs:complexType>
-			<xs:sequence>
-
-
+			<xs:sequence>
 
 				<xs:element ref="content" maxOccurs="unbounded"
 					minOccurs="0">
