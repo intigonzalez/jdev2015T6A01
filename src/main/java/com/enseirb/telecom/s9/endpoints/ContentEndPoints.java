@@ -21,7 +21,7 @@ import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
 // The Java class will be hosted at the URI path "/app/video"
-@Path("/app/video")
+@Path("/app/{userID}/video")
 public class ContentEndPoints {
 
 	// TODO: update the class to suit your needs

@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response.Status;
 import com.enseirb.telecom.s9.Group;
 
 // The Java class will be hosted at the URI path "/myresource"
-@Path("/app/group")
+@Path("/app/{userID}/group")
 public class GroupEndPoints {
 
 	// TODO: update the class to suit your needs
@@ -31,6 +31,10 @@ public class GroupEndPoints {
 		// TODO: get the list of relation if null return all relation
 		//Return the list of mender group
 		// NHE: easy way to return an error for a rest api: throw an WebApplicationException
+//		Group group = new Group();
+//		group.setGroupID(1);
+//		group.setGroupName("blabla");
+//		return group ;
 		throw new WebApplicationException(Status.CONFLICT);
 	}
 

@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response.Status;
 import com.enseirb.telecom.s9.Friend;
 
 // The Java class will be hosted at the URI path "/app/friends"
-@Path("/app/friends")
+@Path("/app/{userID}/friends")
 public class FriendEndPoints {
 
 	// move in groupe
