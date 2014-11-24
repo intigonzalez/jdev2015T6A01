@@ -16,21 +16,18 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
-import com.enseirb.telecom.s9.Box;
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.db.ContentRepositoryMongo;
-import com.enseirb.telecom.s9.service.ContentServiceImpl;
 import com.enseirb.telecom.s9.service.ContentService;
+import com.enseirb.telecom.s9.service.ContentServiceImpl;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
 // The Java class will be hosted at the URI path "/app/video"
-@Path("/app/video")
+@Path("/app/{userID}/video")
 public class ContentEndPoints {
 
 	ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo());
@@ -70,6 +67,7 @@ public class ContentEndPoints {
 		writeToFile(uploadedInputStream, uploadedFileLocation);
 
 		String output = "File uploaded to : " + uploadedFileLocation;
+		
 
 		uManager.saveContent(content);;
 		return Response.created(new URI(content.getContentsID())).build();

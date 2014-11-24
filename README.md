@@ -13,7 +13,7 @@ Projet S9 : Enseirb : Réseaux social décentralisé avec partage de videos
 Create a user
 
     {
-    "email": "vince@onehear.nl",
+    "userID": "vince@onehear.nl",
     "name": "vincent",
     "password": "1234",
     "privateKey": "private",

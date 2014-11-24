@@ -53,7 +53,7 @@ public class UserEndPoints {
 	}
 
 	@PUT
-	@Path("{email}")
+	@Path("{userID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putUser(User user) {
 		// TODO: need to check the authentication of the user

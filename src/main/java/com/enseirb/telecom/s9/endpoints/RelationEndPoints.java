@@ -1,7 +1,5 @@
 package com.enseirb.telecom.s9.endpoints;
 
-import java.util.ListResourceBundle;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -17,8 +15,8 @@ import javax.ws.rs.core.Response.Status;
 import com.enseirb.telecom.s9.Friend;
 
 // The Java class will be hosted at the URI path "/app/friends"
-@Path("/app/friends")
-public class FriendEndPoints {
+@Path("/app/{userID}/friends")
+public class RelationEndPoints {
 
 	// move in groupe
 	// @GET
