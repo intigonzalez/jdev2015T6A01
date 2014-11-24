@@ -21,7 +21,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.enseirb.telecom.s9.Box;
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.db.ContentRepositoryMongo;
 import com.enseirb.telecom.s9.service.ContentServiceImpl;
@@ -71,7 +70,8 @@ public class ContentEndPoints {
 
 		String output = "File uploaded to : " + uploadedFileLocation;
 
-		uManager.saveContent(content);;
+		uManager.saveContent(content); // save ou create ???
+		// return Response.status(200).entity(output).build();
 		return Response.created(new URI(content.getContentsID())).build();
 
 	}
