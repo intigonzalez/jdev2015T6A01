@@ -53,15 +53,13 @@ public class ContentEndPoints {
 	
 
 	@POST
-	@Path("{email}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response postcontent(
-			@PathParam("{email}") String email,
+			@PathParam("userID") String email,
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) throws URISyntaxException {
-		
 		// Le uploadedFileLocation doit être changé suivant le besoin
-		String uploadedFileLocation = "/content/"
+		String uploadedFileLocation = "/Users/Charles-Damien/Desktop/"
 				+ fileDetail.getFileName();
 
 		// save it
