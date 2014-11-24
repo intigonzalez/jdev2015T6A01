@@ -13,7 +13,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.enseirb.telecom.s9.Friend;
 import com.enseirb.telecom.s9.Group;
 import com.enseirb.telecom.s9.ListRelation;
 
@@ -35,16 +34,16 @@ public class GroupEndPoints {
 		// Return the list of mender group
 		// NHE: easy way to return an error for a rest api: throw an
 		// WebApplicationException
-		boolean test = true;
-		if (test) {
-			Friend friend = new Friend();
-			friend.setEmail("dbourasseau@enseirb.fr");
-			ListRelation group = new ListRelation();
-			group.getFriend().add(friend);
-			return group;
-		} else {
+//		boolean test = true;
+//		if (test) {
+//			Relation relation = new Relation();
+//			friend.setEmail("dbourasseau@enseirb.fr");
+//			ListRelation group = new ListRelation();
+//			group.getFriend().add(relation);
+//			return group;
+//		} else {
 			throw new WebApplicationException(Status.CONFLICT);
-		}
+//		}
 
 	}
 

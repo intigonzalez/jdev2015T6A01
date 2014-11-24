@@ -1,11 +1,14 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-<xs:element name="authorization">
+    <xs:include schemaLocation="group.xsd"></xs:include>
+    <xs:element name="authorization">
   <xs:complexType>
-    <xs:sequence>
-                <xs:element name="group" type="xs:int" maxOccurs="1" minOccurs="1"></xs:element>
-                <xs:element name="action" type="xs:string" maxOccurs="unbounded" minOccurs="0" />
+    <xs:sequence>
+
+                <xs:element ref="group" maxOccurs="1" minOccurs="1"></xs:element>
+                <xs:element name="action" type="xs:string" maxOccurs="unbounded"
+    		minOccurs="0" />
     </xs:sequence>
   </xs:complexType>
 </xs:element>
