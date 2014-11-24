@@ -1,7 +1,6 @@
 package com.enseirb.telecom.s9.db;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,11 +8,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class MongoId implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1483717542874193841L;
+public class MongoId {
+
 	@JsonProperty("$oid")
 	String $oid;
 	

@@ -1,19 +1,21 @@
 package com.enseirb.telecom.s9.db;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
-public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryObject, MongoId> {
+public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryObject, String> {
 
 	@Override
 	public <S extends ContentRepositoryObject> S save(S entity) {
-		if (entity.getId() != null && exists(entity.getId())) {
-			delete(entity.getId());
+		if (entity.getId() != null && exists(entity.getId().get$oid())) {
+			delete(entity.getId().get$oid());
 		}
 		try {
 			MongoClient mongoClient = DbInit.Connect();
@@ -35,13 +37,36 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 	}
 
 	@Override
-	public ContentRepositoryObject findOne(MongoId id) {
-		// TODO Auto-generated method stub
-		return null;
+	public ContentRepositoryObject findOne(String id) {
+		try {
+			MongoClient mongoClient = DbInit.Connect();
+			DBCollection db = mongoClient.getDB("mediahome").getCollection("contents");
+
+			BasicDBObject query = new BasicDBObject("_id", id);
+			DBCursor cursor = db.find(query);
+			ContentRepositoryObject content = null;
+			ObjectMapper mapper = new ObjectMapper();
+			if (cursor.hasNext()) {
+				try {
+					content = mapper.readValue(cursor.next().toString(), ContentRepositoryObject.class);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					System.err.println("Content Mapping failed ! ");
+				}
+			};
+			mongoClient.close();
+			return content;
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");
+			return null;
+		}
 	}
 
 	@Override
-	public boolean exists(MongoId id) {
+	public boolean exists(String id) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DBCollection db = mongoClient.getDB("mediahome").getCollection("contents");
@@ -67,7 +92,7 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 	}
 
 	@Override
-	public Iterable<ContentRepositoryObject> findAll(Iterable<MongoId> ids) {
+	public Iterable<ContentRepositoryObject> findAll(Iterable<String> ids) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -79,7 +104,7 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 	}
 
 	@Override
-	public void delete(MongoId id) {
+	public void delete(String id) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DBCollection db = mongoClient.getDB("mediahome").getCollection("contents");
