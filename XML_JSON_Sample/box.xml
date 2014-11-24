@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<box xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="box.xsd">
+  <id_box>id_box</id_box>
+  <privateKey>privateKey</privateKey>
+  <ip>ip</ip>
+  <TTL>0</TTL>
+  <user>
+    <email>email</email>
+  </user>
+</box>
