@@ -1,26 +1,18 @@
-angular.module("mainModule", [])
-  .controller("mainController", function ($scope, $http)
-  {
-    $scope.person1 = {};
-    $scope.person2 = {};
-    $scope.person3 = {};
+var RegisterForm = angular.module('RegisterForm', []);
+//Hello
+RegisterForm.controller("mainController", function ($scope, $http) {
 
-    $scope.submitData = function (person, resultVarName)
-    {
-      var config = {
-        params: {
-          person: person
-        }
-      };
-
-      $http.post("server.php", null, config)
-        .success(function (data, status, headers, config)
-        {
-          $scope[resultVarName] = data;
-        })
-        .error(function (data, status, headers, config)
-        {
-          $scope[resultVarName] = "SUBMIT ERROR";
-        });
+    $scope.submitData = function (person) {
+        var data = {};
+        data.user = person;
+        $http.post("/api/app/account/",data )
+            .success(function (data, status, headers, config)
+            {
+                console.log("Succeed");
+            })
+            .error(function (data, status, headers, config)
+            {
+                console.log("Failed");
+            });
     };
-  });
+});

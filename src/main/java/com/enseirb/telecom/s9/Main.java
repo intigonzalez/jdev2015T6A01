@@ -58,7 +58,6 @@ public class Main {
 				.addHttpHandler(
 						new CLStaticHttpHandler(Main.class.getClassLoader(),
 								"/"));
-		httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("display"),"/display");
 		System.out.println(String.format(
 				"Jersey app started with WADL available at "
 						+ "%sapplication.wadl\n"
