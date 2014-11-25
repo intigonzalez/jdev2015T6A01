@@ -2,7 +2,6 @@ package com.enseirb.telecom.s9.db;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -81,7 +80,7 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 				mongoClient.close();
 				return false;
 			}
-		} catch(UnknownHostException e) {
+		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.err.println("Connection to database failed ");
@@ -91,85 +90,12 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 	@Override
 	public Iterable<UserRepositoryObject> findAll() {
-		
-		//Iterable <UserRepositoryObject> listOfAllUsers = null;
-		List <UserRepositoryObject> listOfAllUsers = new LinkedList<UserRepositoryObject>();
-		
-		try{
-			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
-			DBCollection dbUsers = db.getCollection("users");
-			
-			ObjectMapper mapper = new ObjectMapper();
-			UserRepositoryObject user = null;
-			
-			DBCursor cursor = dbUsers.find();
-					
-			while(cursor.hasNext()){
-				try {
-					user = mapper.readValue(cursor.next().toString(), UserRepositoryObject.class);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					System.err.println("User Mapping failed ! ");
-				}
-				
-				listOfAllUsers.add(user);
-			}
-			
-		}
-		catch (UnknownHostException e){
-			e.printStackTrace();
-			System.err.println("Connection to database failed ");			
-		}
-		return listOfAllUsers;
-		
-		//throw new RuntimeException("not yet invented");
+		throw new RuntimeException("not yet invented");
 	}
 
 	@Override
 	public Iterable<UserRepositoryObject> findAll(Iterable<String> ids) {
-
-		// throw new RuntimeException("not yet invented");
-
-		List<UserRepositoryObject> listOfAllUsers = new LinkedList<UserRepositoryObject>();
-
-		Iterator<String> iterator = ids.iterator();
-
-		try {
-			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
-			DBCollection dbUsers = db.getCollection("users");
-
-			ObjectMapper mapper = new ObjectMapper();
-			UserRepositoryObject user = null;
-
-			while (iterator.hasNext()) {
-				BasicDBObject query = new BasicDBObject("userID",
-						iterator.next());
-				DBCursor cursor = dbUsers.find(query);
-
-				while (cursor.hasNext()) {
-					try {
-						user = mapper.readValue(cursor.next().toString(),
-								UserRepositoryObject.class);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						System.err.println("User Mapping failed ! ");
-					}
-
-					listOfAllUsers.add(user);
-				}
-
-			}
-
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			System.err.println("Connection to database failed ");
-		}
-		return listOfAllUsers;
-
+		throw new RuntimeException("not yet invented");
 	}
 
 	@Override
@@ -184,11 +110,19 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("users");
 
-			numberOfUser = dbUsers.getCount();
+			DBCursor cursor = dbUsers.find();
+			try {
+				mongoClient.close();
+				while (cursor.hasNext()) {
+					numberOfUser++;
+				}
+			} finally {
+				cursor.close();
+			}
 		}
+
 		catch (UnknownHostException e) {
-			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+
 		}
 
 		return numberOfUser;
