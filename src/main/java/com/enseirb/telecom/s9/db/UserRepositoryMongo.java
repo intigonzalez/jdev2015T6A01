@@ -100,7 +100,33 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 	@Override
 	public long count() {
-		throw new RuntimeException("not yet invented");
+
+		// throw new RuntimeException("not yet invented");
+
+		long numberOfUser = 0;
+
+		try {
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbUsers = db.getCollection("users");
+
+			DBCursor cursor = dbUsers.find();
+			try {
+				mongoClient.close();
+				while (cursor.hasNext()) {
+					numberOfUser++;
+				}
+			} finally {
+				cursor.close();
+			}
+		}
+
+		catch (UnknownHostException e) {
+
+		}
+
+		return numberOfUser;
+
 	}
 
 	@Override
@@ -142,8 +168,22 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 	@Override
 	public void deleteAll() {
-		throw new RuntimeException("not yet invented");
+		
+		//throw new RuntimeException("not yet invented");
 
+		try{
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbUsers = db.getCollection("users");
+			
+			dbUsers.drop();
+			mongoClient.close();
+			
+			}
+		catch(UnknownHostException e){
+			e.printStackTrace();
+			System.err.println();
+		}
 	}
 
 	@Override

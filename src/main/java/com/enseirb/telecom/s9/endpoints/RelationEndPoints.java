@@ -17,7 +17,7 @@ import com.enseirb.telecom.s9.Relation;
 //import com.enseirb.telecom.s9.Relation;
 
 // The Java class will be hosted at the URI path "/app/friends"
-@Path("/app/{userID}/friends")
+@Path("app/{userID}/friends")
 public class RelationEndPoints {
 
 	// move in groupe
