@@ -1,22 +1,18 @@
 package com.enseirb.telecom.s9;
 
+import java.io.IOException;
+import java.net.URI;
+
+import javax.ws.rs.core.UriBuilder;
+
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
-import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.jettison.JettisonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.ResourceFinder;
-import org.glassfish.jersey.server.internal.scanning.PackageNamesScanner;
 
-import com.enseirb.telecom.s9.endpoints.ContentEndPoints;
-
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.UriBuilder;
-
-import java.io.IOException;
-import java.net.URI;
 
 public class Main {
 
@@ -33,7 +29,7 @@ public class Main {
 	}
 
 	private static URI getBaseURI() {
-		return UriBuilder.fromUri("http://localhost/api/").port(getPort(9998))
+		return UriBuilder.fromUri("http://0.0.0.0/api/").port(getPort(9998))
 				.build();
 	}
 
@@ -44,6 +40,7 @@ public class Main {
 		ResourceConfig resources = new ResourceConfig();
 		resources.packages("com.enseirb.telecom.s9.endpoints");
 		resources.register(MultiPartFeature.class);
+		resources.register(JettisonFeature.class);
 		System.out.println("Starting grizzly2...");
 		// return GrizzlyServerFactory.createHttpServer(BASE_URI,
 		// resourceConfig);
@@ -61,7 +58,7 @@ public class Main {
 				.addHttpHandler(
 						new CLStaticHttpHandler(Main.class.getClassLoader(),
 								"/"));
-
+		httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("display"),"/display");
 		System.out.println(String.format(
 				"Jersey app started with WADL available at "
 						+ "%sapplication.wadl\n"
