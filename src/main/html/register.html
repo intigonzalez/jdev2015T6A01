@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="register">
+  <head>
+ <meta charset="utf-8" />
+    <title>Medi@Home Register Form</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script>
+  <script src="script.js"></script>
+  </head>
+
+<body>
+
+
+	       <div ng-controller="registerController">
+    <form class="form-horizontal" name="registerForm" ng-submit="submitMyForm()">
+    
+ <label>First Name :</label>
+			<input type="text" ng-model="person.firstName"/></br>
+			<label>Last Name :</label>
+			<input type="text" ng-model="person.lastName"></br>
+
+<label>Pseudo :</label>
+			<input type="text" ng-model="person.pseudo"></br>
+
+<label>Password :</label>
+			<input type="text" ng-model="person.password"></br>
+
+<label>Email Adress :</label>
+			<input type="text" ng-model="person.email"></br>
+
+ 
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" class="btn btn-default" value="Sign Up" />
+            </div>
+        </div>
+
+
+</div>
+</body>
+
+<script>
+$http.post(127.0.0.1, '{ "user" : '+data+' }');
+        $http.post(127.0.0.1, '{ "user" : '+client+' }');
+	
+	</script>
+
+</html>

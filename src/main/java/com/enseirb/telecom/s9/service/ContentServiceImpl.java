@@ -3,7 +3,6 @@ package com.enseirb.telecom.s9.service;
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
 import com.enseirb.telecom.s9.db.CrudRepository;
-import com.enseirb.telecom.s9.db.UserRepositoryObject;
 
 public class ContentServiceImpl implements ContentService {
 	
