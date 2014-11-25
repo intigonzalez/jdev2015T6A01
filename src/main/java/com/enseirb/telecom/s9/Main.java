@@ -42,8 +42,7 @@ public class Main {
 	protected static HttpServer startServer() throws IOException {
 
 		ResourceConfig resources = new ResourceConfig();
-		//resources.packages("com.enseirb.telecom.s9.endpoints");
-		resources.register(ContentEndPoints.class);
+		resources.packages("com.enseirb.telecom.s9.endpoints");
 		resources.register(MultiPartFeature.class);
 		System.out.println("Starting grizzly2...");
 		// return GrizzlyServerFactory.createHttpServer(BASE_URI,
