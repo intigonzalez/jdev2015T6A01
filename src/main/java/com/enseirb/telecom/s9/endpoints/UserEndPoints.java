@@ -21,7 +21,7 @@ import com.enseirb.telecom.s9.service.AccountService;
 import com.enseirb.telecom.s9.service.AccountServiceImpl;
 
 // The Java class will be hosted at the URI path "/app/account"
-@Path("/app/account")
+@Path("app/account")
 public class UserEndPoints {
 
 	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo());

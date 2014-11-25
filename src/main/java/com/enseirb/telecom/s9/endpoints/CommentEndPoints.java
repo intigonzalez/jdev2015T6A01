@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response.Status;
 import com.enseirb.telecom.s9.Comment;
 
 // The Java class will be hosted at the URI path "/myresource"
-@Path("/app/{userID}/{videoID}")
+@Path("app/{userID}/{videoID}")
 public class CommentEndPoints {
 
 	// TODO: update the class to suit your needs

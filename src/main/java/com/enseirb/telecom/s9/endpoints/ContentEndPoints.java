@@ -29,7 +29,7 @@ import com.enseirb.telecom.s9.service.ContentServiceImpl;
 
 
 // The Java class will be hosted at the URI path "/app/video"
-@Path("/app/{userID}/video")
+@Path("app/{userID}/video")
 public class ContentEndPoints {
 
 	ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo());
