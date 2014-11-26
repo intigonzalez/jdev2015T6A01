@@ -133,7 +133,6 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 		// throw new RuntimeException("not yet invented");
 
 		List<UserRepositoryObject> listOfAllUsers = new LinkedList<UserRepositoryObject>();
-
 		Iterator<String> iterator = ids.iterator();
 
 		try {
@@ -254,7 +253,38 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 	@Override
 	public <S extends UserRepositoryObject> Iterable<S> save(Iterable<S> entities) {
-		throw new RuntimeException("not yet invented");
+		//throw new RuntimeException("not yet invented");
+		
+		List<S> listOfAllUsers = new LinkedList<S>();
+		Iterator<S> iterator = entities.iterator();
+		
+		while(iterator.hasNext()){
+			if(exists(iterator.next().getUserID())){
+				delete(iterator.next().getUserID());
+			}
+			
+			try{
+				MongoClient mongoClient = DbInit.Connect();
+				DB db = mongoClient.getDB("mediahome");
+				DBCollection dbUsers = db.getCollection("user");
+				
+				try {
+					dbUsers.save(DbInit.createDBObject(iterator.next()));
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			catch(UnknownHostException e){
+				e.printStackTrace();
+				System.err.println("Connection to database failed ");
+				
+			}
+		}
+		
+		
+		return listOfAllUsers ;
+		
 	}
 
 }
