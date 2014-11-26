@@ -1,8 +1,10 @@
 package com.enseirb.telecom.s9.endpoints;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -17,6 +19,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.enseirb.telecom.s9.Content;
@@ -51,11 +54,12 @@ public class ContentEndPoints {
 		return uManager.getContent(contentsID);
 	}
 
-	// @POST
-	// @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	// public Response postVideo(Content content) {
-	// return Response.status(Status.SERVICE_UNAVAILABLE).build();
-	// }
+//	@POST
+//	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+//	public Response postVideo(Content content) {
+//		return Response.status(Status.SERVICE_UNAVAILABLE).build();
+//	}
+	
 
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -63,6 +67,7 @@ public class ContentEndPoints {
 			@FormDataParam("file") InputStream uploadedInputStream)
 			throws URISyntaxException, IOException {
 		// Le uploadedFileLocation doit être changé suivant le besoin
+		
 
 		
 		File upload = File.createTempFile("nicolas", "enseirb",
@@ -80,35 +85,36 @@ public class ContentEndPoints {
 		content.setLink("/content/" + upload.getName());
 		long unixTime = System.currentTimeMillis() / 1000L;
 		content.setUnixTime(unixTime);
-
-		content = uManager.createContent(content);
+		
+		content = uManager.createContent(content); 
 		return Response.created(new URI(content.getContentsID())).build();
 
 	}
+
 
 	@PUT
 	@Path("{contentsID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putContent(Content content) {
 		// TODO: need to check the authentication of the user
-
+		
 		// modify the content
 		if (uManager.contentExist(content.getContentsID()) == false) {
-			uManager.saveContent(content);
-			;
+			uManager.saveContent(content);;
 			return Response.status(200).build();
 		} else {
 			return Response.status(409).build();
 		}
 
-	}
 
+	}
+	
 	@DELETE
 	@Path("{contentsID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteContent(@PathParam("contentsID") String contentsID) {
 		// TODO: need to check the authentication of the user
-
+		
 		// delete the content
 		uManager.deleteContent(contentsID);
 		return Response.status(200).build();

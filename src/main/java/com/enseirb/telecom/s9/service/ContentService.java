@@ -18,6 +18,11 @@ public interface ContentService {
 	
 	public abstract void deleteContent(String contentsID);
 
+	/**
+	 * save uploaded file to new location
+	 * @param uploadedInputStream
+	 * @param uploadedFileLocation
+	 */
 	public abstract void writeToFile(InputStream uploadedInputStream,
 			File dest);
 }
