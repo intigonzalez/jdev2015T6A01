@@ -45,8 +45,7 @@ public class ContentServiceImpl implements ContentService {
 		contentDatabase.save(new ContentRepositoryObject(content));		
 	}
 	
-
-	// save uploaded file to new location
+	
 	@Override
 	public void writeToFile(InputStream uploadedInputStream,
 			String uploadedFileLocation) {

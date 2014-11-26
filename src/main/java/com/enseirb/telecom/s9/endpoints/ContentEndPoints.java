@@ -1,10 +1,6 @@
 package com.enseirb.telecom.s9.endpoints;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -59,14 +55,19 @@ public class ContentEndPoints {
 			@PathParam("userID") String email,
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) throws URISyntaxException {
-		// Le uploadedFileLocation doit être changé suivant le besoin
+		// /!\ Le uploadedFileLocation doit être changé suivant le besoin
 		String uploadedFileLocation = "/Users/Charles-Damien/Desktop/"
 				+ fileDetail.getFileName();
 
 		// save it
 		uManager.writeToFile(uploadedInputStream, uploadedFileLocation);
 
+		// String to be returned to the user to assure the file is uploaded
 		String output = "File uploaded to : " + uploadedFileLocation;
+		
+		/**
+		 * Create a new content object
+		 */
 		Content content = new Content();
 		content.setName(fileDetail.getFileName());
 		content.setLogin(email);
