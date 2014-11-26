@@ -26,7 +26,7 @@ public class CommentEndPoints {
 	@GET
 	@Path("{commentID}")
 	@Produces(MediaType.APPLICATION_XML)
-	public Comment getComment() {
+	public Comment getIt() {
 		// need to create
 		// NHE: easy way to return an error for a rest api: throw an
 		// WebApplicationException
