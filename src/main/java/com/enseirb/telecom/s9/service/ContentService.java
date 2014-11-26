@@ -1,5 +1,7 @@
 package com.enseirb.telecom.s9.service;
 
+import java.io.InputStream;
+
 import com.enseirb.telecom.s9.Content;
 
 
@@ -14,4 +16,7 @@ public interface ContentService {
 	public abstract void saveContent(Content content);
 	
 	public abstract void deleteContent(String contentsID);
+
+	public abstract void writeToFile(InputStream uploadedInputStream,
+			String uploadedFileLocation);
 }
