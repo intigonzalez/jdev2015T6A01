@@ -3,7 +3,6 @@ package com.enseirb.telecom.s9.endpoints;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
