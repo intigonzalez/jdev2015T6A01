@@ -26,7 +26,7 @@ public class CommentEndPoints {
 	@GET
 	@Path("{commentID}")
 	@Produces(MediaType.APPLICATION_XML)
-	public Comment getFriend() {
+	public Comment getComment() {
 		// need to create
 		// NHE: easy way to return an error for a rest api: throw an
 		// WebApplicationException
@@ -35,16 +35,17 @@ public class CommentEndPoints {
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postFriend(Comment comment) {
+	public Response postComment(Comment comment) {
 		// add a comment
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}
 
+	//pas obligatory
 	@PUT
 	@Path("{commentID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putFriend(Comment comment) {
+	public Response putComment(Comment comment) {
 		// need to verify user
 		// and after this modifies the comment
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
@@ -54,7 +55,7 @@ public class CommentEndPoints {
 	@DELETE
 	@Path("{commentID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteFriend(Comment comment) {
+	public Response deleteComment(Comment comment) {
 		// need to verify user
 		// and after this delete the comment
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
