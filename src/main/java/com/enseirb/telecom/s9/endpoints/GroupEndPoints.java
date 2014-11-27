@@ -52,7 +52,7 @@ public class GroupEndPoints {
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postBox(Group group) {
-		// TODO: crée un groupe
+		// TODO: cree un groupe
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}
