@@ -23,16 +23,24 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.enseirb.telecom.s9.Content;
-import com.enseirb.telecom.s9.db.ContentRepositoryMongo;
+import com.enseirb.telecom.s9.db.ContentRepositoryObject;
+import com.enseirb.telecom.s9.db.mock.CrudRepositoryMock;
 import com.enseirb.telecom.s9.service.ContentService;
 import com.enseirb.telecom.s9.service.ContentServiceImpl;
-
+import com.google.common.io.Files;
 
 // The Java class will be hosted at the URI path "/app/video"
 @Path("app/{userID}/video")
 public class ContentEndPoints {
 
-	ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo());
+	ContentService uManager = new ContentServiceImpl(
+			new CrudRepositoryMock<ContentRepositoryObject>() {
+
+				@Override
+				protected String getID(ContentRepositoryObject t) {
+					return t.getUserId();
+				}
+			});
 
 	// TODO: update the class to suit your needs
 
@@ -55,55 +63,34 @@ public class ContentEndPoints {
 
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response postcontent(
-			@PathParam("userID") String email,
-			@FormDataParam("file") InputStream uploadedInputStream,
-			@FormDataParam("file") FormDataContentDisposition fileDetail) throws URISyntaxException {
+	public Response postcontent(@PathParam("userID") String email,
+			@FormDataParam("file") InputStream uploadedInputStream)
+			throws URISyntaxException, IOException {
 		// Le uploadedFileLocation doit être changé suivant le besoin
-		String uploadedFileLocation = "/Users/Charles-Damien/Desktop/"
-				+ fileDetail.getFileName();
+		
 
+		
+		File upload = File.createTempFile("nicolas", "enseirb",
+				Files.createTempDir());
+
+		//NHE: all the rest should be in the Service Layer
 		// save it
-		writeToFile(uploadedInputStream, uploadedFileLocation);
+		uManager.writeToFile(uploadedInputStream, upload);
 
-		String output = "File uploaded to : " + uploadedFileLocation;
+		String output = "File uploaded to : " + upload.getAbsolutePath();
 		Content content = new Content();
-		content.setName(fileDetail.getFileName());
+		content.setName(upload.getName());
 		content.setLogin(email);
 		content.setStatus("In progress");
-		content.setLink("/content/" + fileDetail.getFileName());
+		content.setLink("/content/" + upload.getName());
 		long unixTime = System.currentTimeMillis() / 1000L;
 		content.setUnixTime(unixTime);
 		
 		content = uManager.createContent(content); 
-		// return Response.status(200).entity(output).build();
 		return Response.created(new URI(content.getContentsID())).build();
 
 	}
 
-	// save uploaded file to new location
-	private void writeToFile(InputStream uploadedInputStream,
-			String uploadedFileLocation) {
-
-		try {
-			OutputStream out = new FileOutputStream(new File(
-					uploadedFileLocation));
-			int read = 0;
-			byte[] bytes = new byte[1024];
-
-			out = new FileOutputStream(new File(uploadedFileLocation));
-			while ((read = uploadedInputStream.read(bytes)) != -1) {
-				out.write(bytes, 0, read);
-			}
-			out.flush();
-			out.close();
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}
-
-	}
-	
 
 	@PUT
 	@Path("{contentsID}")

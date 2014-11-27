@@ -93,7 +93,7 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 	public Iterable<UserRepositoryObject> findAll() {
 		
 		//Iterable <UserRepositoryObject> listOfAllUsers = null;
-		List <UserRepositoryObject> listOfAllUsers = new LinkedList<UserRepositoryObject>();
+		List <UserRepositoryObject> listOfAllUsers = new ArrayList<UserRepositoryObject>();
 		
 		try{
 			MongoClient mongoClient = DbInit.Connect();
@@ -132,7 +132,7 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 		// throw new RuntimeException("not yet invented");
 
-		List<UserRepositoryObject> listOfAllUsers = new LinkedList<UserRepositoryObject>();
+		List<UserRepositoryObject> listOfAllUsers = new ArrayList<UserRepositoryObject>();
 		Iterator<String> iterator = ids.iterator();
 
 		try {
@@ -255,7 +255,7 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 	public <S extends UserRepositoryObject> Iterable<S> save(Iterable<S> entities) {
 		//throw new RuntimeException("not yet invented");
 		
-		List<S> listOfAllUsers = new LinkedList<S>();
+		List<S> listOfAllUsers = new ArrayList<S>();
 		Iterator<S> iterator = entities.iterator();
 		
 		while(iterator.hasNext()){
