@@ -49,7 +49,7 @@ public class ContentServiceImpl implements ContentService {
 		connection = factory.newConnection();
 		Channel channel = connection.createChannel();
 		channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-		String message = "{\"id\": \"4cc7436e-afd4-4f8f-a2f3-f46567e7ca77\", \"task\": \"tasks.print_shell\", \"args\": [\""+ srcfile + "\",\""+ content.getLink() +"\"], \"kwargs\": {}, \"retries\": 0, \"eta\": \"2009-11-17T12:30:56.527191\"}";
+		String message = "{\"id\": \"4cc7436e-afd4-4f8f-a2f3-f46567e7ca77\", \"task\": \"tasks.print_shell\", \"args\": [\""+ srcfile + "\",\""+ content.getLink().substring(1) +"\"], \"kwargs\": {}, \"retries\": 0, \"eta\": \"2009-11-17T12:30:56.527191\"}";
 		channel.basicPublish("", QUEUE_NAME, new AMQP.BasicProperties.Builder()
 				.contentType("application/json").contentEncoding("utf-8")
 				.build(), message.getBytes("utf-8"));

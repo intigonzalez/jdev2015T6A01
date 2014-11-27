@@ -23,7 +23,7 @@ def gen_prime(x):
 @app.task
 def print_shell(in_file, out_file):
 	print in_file
-	subprocess.call("/home/user/workspace/Media-home/coreVideo/copy.sh  " + in_file + " " + out_file, shell=True)
+	subprocess.call("/home/user/workspace/Media-home/coreVideo/video.sh  " + in_file + " " + out_file, shell=True)
 	print out_file
 
 @app.task
