@@ -53,11 +53,11 @@ public class UserEndPoints {
 	@PUT
 	@Path("{userID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putUser(User user) {
+	public Response putUser(User user, @PathParam("userID") String userIDFromPath) {
 		// TODO: need to check the authentication of the user
 
 		// modify the user
-		if (uManager.userExist(user.getUserID()) == false) {
+		if ( user.getUserID().equals(userIDFromPath ) || uManager.userExist(user.getUserID()) == false ) {
 			uManager.saveUser(user);
 			return Response.status(200).build();
 		} else {

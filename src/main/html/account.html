@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Media Home : Your account</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <script type="text/javascript" src="angular.min.js"></script>
+    <script src="account.js"></script>
+
+</head>
+<body ng-app="Account">
+
+<div ng-controller="DisplayController as display">
+
+    <p><a href ng-click="display.setTab(1)">View</a></p>
+    <p><a href ng-click="display.setTab(2)">Edit</a></p>
+
+    <div ng-controller="UserController as user">
+        <div id="showAccount" ng-show="display.isSetTab(1)">
+            <h2>Name : </h2>
+            <p> {{user.person.name}}</p>
+
+            <h2>Surname : </h2>
+            <p> {{user.person.surname}}</p>
+
+            <h2>Email : </h2>
+            <p> {{user.person.userID}}</p>
+
+            <h2>Password : </h2>
+            <p> {{user.person.password}}</p>
+        </div>
+
+        <div id="editAccount" ng-show="display.isSetTab(2)">
+            <form class="form-horizontal" name="registerForm" novalidate>
+
+                <label>Name :</label>
+                <input type="text" ng-model="user.person.name"/></br>
+                <label>Surname :</label>
+                <input type="text" ng-model="user.person.surname"></br>
+                <label>Password :</label>
+                <input type="text" ng-model="user.person.password"></br>
+
+                <label>Email Adress :</label>
+                <input type="text" ng-model="user.person.userID"></br>
+
+
+                <div class="form-group">
+                    <div class="col-md-offset-3 col-md-9">
+                        <!-- span class adds a flash logo to the submit button -->
+                        <button ng-click="user.putUser(user.person)" class="btn btn-default"><span class="glyphicon glyphicon-flash"></span>Sign up</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+</body>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js">
+
+    </
+    html >
