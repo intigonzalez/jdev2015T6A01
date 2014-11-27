@@ -2,15 +2,15 @@
   <xs:element name="task">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="args">
+                <xs:element type="xs:string" name="id" />
+                <xs:element name="args">
           <xs:complexType>
             <xs:sequence>
               <xs:element type="xs:string" name="arg" maxOccurs="unbounded" minOccurs="0"/>
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element type="xs:dateTime" name="eta"/>
-        <xs:element type="xs:string" name="id"/>
+        <xs:element type="xs:dateTime" name="eta"/>
         <xs:element type="xs:string" name="kwargs"/>
         <xs:element type="xs:string" name="retries"/>
         <xs:element type="xs:string" name="task"/>
