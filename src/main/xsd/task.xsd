@@ -2,19 +2,19 @@
   <xs:element name="task">
     <xs:complexType>
       <xs:sequence>
-                <xs:element type="xs:string" name="id" />
-                <xs:element name="args">
+                <xs:element type="xs:string" name="id" maxOccurs="1" minOccurs="1"/>
+                <xs:element type="xs:string" name="task" maxOccurs="1" minOccurs="0" />
+                <xs:element name="args" maxOccurs="1" minOccurs="0">
           <xs:complexType>
             <xs:sequence>
               <xs:element type="xs:string" name="arg" maxOccurs="unbounded" minOccurs="0"/>
             </xs:sequence>
           </xs:complexType>
-        </xs:element>
-        <xs:element type="xs:dateTime" name="eta"/>
-        <xs:element type="xs:string" name="kwargs"/>
-        <xs:element type="xs:string" name="retries"/>
-        <xs:element type="xs:string" name="task"/>
-      </xs:sequence>
+        </xs:element>
+        <xs:element type="xs:string" name="kwargs" maxOccurs="1" minOccurs="0"/>
+        <xs:element type="xs:string" name="retries" maxOccurs="1" minOccurs="0"/>
+                <xs:element type="xs:dateTime" name="eta" maxOccurs="1" minOccurs="0" />
+            </xs:sequence>
     </xs:complexType>
   </xs:element>
 </xs:schema>
