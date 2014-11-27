@@ -39,6 +39,7 @@ public class Main {
 
 		ResourceConfig resources = new ResourceConfig();
 		resources.packages("com.enseirb.telecom.s9.endpoints");
+		resources.register(CORSResponseFilter.class);
 		resources.register(MultiPartFeature.class);
 		resources.register(JettisonFeature.class);
 		System.out.println("Starting grizzly2...");
