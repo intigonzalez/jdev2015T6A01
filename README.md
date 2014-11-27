@@ -18,7 +18,7 @@ then, you can deploy the all-in-one jar file and run it with just the jvm
 
 # API #
 
-## /app/account ##
+## /api/account ##
 
 ### POST ###
 

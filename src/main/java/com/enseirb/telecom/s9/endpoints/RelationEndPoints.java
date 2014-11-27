@@ -53,14 +53,13 @@ public class RelationEndPoints {
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putFriend(Relation relation) {
-		// TODO: change de groupe et confirmé une demande d'ajout
-		// Pour confirmé un ami, il faut : regarder la valeur qui existe dans la
-		// data base si on a décidé quelle serait sous la forme zéro demande
-		// émise, une demande reçue et deux demande accepter alors si c'est
-		// l'user local qui fait la demande pour passer à deux la valeur et
-		// quelle était à un OK sinon refus
-		// need to verify the friend
-		// and after this modifies the friend
+		// TODO: change de groupe et confirme une demande d'ajout
+		// Pour confirme un ami, il faut : regarder la valeur qui existe dans la
+		// data base si on a decide quelle serait sous la forme zero demande
+		// emise, une demande recue et deux demande accepter alors si c'est
+		// l'user local qui fait la demande pour passer a deux la valeur et
+		// quelle etait a un OK sinon refus
+		// need to verify the friend and after this modifies the friend
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}
