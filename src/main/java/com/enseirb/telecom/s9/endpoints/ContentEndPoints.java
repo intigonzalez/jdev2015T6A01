@@ -66,7 +66,7 @@ public class ContentEndPoints {
 	public Response postcontent(@PathParam("userID") String email,
 			@FormDataParam("file") InputStream uploadedInputStream)
 			throws URISyntaxException, IOException {
-		// Le uploadedFileLocation doit être changé suivant le besoin
+		// Le uploadedFileLocation doit etre changer suivant le besoin
 		
 
 		
