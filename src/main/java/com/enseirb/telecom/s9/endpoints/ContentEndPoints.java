@@ -76,7 +76,7 @@ public class ContentEndPoints {
 		content.setLogin(email);
 		content.setStatus("In progress");
 		new RandomStringUtils();
-		String link = "/videos/"+email+"/"+RandomStringUtils.random(20);
+		String link = "/videos/"+email+"/"+RandomStringUtils.randomAlphabetic(20);
 		content.setLink(link);
 		long unixTime = System.currentTimeMillis() / 1000L;
 		content.setUnixTime(unixTime);
