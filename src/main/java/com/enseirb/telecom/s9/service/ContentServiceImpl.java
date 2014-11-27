@@ -1,18 +1,17 @@
 package com.enseirb.telecom.s9.service;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
 import com.enseirb.telecom.s9.db.CrudRepository;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.ConnectionFactory;
 
 public class ContentServiceImpl implements ContentService {
 
@@ -40,7 +39,29 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public Content createContent(Content content) {
+	public Content createContent(Content content, String srcfile) {
+		
+		try {
+		String QUEUE_NAME = "celery";
+		ConnectionFactory factory = new ConnectionFactory();
+		factory.setHost("localhost");
+		com.rabbitmq.client.Connection connection;
+		connection = factory.newConnection();
+		Channel channel = connection.createChannel();
+		channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+		String message = "{\"id\": \"4cc7436e-afd4-4f8f-a2f3-f46567e7ca77\", \"task\": \"tasks.print_shell\", \"args\": [\""+ srcfile + "\",\""+ content.getLink() +"\"], \"kwargs\": {}, \"retries\": 0, \"eta\": \"2009-11-17T12:30:56.527191\"}";
+		channel.basicPublish("", QUEUE_NAME, new AMQP.BasicProperties.Builder()
+				.contentType("application/json").contentEncoding("utf-8")
+				.build(), message.getBytes("utf-8"));
+		System.out.println(" [x] Sent '" + message + "'");
+		channel.close();
+		connection.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		return contentDatabase.save(new ContentRepositoryObject(content))
 				.toContent();
 	}

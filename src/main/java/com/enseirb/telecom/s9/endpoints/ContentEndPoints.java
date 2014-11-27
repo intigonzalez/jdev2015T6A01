@@ -69,19 +69,17 @@ public class ContentEndPoints {
 		// save it
 		uManager.writeToFile(uploadedInputStream, upload);
 
-		String output = "File uploaded to : " + upload.getAbsolutePath();
-		System.out.println(output);
+		System.out.println("File uploaded to : " + upload.getAbsolutePath());
 		Content content = new Content();
 		content.setName(upload.getName());
 		content.setLogin(email);
 		content.setStatus("In progress");
-		new RandomStringUtils();
 		String link = "/videos/"+email+"/"+RandomStringUtils.randomAlphabetic(20);
 		content.setLink(link);
 		long unixTime = System.currentTimeMillis() / 1000L;
 		content.setUnixTime(unixTime);
 		
-		content = uManager.createContent(content);
+		content = uManager.createContent(content, upload.getAbsolutePath());
 		// This must be fixed for the response. It is not correct
 		return Response.created(new URI(content.getContentsID())).build();
 
