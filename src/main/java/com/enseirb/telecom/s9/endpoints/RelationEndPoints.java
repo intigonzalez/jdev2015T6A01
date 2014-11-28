@@ -20,6 +20,9 @@ import com.enseirb.telecom.s9.Relation;
 @Path("app/{userID}/friends")
 public class RelationEndPoints {
 
+	
+	
+	
 	// move in groupe
 	// @GET
 	// @Produces(MediaType.APPLICATION_XML)
