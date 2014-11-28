@@ -78,3 +78,4 @@ mv high_track2_dashinit.mp4 audio/
 echo "AddType audio/mp4 .mp4" > audio/.htaccess
 cd ..
 rm -rf encoding
+rm -rf $1
