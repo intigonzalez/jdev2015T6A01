@@ -1,7 +1,10 @@
 package com.enseirb.telecom.s9;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Properties;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -19,7 +22,7 @@ public class Main {
 
 	private static int getPort(int defaultPort) {
 		// grab port from environment, otherwise fall back to default port 9998
-		String httpPort = System.getProperty("jersey.test.port");
+		String httpPort = ApplicationContext.getProperties().getProperty("bindPort");
 		if (null != httpPort) {
 			try {
 				return Integer.parseInt(httpPort);
@@ -30,7 +33,7 @@ public class Main {
 	}
 
 	private static URI getBaseURI() {
-		return UriBuilder.fromUri("http://0.0.0.0/api/").port(getPort(9998))
+		return UriBuilder.fromUri("http://"+ApplicationContext.getProperties().getProperty("bindIp")+"/api/").port(getPort(9998))
 				.build();
 	}
 
@@ -55,16 +58,25 @@ public class Main {
 
 			@Override
 			public void run() {
-
+				
+				// create and load default properties
+				Properties properties = new Properties();
+				FileInputStream in;
+				try {
+					in = new FileInputStream("application.properties");
+					properties.load(in);
+					ApplicationContext.setProperties(properties);
+					in.close();					
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 				try {
 					HttpServer httpServer = startServer();
 					httpServer.getServerConfiguration().addHttpHandler(
 							new CLStaticHttpHandler(
 									Main.class.getClassLoader(), "/"));
-					
-					StaticHttpHandler videoHandler = new StaticHttpHandler("videos");
-					videoHandler.setFileCacheEnabled(false);
-					httpServer.getServerConfiguration().addHttpHandler(videoHandler,"/videos");
 					
 				} catch (IOException e) {
 					throw Throwables.propagate(e);
