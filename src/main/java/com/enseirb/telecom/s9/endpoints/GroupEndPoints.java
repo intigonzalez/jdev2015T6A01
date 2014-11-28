@@ -18,7 +18,7 @@ import com.enseirb.telecom.s9.ListRelation;
 import com.enseirb.telecom.s9.Relation;
 
 // The Java class will be hosted at the URI path "/myresource"
-@Path("/app/{userID}/group")
+@Path("app/{userID}/group")
 public class GroupEndPoints {
 
 	// TODO: update the class to suit your needs
@@ -38,7 +38,8 @@ public class GroupEndPoints {
 		boolean test = true;
 		if (test) {
 			Relation relation = new Relation();
-			relation.setEmail("groupID = " + groupID +" "+ userID);
+			relation.setEmail(userID);
+			relation.setName(groupID);
 			ListRelation group = new ListRelation();
 			group.getRelation().add(relation);
 			return group;
@@ -51,7 +52,7 @@ public class GroupEndPoints {
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postBox(Group group) {
-		// TODO: crée un groupe
+		// TODO: cree un groupe
 		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}

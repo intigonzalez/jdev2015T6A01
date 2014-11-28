@@ -49,6 +49,7 @@ public class AccountServiceImpl implements AccountService {
 	 * com.enseirb.telecom.s9.service.AccountService#createUser(com.enseirb.
 	 * telecom.s9.User)
 	 */
+	
 	@Override
 	public User createUser(User user) {
 		return userDatabase.save(new UserRepositoryObject(user)).toUser();

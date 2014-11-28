@@ -23,15 +23,22 @@
 				<xs:element name="previewLink" type="xs:anyURI"
 					maxOccurs="1" minOccurs="0">
 				</xs:element>
-                <xs:element name="status" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
-                <xs:element ref="comment" maxOccurs="unbounded"
+				<xs:element name="status" type="xs:string" maxOccurs="1"
+					minOccurs="0">
+				</xs:element>
+				<xs:element name="coment" type="xs:string" maxOccurs="1"
+					minOccurs="0">
+				</xs:element>
+				<xs:element name="type" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
+				<xs:element ref="comment" maxOccurs="unbounded"
 					minOccurs="0">
 				</xs:element>
 
 
 				<xs:element ref="authorization" maxOccurs="unbounded"
 					minOccurs="0">
-				</xs:element>
+				</xs:element>
+
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

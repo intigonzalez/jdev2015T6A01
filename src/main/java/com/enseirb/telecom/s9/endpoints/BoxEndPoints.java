@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response.Status;
 import com.enseirb.telecom.s9.Box;
 
 // The Java class will be hosted at the URI path "/myresource"
-@Path("/app/box")
+@Path("box")
 public class BoxEndPoints {
 
 	// TODO: update the class to suit your needs

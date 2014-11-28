@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:element name="task">
+	<xs:complexType>
+		<xs:sequence>
+			<xs:element type="xs:string" name="id" maxOccurs="1" minOccurs="1"/>
+			<xs:element type="xs:string" name="task" maxOccurs="1" minOccurs="1"/>
+			<xs:element name="args" type="xs:string" maxOccurs="unbounded" minOccurs="1">
+			</xs:element>
+			<xs:element type="xs:string" name="kwargs" maxOccurs="1" minOccurs="0"/>
+			<xs:element type="xs:string" name="retries" maxOccurs="1" minOccurs="0"/>
+			<xs:element type="xs:dateTime" name="eta" maxOccurs="1" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	</xs:element>
+
+	<!-- <xs:element name="id" type="xs:string"></xs:element> -->
+
+
+	<!-- <xs:element name="task" type="xs:string"></xs:element> -->
+</xs:schema>

@@ -13,8 +13,17 @@ public interface AccountService {
 
 	public abstract User getUser(String email);
 
+	/**
+	 *  create user like XSD
+	 * @param user
+	 * @return
+	 */
 	public abstract User createUser(User user);
 
+	/**
+	 * modify user for save in database
+	 * @param user
+	 */
 	public abstract void saveUser(User user);
 	
 	public abstract void deleteUser(String email);

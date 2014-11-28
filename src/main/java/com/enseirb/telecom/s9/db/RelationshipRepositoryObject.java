@@ -31,6 +31,19 @@ public class RelationshipRepositoryObject {
 		this.group = relation.getGroupID();
 		
 	}
+	
+	public RelationshipRepositoryObject(Relation relation) {
+		this.email = relation.getEmail();
+		this.name = relation.getName();
+		this.surname = relation.getSurname();
+		this.pubKey = relation.getPubKey();
+		this.aprouve = relation.isAprouve();
+		this.unixTime = relation.getUnixTime();
+		this.group = relation.getGroupID();
+		
+	}
+	
+	
 	String userId;
 	String email;
     String name;
