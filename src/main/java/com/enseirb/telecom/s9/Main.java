@@ -33,11 +33,10 @@ public class Main {
 	}
 
 	private static URI getBaseURI() {
-		return UriBuilder.fromUri("http://"+ApplicationContext.getProperties().getProperty("bindIp")+"/api/").port(getPort(9998))
+		String ip = ApplicationContext.getProperties().getProperty("bindIp");
+		return UriBuilder.fromUri("http://"+ip+"/api/").port(getPort(9998))
 				.build();
 	}
-
-	public static final URI BASE_URI = getBaseURI();
 
 	protected static HttpServer startServer() throws IOException {
 
@@ -49,28 +48,27 @@ public class Main {
 		System.out.println("Starting grizzly2...");
 		// return GrizzlyServerFactory.createHttpServer(BASE_URI,
 		// resourceConfig);
-		return GrizzlyHttpServerFactory.createHttpServer(BASE_URI, resources);
+		return GrizzlyHttpServerFactory.createHttpServer(getBaseURI(), resources);
 	}
 
 	public static void main(String[] args) throws IOException, InterruptedException {
+		// Properties 
+		FileInputStream in;
+		try {
+			ApplicationContext.properties = new Properties();
+			in = new FileInputStream("application.properties");
+			ApplicationContext.properties.load(in);
+			in.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		// Grizzly 2 initialization
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				
-				// create and load default properties
-				Properties properties = new Properties();
-				FileInputStream in;
-				try {
-					in = new FileInputStream("application.properties");
-					properties.load(in);
-					ApplicationContext.setProperties(properties);
-					in.close();					
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 				
 				try {
 					HttpServer httpServer = startServer();
