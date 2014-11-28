@@ -8,6 +8,7 @@ import org.bson.types.ObjectId;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
@@ -105,7 +106,23 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 	@Override
 	public long count() {
 		// TODO Auto-generated method stub
-		return 0;
+		
+		long nbOfContents = 0;
+
+		try {
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbUsers = db.getCollection("contents");
+
+			nbOfContents = dbUsers.getCount();
+		}
+		catch (UnknownHostException e) {
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");
+		}
+
+		return nbOfContents;
+		
 	}
 
 	@Override
@@ -128,6 +145,17 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 	public void delete(ContentRepositoryObject entity) {
 		// TODO Auto-generated method stub
 
+		try {
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbUsers = db.getCollection("contents");
+			BasicDBObject query = new BasicDBObject("_id", entity.getId().toString());
+			dbUsers.remove(query);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");
+		}
+		
 	}
 
 	@Override
@@ -139,6 +167,21 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 	@Override
 	public void deleteAll() {
 		// TODO Auto-generated method stub
+		
+		try{
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbContents = db.getCollection("contents");
+			
+			dbContents.drop();
+			mongoClient.close();
+			
+			}
+		catch(UnknownHostException e){
+			e.printStackTrace();
+			System.err.println("Connnection to database failed");
+		}
+		
 
 	}
 

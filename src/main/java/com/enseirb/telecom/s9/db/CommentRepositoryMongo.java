@@ -2,6 +2,9 @@ package com.enseirb.telecom.s9.db;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.bson.types.ObjectId;
 
@@ -122,24 +125,103 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 	@Override
 	public Iterable<CommentRepositoryObject> findAll(Iterable<String> ids) {
 		// TODO Auto-generated method stub
-		return null;
+		
+		List<CommentRepositoryObject> listOfAllComments = new ArrayList<CommentRepositoryObject>();
+		Iterator<String> iterator = ids.iterator();
+
+		try {
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbUsers = db.getCollection("users");
+
+			ObjectMapper mapper = new ObjectMapper();
+			CommentRepositoryObject user = null;
+
+			while (iterator.hasNext()) {
+				BasicDBObject query = new BasicDBObject("userID", iterator.next());
+				DBCursor cursor = dbUsers.find(query);
+
+				while (cursor.hasNext()) {
+					try {
+						user = mapper.readValue(cursor.next().toString(),
+								CommentRepositoryObject.class);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						System.err.println("User Mapping failed ! ");
+					}
+
+					listOfAllComments.add(user);
+				}
+			}
+
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");
+		}
+		return listOfAllComments;
+		
 	}
 
 	@Override
 	public long count() {
 		// TODO Auto-generated method stub
-		return 0;
+		
+		long totalNbOfComment = 0;
+		
+		try{
+			
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection collection = db.getCollection("comments");
+			
+			totalNbOfComment = collection.getCount();
+			mongoClient.close();
+		}
+		catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");
+		}
+		
+		
+		return totalNbOfComment ;
 	}
 
 	@Override
 	public void delete(String id) {
 		// TODO Auto-generated method stub
 		
+		try {
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbComments = db.getCollection("comments");
+
+			BasicDBObject query = new BasicDBObject("commentId", id);
+			dbComments.remove(query);
+			mongoClient.close();
+			
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");
+		}
+		
 	}
 
 	@Override
 	public void delete(CommentRepositoryObject entity) {
 		// TODO Auto-generated method stub
+		
+		try {
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbComments = db.getCollection("comments");
+			BasicDBObject query = new BasicDBObject("commentId", entity.getCommentId());
+			dbComments.remove(query);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");
+		}
 		
 	}
 
@@ -153,8 +235,20 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 	public void deleteAll() {
 		// TODO Auto-generated method stub
 		
-	}
-	
-	
+		try{
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbComments = db.getCollection("comments");
+			
+			dbComments.drop();
+			mongoClient.close();
+			
+			}
+		catch(UnknownHostException e){
+			e.printStackTrace();
+			System.err.println();
+		}
+				
+	}	
 	
 }
