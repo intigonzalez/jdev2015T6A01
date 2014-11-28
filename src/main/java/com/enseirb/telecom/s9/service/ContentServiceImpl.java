@@ -10,9 +10,6 @@ import java.util.UUID;
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
 import com.enseirb.telecom.s9.db.CrudRepository;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.ConnectionFactory;
 
 public class ContentServiceImpl implements ContentService {
 
@@ -20,8 +17,9 @@ public class ContentServiceImpl implements ContentService {
 	RabbitMQServer rabbitMq;
 
 	public ContentServiceImpl(
-			CrudRepository<ContentRepositoryObject, String> videoDatabase) {
+			CrudRepository<ContentRepositoryObject, String> videoDatabase, RabbitMQServer rabbitMq) {
 		this.contentDatabase = videoDatabase;
+		this.rabbitMq = rabbitMq;
 	}
 
 	@Override
@@ -44,16 +42,13 @@ public class ContentServiceImpl implements ContentService {
 	public Content createContent(Content content, String srcfile) {
 		
 		try {
-		
 		UUID uuid = UUID.randomUUID();
-		System.out.println("UUID: " + uuid.toString());
+//		System.out.println("UUID: " + uuid.toString());
 		String message = "{\"id\": \""+uuid.toString()+"\", \"task\": \"tasks.print_shell\", \"args\": [\""+ srcfile + "\",\""+ content.getLink().substring(1) +"\"], \"kwargs\": {}, \"retries\": 0, \"eta\": \"2009-11-17T12:30:56.527191\"}";
-		rabbitMq.channel.basicPublish("", rabbitMq.QUEUE_NAME, new AMQP.BasicProperties.Builder()
-				.contentType("application/json").contentEncoding("utf-8")
-				.build(), message.getBytes("utf-8"));
+		rabbitMq.addTask(message);
 		System.out.println(" [x] Sent '" + message + "'");
-		rabbitMq.channel.close();
-		rabbitMq.connection.close();
+//		rabbitMq.channel.close();
+//		rabbitMq.connection.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

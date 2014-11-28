@@ -20,7 +20,7 @@ then, you can deploy the all-in-one jar file and run it with just the jvm
 sudo apt-get install rabbitmq-server
 sudo apt-get install python-celery python-pip
 sudo pip install celery
-To start celery : celery -A tasks worker --loglevel=info
+To start celery : celery -A tasks worker --loglevel=info --concurrency=1
 If Segfault  sudo apt-get remove python-librabbitmq
 
 

@@ -26,13 +26,14 @@ import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.db.ContentRepositoryMongo;
 import com.enseirb.telecom.s9.service.ContentService;
 import com.enseirb.telecom.s9.service.ContentServiceImpl;
+import com.enseirb.telecom.s9.service.RabbitMQServer;
 import com.google.common.io.Files;
 
 // The Java class will be hosted at the URI path "/app/video"
 @Path("app/{userID}/video")
 public class ContentEndPoints {
 
-	ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo());
+	ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo(), new RabbitMQServer());
 
 	// TODO: update the class to suit your needs
 
