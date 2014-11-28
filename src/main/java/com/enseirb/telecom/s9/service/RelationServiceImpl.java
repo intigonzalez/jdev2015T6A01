@@ -37,7 +37,7 @@ public class RelationServiceImpl implements RelationService {
 	public void deleteRelation(String email) {
 		relationshipDatabase.delete(email);	
 	}
-	public RelationServiceImpl(CrudRepository<UserRepositoryObject, String> userDatabase, CrudRepository<RelationshipRepositoryObject, String> RelationshipDatabase) {
+	public RelationServiceImpl(CrudRepository<RelationshipRepositoryObject, String> RelationshipDatabase) {
 	//	this.userDatabase = userDatabase;
 		this.relationshipDatabase = RelationshipDatabase;
 	}
