@@ -4,7 +4,7 @@
 /**
  * Created by Charles-Damien on 27/11/14.
  */
-var userID = "vince@oneear.nl";
+var userID = "vince@onehear.nl";
 var app = angular.module('Account', []);
 
 app.controller('UserController', function($http) {
