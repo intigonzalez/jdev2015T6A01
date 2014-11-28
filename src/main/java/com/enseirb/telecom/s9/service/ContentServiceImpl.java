@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
@@ -16,6 +17,7 @@ import com.rabbitmq.client.ConnectionFactory;
 public class ContentServiceImpl implements ContentService {
 
 	CrudRepository<ContentRepositoryObject, String> contentDatabase;
+	RabbitMQServer rabbitMq;
 
 	public ContentServiceImpl(
 			CrudRepository<ContentRepositoryObject, String> videoDatabase) {
@@ -42,20 +44,16 @@ public class ContentServiceImpl implements ContentService {
 	public Content createContent(Content content, String srcfile) {
 		
 		try {
-		String QUEUE_NAME = "celery";
-		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("localhost");
-		com.rabbitmq.client.Connection connection;
-		connection = factory.newConnection();
-		Channel channel = connection.createChannel();
-		channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-		String message = "{\"id\": \"4cc7436e-afd4-4f8f-a2f3-f46567e7ca77\", \"task\": \"tasks.print_shell\", \"args\": [\""+ srcfile + "\",\""+ content.getLink().substring(1) +"\"], \"kwargs\": {}, \"retries\": 0, \"eta\": \"2009-11-17T12:30:56.527191\"}";
-		channel.basicPublish("", QUEUE_NAME, new AMQP.BasicProperties.Builder()
+		
+		UUID uuid = UUID.randomUUID();
+		System.out.println("UUID: " + uuid.toString());
+		String message = "{\"id\": \""+uuid.toString()+"\", \"task\": \"tasks.print_shell\", \"args\": [\""+ srcfile + "\",\""+ content.getLink().substring(1) +"\"], \"kwargs\": {}, \"retries\": 0, \"eta\": \"2009-11-17T12:30:56.527191\"}";
+		rabbitMq.channel.basicPublish("", rabbitMq.QUEUE_NAME, new AMQP.BasicProperties.Builder()
 				.contentType("application/json").contentEncoding("utf-8")
 				.build(), message.getBytes("utf-8"));
 		System.out.println(" [x] Sent '" + message + "'");
-		channel.close();
-		connection.close();
+		rabbitMq.channel.close();
+		rabbitMq.connection.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
