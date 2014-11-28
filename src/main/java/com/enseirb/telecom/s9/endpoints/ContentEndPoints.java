@@ -67,17 +67,17 @@ public class ContentEndPoints {
 		String fileTypeTemp = fileMediaType.toString();
 		String [] fileType = fileTypeTemp.split("/");
 		
-		//File upload = File.createTempFile(email, "."+extension,Files.createTempDir());
+		File upload = File.createTempFile(email, "."+extension,Files.createTempDir());
 
 		//NHE: all the rest should be in the Service Layer
 		// save it
-		//uManager.writeToFile(uploadedInputStream, upload);
+		uManager.writeToFile(uploadedInputStream, upload);
 
 		//System.out.println("File uploaded to : " + upload.getAbsolutePath());
 		System.out.println("File type : " + fileType[0]);
 		
 		Content content = new Content();
-		content.setName("temp");//upload.getName());
+		content.setName(upload.getName());
 		content.setLogin(email);
 		content.setStatus("In progress");
 		content.setType(fileType[0]);
@@ -87,7 +87,7 @@ public class ContentEndPoints {
 		long unixTime = System.currentTimeMillis() / 1000L;
 		content.setUnixTime(unixTime);
 
-		content = uManager.createContent(content, "temp");//upload.getAbsolutePath());
+		content = uManager.createContent(content,upload.getAbsolutePath());
 		return Response.created(new URI("app/"+email+"/content/"+content.getContentsID())).build();
 
 	}
