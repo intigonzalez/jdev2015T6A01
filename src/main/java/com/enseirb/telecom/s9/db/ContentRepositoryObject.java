@@ -10,6 +10,17 @@ import com.enseirb.telecom.s9.Content;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ContentRepositoryObject {
+	@JsonProperty("_id")
+	ObjectId _id;
+	String name;
+	String userId;
+	Long unixTime;
+	String link;
+	String previewLink;
+	String status;
+	List<Comment> comment;
+	List<Authorization> authorizations;
+
 	public ContentRepositoryObject() {
 
 	}
@@ -40,17 +51,6 @@ public class ContentRepositoryObject {
 		this.comment = content.getComment();
 		this.authorizations = content.getAuthorization();
 	}
-	@JsonProperty("_id")
-	ObjectId _id;
-	String name;
-	String userId;
-	Long unixTime;
-	String link;
-	String previewLink;
-	String status;
-	List<Comment> comment;
-	List<Authorization> authorizations;
-
 	public ObjectId getId() {
 		return _id;
 	}
