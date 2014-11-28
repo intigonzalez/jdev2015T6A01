@@ -1,14 +1,11 @@
 package com.enseirb.telecom.s9.service;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
@@ -17,10 +14,12 @@ import com.enseirb.telecom.s9.db.CrudRepository;
 public class ContentServiceImpl implements ContentService {
 
 	CrudRepository<ContentRepositoryObject, String> contentDatabase;
+	RabbitMQServer rabbitMq;
 
 	public ContentServiceImpl(
-			CrudRepository<ContentRepositoryObject, String> videoDatabase) {
+			CrudRepository<ContentRepositoryObject, String> videoDatabase, RabbitMQServer rabbitMq) {
 		this.contentDatabase = videoDatabase;
+		this.rabbitMq = rabbitMq;
 	}
 
 	@Override
@@ -40,7 +39,22 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public Content createContent(Content content) {
+	public Content createContent(Content content, String srcfile) {
+		
+		try {
+		UUID uuid = UUID.randomUUID();
+//		System.out.println("UUID: " + uuid.toString());
+		String message = "{\"id\": \""+uuid.toString()+"\", \"task\": \"tasks.print_shell\", \"args\": [\""+ srcfile + "\",\""+ content.getLink().substring(1) +"\"], \"kwargs\": {}, \"retries\": 0, \"eta\": \"2009-11-17T12:30:56.527191\"}";
+		rabbitMq.addTask(message);
+		System.out.println(" [x] Sent '" + message + "'");
+//		rabbitMq.channel.close();
+//		rabbitMq.connection.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		return contentDatabase.save(new ContentRepositoryObject(content))
 				.toContent();
 	}

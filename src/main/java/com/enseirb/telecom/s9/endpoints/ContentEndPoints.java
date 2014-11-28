@@ -1,10 +1,8 @@
 package com.enseirb.telecom.s9.endpoints;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -19,28 +17,23 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.enseirb.telecom.s9.Content;
-import com.enseirb.telecom.s9.db.ContentRepositoryObject;
-import com.enseirb.telecom.s9.db.mock.CrudRepositoryMock;
+import com.enseirb.telecom.s9.db.ContentRepositoryMongo;
 import com.enseirb.telecom.s9.service.ContentService;
 import com.enseirb.telecom.s9.service.ContentServiceImpl;
+import com.enseirb.telecom.s9.service.RabbitMQServer;
 import com.google.common.io.Files;
 
 // The Java class will be hosted at the URI path "/app/video"
 @Path("app/{userID}/video")
 public class ContentEndPoints {
 
-	ContentService uManager = new ContentServiceImpl(
-			new CrudRepositoryMock<ContentRepositoryObject>() {
-
-				@Override
-				protected String getID(ContentRepositoryObject t) {
-					return t.getUserId();
-				}
-			});
+	ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo(), new RabbitMQServer());
 
 	// TODO: update the class to suit your needs
 
@@ -64,29 +57,34 @@ public class ContentEndPoints {
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response postcontent(@PathParam("userID") String email,
-			@FormDataParam("file") InputStream uploadedInputStream)
+			@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail)
 			throws URISyntaxException, IOException {
 		// Le uploadedFileLocation doit etre changer suivant le besoin
+		String fileName = fileDetail.getFileName();
+		String extension = FilenameUtils.getExtension(fileName);			
 		
-
-		
-		File upload = File.createTempFile("nicolas", "enseirb",
-				Files.createTempDir());
+		File upload = File.createTempFile(email, "."+extension,Files.createTempDir());
 
 		//NHE: all the rest should be in the Service Layer
 		// save it
 		uManager.writeToFile(uploadedInputStream, upload);
 
-		String output = "File uploaded to : " + upload.getAbsolutePath();
+		System.out.println("File uploaded to : " + upload.getAbsolutePath());
+		
 		Content content = new Content();
 		content.setName(upload.getName());
 		content.setLogin(email);
 		content.setStatus("In progress");
-		content.setLink("/content/" + upload.getName());
+
+		// Only if the file is a video content
+		String link = "/videos/"+email+"/"+RandomStringUtils.randomAlphabetic(20);
+		content.setLink(link);
 		long unixTime = System.currentTimeMillis() / 1000L;
 		content.setUnixTime(unixTime);
 		
-		content = uManager.createContent(content); 
+		content = uManager.createContent(content, upload.getAbsolutePath());
+		// This must be fixed for the response. It is not correct
 		return Response.created(new URI(content.getContentsID())).build();
 
 	}
