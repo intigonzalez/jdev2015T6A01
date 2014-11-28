@@ -7,12 +7,12 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jettison.JettisonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
+import com.google.common.base.Throwables;
 
 public class Main {
 
@@ -39,6 +39,7 @@ public class Main {
 
 		ResourceConfig resources = new ResourceConfig();
 		resources.packages("com.enseirb.telecom.s9.endpoints");
+		resources.register(CORSResponseFilter.class);
 		resources.register(MultiPartFeature.class);
 		resources.register(JettisonFeature.class);
 		System.out.println("Starting grizzly2...");
@@ -47,23 +48,29 @@ public class Main {
 		return GrizzlyHttpServerFactory.createHttpServer(BASE_URI, resources);
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		// Grizzly 2 initialization
-		
-		HttpServer httpServer = startServer();
-		// httpServer.getServerConfiguration().addHttpHandler(new
-		// StaticHttpHandler("display"),"/display");
+		new Thread(new Runnable() {
 
-		httpServer.getServerConfiguration()
-				.addHttpHandler(
-						new CLStaticHttpHandler(Main.class.getClassLoader(),
-								"/"));
-		System.out.println(String.format(
-				"Jersey app started with WADL available at "
-						+ "%sapplication.wadl\n"
-						+ "Static files are available at the root: http://localhost:9998/FileUpload.html\nHit enter to stop it...",
-				BASE_URI));
-		System.in.read();
-		httpServer.stop();
+			@Override
+			public void run() {
+
+				try {
+					HttpServer httpServer = startServer();
+					httpServer.getServerConfiguration().addHttpHandler(
+							new CLStaticHttpHandler(
+									Main.class.getClassLoader(), "/"));
+				} catch (IOException e) {
+					throw Throwables.propagate(e);
+				}
+				// httpServer.getServerConfiguration().addHttpHandler(new
+				// StaticHttpHandler("display"),"/display");
+
+			}
+		}).start();
+		
+		Thread.currentThread().join();
+
+		// httpServer.stop();
 	}
 }

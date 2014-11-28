@@ -90,12 +90,88 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 	@Override
 	public Iterable<UserRepositoryObject> findAll() {
-		throw new RuntimeException("not yet invented");
+		//Iterable <UserRepositoryObject> listOfAllUsers = null;
+		List <UserRepositoryObject> listOfAllUsers = new ArrayList<UserRepositoryObject>();
+		
+		try{
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbUsers = db.getCollection("users");
+			
+			ObjectMapper mapper = new ObjectMapper();
+			UserRepositoryObject user = null;
+			
+			DBCursor cursor = dbUsers.find();
+					
+			while(cursor.hasNext()){
+				try {
+					user = mapper.readValue(cursor.next().toString(), UserRepositoryObject.class);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					System.err.println("User Mapping failed ! ");
+				}
+				
+				listOfAllUsers.add(user);
+			}
+			
+		}
+		catch (UnknownHostException e){
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");			
+		}
+		return listOfAllUsers;
+		
+		//throw new RuntimeException("not yet invented");
+>>>>>>> d48c71bf015ac6c7c3a7dc7d47a96cac45529624
 	}
 
 	@Override
 	public Iterable<UserRepositoryObject> findAll(Iterable<String> ids) {
+<<<<<<< HEAD
 		throw new RuntimeException("not yet invented");
+=======
+
+		// throw new RuntimeException("not yet invented");
+
+		List<UserRepositoryObject> listOfAllUsers = new ArrayList<UserRepositoryObject>();
+		Iterator<String> iterator = ids.iterator();
+
+		try {
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbUsers = db.getCollection("users");
+
+			ObjectMapper mapper = new ObjectMapper();
+			UserRepositoryObject user = null;
+
+			while (iterator.hasNext()) {
+				BasicDBObject query = new BasicDBObject("userID",
+						iterator.next());
+				DBCursor cursor = dbUsers.find(query);
+
+				while (cursor.hasNext()) {
+					try {
+						user = mapper.readValue(cursor.next().toString(),
+								UserRepositoryObject.class);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						System.err.println("User Mapping failed ! ");
+					}
+
+					listOfAllUsers.add(user);
+				}
+
+			}
+
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");
+		}
+		return listOfAllUsers;
+
+>>>>>>> d48c71bf015ac6c7c3a7dc7d47a96cac45529624
 	}
 
 	@Override
@@ -188,7 +264,38 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 	@Override
 	public <S extends UserRepositoryObject> Iterable<S> save(Iterable<S> entities) {
-		throw new RuntimeException("not yet invented");
+		//throw new RuntimeException("not yet invented");
+		
+		List<S> listOfAllUsers = new ArrayList<S>();
+		Iterator<S> iterator = entities.iterator();
+		
+		while(iterator.hasNext()){
+			if(exists(iterator.next().getUserID())){
+				delete(iterator.next().getUserID());
+			}
+			
+			try{
+				MongoClient mongoClient = DbInit.Connect();
+				DB db = mongoClient.getDB("mediahome");
+				DBCollection dbUsers = db.getCollection("user");
+				
+				try {
+					dbUsers.save(DbInit.createDBObject(iterator.next()));
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			catch(UnknownHostException e){
+				e.printStackTrace();
+				System.err.println("Connection to database failed ");
+				
+			}
+		}
+		
+		
+		return listOfAllUsers ;
+		
 	}
 
 }

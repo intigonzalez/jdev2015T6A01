@@ -5,7 +5,7 @@
     <xs:element name="box">
   <xs:complexType>
     <xs:sequence>
-    	<xs:element name="id_box" type="xs:string" maxOccurs="1" minOccurs="1"/>
+    	<xs:element name="boxID" type="xs:string" maxOccurs="1" minOccurs="1"/>
     	<xs:element name="privateKey" type="xs:string" maxOccurs="1" minOccurs="0"/>
     	<xs:element name="ip" type="xs:string" maxOccurs="1" minOccurs="0"/>
                 <xs:element name="TTL" type="xs:int" maxOccurs="1" minOccurs="0"/>
