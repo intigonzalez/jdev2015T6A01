@@ -23,15 +23,17 @@ then, you can deploy the all-in-one jar file and run it with just the jvm
 ### POST ###
 
 Create a user
-
-    {
-    "userID": "vince@onehear.nl",
-    "name": "vincent",
-    "password": "1234",
-    "privateKey": "private",
-    "pubKey": "pub",
-    "surname": "van gogh"
-    }
+	
+	{
+	  "user": {
+	    "userID": "userIddD",
+	    "name": "name",
+	    "surname": "surname",
+	    "password": "password",
+	    "pubKey": "pubKey",
+	    "privateKey": "privateKey"
+	  }
+	}
 
 	<user>
 	  <userID>userIddD</userID>
