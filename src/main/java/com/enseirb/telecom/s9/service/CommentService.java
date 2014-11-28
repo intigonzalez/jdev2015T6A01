@@ -13,7 +13,5 @@ public interface CommentService {
 	public abstract void saveComment(Comment comment);
 	
 	public abstract void deleteComment(String email);
-	
-	
 
 }
