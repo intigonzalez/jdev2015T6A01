@@ -53,10 +53,10 @@ public class ContentServiceImpl implements ContentService {
 			UUID uuid = UUID.randomUUID();
 
 			Task task = new Task();
-			task.setTask("tasks.print_shell");
+			task.setTask("tasks.print_hello");
 			task.setId(uuid.toString());
-			task.getArgs().add(srcfile);
-			task.getArgs().add(content.getLink().substring(1));
+			//task.getArgs().add(srcfile);
+			//task.getArgs().add(content.getLink().substring(1));
 	 
 			XStream xstream = new XStream(new JsonHierarchicalStreamDriver() {
 				public HierarchicalStreamWriter createWriter(Writer writer) {
