@@ -2,12 +2,15 @@ package com.enseirb.telecom.s9.db;
 
 import org.bson.types.ObjectId;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.enseirb.telecom.s9.Comment;
+
 public class CommentRepositoryObject {
 
-	
-	String videoId;
+	@JsonProperty("_id")
 	ObjectId commentId;
-	String userId;
+	String videoId;
+	String login;
 	double unix_time;
 	String comment;
 	
@@ -15,26 +18,34 @@ public class CommentRepositoryObject {
 	public CommentRepositoryObject(){	
 	}
 	
-	public CommentRepositoryObject(Object videoId, String commentId, String userId, double unix_time,
+	public CommentRepositoryObject(String videoId, ObjectId commentId, String login, double unix_time,
 			String comment){
 		
-		//this.videoId = videoId;
-		//this.commentId = commentId;
-		this.userId = userId;
-		this.unix_time = unix_time;
+		this.videoId = videoId;
+		this.commentId = commentId;
+		this.login = login;
 		this.comment = comment;
 	}
 	
-	public void setVideoId(Object videoId){
-		//this.videoId = videoId;
+	public CommentRepositoryObject(String videoId, Comment comment){
+		
+		commentId = new ObjectId(comment.getCommentID());
+		this.videoId = videoId;
+		login = comment.getLogin();
+		unix_time = comment.getUnixTime();
+		this.comment = comment.getComment();
 	}
 	
-	public void setCommentId(String commentId){
-		//this.commentId = commentId;
+	public void setVideoId(String videoId){
+		this.videoId = videoId;
 	}
 	
-	public void setUserId(String userId){
-		this.userId = userId;
+	public void setCommentId(ObjectId object){
+		this.commentId = object;
+	}
+	
+	public void setUserId(String login){
+		this.login = login;
 	}
 	
 	public void setUnixTime(double unix_time){
@@ -45,19 +56,32 @@ public class CommentRepositoryObject {
 		this.comment = comment;
 	}
 	
-	/*public Object getVideoId(){
+	public String getVideoId(){
 		return videoId;
 	}	
-	public String getCommentId(){
-		//return commentId;
+	public ObjectId getCommentId(){
+		return commentId;
 	}	
-	public String getUserId(){
-		return userId;
+	public String getLogin(){
+		return login;
 	}
 	public double getUnixTime(){
 		return unix_time;
 	}
 	public String getComment(){
 		return comment;
-	}*/
+	}
+	
+	public Comment toComment(){
+		
+		Comment comment = new Comment();
+		
+		comment.setComment(this.getComment());
+		comment.setCommentID(this.getCommentId().toString());
+		comment.setLogin(this.getLogin());
+		comment.setUnixTime(this.getUnixTime());		
+		
+		return comment;		
+	}
+	
 }
