@@ -281,8 +281,7 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 				
 			}
 		}
-		
-		
+				
 		return listOfAllUsers ;
 		
 	}
