@@ -47,9 +47,9 @@ cd ..
 mkdir hls
 cd hls
 mkdir hls-1 hls-2 hls-3
-ffmpeg -i high.mp4 -map 0 -flags +global_header -vcodec copy -vbsf h264_mp4toannexb -acodec copy -f segment -segment_format mpegts -segment_time 4 -segment_wrap 0 -segment_list hls-3/playlist.m3u8 hls-3/chunks_name%03d.ts
-ffmpeg -i mid.mp4 -map 0 -flags +global_header -vcodec copy -vbsf h264_mp4toannexb -acodec copy -f segment -segment_format mpegts -segment_time 4 -segment_wrap 0 -segment_list hls-2/playlist.m3u8 hls-2/chunks_name%03d.ts
-ffmpeg -i low.mp4 -map 0 -flags +global_header -vcodec copy -vbsf h264_mp4toannexb -acodec copy -f segment -segment_format mpegts -segment_time 4 -segment_wrap 0 -segment_list hls-1/playlist.m3u8 hls-1/chunks_name%03d.ts
+ffmpeg -i ../encoding/high.mp4 -map 0 -flags +global_header -vcodec copy -vbsf h264_mp4toannexb -acodec copy -f segment -segment_format mpegts -segment_time 4 -segment_wrap 0 -segment_list hls-3/playlist.m3u8 hls-3/chunks_name%03d.ts
+ffmpeg -i ../encoding/mid.mp4 -map 0 -flags +global_header -vcodec copy -vbsf h264_mp4toannexb -acodec copy -f segment -segment_format mpegts -segment_time 4 -segment_wrap 0 -segment_list hls-2/playlist.m3u8 hls-2/chunks_name%03d.ts
+ffmpeg -i ../encoding/low.mp4 -map 0 -flags +global_header -vcodec copy -vbsf h264_mp4toannexb -acodec copy -f segment -segment_format mpegts -segment_time 4 -segment_wrap 0 -segment_list hls-1/playlist.m3u8 hls-1/chunks_name%03d.ts
 # WIDTH1=$( mediainfo $2-1.mp4 | grep Width | cut -d ':' -f 2 | sed 's/[^0-9]//g' )
 # HEIGHT1=$( mediainfo $2-1.mp4 | grep Height | cut -d ':' -f 2 | sed 's/[^0-9]//g' )
 # WIDTH2=$( mediainfo $2-2.mp4 | grep Width | cut -d ':' -f 2 | sed 's/[^0-9]//g' )
@@ -70,11 +70,11 @@ cd ..
 # Chunks Dash
 mkdir dash
 cd dash
-MP4Box -dash 4000 -profile onDemand low.mp4#video:id=v1 mid.mp4#video:id=v2 $high.mp4#video:id=v3 high.mp4#audio:id=a1
+MP4Box -dash 4000 -profile onDemand ../encoding/low.mp4#video:id=v1 ../encoding/mid.mp4#video:id=v2 ../encoding/high.mp4#video:id=v3 ../encoding/high.mp4#audio:id=a1
 
 #Change Audio Mime Type
 mkdir audio
-mv $2-3_track2_dashinit.mp4 audio/
+mv high_track2_dashinit.mp4 audio/
 echo "AddType audio/mp4 .mp4" > audio/.htaccess
 cd ..
 rm -rf encoding
