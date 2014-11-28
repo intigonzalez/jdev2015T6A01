@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.UUID;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -17,8 +18,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.RandomStringUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -63,7 +62,7 @@ public class ContentEndPoints {
 			@FormDataParam("file") FormDataBodyPart body)
 			throws URISyntaxException, IOException {
 		String fileName = fileDetail.getFileName();
-		String extension = FilenameUtils.getExtension(fileName);			
+		String extension = Files.getFileExtension(fileName);			
 		MediaType fileMediaType = body.getMediaType();
 		String fileTypeTemp = fileMediaType.toString();
 		String [] fileType = fileTypeTemp.split("/");
@@ -82,7 +81,8 @@ public class ContentEndPoints {
 		content.setLogin(email);
 		content.setStatus("In progress");
 		content.setType(fileType[0]);
-		String link = "/videos/"+email+"/"+RandomStringUtils.randomAlphabetic(20);
+		UUID uuid = UUID.randomUUID();
+		String link = "/videos/"+email+"/"+uuid.toString();
 		content.setLink(link);
 		long unixTime = System.currentTimeMillis() / 1000L;
 		content.setUnixTime(unixTime);
