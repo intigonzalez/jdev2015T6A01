@@ -4,13 +4,23 @@
 /**
  * Created by Charles-Damien on 27/11/14.
  */
-var userID = "vince@oneear.nl";
+var userID = "vince@onehear.nl";
 var app = angular.module('Account', []);
 
 app.controller('UserController', function($http) {
     var user = this;
     user.person = {};
-
+    this.tab = 1;
+    this.setTab = function() {
+        if (this.tab==1) {
+            this.tab = 2;
+        } else {
+            this.tab = 1;
+        }
+    };
+    this.isSetTab = function(value) {
+        return this.tab === value;
+    };
     this.getUser = function() {
         $http.get("/api/app/account/"+userID)
             .success(function( data, status, headers, config) {

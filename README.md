@@ -31,16 +31,26 @@ If Segfault  sudo apt-get remove python-librabbitmq
 ### POST ###
 
 Create a user
+	
+	{
+	  "user": {
+	    "userID": "userIddD",
+	    "name": "name",
+	    "surname": "surname",
+	    "password": "password",
+	    "pubKey": "pubKey",
+	    "privateKey": "privateKey"
+	  }
+	}
 
-    {
-    "userID": "vince@onehear.nl",
-    "name": "vincent",
-    "password": "1234",
-    "privateKey": "private",
-    "pubKey": "pub",
-    "surname": "van gogh"
-    }
-
+	<user>
+	  <userID>userIddD</userID>
+	  <name>name</name>
+	  <surname>surname</surname>
+	  <password>password</password>
+	  <pubKey>pubKey</pubKey>
+	  <privateKey>privateKey</privateKey>
+	</user>
 
 
 

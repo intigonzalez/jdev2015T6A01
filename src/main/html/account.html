@@ -3,9 +3,12 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Media Home : Your account</title>
+    <script src="template.css"></script>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <script type="text/javascript" src="angular.min.js"></script>
     <script src="account.js"></script>
+    <script src="magic-bootstrap.css"></script>
+
 
 </head>
 <body ng-app="Account">
@@ -26,9 +29,8 @@
 
     <div class="col-md-offset-3 col-md-9">
     <ul class="nav nav-pills nav-stacked">
-        <button ng-click="display.setTab(1)" class="btn btn-default"><span class="glyphicon glyphicon-home"></span> Home </button>
-        <button ng-click="display.setTab(2)" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit Personal Information </button>
-        <button ng-click="display.setTab(3)" class="btn btn-default"><span class="glyphicon glyphicon-user"></span> Friends </button>
+        <button ng-click="display.setTab(1)" class="btn btn-primary"><span class="glyphicon glyphicon-home"></span> Home </button>
+        <button ng-click="display.setTab(3)" class="btn btn-primary"><span class="glyphicon glyphicon-user"></span> Friends </button>
 
     </ul>
  </div>
@@ -37,6 +39,8 @@
     <div ng-controller="UserController as user">
         <div class="col-md-offset-3 col-md-6">
         <div id="showAccount" ng-show="display.isSetTab(1)">
+            <button ng-click="display.setTab(2)" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Edit Personal Information </button>
+
             <h2>Name : </h2>
             <p> {{user.person.name}}</p>
 
@@ -58,7 +62,7 @@
             <form class="form-horizontal" name="registerForm" novalidate>
 
                 <label>Name :</label>
-                <input type="text" ng-model="user.person.name"/></br>
+                <input type="text" ng-model="user.person.name"></br>
                 <label>Surname :</label>
                 <input type="text" ng-model="user.person.surname"></br>
                 <label>Password :</label>
@@ -71,7 +75,7 @@
                 <div class="form-group">
                     <div class="col-md-offset-3 col-md-9">
                         <!-- span class adds a flash logo to the submit button -->
-                        <button ng-click="user.putUser(user.person)" class="btn btn-default"><span class="glyphicon glyphicon-floppy-save"></span> Update Information </button>
+                        <button ng-click="user.putUser(user.person)" class="btn btn-success"><span class="glyphicon glyphicon-floppy-save"></span> Update Information </button>
                     </div>
                 </div>
             </form>
@@ -79,6 +83,7 @@
         </div>
             </div>
 
+      
         <!-- Friends div -->
 
 
@@ -89,11 +94,14 @@
 
                 <!-- the Show Friend button used to be here -- Anas -->
 
-                    <li ng-repeat="friend in friendList.friend">
+                    <div ng-repeat="friend in friendList.friend">
+
                         <p>Name: {{ friend.name }}</p>
                         <p>Surname: {{ friend.surname }}</p>
                         <p> Email : {{ friend.email }}</p>
-                    </li>
+                        <p> *************************   </p>
+
+
                 </ul>
 
             </div>
@@ -106,6 +114,7 @@
 
     </div>
 </div>
+    </div>
 </body>
 
 <!-- Latest compiled and minified JavaScript -->
