@@ -1,13 +1,11 @@
 package com.enseirb.telecom.s9.db.mock;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.db.CrudRepository;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
