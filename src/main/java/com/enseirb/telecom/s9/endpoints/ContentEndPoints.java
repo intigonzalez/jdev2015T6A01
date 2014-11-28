@@ -71,10 +71,13 @@ public class ContentEndPoints {
 		uManager.writeToFile(uploadedInputStream, upload);
 
 		System.out.println("File uploaded to : " + upload.getAbsolutePath());
+		
 		Content content = new Content();
 		content.setName(upload.getName());
 		content.setLogin(email);
 		content.setStatus("In progress");
+
+		// Only if the file is a video content
 		String link = "/videos/"+email+"/"+RandomStringUtils.randomAlphabetic(20);
 		content.setLink(link);
 		long unixTime = System.currentTimeMillis() / 1000L;
