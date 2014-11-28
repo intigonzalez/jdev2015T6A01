@@ -33,6 +33,14 @@ Create a user
     "surname": "van gogh"
     }
 
+	<user>
+	  <userID>userIddD</userID>
+	  <name>name</name>
+	  <surname>surname</surname>
+	  <password>password</password>
+	  <pubKey>pubKey</pubKey>
+	  <privateKey>privateKey</privateKey>
+	</user>
 
 
 
