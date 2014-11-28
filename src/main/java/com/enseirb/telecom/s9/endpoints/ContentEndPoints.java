@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -29,8 +30,8 @@ import com.enseirb.telecom.s9.service.ContentServiceImpl;
 import com.enseirb.telecom.s9.service.RabbitMQServer;
 import com.google.common.io.Files;
 
-// The Java class will be hosted at the URI path "/app/video"
-@Path("app/{userID}/video")
+// The Java class will be hosted at the URI path "/app/content"
+@Path("app/{userID}/content")
 public class ContentEndPoints {
 
 	ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo(), new RabbitMQServer());
@@ -58,11 +59,14 @@ public class ContentEndPoints {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response postcontent(@PathParam("userID") String email,
 			@FormDataParam("file") InputStream uploadedInputStream,
-			@FormDataParam("file") FormDataContentDisposition fileDetail)
+			@FormDataParam("file") FormDataContentDisposition fileDetail,
+			@FormDataParam("file") FormDataBodyPart body)
 			throws URISyntaxException, IOException {
-		// Le uploadedFileLocation doit etre changer suivant le besoin
 		String fileName = fileDetail.getFileName();
 		String extension = FilenameUtils.getExtension(fileName);			
+		MediaType fileMediaType = body.getMediaType();
+		String fileTypeTemp = fileMediaType.toString();
+		String [] fileType = fileTypeTemp.split("/");
 		
 		File upload = File.createTempFile(email, "."+extension,Files.createTempDir());
 
@@ -71,21 +75,20 @@ public class ContentEndPoints {
 		uManager.writeToFile(uploadedInputStream, upload);
 
 		System.out.println("File uploaded to : " + upload.getAbsolutePath());
+		System.out.println("File type : " + fileType[0]);
 		
 		Content content = new Content();
 		content.setName(upload.getName());
 		content.setLogin(email);
 		content.setStatus("In progress");
-
-		// Only if the file is a video content
+		content.setType(fileType[0]);
 		String link = "/videos/"+email+"/"+RandomStringUtils.randomAlphabetic(20);
 		content.setLink(link);
 		long unixTime = System.currentTimeMillis() / 1000L;
 		content.setUnixTime(unixTime);
-		
+
 		content = uManager.createContent(content, upload.getAbsolutePath());
-		// This must be fixed for the response. It is not correct
-		return Response.created(new URI(content.getContentsID())).build();
+		return Response.created(new URI("app/"+email+"/content/"+content.getContentsID())).build();
 
 	}
 

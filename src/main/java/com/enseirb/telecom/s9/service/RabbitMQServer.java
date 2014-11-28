@@ -17,7 +17,7 @@ public class RabbitMQServer {
 	public RabbitMQServer() {
 		QUEUE_NAME = "celery";
 		factory = new ConnectionFactory();
-		factory.setHost("localhost");
+		factory.setHost("localhost"); // To be changed???
 		try {
 			connection = factory.newConnection();
 			channel = connection.createChannel();
