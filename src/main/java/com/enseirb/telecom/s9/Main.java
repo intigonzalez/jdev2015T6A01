@@ -7,6 +7,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jettison.JettisonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -60,12 +61,14 @@ public class Main {
 					httpServer.getServerConfiguration().addHttpHandler(
 							new CLStaticHttpHandler(
 									Main.class.getClassLoader(), "/"));
+					
+					StaticHttpHandler videoHandler = new StaticHttpHandler("videos");
+					videoHandler.setFileCacheEnabled(false);
+					httpServer.getServerConfiguration().addHttpHandler(videoHandler,"/videos");
+					
 				} catch (IOException e) {
 					throw Throwables.propagate(e);
 				}
-				// httpServer.getServerConfiguration().addHttpHandler(new
-				// StaticHttpHandler("display"),"/display");
-
 			}
 		}).start();
 		

@@ -31,6 +31,19 @@ public class RelationshipRepositoryObject {
 		this.group = relation.getGroupID();
 		
 	}
+	
+	public RelationshipRepositoryObject(Relation relation) {
+		this.email = relation.getEmail();
+		this.name = relation.getName();
+		this.surname = relation.getSurname();
+		this.pubKey = relation.getPubKey();
+		this.aprouve = relation.isAprouve();
+		this.unixTime = relation.getUnixTime();
+		this.group = relation.getGroupID();
+		
+	}
+	
+	
 	String userId;
 	String email;
     String name;
@@ -87,7 +100,7 @@ public class RelationshipRepositoryObject {
 	public void setGroup(List<Integer> group) {
 		this.group = group;
 	}
-	public void toRelation() {
+	public Relation toRelation() {
 		Relation relation = new Relation();
 		relation.setEmail(email);
 		relation.setName(name);
@@ -96,6 +109,7 @@ public class RelationshipRepositoryObject {
 		relation.setUnixTime(unixTime);
 		relation.setAprouve(aprouve);
 		relation.getGroupID().addAll(group);
+		return relation;
 		
 	}
 }

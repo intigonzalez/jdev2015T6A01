@@ -36,12 +36,10 @@ public class GistfileTaskXSD {
 //		{
 //			  "id": "0af8243a-6503-464a-9ac0-2676a05371a0",
 //			  "task": "t",
-//			  "args": {
-//			    "arg": [
+//			  "args":  [
 //			      "arg1",
 //			      "arg2"
-//			    ]
-//			  },
+//			    ],
 //			  "kwargs": "kwargs...",
 //			  "retries": "retries"
 //			}

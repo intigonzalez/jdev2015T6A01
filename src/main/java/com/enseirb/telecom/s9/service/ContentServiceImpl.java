@@ -1,26 +1,31 @@
 package com.enseirb.telecom.s9.service;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.CopyOption;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 import com.enseirb.telecom.s9.Content;
+import com.enseirb.telecom.s9.Task;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
 import com.enseirb.telecom.s9.db.CrudRepository;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
+import com.thoughtworks.xstream.io.json.JsonWriter;
 
 public class ContentServiceImpl implements ContentService {
 
 	CrudRepository<ContentRepositoryObject, String> contentDatabase;
+	RabbitMQServer rabbitMq;
 
 	public ContentServiceImpl(
-			CrudRepository<ContentRepositoryObject, String> videoDatabase) {
+			CrudRepository<ContentRepositoryObject, String> videoDatabase, RabbitMQServer rabbitMq) {
 		this.contentDatabase = videoDatabase;
+		this.rabbitMq = rabbitMq;
 	}
 
 	@Override
@@ -40,7 +45,38 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public Content createContent(Content content) {
+	public Content createContent(Content content, String srcfile) {
+
+		// Only if the file is a video content
+		if(content.getType().equals("video")){
+			try {
+			UUID uuid = UUID.randomUUID();
+
+			Task task = new Task();
+			task.setTask("tasks.print_shell");
+			task.setId(uuid.toString());
+			task.getArgs().add(srcfile);
+			task.getArgs().add(content.getLink().substring(1));
+	 
+			XStream xstream = new XStream(new JsonHierarchicalStreamDriver() {
+				public HierarchicalStreamWriter createWriter(Writer writer) {
+					return new JsonWriter(writer, JsonWriter.DROP_ROOT_MODE);
+				}
+			});
+			//System.out.println(" [x] Sent '" + xstream.toXML(task) + "'");
+	 
+	//		System.out.println("UUID: " + uuid.toString());
+			//String message = "{\"id\": \""+uuid.toString()+"\", \"task\": \"tasks.print_shell\", \"args\": [\""+ srcfile + "\",\""+ content.getLink().substring(1) +"\"], \"kwargs\": {}, \"retries\": 0, \"eta\": \"2009-11-17T12:30:56.527191\"}";
+			rabbitMq.addTask(xstream.toXML(task));
+	//		rabbitMq.channel.close();
+	//		rabbitMq.connection.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
 		return contentDatabase.save(new ContentRepositoryObject(content))
 				.toContent();
 	}

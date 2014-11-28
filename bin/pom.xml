@@ -8,32 +8,14 @@
 	<name>media-home</name>
 	<dependencies>
 		<dependency>
-			<groupId>org.glassfish.jersey.containers</groupId>
-			<artifactId>jersey-container-grizzly2-http</artifactId>
-			<version>2.13</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.glassfish.jersey.core</groupId>
-			<artifactId>jersey-server</artifactId>
-			<version>2.13</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.glassfish.jersey.core</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>2.13</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-multipart</artifactId>
-			<version>2.13</version>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-grizzly2</artifactId>
+			<version>${jersey-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-json-jettison</artifactId>
-			<version>2.13</version>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-json</artifactId>
+			<version>${jersey-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>
@@ -50,11 +32,7 @@
 			<artifactId>jackson-core</artifactId>
 			<version>2.4.3</version>
 		</dependency>
-		<dependency>
-			<groupId>com.rabbitmq</groupId>
-			<artifactId>amqp-client</artifactId>
-			<version>3.4.2</version>
-		</dependency>
+
 		<!-- uncomment this to get JSON support: <dependency> <groupId>com.sun.jersey</groupId> 
 			<artifactId>jersey-json</artifactId> <version>${jersey-version}</version> 
 			</dependency> -->
@@ -64,55 +42,24 @@
 		<!-- uncomment this to get ATOM support: <dependency> <groupId>com.sun.jersey</groupId> 
 			<artifactId>jersey-atom</artifactId> <version>${jersey-version}</version> 
 			</dependency> -->
-
-
+		<!-- uncomment this to get multipart MIME types support: <dependency> <groupId>com.sun.jersey.contribs</groupId> 
+			<artifactId>jersey-multipart</artifactId> <version>${jersey-version}</version> 
+			</dependency> -->
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>18.0</version>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.jersey.core</groupId>
+			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-client</artifactId>
-			<version>2.13</version>
-
+			<version>${jersey-version}</version>
+			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-			<version>1.4.7</version>
-		</dependency>
-
-
 	</dependencies>
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/html</directory>
-			</resource>
-		</resources>
 		<plugins>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>com.enseirb.telecom.s9.Main</mainClass>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -175,11 +122,8 @@
 				</configuration>
 			</plugin>
 		</plugins>
-
 	</build>
-
-
 	<properties>
-		<jersey-version>2.6</jersey-version>
+		<jersey-version>1.18.2</jersey-version>
 	</properties>
 </project>
