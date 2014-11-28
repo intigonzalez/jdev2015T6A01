@@ -87,7 +87,7 @@ public class RelationshipRepositoryObject {
 	public void setGroup(List<Integer> group) {
 		this.group = group;
 	}
-	public void toRelation() {
+	public Relation toRelation() {
 		Relation relation = new Relation();
 		relation.setEmail(email);
 		relation.setName(name);
@@ -96,6 +96,7 @@ public class RelationshipRepositoryObject {
 		relation.setUnixTime(unixTime);
 		relation.setAprouve(aprouve);
 		relation.getGroupID().addAll(group);
+		return relation;
 		
 	}
 }

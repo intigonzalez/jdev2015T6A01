@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.enseirb.telecom.s9.Group;
 import com.enseirb.telecom.s9.ListRelation;
+import com.enseirb.telecom.s9.Relation;
 
 // The Java class will be hosted at the URI path "/myresource"
 @Path("/app/{userID}/group")
@@ -34,16 +35,16 @@ public class GroupEndPoints {
 		// Return the list of mender group
 		// NHE: easy way to return an error for a rest api: throw an
 		// WebApplicationException
-//		boolean test = true;
-//		if (test) {
-//			Relation relation = new Relation();
-//			friend.setEmail("dbourasseau@enseirb.fr");
-//			ListRelation group = new ListRelation();
-//			group.getFriend().add(relation);
-//			return group;
-//		} else {
+		boolean test = true;
+		if (test) {
+			Relation relation = new Relation();
+			relation.setEmail("groupID = " + groupID +" "+ userID);
+			ListRelation group = new ListRelation();
+			group.getRelation().add(relation);
+			return group;
+		} else {
 			throw new WebApplicationException(Status.CONFLICT);
-//		}
+		}
 
 	}
 
