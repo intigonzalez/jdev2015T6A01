@@ -15,4 +15,54 @@ RegisterForm.controller("mainController", function ($scope, $http) {
                 console.log("Failed");
             });
     };
+   // $(document) Jquery for validating the form -->
+    angular.element(document).ready(function(){
+        $("form").validate({
+            rules: {
+                name:{
+                    minlength: 3,
+                    maxlength: 20,
+                    required: true
+                },
+                email:{
+                    minlength: 3,
+                    maxlength: 20,
+                    required: true
+                }
+            },
+            highlight: function (element) {
+                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+            },
+            unhighlight: function (element) {
+                $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+            }
+        });
+    });
+
+    // End of js part for validating the form inputs
+
+
+});
+
+$(document).ready(function(){
+    $("registerForm").validate({
+        rules: {
+            name:{
+                minlength: 3,
+                maxlength: 20,
+                required: true
+            },
+            email:{
+                minlength: 3,
+                maxlength: 20,
+                required: true
+            }
+        },
+        highlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        },
+        unhighlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+    });
 });
