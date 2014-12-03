@@ -96,9 +96,9 @@ app.controller('listVideoCtrl', ['$scope', function ($scope) {
         "name": "Birthday party",
         "email": "heyu@dreams.zz"
     },{
-    "owner": "B4Ever",
-    "name": "Festival",
-    "email": "heyu@dreams.zz"
+        "owner": "B4Ever",
+        "name": "Festival",
+        "email": "heyu@dreams.zz"
     }];
 
 }]);
