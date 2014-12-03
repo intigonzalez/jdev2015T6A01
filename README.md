@@ -34,7 +34,7 @@ Create a user
 	
 	{
 	  "user": {
-	    "userID": "userIddD",
+	    "userID": "userID",
 	    "name": "name",
 	    "surname": "surname",
 	    "password": "password",
