@@ -2,6 +2,9 @@ package com.enseirb.telecom.s9.db;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -123,15 +126,10 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 		return listOfAllUsers;
 		
 		//throw new RuntimeException("not yet invented");
->>>>>>> d48c71bf015ac6c7c3a7dc7d47a96cac45529624
 	}
 
 	@Override
 	public Iterable<UserRepositoryObject> findAll(Iterable<String> ids) {
-<<<<<<< HEAD
-		throw new RuntimeException("not yet invented");
-=======
-
 		// throw new RuntimeException("not yet invented");
 
 		List<UserRepositoryObject> listOfAllUsers = new ArrayList<UserRepositoryObject>();
@@ -171,7 +169,6 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 		}
 		return listOfAllUsers;
 
->>>>>>> d48c71bf015ac6c7c3a7dc7d47a96cac45529624
 	}
 
 	@Override
