@@ -47,11 +47,16 @@ public class RelationEndPoints {
 	@GET
 	@Path("{username}")
 	@Produces(MediaType.APPLICATION_XML)
-	public Relation getRelation(@PathParam("userID") String userIDFromPath) {
+	public Relation getRelation(@PathParam("userID") String userIDFromPath,
+			@PathParam("username") String relationIDFromPath) {
 		// TODO: get info of username relation
 		// NHE: easy way to return an error for a rest api: throw an
 		// WebApplicationException
-		throw new WebApplicationException(Status.CONFLICT);
+		if (rManager.RelationExist(userIDFromPath, relationIDFromPath) == true) {
+			return rManager.getRelation(userIDFromPath, relationIDFromPath);
+		} else {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
 	}
 
 	@POST
@@ -60,8 +65,8 @@ public class RelationEndPoints {
 			Relation relation) throws URISyntaxException {
 		// TODO: ajout un ami
 		// add a friend
-		if (rManager.RelationExist(relation.getEmail()) == false) {
-			rManager.saveRelation(relation, userIDFromPath);
+		if (rManager.RelationExist(userIDFromPath,relation.getEmail()) == false) {
+			rManager.saveRelation(userIDFromPath,relation);
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(relation.getEmail())).build();
 		} else {
@@ -83,11 +88,11 @@ public class RelationEndPoints {
 		// quelle etait a un OK sinon refus
 		// need to verify the friend and after this modifies the friend
 
-		if ( relation.getEmail().equals(userIDFromPath ) || rManager.RelationExist(relation.getEmail()) == false ) {
-			rManager.saveRelation(relation, userIDFromPath);
+		if (rManager.RelationExist(userIDFromPath, relation.getEmail())) {
+			rManager.saveRelation(userIDFromPath, relation);
 			return Response.status(200).build();
 		} else {
-			return Response.status(409).build();
+			return Response.status(404).build();
 		}
 
 	}
@@ -95,11 +100,10 @@ public class RelationEndPoints {
 	@DELETE
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteFriend(@PathParam("userID") String userIDFromPath,
-			Relation relation) {
+	public Response deleteFriend(@PathParam("userID") String userIDFromPath,@PathParam("username") String relationIDFromPath) {
 		// TODO: delete this friends thinks to send a message to the over box
 		// and after this delete the user
-		rManager.deleteRelation(userIDFromPath);
+		rManager.deleteRelation(userIDFromPath, relationIDFromPath);
 		return Response.status(200).build();
 
 	}

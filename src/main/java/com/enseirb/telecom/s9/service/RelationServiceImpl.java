@@ -2,20 +2,20 @@ package com.enseirb.telecom.s9.service;
 
 import com.enseirb.telecom.s9.Relation;
 import com.enseirb.telecom.s9.db.CrudRepository;
+import com.enseirb.telecom.s9.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.s9.db.RelationshipRepositoryObject;
-import com.enseirb.telecom.s9.db.UserRepositoryObject;
 
 public class RelationServiceImpl implements RelationService {
 
 	CrudRepository<RelationshipRepositoryObject, String> relationshipDatabase;
 	
-	public boolean RelationExist(String email) {
-		return relationshipDatabase.exists(email);
+	public boolean RelationExist(String UserID,String email) {
+		return ((RelationshipRepositoryMongo)relationshipDatabase).exists(UserID, email);
 	}
 	
 	@Override
-	public Relation getRelation(String email) {
-		RelationshipRepositoryObject relation = relationshipDatabase.findOne(email);
+	public Relation getRelation(String userID, String email) {
+		RelationshipRepositoryObject relation = ((RelationshipRepositoryMongo)relationshipDatabase).findOne(userID, email);
 		if (relation == null ) {
 			return null;
 		}
@@ -24,18 +24,14 @@ public class RelationServiceImpl implements RelationService {
 		}
 	}
 	@Override
-	public Relation createRelation(Relation relation) {
+	public Relation createRelation(String userID, Relation relation) {
 		return relationshipDatabase.save(new RelationshipRepositoryObject(relation)).toRelation(); 
 
 	}
 	@Override
-	public void saveRelation(Relation relation,String userID) {
+	public void saveRelation(String userID,Relation relation) {
 		 relationshipDatabase.save(new RelationshipRepositoryObject(userID,relation));
 		return;
-	}
-	@Override
-	public void deleteRelation(String email) {
-		relationshipDatabase.delete(email);	
 	}
 	public RelationServiceImpl(CrudRepository<RelationshipRepositoryObject, String> RelationshipDatabase) {
 	//	this.userDatabase = userDatabase;
@@ -52,5 +48,12 @@ public class RelationServiceImpl implements RelationService {
 	 * 
 	 * @see
 	 * com.enseirb.telecom.s9.service.AccountService#getUser(java.lang.String)
-	 */	
+	 */
+
+	@Override
+	public void deleteRelation(String userID, String email) {
+		((RelationshipRepositoryMongo)relationshipDatabase).delete(userID, email);
+		
+	}
+
 	}
