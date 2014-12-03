@@ -82,10 +82,16 @@ public class RelationEndPoints {
 		// l'user local qui fait la demande pour passer a deux la valeur et
 		// quelle etait a un OK sinon refus
 		// need to verify the friend and after this modifies the friend
-		return Response.status(Status.SERVICE_UNAVAILABLE).build();
+
+		if ( relation.getEmail().equals(userIDFromPath ) || rManager.RelationExist(relation.getEmail()) == false ) {
+			rManager.saveRelation(relation, userIDFromPath);
+			return Response.status(200).build();
+		} else {
+			return Response.status(409).build();
+		}
 
 	}
-
+	
 	@DELETE
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -93,8 +99,10 @@ public class RelationEndPoints {
 			Relation relation) {
 		// TODO: delete this friends thinks to send a message to the over box
 		// and after this delete the user
-		return Response.status(Status.SERVICE_UNAVAILABLE).build();
+		rManager.deleteRelation(userIDFromPath);
+		return Response.status(200).build();
 
 	}
 
 }
+
