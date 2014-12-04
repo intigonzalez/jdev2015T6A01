@@ -71,6 +71,7 @@ public class RelationServiceImpl implements RelationService {
 			}
 			
 		}
+		// Or, the user can edit the group his/her relationshis is in. 
 		if ( !relationIntoDb.getGroupID().equals(relation.getGroupID())) {
 			relationIntoDb.getGroupID().clear();
 			relationIntoDb.getGroupID().addAll(relation.getGroupID());
@@ -97,6 +98,12 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public void deleteRelation(String userID, String email) {
+		if ( userDatabase.exists(email) ) {
+			relationshipDatabase.delete(email, userID);
+		}
+		else {
+			//Send a request to the right box
+		}
 		relationshipDatabase.delete(userID, email);
 		
 	}
