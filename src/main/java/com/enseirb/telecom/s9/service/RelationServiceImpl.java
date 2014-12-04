@@ -1,21 +1,20 @@
 package com.enseirb.telecom.s9.service;
 
 import com.enseirb.telecom.s9.Relation;
-import com.enseirb.telecom.s9.db.CrudRepository;
-import com.enseirb.telecom.s9.db.RelationshipRepositoryMongo;
+import com.enseirb.telecom.s9.db.RelationshipRepositoryInterface;
 import com.enseirb.telecom.s9.db.RelationshipRepositoryObject;
 
 public class RelationServiceImpl implements RelationService {
 
-	CrudRepository<RelationshipRepositoryObject, String> relationshipDatabase;
+	RelationshipRepositoryInterface relationshipDatabase;
 	
 	public boolean RelationExist(String UserID,String email) {
-		return ((RelationshipRepositoryMongo)relationshipDatabase).exists(UserID, email);
+		return relationshipDatabase.exists(UserID, email);
 	}
 	
 	@Override
 	public Relation getRelation(String userID, String email) {
-		RelationshipRepositoryObject relation = ((RelationshipRepositoryMongo)relationshipDatabase).findOne(userID, email);
+		RelationshipRepositoryObject relation = relationshipDatabase.findOne(userID, email);
 		if (relation == null ) {
 			return null;
 		}
@@ -33,7 +32,7 @@ public class RelationServiceImpl implements RelationService {
 		 relationshipDatabase.save(new RelationshipRepositoryObject(userID,relation));
 		return;
 	}
-	public RelationServiceImpl(CrudRepository<RelationshipRepositoryObject, String> RelationshipDatabase) {
+	public RelationServiceImpl(RelationshipRepositoryInterface RelationshipDatabase) {
 	//	this.userDatabase = userDatabase;
 		this.relationshipDatabase = RelationshipDatabase;
 	}
@@ -52,7 +51,7 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public void deleteRelation(String userID, String email) {
-		((RelationshipRepositoryMongo)relationshipDatabase).delete(userID, email);
+		relationshipDatabase.delete(userID, email);
 		
 	}
 

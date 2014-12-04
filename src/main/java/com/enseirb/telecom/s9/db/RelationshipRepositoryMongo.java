@@ -10,7 +10,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
-public class RelationshipRepositoryMongo implements CrudRepository<RelationshipRepositoryObject, String> {
+public class RelationshipRepositoryMongo implements RelationshipRepositoryInterface {
 
 	@Override
 	public <S extends RelationshipRepositoryObject> S save(S entity) {
