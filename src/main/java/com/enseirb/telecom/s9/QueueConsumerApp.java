@@ -3,6 +3,7 @@ package com.enseirb.telecom.s9;
 import java.io.IOException;
 
 import com.google.common.base.Throwables;
+import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -30,7 +31,7 @@ public class QueueConsumerApp {
 
 			@Override
 			public void run() {
-
+				/*
 				try {
 				    while (true) {
 					      QueueingConsumer.Delivery delivery = consumer.nextDelivery();
@@ -39,7 +40,27 @@ public class QueueConsumerApp {
 					    }
 				} catch (ShutdownSignalException | ConsumerCancelledException | InterruptedException e) {
 					throw Throwables.propagate(e);
+				}*/
+while(true){
+			    QueueingConsumer.Delivery delivery = null;
+				try {
+					delivery = consumer.nextDelivery();
+				} catch (ShutdownSignalException | ConsumerCancelledException
+						| InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
+
+			    BasicProperties props = delivery.getProperties();
+			    BasicProperties replyProps = new BasicProperties
+			                                     .Builder()
+			                                     .correlationId(props.getCorrelationId())
+			                                     .build();
+
+			    String message = new String(delivery.getBody());
+
+			    System.out.println(" [.] " + message);
+			}
 			}
 		}).start();
 		
