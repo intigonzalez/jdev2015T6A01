@@ -26,6 +26,7 @@ import com.mongodb.util.JSON;
 public class AccountServiceImpl implements AccountService {
 
 	CrudRepository<UserRepositoryObject, String> userDatabase;
+	RequetUserServiceImpl requetUserServiceImpl= new RequetUserServiceImpl("http://localhost:9999/api/app/account/");
 
 	public AccountServiceImpl(
 			CrudRepository<UserRepositoryObject, String> userDatabase) {
@@ -44,7 +45,7 @@ public class AccountServiceImpl implements AccountService {
 		// TODO: change to the correct page and add fontion for get addr of
 		// server
 		try {
-			Response retourDeLaPage = RequetServiceImpl
+			Response retourDeLaPage = requetUserServiceImpl
 					.get("http://localhost:9999/api/app/account/" + email);
 			if (retourDeLaPage.getStatusInfo().equals(Status.CONFLICT))
 				exist = true;
@@ -91,7 +92,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public void saveUser(User user) {
-		Response returnValue = RequetServiceImpl.post(
+		Response returnValue = requetUserServiceImpl.post(
 				"http://localhost:9999/api/app/account/", user);
 		try {
 			if (!returnValue.getStatusInfo().equals(Status.CREATED)) {
