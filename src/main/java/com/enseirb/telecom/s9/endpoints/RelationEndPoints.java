@@ -18,8 +18,10 @@ import javax.ws.rs.core.Response.Status;
 
 import com.enseirb.telecom.s9.Relation;
 import com.enseirb.telecom.s9.User;
+import com.enseirb.telecom.s9.db.CrudRepository;
 import com.enseirb.telecom.s9.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.s9.db.UserRepositoryMongo;
+import com.enseirb.telecom.s9.db.UserRepositoryObject;
 import com.enseirb.telecom.s9.service.AccountService;
 import com.enseirb.telecom.s9.service.AccountServiceImpl;
 import com.enseirb.telecom.s9.service.RelationService;
@@ -32,7 +34,8 @@ import com.enseirb.telecom.s9.service.RelationServiceImpl;
 public class RelationEndPoints {
 
 	RelationService rManager = new RelationServiceImpl(
-			new RelationshipRepositoryMongo());
+			new RelationshipRepositoryMongo(),
+			new UserRepositoryMongo());
 
 	// move in groupe
 	// @GET
@@ -66,7 +69,7 @@ public class RelationEndPoints {
 		// TODO: ajout un ami
 		// add a friend
 		if (rManager.RelationExist(userIDFromPath,relation.getEmail()) == false) {
-			rManager.saveRelation(userIDFromPath,relation);
+			rManager.createRelation(userIDFromPath,relation);
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(relation.getEmail())).build();
 		} else {
