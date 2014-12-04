@@ -82,6 +82,7 @@ public class ContentEndPoints {
 		content.setStatus("In progress");
 		content.setType(fileType[0]);
 		UUID uuid = UUID.randomUUID();
+		content.setContentsID(uuid.toString());
 		String link = "/videos/"+email+"/"+uuid.toString();
 		content.setLink(link);
 		long unixTime = System.currentTimeMillis() / 1000L;
@@ -100,8 +101,8 @@ public class ContentEndPoints {
 		// TODO: need to check the authentication of the user
 		
 		// modify the content
-		if (uManager.contentExist(content.getContentsID()) == false) {
-			uManager.saveContent(content);;
+		if (uManager.contentExist(content.getContentsID()) == true) {
+			uManager.saveContent(content);
 			return Response.status(200).build();
 		} else {
 			return Response.status(409).build();

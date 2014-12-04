@@ -2,6 +2,7 @@ package com.enseirb.telecom.s9.db;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.UUID;
 
 import org.bson.types.ObjectId;
 
@@ -26,7 +27,6 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 			DBCollection db = mongoClient.getDB("mediahome").getCollection("contents");
 			DBObject objectToSave = DbInit.createDBObject(entity);
 			db.save(objectToSave);
-			entity.setId((ObjectId)objectToSave.get( "_id" ));
 			mongoClient.close();
 		} catch (UnknownHostException | JsonProcessingException e) {
 			// TODO Auto-generated catch block
@@ -48,7 +48,7 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 			MongoClient mongoClient = DbInit.Connect();
 			DBCollection db = mongoClient.getDB("mediahome").getCollection("contents");
 
-			BasicDBObject query = new BasicDBObject("_id", id);
+			BasicDBObject query = new BasicDBObject("id", id);
 			DBCursor cursor = db.find(query);
 			ContentRepositoryObject content = null;
 			ObjectMapper mapper = new ObjectMapper();

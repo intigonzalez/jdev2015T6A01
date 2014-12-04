@@ -84,6 +84,7 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public void saveContent(Content content) {
+		//TODO(0) : Manage the content update. Check all informations are done ! 
 		contentDatabase.save(new ContentRepositoryObject(content));
 	}
 
