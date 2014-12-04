@@ -11,6 +11,7 @@ import javax.validation.Path.Node;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -40,18 +41,21 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public boolean userExist(String email) {
 		boolean exist = userDatabase.exists(email);
-		if (exist == false) {
-			try {
-				// change to the correct page
-				String retourDeLaPage = RequetServiceImpl
-						.doGet("http://localhost:9998/api/app/account/" + email);
-				if (!retourDeLaPage.isEmpty())
-					exist=true;
-			} catch (IOException e) {
-				e.printStackTrace();
+		// TODO: change to the correct page and add fontion for get addr of
+		// server
+		try {
+			Response retourDeLaPage = RequetServiceImpl
+					.get("http://localhost:9999/api/app/account/" + email);
+			if (retourDeLaPage.getStatusInfo().equals(Status.CONFLICT))
+				exist = true;
+			else if (!retourDeLaPage.getStatusInfo().equals(Status.OK)) {
+				System.err.printf("The server say is not ok ! :(\n");
 			}
+		} catch (Exception e) {
+			System.err.printf("Can not connect on the server :(\n");
 
 		}
+
 		return exist;
 	}
 
@@ -82,31 +86,24 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public User createUser(User user) {
-
-	
 		return userDatabase.save(new UserRepositoryObject(user)).toUser();
-
 	}
 
 	@Override
 	public void saveUser(User user) {
-//		try {
-//			java.io.StringWriter sw = new StringWriter();
-//			JAXB.marshal(user, sw);
-//			String returnValue = RequetServiceImpl.post("http://localhost:9998/api/app/account/",sw.toString());
-//			String returnValue = RequetServiceImpl.post("http://localhost:9998/api/appserv/account/",user);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		Response returnValue = RequetServiceImpl.post(
+				"http://localhost:9999/api/app/account/", user);
+		try {
+			if (!returnValue.getStatusInfo().equals(Status.CREATED)) {
+				System.err.printf(user.getUserID()
+						+ " can not registerd on the server");
+			}
+		} catch (Exception e) {
+			System.err.printf("Can not connect on the server :(\n");
+
+		}
 		userDatabase.save(new UserRepositoryObject(user));
 
-	}
-	
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	private String toXML(User user){
-		
-		return user.getClass().toString();		
 	}
 
 	@Override
