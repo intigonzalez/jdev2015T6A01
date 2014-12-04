@@ -18,8 +18,10 @@ import javax.ws.rs.core.Response.Status;
 
 import com.enseirb.telecom.s9.Relation;
 import com.enseirb.telecom.s9.User;
+import com.enseirb.telecom.s9.db.CrudRepository;
 import com.enseirb.telecom.s9.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.s9.db.UserRepositoryMongo;
+import com.enseirb.telecom.s9.db.UserRepositoryObject;
 import com.enseirb.telecom.s9.service.AccountService;
 import com.enseirb.telecom.s9.service.AccountServiceImpl;
 import com.enseirb.telecom.s9.service.RelationService;
@@ -31,8 +33,7 @@ import com.enseirb.telecom.s9.service.RelationServiceImpl;
 @Path("app/{userID}/friends")
 public class RelationEndPoints {
 
-	RelationService rManager = new RelationServiceImpl(
-			new RelationshipRepositoryMongo());
+	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
 
 	// move in groupe
 	// @GET
@@ -47,8 +48,7 @@ public class RelationEndPoints {
 	@GET
 	@Path("{username}")
 	@Produces(MediaType.APPLICATION_XML)
-	public Relation getRelation(@PathParam("userID") String userIDFromPath,
-			@PathParam("username") String relationIDFromPath) {
+	public Relation getRelation(@PathParam("userID") String userIDFromPath, @PathParam("username") String relationIDFromPath) {
 		// TODO: get info of username relation
 		// NHE: easy way to return an error for a rest api: throw an
 		// WebApplicationException
@@ -61,12 +61,11 @@ public class RelationEndPoints {
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postFriend(@PathParam("userID") String userIDFromPath,
-			Relation relation) throws URISyntaxException {
+	public Response postFriend(@PathParam("userID") String userIDFromPath, Relation relation) throws URISyntaxException {
 		// TODO: ajout un ami
 		// add a friend
-		if (rManager.RelationExist(userIDFromPath,relation.getEmail()) == false) {
-			rManager.saveRelation(userIDFromPath,relation);
+		if (rManager.RelationExist(userIDFromPath, relation.getEmail()) == false) {
+			rManager.createRelation(userIDFromPath, relation);
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(relation.getEmail())).build();
 		} else {
@@ -78,8 +77,7 @@ public class RelationEndPoints {
 	@PUT
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putFriend(@PathParam("userID") String userIDFromPath,
-			Relation relation) {
+	public Response putFriend(@PathParam("userID") String userIDFromPath, @PathParam("username") String friendEmail, Relation relation) {
 		// TODO: change de groupe et confirme une demande d'ajout
 		// Pour confirme un ami, il faut : regarder la valeur qui existe dans la
 		// data base si on a decide quelle serait sous la forme zero demande
@@ -87,20 +85,22 @@ public class RelationEndPoints {
 		// l'user local qui fait la demande pour passer a deux la valeur et
 		// quelle etait a un OK sinon refus
 		// need to verify the friend and after this modifies the friend
-
-		if (rManager.RelationExist(userIDFromPath, relation.getEmail())) {
-			rManager.saveRelation(userIDFromPath, relation);
-			return Response.status(200).build();
+		if (relation.getEmail() == friendEmail) {
+			if (rManager.RelationExist(userIDFromPath, relation.getEmail())) {
+				rManager.saveRelation(userIDFromPath, relation);
+				return Response.status(200).build();
+			} else {
+				return Response.status(404).build();
+			}
 		} else {
-			return Response.status(404).build();
+			return Response.status(403).build();
 		}
-
 	}
-	
+
 	@DELETE
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteFriend(@PathParam("userID") String userIDFromPath,@PathParam("username") String relationIDFromPath) {
+	public Response deleteFriend(@PathParam("userID") String userIDFromPath, @PathParam("username") String relationIDFromPath) {
 		// TODO: delete this friends thinks to send a message to the over box
 		// and after this delete the user
 		rManager.deleteRelation(userIDFromPath, relationIDFromPath);
@@ -109,4 +109,3 @@ public class RelationEndPoints {
 	}
 
 }
-
