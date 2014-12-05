@@ -46,16 +46,15 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public Content createContent(Content content, String srcfile) {
+	public Content createContent(Content content, String srcfile, String id) {
 
 		// Only if the file is a video content
 		if(content.getType().equals("video")){
 			try {
-			UUID uuid = UUID.randomUUID();
 
 			Task task = new Task();
 			task.setTask("tasks.print_shell");
-			task.setId(uuid.toString().replace("-", ""));
+			task.setId(id);
 			task.getArgs().add(srcfile);
 			task.getArgs().add(ApplicationContext.getProperties().getProperty("contentPath") + content.getLink());
 	 

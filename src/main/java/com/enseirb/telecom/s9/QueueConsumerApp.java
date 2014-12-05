@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConnectionFactory;
@@ -32,6 +35,15 @@ public class QueueConsumerApp {
 					BasicProperties properties, byte[] body) throws IOException {
 				String result = new String(body);
 				System.out.println(result);
+				JSONObject obj;
+				try {
+					obj = new JSONObject(result);
+					String status = obj.getString("status");
+					System.out.println(status);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
