@@ -12,7 +12,7 @@ public interface ContentService {
 
 	public abstract Content getContent(String contentsID);
 
-	public abstract Content createContent(Content content);
+	public abstract Content createContent(Content content, String srcfile);
 
 	public abstract void saveContent(Content content);
 	

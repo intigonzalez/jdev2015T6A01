@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <script type="text/javascript" src="angular.min.js"></script>
     <script src="register.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
 </head>
 
 <body ng-app="RegisterForm">
@@ -13,12 +15,71 @@
     <div class="col-md-6 col-md-offset-3">
         <div class="page-header">
             <!--   span class adds a tower to the register title -->
-            <h1><span class="glyphicon glyphicon-tower"></span> Register Form Medi@Home</h1>
+            <h1><span class="glyphicon glyphicon-cog"></span> Register Form Medi@Home</h1>
         </div>
 
-        <form class="form-horizontal" name="registerForm" novalidate>
+        <form class="form-horizontal" name="registerForm" validate>
 
-            <label>Name :</label>
+
+<!-- Register Form -->
+
+
+                                <form role="form" action="#" method="POST">
+                                    <fieldset>
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-10  col-md-offset-1 ">
+                                                <!-- Name -->
+                                                <div class="form-group">
+                                                    <div class="input-group">
+												<span class="input-group-addon">
+													<i class="glyphicon glyphicon-user"></i>
+												</span>
+                                                        <input class="form-control" placeholder="Username" ng-model="person.name" type="text" autofocus required>
+                                                    </div>
+                                                </div>
+                                                <!-- Surname -->
+                                                <div class="form-group">
+                                                    <div class="input-group">
+												<span class="input-group-addon">
+													<i class="glyphicon glyphicon-user"></i>
+												</span>
+                                                        <input class="form-control" placeholder="Surname" ng-model="person.surname" type="text" autofocus>
+                                                    </div>
+                                                </div>
+                                                <!-- Password -->
+                                                <div class="form-group">
+                                                    <div class="input-group">
+												<span class="input-group-addon">
+													<i class="glyphicon glyphicon-lock"></i>
+												</span>
+                                                        <input class="form-control" placeholder="Password" ng-model="person.password" type="password">
+                                                    </div>
+                                                </div>
+                                                <!-- Mail Address -->
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                	<span class="input-group-addon">@</span>
+                                                <input class="form-control" placeholder=" E-mail Address " ng-model="person.userID" type="text">
+                                            </div>
+                                        </div>
+
+                                                <div class="form-group">
+                                                    <button ng-click="submitData(person)" class="btn btn-lg btn-primary btn-block"> Sign Up </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </form>
+
+                            <div class="panel-footer ">
+                                You already have an account !! <a href="#" onClick=""> Sign in Here</a>
+                            </div>
+
+
+
+
+            <!--
+  <label>Name :</label>
             <input type="text" ng-model="person.name"/></br>
             <label>Surname :</label>
             <input type="text" ng-model="person.surname"></br>
@@ -31,12 +92,13 @@
 
             <div class="form-group">
                 <div class="col-md-offset-3 col-md-9">
-                    <!-- span class adds a flash logo to the submit button -->
-                    <button ng-click="submitData(person)" class="btn btn-default"><span class="glyphicon glyphicon-flash"></span>Sign up</button>
-                </div>
-            </div>
-        </form>
+                    <!-- span class adds a flash logo to the submit button --
+            <button ng-click="submitData(person)" class="btn btn-success"><span class="glyphicon glyphicon-flash"></span>Sign up</button>
 
+            -->
+
+        </form>
+</div></div></div>
     </div>
 </body>
 

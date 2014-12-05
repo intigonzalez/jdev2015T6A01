@@ -1,5 +1,6 @@
 package com.enseirb.telecom.s9.endpoints;
 
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -13,6 +14,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.enseirb.telecom.s9.Task;
+
+
 
 // The Java class will be hosted at the URI path "/myresource"
 @Path("app/task")

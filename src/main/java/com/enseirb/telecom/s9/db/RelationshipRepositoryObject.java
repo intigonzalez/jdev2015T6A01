@@ -9,7 +9,7 @@ public class RelationshipRepositoryObject {
 	public RelationshipRepositoryObject(){
 		
 	}
-	public RelationshipRepositoryObject(String userId, String email, String name, String surname, String pubKey, Boolean aprouve, Long unixTime, List<Integer> group) {
+	public RelationshipRepositoryObject(String userId, String email, String name, String surname, String pubKey, Integer aprouve, Long unixTime, List<Integer> group) {
 		super();
 		this.userId = userId;
 		this.email = email;
@@ -26,19 +26,22 @@ public class RelationshipRepositoryObject {
 		this.name = relation.getName();
 		this.surname = relation.getSurname();
 		this.pubKey = relation.getPubKey();
-		this.aprouve = relation.isAprouve();
+		this.aprouve = relation.getAprouve();
 		this.unixTime = relation.getUnixTime();
 		this.group = relation.getGroupID();
 		
 	}
+
+	
 	String userId;
 	String email;
     String name;
     String surname;
     String pubKey;
-    Boolean aprouve;
+    Integer aprouve;
     Long unixTime;
     List<Integer> group;
+    
 	public String getUserId() {
 		return userId;
 	}
@@ -69,10 +72,10 @@ public class RelationshipRepositoryObject {
 	public void setPubKey(String pubKey) {
 		this.pubKey = pubKey;
 	}
-	public Boolean getAprouve() {
+	public Integer getAprouve() {
 		return aprouve;
 	}
-	public void setAprouve(Boolean aprouve) {
+	public void setAprouve(Integer aprouve) {
 		this.aprouve = aprouve;
 	}
 	public Long getUnixTime() {
@@ -87,7 +90,7 @@ public class RelationshipRepositoryObject {
 	public void setGroup(List<Integer> group) {
 		this.group = group;
 	}
-	public void toRelation() {
+	public Relation toRelation() {
 		Relation relation = new Relation();
 		relation.setEmail(email);
 		relation.setName(name);
@@ -96,6 +99,7 @@ public class RelationshipRepositoryObject {
 		relation.setUnixTime(unixTime);
 		relation.setAprouve(aprouve);
 		relation.getGroupID().addAll(group);
+		return relation;
 		
 	}
 }
