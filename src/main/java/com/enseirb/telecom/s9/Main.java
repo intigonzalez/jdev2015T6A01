@@ -1,7 +1,10 @@
 package com.enseirb.telecom.s9;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Properties;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -19,7 +22,7 @@ public class Main {
 
 	private static int getPort(int defaultPort) {
 		// grab port from environment, otherwise fall back to default port 9998
-		String httpPort = System.getProperty("jersey.test.port");
+		String httpPort = ApplicationContext.getProperties().getProperty("bindPort");
 		if (null != httpPort) {
 			try {
 				return Integer.parseInt(httpPort);
@@ -30,11 +33,10 @@ public class Main {
 	}
 
 	private static URI getBaseURI() {
-		return UriBuilder.fromUri("http://0.0.0.0/api/").port(getPort(9998))
+		String ip = ApplicationContext.getProperties().getProperty("bindIp");
+		return UriBuilder.fromUri("http://"+ip+"/api/").port(getPort(9998))
 				.build();
 	}
-
-	public static final URI BASE_URI = getBaseURI();
 
 	protected static HttpServer startServer() throws IOException {
 
@@ -46,25 +48,33 @@ public class Main {
 		System.out.println("Starting grizzly2...");
 		// return GrizzlyServerFactory.createHttpServer(BASE_URI,
 		// resourceConfig);
-		return GrizzlyHttpServerFactory.createHttpServer(BASE_URI, resources);
+		return GrizzlyHttpServerFactory.createHttpServer(getBaseURI(), resources);
 	}
 
 	public static void main(String[] args) throws IOException, InterruptedException {
+		// Properties 
+		FileInputStream in;
+		try {
+			ApplicationContext.properties = new Properties();
+			in = new FileInputStream("application.properties");
+			ApplicationContext.properties.load(in);
+			in.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		// Grizzly 2 initialization
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-
+				
 				try {
 					HttpServer httpServer = startServer();
 					httpServer.getServerConfiguration().addHttpHandler(
 							new CLStaticHttpHandler(
 									Main.class.getClassLoader(), "/"));
-					
-					StaticHttpHandler videoHandler = new StaticHttpHandler("videos");
-					videoHandler.setFileCacheEnabled(false);
-					httpServer.getServerConfiguration().addHttpHandler(videoHandler,"/videos");
 					
 				} catch (IOException e) {
 					throw Throwables.propagate(e);

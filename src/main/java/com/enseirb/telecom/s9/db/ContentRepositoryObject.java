@@ -1,22 +1,33 @@
 package com.enseirb.telecom.s9.db;
 
 import java.util.List;
+import java.util.UUID;
 
-import org.bson.types.ObjectId;
 
 import com.enseirb.telecom.s9.Authorization;
 import com.enseirb.telecom.s9.Comment;
 import com.enseirb.telecom.s9.Content;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ContentRepositoryObject {
+	String id;
+	String name;
+	String userId;
+	Long unixTime;
+	String link;
+	String previewLink;
+	String status;
+	List<Comment> comment;
+	List<Authorization> authorizations;
+
 	public ContentRepositoryObject() {
 
 	}
 
-	public ContentRepositoryObject(ObjectId id, String name, String userId, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<Authorization> authorizations) {
+	public ContentRepositoryObject(String id, String name, String userId, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<Authorization> authorizations) {
 		super();
-		_id = id;
+		this.id = id;
 		this.name = name;
 		this.userId = userId;
 		this.unixTime = unixTime;
@@ -28,9 +39,7 @@ public class ContentRepositoryObject {
 	}
 
 	public ContentRepositoryObject(Content content) {
-		if (content.getContentsID() != null) {
-			_id = new ObjectId(content.getContentsID());
-		}		
+		id = content.getContentsID();
 		name = content.getName();
 		userId = content.getLogin();
 		unixTime = content.getUnixTime();
@@ -40,23 +49,12 @@ public class ContentRepositoryObject {
 		this.comment = content.getComment();
 		this.authorizations = content.getAuthorization();
 	}
-	@JsonProperty("_id")
-	ObjectId _id;
-	String name;
-	String userId;
-	Long unixTime;
-	String link;
-	String previewLink;
-	String status;
-	List<Comment> comment;
-	List<Authorization> authorizations;
-
-	public ObjectId getId() {
-		return _id;
+	public String getId() {
+		return id;
 	}
 
-	public void setId(ObjectId id) {
-		_id = id;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {

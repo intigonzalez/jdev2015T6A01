@@ -12,11 +12,11 @@
     		minOccurs="0" />
     	<xs:element name="pubKey" type="xs:string" maxOccurs="1"
     		minOccurs="0" />
-    	<xs:element name="aprouve" type="xs:boolean" maxOccurs="1"
+    	<xs:element name="aprouve" type="xs:int" maxOccurs="1"
     		minOccurs="0" />
+<!--     		1 : I asked and I am waiting for Answer, 2 : I received a request, and I shoud answer, 3 : Request Accepted  -->
     	<xs:element name="unix_time" type="xs:long" maxOccurs="1"
     		minOccurs="0" />
-    	<!--     	<xs:element name="groupeID" type="xs:string" maxOccurs="unbounded" minOccurs="0"></xs:element> -->
     	<xs:element name="groupID" type="xs:int" maxOccurs="unbounded" minOccurs="0"></xs:element>
     </xs:sequence>
   </xs:complexType>

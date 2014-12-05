@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+import com.enseirb.telecom.s9.ApplicationContext;
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.Task;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
@@ -56,7 +57,7 @@ public class ContentServiceImpl implements ContentService {
 			task.setTask("tasks.print_shell");
 			task.setId(uuid.toString().replace("-", ""));
 			task.getArgs().add(srcfile);
-			task.getArgs().add(content.getLink().substring(1));
+			task.getArgs().add(ApplicationContext.getProperties().getProperty("contentPath") + content.getLink());
 	 
 			XStream xstream = new XStream(new JsonHierarchicalStreamDriver() {
 				public HierarchicalStreamWriter createWriter(Writer writer) {
@@ -79,6 +80,7 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public void saveContent(Content content) {
+		//TODO(0) : Manage the content update. Check all informations are done ! 
 		contentDatabase.save(new ContentRepositoryObject(content));
 	}
 
