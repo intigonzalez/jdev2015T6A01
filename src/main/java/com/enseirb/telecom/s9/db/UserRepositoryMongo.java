@@ -2,7 +2,9 @@ package com.enseirb.telecom.s9.db;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -81,7 +83,7 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 				mongoClient.close();
 				return false;
 			}
-		} catch(UnknownHostException e) {
+		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.err.println("Connection to database failed ");
@@ -91,7 +93,6 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 	@Override
 	public Iterable<UserRepositoryObject> findAll() {
-		
 		//Iterable <UserRepositoryObject> listOfAllUsers = null;
 		List <UserRepositoryObject> listOfAllUsers = new ArrayList<UserRepositoryObject>();
 		
@@ -129,7 +130,6 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 	@Override
 	public Iterable<UserRepositoryObject> findAll(Iterable<String> ids) {
-
 		// throw new RuntimeException("not yet invented");
 
 		List<UserRepositoryObject> listOfAllUsers = new ArrayList<UserRepositoryObject>();
@@ -183,11 +183,19 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("users");
 
-			numberOfUser = dbUsers.getCount();
+			DBCursor cursor = dbUsers.find();
+			try {
+				mongoClient.close();
+				while (cursor.hasNext()) {
+					numberOfUser++;
+				}
+			} finally {
+				cursor.close();
+			}
 		}
+
 		catch (UnknownHostException e) {
-			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+
 		}
 
 		return numberOfUser;
