@@ -85,7 +85,7 @@ public class RelationEndPoints {
 		// l'user local qui fait la demande pour passer a deux la valeur et
 		// quelle etait a un OK sinon refus
 		// need to verify the friend and after this modifies the friend
-		if (relation.getEmail() == friendEmail) {
+		if (relation.getEmail().equals(friendEmail)) {
 			if (rManager.RelationExist(userIDFromPath, relation.getEmail())) {
 				rManager.saveRelation(userIDFromPath, relation);
 				return Response.status(200).build();
