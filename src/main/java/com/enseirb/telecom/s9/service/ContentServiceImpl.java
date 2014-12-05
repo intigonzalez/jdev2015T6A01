@@ -9,6 +9,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 import com.enseirb.telecom.s9.Content;
+import com.enseirb.telecom.s9.QueueConsumerApp;
 import com.enseirb.telecom.s9.Task;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
 import com.enseirb.telecom.s9.db.CrudRepository;
@@ -68,6 +69,12 @@ public class ContentServiceImpl implements ContentService {
 	//		System.out.println("UUID: " + uuid.toString());
 			//String message = "{\"id\": \""+uuid.toString()+"\", \"task\": \"tasks.print_shell\", \"args\": [\""+ srcfile + "\",\""+ content.getLink().substring(1) +"\"], \"kwargs\": {}, \"retries\": 0, \"eta\": \"2009-11-17T12:30:56.527191\"}";
 			rabbitMq.addTask(xstream.toXML(task));
+			try {
+				QueueConsumerApp.test(task.getId());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	//		rabbitMq.channel.close();
 	//		rabbitMq.connection.close();
 			} catch (IOException e) {
