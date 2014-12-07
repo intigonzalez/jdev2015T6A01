@@ -2,10 +2,6 @@ package com.enseirb.telecom.s9.db;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.UUID;
-
-import org.bson.types.ObjectId;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;

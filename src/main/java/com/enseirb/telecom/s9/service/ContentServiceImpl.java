@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.UUID;
-
 import com.enseirb.telecom.s9.ApplicationContext;
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.Task;

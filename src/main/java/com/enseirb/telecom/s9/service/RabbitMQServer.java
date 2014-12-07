@@ -37,7 +37,7 @@ public class RabbitMQServer {
 				.build(), task.getBytes("utf-8"));
 
 		try {
-			QueueConsumerApp.test(id);
+			QueueConsumerApp.getQueueMessage(id);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
