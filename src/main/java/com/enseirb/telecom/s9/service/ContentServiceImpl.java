@@ -19,7 +19,7 @@ import com.thoughtworks.xstream.io.json.JsonWriter;
 
 public class ContentServiceImpl implements ContentService {
 
-	CrudRepository<ContentRepositoryObject, String> contentDatabase;
+	static CrudRepository<ContentRepositoryObject, String> contentDatabase;
 	RabbitMQServer rabbitMq;
 
 	public ContentServiceImpl(
@@ -108,7 +108,9 @@ public class ContentServiceImpl implements ContentService {
 	@Override
 	public void updateContent(String contentsID) {
 		// TODO Auto-generated method stub
-		contentDatabase.findOne(contentsID).setStatus("success");
+		contentDatabase.
+			findOne(contentsID).
+				setStatus("success");
 	}
 
 }
