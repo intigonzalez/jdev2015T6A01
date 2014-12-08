@@ -30,6 +30,13 @@ public class RabbitMQServer {
 
 	}
 
+/**
+ * Add the task and ask for the end message
+ * @param task
+ * @param id
+ * @throws UnsupportedEncodingException
+ * @throws IOException
+ */
 	public void addTask(String task, String id)
 			throws UnsupportedEncodingException, IOException {
 		channel.basicPublish("", QUEUE_NAME, new AMQP.BasicProperties.Builder()

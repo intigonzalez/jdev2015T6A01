@@ -25,4 +25,5 @@ public interface ContentService {
 	 */
 	public abstract void writeToFile(InputStream uploadedInputStream,
 			File dest);
+	public abstract void updateContent(String contentsID);
 }

@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+
 import com.enseirb.telecom.s9.ApplicationContext;
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.Task;
@@ -25,6 +26,9 @@ public class ContentServiceImpl implements ContentService {
 			CrudRepository<ContentRepositoryObject, String> videoDatabase, RabbitMQServer rabbitMq) {
 		this.contentDatabase = videoDatabase;
 		this.rabbitMq = rabbitMq;
+	}
+	public ContentServiceImpl(){
+		
 	}
 
 	@Override
@@ -99,6 +103,12 @@ public class ContentServiceImpl implements ContentService {
 	public void deleteContent(String contentsID) {
 		this.contentDatabase.delete(contentsID);
 
+	}
+
+	@Override
+	public void updateContent(String contentsID) {
+		// TODO Auto-generated method stub
+		contentDatabase.findOne(contentsID).setStatus("success");
 	}
 
 }

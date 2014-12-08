@@ -7,6 +7,7 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.enseirb.telecom.s9.service.ContentServiceImpl;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConnectionFactory;
@@ -15,9 +16,15 @@ import com.rabbitmq.client.Envelope;
 
 public class QueueConsumerApp {
 
+	/**
+	 * Create a queue with the correlation_id of the task, as we can wait the end message
+	 * @param queue
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	public static void getQueueMessage(String queue) throws IOException,
 			InterruptedException {
-		String QUEUE_NAME = queue;
+		final String QUEUE_NAME = queue;
 
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.setHost("localhost");
@@ -50,6 +57,9 @@ public class QueueConsumerApp {
 				}
 				if (status.equals("SUCCESS")) {
 					// TODO : change the status in DataBase
+					System.out.println(QUEUE_NAME);
+					ContentServiceImpl contentServiceImpl =new ContentServiceImpl();
+					contentServiceImpl.updateContent(QUEUE_NAME);
 					
 				}
 			}
