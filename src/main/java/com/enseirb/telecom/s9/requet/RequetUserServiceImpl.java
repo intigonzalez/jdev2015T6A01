@@ -1,4 +1,4 @@
-package com.enseirb.telecom.s9.service;
+package com.enseirb.telecom.s9.requet;
 
 import java.io.IOException;
 
@@ -17,17 +17,19 @@ import com.enseirb.telecom.s9.exception.SuchUserException;
 public class RequetUserServiceImpl implements RequetUserService {
 
 	private String url;
-
+	private Client client;
+	
 	public RequetUserServiceImpl(String url) {
 		this.url = url;
+		client = ClientBuilder.newClient();
 	}
 	
 
 	@Override
 	public User get(User user) throws IOException, NoSuchUserException {
 		User userGet =new User();
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(url+"userID/"+user.getUserID());
+//		Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(url+user.getUserID());
 		try {
 		 userGet = target.request(MediaType.APPLICATION_XML_TYPE).get(User.class);
 		}catch (Exception e){
@@ -44,9 +46,7 @@ public class RequetUserServiceImpl implements RequetUserService {
 
 	@Override
 	public void post(User user) throws IOException, SuchUserException {
-		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(url);
-		try {
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
 				.post(Entity.entity(user, MediaType.APPLICATION_XML),
 						Response.class);
@@ -66,19 +66,16 @@ public class RequetUserServiceImpl implements RequetUserService {
 		default:
 			throw new IOException("Can not conect to the server :" + response.getStatus());
 		}
-		}catch (Exception e){
-			System.out.println(target.getUri());
-			e.printStackTrace();
-		}
+
 	}
 
 
 	@Override
 	public void put(User user) throws IOException, NoSuchUserException {
 		
-		Client client = ClientBuilder.newClient();
+//		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(url+user.getUserID());
-		try {
+//		try {
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
 				.put(Entity.entity(user, MediaType.APPLICATION_XML),
 						Response.class);
@@ -97,16 +94,16 @@ public class RequetUserServiceImpl implements RequetUserService {
 		default:
 			throw new IOException("Can not conect to the server :" + response.getStatus());
 		}
-		}catch (Exception e){
-			System.out.println(target.getUri());
-			e.printStackTrace();
-		}
+//		}catch (Exception e){
+//			System.out.println(target.getUri());
+//			e.printStackTrace();
+//		}
 	}
 
 
 	@Override
 	public void delete(String userID) throws IOException, NoSuchUserException {
-		Client client = ClientBuilder.newClient();
+//		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(this.url+userID);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE).delete();
 		switch (Status.fromStatusCode(response.getStatus())) {

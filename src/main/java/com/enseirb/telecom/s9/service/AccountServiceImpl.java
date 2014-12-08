@@ -24,6 +24,8 @@ import com.enseirb.telecom.s9.db.CrudRepository;
 import com.enseirb.telecom.s9.db.UserRepositoryObject;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
 import com.enseirb.telecom.s9.exception.SuchUserException;
+import com.enseirb.telecom.s9.requet.RequetUserService;
+import com.enseirb.telecom.s9.requet.RequetUserServiceImpl;
 import com.mongodb.util.JSON;
 
 public class AccountServiceImpl implements AccountService {
