@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
+import javax.management.relation.RelationService;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -23,10 +24,15 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.enseirb.telecom.s9.Content;
+import com.enseirb.telecom.s9.ListContent;
+import com.enseirb.telecom.s9.Relation;
 import com.enseirb.telecom.s9.db.ContentRepositoryMongo;
+import com.enseirb.telecom.s9.db.RelationshipRepositoryMongo;
+import com.enseirb.telecom.s9.db.UserRepositoryMongo;
 import com.enseirb.telecom.s9.service.ContentService;
 import com.enseirb.telecom.s9.service.ContentServiceImpl;
 import com.enseirb.telecom.s9.service.RabbitMQServer;
+import com.enseirb.telecom.s9.service.RelationServiceImpl;
 import com.google.common.io.Files;
 
 // The Java class will be hosted at the URI path "/app/content"
@@ -47,6 +53,18 @@ public class ContentEndPoints {
 		return uManager.getContent(contentsID);
 	}
 
+	@GET
+	@Path("relation/{relationID}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public ListContent getFromRelation(@PathParam("contentsID") String contentsID,@PathParam("relationID") String relationID,@PathParam("userID") String userID) {
+		RelationServiceImpl relationService = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
+		 if (relationService.RelationExist(userID, relationID)){
+			Relation relation = relationService.getRelation(userID, relationID);
+			return uManager.getAllContent(relation.getGroupID());
+		 }
+		return null;
+	}
+	
 //	@POST
 //	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 //	public Response postVideo(Content content) {

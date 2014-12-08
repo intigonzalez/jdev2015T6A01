@@ -49,9 +49,6 @@ public class RelationEndPoints {
 	@Path("{username}")
 	@Produces(MediaType.APPLICATION_XML)
 	public Relation getRelation(@PathParam("userID") String userIDFromPath, @PathParam("username") String relationIDFromPath) {
-		// TODO: get info of username relation
-		// NHE: easy way to return an error for a rest api: throw an
-		// WebApplicationException
 		if (rManager.RelationExist(userIDFromPath, relationIDFromPath) == true) {
 			return rManager.getRelation(userIDFromPath, relationIDFromPath);
 		} else {

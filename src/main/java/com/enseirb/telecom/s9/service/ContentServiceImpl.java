@@ -6,10 +6,14 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 import com.enseirb.telecom.s9.ApplicationContext;
+import com.enseirb.telecom.s9.Authorization;
 import com.enseirb.telecom.s9.Content;
+import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.Task;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
 import com.enseirb.telecom.s9.db.CrudRepository;
@@ -107,5 +111,25 @@ public class ContentServiceImpl implements ContentService {
 		this.contentDatabase.delete(contentsID);
 
 	}
+
+	@Override
+	public ListContent getAllContent(List<Integer> groupID) {
+		ListContent listContent = new ListContent();
+		 Iterable<ContentRepositoryObject> content = contentDatabase.findAll();
+		 Iterator<ContentRepositoryObject> itr = content.iterator();
+		if (content == null) {
+			return null;
+		} else {
+			while (itr.hasNext()) {
+				ContentRepositoryObject contentRepositoryObject = itr.next();
+//				contentRepositoryObject.getAuthorizations()
+			}
+			return listContent;
+		}
+	}
+
+
+
+
 
 }
