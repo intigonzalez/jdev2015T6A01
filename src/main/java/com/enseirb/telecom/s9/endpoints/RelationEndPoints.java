@@ -32,7 +32,7 @@ import com.enseirb.telecom.s9.service.RelationServiceImpl;
 //import com.enseirb.telecom.s9.Relation;
 
 // The Java class will be hosted at the URI path "/app/friends"
-@Path("app/{userID}/friends")
+@Path("app/{userID}/relation")
 public class RelationEndPoints {
 
 	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
