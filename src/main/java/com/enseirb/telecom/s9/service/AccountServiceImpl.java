@@ -24,14 +24,14 @@ import com.enseirb.telecom.s9.db.CrudRepository;
 import com.enseirb.telecom.s9.db.UserRepositoryObject;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
 import com.enseirb.telecom.s9.exception.SuchUserException;
-import com.enseirb.telecom.s9.requet.RequetUserService;
-import com.enseirb.telecom.s9.requet.RequetUserServiceImpl;
+import com.enseirb.telecom.s9.request.RequestUserService;
+import com.enseirb.telecom.s9.request.RequestUserServiceImpl;
 import com.mongodb.util.JSON;
 
 public class AccountServiceImpl implements AccountService {
 
 	CrudRepository<UserRepositoryObject, String> userDatabase;
-	RequetUserService requetUserService = new RequetUserServiceImpl(
+	RequestUserService requetUserService = new RequestUserServiceImpl(
 			"http://localhost:9999/api/app/account/");
 
 	public AccountServiceImpl(

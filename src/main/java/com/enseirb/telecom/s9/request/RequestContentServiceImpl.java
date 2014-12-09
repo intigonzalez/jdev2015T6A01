@@ -1,4 +1,4 @@
-package com.enseirb.telecom.s9.requet;
+package com.enseirb.telecom.s9.request;
 
 import java.io.IOException;
 
@@ -12,22 +12,22 @@ import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.exception.NoRelationException;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
 
-public class RequetContentServiceImpl implements RequetContentService {
+public class RequestContentServiceImpl implements RequestContentService {
 
 	private String url;
 	private Client client;
 
-	public RequetContentServiceImpl(String url) {
+	public RequestContentServiceImpl(String url) {
 		this.url = url;
 		client = ClientBuilder.newClient();
 	}
 
 	@Override
-	public ListContent get(User user) throws IOException, NoSuchUserException,
+	public ListContent get(String userID,String relationID) throws IOException, NoSuchUserException,
 			NoRelationException {
 		ListContent listContent = new ListContent();
 
-		WebTarget target = client.target(url  + user.getUserID()+ "video/");
+		WebTarget target = client.target(url + relationID +"/relation/" + userID+ "/content/");
 		try {
 			listContent = target.request(MediaType.APPLICATION_XML_TYPE).get(
 					ListContent.class);

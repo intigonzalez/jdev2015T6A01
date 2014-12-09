@@ -8,12 +8,15 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Iterator;
 import java.util.List;
+
 import com.enseirb.telecom.s9.ApplicationContext;
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.Task;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
 import com.enseirb.telecom.s9.db.CrudRepository;
+import com.enseirb.telecom.s9.request.RequestUserService;
+import com.enseirb.telecom.s9.request.RequestUserServiceImpl;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
@@ -23,6 +26,8 @@ public class ContentServiceImpl implements ContentService {
 
 	static CrudRepository<ContentRepositoryObject, String> contentDatabase;
 	RabbitMQServer rabbitMq;
+	private RequestUserService requetUserService = new RequestUserServiceImpl(
+			"http://localhost:9999/api/app/account/");
 
 	public ContentServiceImpl(
 			CrudRepository<ContentRepositoryObject, String> videoDatabase, RabbitMQServer rabbitMq) {

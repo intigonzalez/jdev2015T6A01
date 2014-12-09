@@ -1,4 +1,4 @@
-package com.enseirb.telecom.s9.requet;
+package com.enseirb.telecom.s9.request;
 
 import java.io.IOException;
 
@@ -14,12 +14,12 @@ import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
 import com.enseirb.telecom.s9.exception.SuchUserException;
 
-public class RequetUserServiceImpl implements RequetUserService {
+public class RequestUserServiceImpl implements RequestUserService {
 
 	private String url;
 	private Client client;
 	
-	public RequetUserServiceImpl(String url) {
+	public RequestUserServiceImpl(String url) {
 		this.url = url;
 		client = ClientBuilder.newClient();
 	}

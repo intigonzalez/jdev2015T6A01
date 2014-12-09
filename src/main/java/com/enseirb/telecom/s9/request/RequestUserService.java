@@ -1,4 +1,4 @@
-package com.enseirb.telecom.s9.requet;
+package com.enseirb.telecom.s9.request;
 
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
 import com.enseirb.telecom.s9.exception.SuchUserException;
 
-public interface RequetUserService {
+public interface RequestUserService {
 
 	
 	

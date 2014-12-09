@@ -1,5 +1,6 @@
 package com.enseirb.telecom.s9.service;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,11 +12,19 @@ import com.enseirb.telecom.s9.db.CrudRepository;
 import com.enseirb.telecom.s9.db.RelationshipRepositoryInterface;
 import com.enseirb.telecom.s9.db.RelationshipRepositoryObject;
 import com.enseirb.telecom.s9.db.UserRepositoryObject;
+import com.enseirb.telecom.s9.exception.NoRelationException;
+import com.enseirb.telecom.s9.exception.NoSuchUserException;
+import com.enseirb.telecom.s9.request.RequestContentService;
+import com.enseirb.telecom.s9.request.RequestContentServiceImpl;
+import com.enseirb.telecom.s9.request.RequestUserService;
+import com.enseirb.telecom.s9.request.RequestUserServiceImpl;
 
 public class RelationServiceImpl implements RelationService {
 
 	RelationshipRepositoryInterface relationshipDatabase;
 	CrudRepository<UserRepositoryObject, String> userDatabase;
+	RequestContentService requetUserService = new RequestContentServiceImpl(
+			"http://localhost:9999/api/");
 	
 	public RelationServiceImpl(RelationshipRepositoryInterface RelationshipDatabase, CrudRepository<UserRepositoryObject, String> userDatabase ) {
 		this.relationshipDatabase = RelationshipDatabase;
@@ -116,8 +125,19 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public ListContent getAllContent(List<Integer> groupID) {
-		
+	public ListContent getAllContent(String userID,String relationID) {
+		try {
+			requetUserService.get(userID, relationID);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchUserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoRelationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 

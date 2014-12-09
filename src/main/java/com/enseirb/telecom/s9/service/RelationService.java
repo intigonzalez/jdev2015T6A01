@@ -21,5 +21,5 @@ public interface RelationService {
 
 	public abstract ListRelation getListRelation(String userID);
 
-	public abstract ListContent getAllContent(List<Integer> groupID);
+	public abstract ListContent getAllContent(String userIDToGet,String userIDForm);
 }
