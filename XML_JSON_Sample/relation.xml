@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<relation>
+  <email>email</email>
+  <name>name</name>
+  <surname>surname</surname>
+  <pubKey>pubKey</pubKey>
+  <aprouve>0</aprouve>
+  <unix_time>0</unix_time>
+  <groupID>0</groupID>
+</relation>

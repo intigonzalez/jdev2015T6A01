@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<content xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../src/main/xsd/content.xsd">
+<content>
   <contentsID>contentsID</contentsID>
   <name>name</name>
   <login>login</login>

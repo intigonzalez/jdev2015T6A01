@@ -109,17 +109,26 @@ public class ContentServiceImpl implements ContentService {
 
 	public ListContent getAllContent(List<Integer> groupID) {
 		ListContent listContent = new ListContent();
-		 Iterable<ContentRepositoryObject> content = contentDatabase.findAll();
-		 Iterator<ContentRepositoryObject> itr = content.iterator();
-		if (content == null) {
-			return null;
-		} else {
-			while (itr.hasNext()) {
-				ContentRepositoryObject contentRepositoryObject = itr.next();
-//				contentRepositoryObject.getAuthorizations()
+		Iterable<ContentRepositoryObject> content = contentDatabase.findAll();
+		Iterator<ContentRepositoryObject> itr = content.iterator();
+		while (itr.hasNext()) {
+			Boolean found = false;
+			ContentRepositoryObject contentRepositoryObject = itr.next();
+			for (int i = 0;i>groupID.size();i++){
+				if (found) break;
+				for (int j = 0;j>contentRepositoryObject.getAuthorizations().size();j++){
+					if (found) break;
+					if (groupID.get(i)==contentRepositoryObject.getAuthorizations().get(j).getGroup().getGroupID()){
+						listContent.getContent().add(contentRepositoryObject.toContent());
+						found = true;
+					}
+					else {
+						System.err.println("Groupe is not the same");
+					}
+				}
 			}
-			return listContent;
 		}
+		return listContent;
 	}
 
 	@Override

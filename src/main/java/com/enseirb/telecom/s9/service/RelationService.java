@@ -1,6 +1,7 @@
 package com.enseirb.telecom.s9.service;
 
 
+import com.enseirb.telecom.s9.ListRelation;
 import com.enseirb.telecom.s9.Relation;
 
 public interface RelationService {
@@ -14,4 +15,6 @@ public interface RelationService {
 	public abstract void saveRelation(String userID,Relation relation);
 	
 	public abstract void deleteRelation(String userID, String email);
+
+	public abstract ListRelation getListRelation(String userID);
 }
