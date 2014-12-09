@@ -8,10 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
-
 import com.enseirb.telecom.s9.ApplicationContext;
-import com.enseirb.telecom.s9.Authorization;
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.Task;
@@ -24,13 +21,16 @@ import com.thoughtworks.xstream.io.json.JsonWriter;
 
 public class ContentServiceImpl implements ContentService {
 
-	CrudRepository<ContentRepositoryObject, String> contentDatabase;
+	static CrudRepository<ContentRepositoryObject, String> contentDatabase;
 	RabbitMQServer rabbitMq;
 
 	public ContentServiceImpl(
 			CrudRepository<ContentRepositoryObject, String> videoDatabase, RabbitMQServer rabbitMq) {
 		this.contentDatabase = videoDatabase;
 		this.rabbitMq = rabbitMq;
+	}
+	public ContentServiceImpl(){
+		
 	}
 
 	@Override
@@ -50,16 +50,15 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public Content createContent(Content content, String srcfile) {
+	public Content createContent(Content content, String srcfile, String id) {
 
 		// Only if the file is a video content
 		if(content.getType().equals("video")){
 			try {
-			UUID uuid = UUID.randomUUID();
 
 			Task task = new Task();
 			task.setTask("tasks.print_shell");
-			task.setId(uuid.toString());
+			task.setId(id);
 			task.getArgs().add(srcfile);
 			task.getArgs().add(ApplicationContext.getProperties().getProperty("contentPath") + content.getLink());
 	 
@@ -68,13 +67,9 @@ public class ContentServiceImpl implements ContentService {
 					return new JsonWriter(writer, JsonWriter.DROP_ROOT_MODE);
 				}
 			});
-			//System.out.println(" [x] Sent '" + xstream.toXML(task) + "'");
-	 
-	//		System.out.println("UUID: " + uuid.toString());
-			//String message = "{\"id\": \""+uuid.toString()+"\", \"task\": \"tasks.print_shell\", \"args\": [\""+ srcfile + "\",\""+ content.getLink().substring(1) +"\"], \"kwargs\": {}, \"retries\": 0, \"eta\": \"2009-11-17T12:30:56.527191\"}";
-			rabbitMq.addTask(xstream.toXML(task));
-	//		rabbitMq.channel.close();
-	//		rabbitMq.connection.close();
+			
+			rabbitMq.addTask(xstream.toXML(task), task.getId());
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -112,7 +107,6 @@ public class ContentServiceImpl implements ContentService {
 
 	}
 
-	@Override
 	public ListContent getAllContent(List<Integer> groupID) {
 		ListContent listContent = new ListContent();
 		 Iterable<ContentRepositoryObject> content = contentDatabase.findAll();
@@ -128,8 +122,13 @@ public class ContentServiceImpl implements ContentService {
 		}
 	}
 
-
-
-
+	@Override
+	public void updateContent(String contentsID) {
+		// TODO Auto-generated method stub
+		Content content = new Content();
+		content.setContentsID(contentsID);
+		content.setStatus("success");
+		contentDatabase.save(new ContentRepositoryObject(content));
+	}
 
 }

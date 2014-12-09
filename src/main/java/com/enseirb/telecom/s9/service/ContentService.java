@@ -15,7 +15,7 @@ public interface ContentService {
 
 	public abstract Content getContent(String contentsID);
 
-	public abstract Content createContent(Content content, String srcfile);
+	public abstract Content createContent(Content content, String srcfile, String id);
 
 	public abstract void saveContent(Content content);
 	
@@ -31,4 +31,5 @@ public interface ContentService {
 
 	public abstract ListContent getAllContent(List<Integer> groupID);
 
+	public abstract void updateContent(String contentsID);
 }

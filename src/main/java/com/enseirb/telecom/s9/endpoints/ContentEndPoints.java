@@ -91,7 +91,7 @@ public class ContentEndPoints {
 		// save it
 		uManager.writeToFile(uploadedInputStream, upload);
 
-		System.out.println("File uploaded to : " + upload.getAbsolutePath());
+		//System.out.println("File uploaded to : " + upload.getAbsolutePath());
 		System.out.println("File type : " + fileType[0]);
 		
 		Content content = new Content();
@@ -100,13 +100,13 @@ public class ContentEndPoints {
 		content.setStatus("In progress");
 		content.setType(fileType[0]);
 		UUID uuid = UUID.randomUUID();
-		content.setContentsID(uuid.toString());
+		content.setContentsID(uuid.toString().replace("-", ""));
 		String link = "/videos/"+email+"/"+uuid.toString();
 		content.setLink(link);
 		long unixTime = System.currentTimeMillis() / 1000L;
 		content.setUnixTime(unixTime);
 
-		content = uManager.createContent(content, upload.getAbsolutePath());
+		content = uManager.createContent(content,upload.getAbsolutePath(), content.getContentsID());
 		return Response.created(new URI("app/"+email+"/content/"+content.getContentsID())).build();
 
 	}
