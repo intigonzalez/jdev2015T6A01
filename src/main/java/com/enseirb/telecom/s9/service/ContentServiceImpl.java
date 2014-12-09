@@ -128,6 +128,9 @@ public class ContentServiceImpl implements ContentService {
 						listContent.getContent().add(contentRepositoryObject.toContent());
 						found = true;
 					}
+					else {
+						System.err.println("Groupe is not the same");
+					}
 				}
 			}
 		}

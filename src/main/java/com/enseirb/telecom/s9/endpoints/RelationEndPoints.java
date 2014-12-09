@@ -45,7 +45,7 @@ public class RelationEndPoints {
 	// WebApplicationException
 	// throw new WebApplicationException(Status.CONFLICT);
 	// }
-	//
+	
 	@GET
 	@Path("{username}")
 	@Produces(MediaType.APPLICATION_XML)
