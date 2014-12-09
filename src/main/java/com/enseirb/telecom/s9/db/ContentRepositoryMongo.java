@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +17,8 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
 public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryObject, String> {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContentRepositoryMongo.class);
+
 
 	@Override
 	public <S extends ContentRepositoryObject> S save(S entity) {
@@ -31,6 +35,9 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 		} catch (UnknownHostException | JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			// System.err.println("");
+			LOGGER.error("User Saving Failed");
+
 			return null;
 		}
 		return entity;
@@ -58,7 +65,9 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					System.err.println("Content Mapping failed ! ");
+				//	System.err.println("Content Mapping failed ! ");
+					LOGGER.error("Connection to database failed");
+
 				}
 			};
 			mongoClient.close();
@@ -66,7 +75,9 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+		//	System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
 			return null;
 		}
 	}
@@ -85,7 +96,9 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+		//	System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
 			return true;
 		}
 
@@ -118,7 +131,9 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 		}
 		catch (UnknownHostException e) {
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+		//	System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
 		}
 
 		return nbOfContents;
@@ -137,7 +152,9 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+		//	System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
 		}
 	}
 
@@ -153,7 +170,9 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+	//		System.err.println("Connection to database failed ");
+			LOGGER.error("Connnection to database failed");
+
 		}
 		
 	}
@@ -179,7 +198,9 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 			}
 		catch(UnknownHostException e){
 			e.printStackTrace();
-			System.err.println("Connnection to database failed");
+		//	System.err.println("Connection to database failed");
+			LOGGER.error("Connnection to database failed");
+
 		}
 		
 

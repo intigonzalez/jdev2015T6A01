@@ -3,6 +3,9 @@ package com.enseirb.telecom.s9.db;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
@@ -11,6 +14,8 @@ import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
 public class RelationshipRepositoryMongo implements RelationshipRepositoryInterface {
+	private static final Logger LOGGER = LoggerFactory.getLogger(RelationshipRepositoryMongo.class);
+
 
 	@Override
 	public <S extends RelationshipRepositoryObject> S save(S entity) {
@@ -26,6 +31,7 @@ public class RelationshipRepositoryMongo implements RelationshipRepositoryInterf
 		} catch (UnknownHostException | JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			LOGGER.error("???");
 			return null;
 		}
 		return entity;
@@ -58,7 +64,9 @@ public class RelationshipRepositoryMongo implements RelationshipRepositoryInterf
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					System.err.println("User Mapping failed ! ");
+				//	System.err.println("User Mapping failed ! ");
+					LOGGER.error("User Mapping failed !");
+
 				}
 			}
 			mongoClient.close();
@@ -66,7 +74,9 @@ public class RelationshipRepositoryMongo implements RelationshipRepositoryInterf
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+		//	System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
 			return null;
 		}
 	}
@@ -91,7 +101,9 @@ public class RelationshipRepositoryMongo implements RelationshipRepositoryInterf
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+		//	System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
 			return true;
 		}
 	}
@@ -128,7 +140,9 @@ public class RelationshipRepositoryMongo implements RelationshipRepositoryInterf
 			db.remove(query);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+		//	System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
 		}
 	}
 
