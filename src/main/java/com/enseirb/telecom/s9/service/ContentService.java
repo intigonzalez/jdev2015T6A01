@@ -2,8 +2,11 @@ package com.enseirb.telecom.s9.service;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 
+import com.enseirb.telecom.s9.Authorization;
 import com.enseirb.telecom.s9.Content;
+import com.enseirb.telecom.s9.ListContent;
 
 
 public interface ContentService {
@@ -25,4 +28,7 @@ public interface ContentService {
 	 */
 	public abstract void writeToFile(InputStream uploadedInputStream,
 			File dest);
+
+	public abstract ListContent getAllContent(List<Integer> groupID);
+
 }

@@ -34,7 +34,7 @@ Create a user
 	
 	{
 	  "user": {
-	    "userID": "userIddD",
+	    "userID": "user1@onehear.nl",
 	    "name": "name",
 	    "surname": "surname",
 	    "password": "password",
@@ -44,13 +44,25 @@ Create a user
 	}
 
 	<user>
-	  <userID>userIddD</userID>
-	  <boxID>boxIddD</boxID>
+	  <userID>userID</userID>
 	  <name>name</name>
 	  <surname>surname</surname>
 	  <password>password</password>
 	  <pubKey>pubKey</pubKey>
+	  <privateKey>privateKey</privateKey>
 	</user>
 
+Create a relation
+
+	<?xml version="1.0" encoding="UTF-8"?>
+	<relation>
+	  <email>user1@onehear.nl</email>
+	  <name>name</name>
+	  <surname>surname</surname>
+	  <pubKey>pubKey</pubKey>
+	  <aprouve>1</aprouve>
+	  <unix_time>0</unix_time>
+	  <groupID>0</groupID>
+	</relation>
 
 

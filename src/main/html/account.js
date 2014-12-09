@@ -58,7 +58,7 @@ app.controller('DisplayController', function() {
     };
 });
 
-app.controller('listCtrl', ['$scope', function ($scope) {
+app.controller('listFriendCtrl', ['$scope', function ($scope) {
 
     $scope.friendList = {};
 
@@ -78,6 +78,27 @@ app.controller('listCtrl', ['$scope', function ($scope) {
         "name": "Jeremy Clarkson",
         "surname": "Mr car",
         "email": "iduA@6.mir"
+    }];
+
+}]);
+
+
+app.controller('listVideoCtrl', ['$scope', function ($scope) {
+
+    $scope.videoList = {};
+
+    $scope.videoList.video = [{
+        "owner": "Steve Jobs",
+        "name": "Ipad presentation",
+        "email": "i-mNotHere@paradise.com"
+    },{
+        "owner": "Ellie Goulding",
+        "name": "Birthday party",
+        "email": "heyu@dreams.zz"
+    },{
+        "owner": "B4Ever",
+        "name": "Festival",
+        "email": "heyu@dreams.zz"
     }];
 
 }]);

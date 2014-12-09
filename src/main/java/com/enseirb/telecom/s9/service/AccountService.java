@@ -9,7 +9,7 @@ public interface AccountService {
 	 * @param id
 	 * @return
 	 */
-	public abstract boolean userExist(String email);
+	public abstract boolean userExist(User user);
 
 	public abstract User getUser(String email);
 
@@ -26,6 +26,6 @@ public interface AccountService {
 	 */
 	public abstract void saveUser(User user);
 	
-	public abstract void deleteUser(String email);
+	public abstract void deleteUser(String userID);
 
 }

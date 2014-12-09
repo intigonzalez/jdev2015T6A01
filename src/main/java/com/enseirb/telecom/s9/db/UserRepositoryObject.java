@@ -6,13 +6,21 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class UserRepositoryObject {
+	protected String userID;
+	protected String boxID;
+	protected String name;
+	protected String surname;
+	protected String password;
+	protected String pubKey;
+	protected String privateKey;
 	public UserRepositoryObject(){
 		
 	}
 	
-	public UserRepositoryObject(String email, String name, String surname, String password, String pubKey, String privateKey) {
+	public UserRepositoryObject(String userID,String boxID, String name, String surname, String password, String pubKey, String privateKey) {
 		super();
-		this.userID = email;
+		this.boxID=boxID;
+		this.userID = userID;
 		this.name = name;
 		this.surname = surname;
 		this.password = password;
@@ -22,6 +30,7 @@ public class UserRepositoryObject {
 	
 	public UserRepositoryObject(User user) {
 		this.userID = user.getUserID();
+		this.boxID=user.getBoxID();
 		this.name = user.getName();
 		this.surname = user.getSurname();
 		this.password = user.getPassword();
@@ -84,14 +93,16 @@ public class UserRepositoryObject {
 		return user;
 	}
 
-	protected String userID;
-    protected String name;
-    protected String surname;
-    protected String password;
-    protected String pubKey;
-    protected String privateKey;
 	public String getUserID() {
 		return userID;
+	}
+
+	public String getBoxID() {
+		return boxID;
+	}
+
+	public void setBoxID(String boxID) {
+		this.boxID = boxID;
 	}
 
 }

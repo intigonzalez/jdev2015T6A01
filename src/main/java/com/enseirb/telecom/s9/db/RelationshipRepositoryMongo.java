@@ -2,15 +2,18 @@ package com.enseirb.telecom.s9.db;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
-public class RelationshipRepositoryMongo implements CrudRepository<RelationshipRepositoryObject, String> {
+public class RelationshipRepositoryMongo implements RelationshipRepositoryInterface {
 
 	@Override
 	public <S extends RelationshipRepositoryObject> S save(S entity) {
@@ -98,8 +101,35 @@ public class RelationshipRepositoryMongo implements CrudRepository<RelationshipR
 
 	@Override
 	public Iterable<RelationshipRepositoryObject> findAll() {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("not yet invented");
+		List <RelationshipRepositoryObject> listOfAllRelation = new ArrayList<RelationshipRepositoryObject>();
+		
+		try{
+			MongoClient mongoClient = DbInit.Connect();
+			DBCollection db = mongoClient.getDB("mediahome").getCollection("relationships");
+			
+			ObjectMapper mapper = new ObjectMapper();
+			RelationshipRepositoryObject relation = null;
+			
+			DBCursor cursor = db.find();
+					
+			while(cursor.hasNext()){
+				try {
+					relation = mapper.readValue(cursor.next().toString(), RelationshipRepositoryObject.class);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					System.err.println("User Mapping failed ! ");
+				}
+				
+				listOfAllRelation.add(relation);
+			}
+			
+		}
+		catch (UnknownHostException e){
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");			
+		}
+		return listOfAllRelation;
 	}
 
 	@Override

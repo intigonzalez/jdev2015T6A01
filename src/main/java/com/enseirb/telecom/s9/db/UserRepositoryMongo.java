@@ -2,7 +2,9 @@ package com.enseirb.telecom.s9.db;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,23 +19,82 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 	@Override
 	public <S extends UserRepositoryObject> S save(S entity) {
 		if (exists(entity.getUserID())) {
-			delete(entity.getUserID());
-		}
-		try {
-			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
-			DBCollection dbUsers = db.getCollection("users");
+			entity = update(entity);
+		} else {
 
-			dbUsers.save(DbInit.createDBObject(entity));
-			mongoClient.close();
-		} catch (UnknownHostException | JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
+			try {
+
+				MongoClient mongoClient = DbInit.Connect();
+				DB db = mongoClient.getDB("mediahome");
+				DBCollection dbUsers = db.getCollection("users");
+
+				dbUsers.save(DbInit.createDBObject(entity));
+				mongoClient.close();
+			} catch (UnknownHostException | JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
 		}
+
 		return entity;
 	}
 
+public <S extends UserRepositoryObject> S update (S entity){
+		
+		MongoClient mongoClient;
+		try {
+			mongoClient = DbInit.Connect();
+
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbBox = db.getCollection("users");
+			BasicDBObject newDocument = new BasicDBObject();
+
+			if (entity.getUserID() != null) {
+				newDocument.append("$set",new BasicDBObject().append("userID", entity.getUserID()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getBoxID() != null) {
+				newDocument.append("$set", new BasicDBObject().append("boxID",entity.getBoxID()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getName() != null) {// need to verify
+				newDocument.append("$set",new BasicDBObject().append("name", entity.getName()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getName() != null) {
+				newDocument.append("$set",new BasicDBObject().append("firstname", entity.getName()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getPassword() != null) {
+				newDocument.append("$set",new BasicDBObject().append("password", entity.getPassword()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getPubKey() != null) {
+				newDocument.append("$set",new BasicDBObject().append("pubKey", entity.getPubKey()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getPubKey() != null) {
+				newDocument.append("$set",new BasicDBObject().append("privateKey", entity.getPrivateKey()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
+				dbBox.update(searchQuery, newDocument);
+			}
+
+			mongoClient.close();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return entity;
+	}
+	
 	@Override
 	public UserRepositoryObject findOne(String id) {
 		// The id is the email address
@@ -81,7 +142,7 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 				mongoClient.close();
 				return false;
 			}
-		} catch(UnknownHostException e) {
+		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.err.println("Connection to database failed ");
@@ -91,7 +152,6 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 	@Override
 	public Iterable<UserRepositoryObject> findAll() {
-		
 		//Iterable <UserRepositoryObject> listOfAllUsers = null;
 		List <UserRepositoryObject> listOfAllUsers = new ArrayList<UserRepositoryObject>();
 		
@@ -129,7 +189,6 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 
 	@Override
 	public Iterable<UserRepositoryObject> findAll(Iterable<String> ids) {
-
 		// throw new RuntimeException("not yet invented");
 
 		List<UserRepositoryObject> listOfAllUsers = new ArrayList<UserRepositoryObject>();
@@ -183,11 +242,19 @@ public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject,
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("users");
 
-			numberOfUser = dbUsers.getCount();
+			DBCursor cursor = dbUsers.find();
+			try {
+				mongoClient.close();
+				while (cursor.hasNext()) {
+					numberOfUser++;
+				}
+			} finally {
+				cursor.close();
+			}
 		}
+
 		catch (UnknownHostException e) {
-			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+
 		}
 
 		return numberOfUser;
