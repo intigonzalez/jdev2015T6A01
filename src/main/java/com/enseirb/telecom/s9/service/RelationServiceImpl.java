@@ -1,5 +1,8 @@
 package com.enseirb.telecom.s9.service;
 
+import java.util.Iterator;
+
+import com.enseirb.telecom.s9.ListRelation;
 import com.enseirb.telecom.s9.Relation;
 import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.db.CrudRepository;
@@ -12,6 +15,11 @@ public class RelationServiceImpl implements RelationService {
 	RelationshipRepositoryInterface relationshipDatabase;
 	CrudRepository<UserRepositoryObject, String> userDatabase;
 	
+	public RelationServiceImpl(RelationshipRepositoryInterface RelationshipDatabase, CrudRepository<UserRepositoryObject, String> userDatabase ) {
+		this.relationshipDatabase = RelationshipDatabase;
+		this.userDatabase = userDatabase;
+	}
+
 	public boolean RelationExist(String UserID,String email) {
 		return relationshipDatabase.exists(UserID, email);
 	}
@@ -26,6 +34,20 @@ public class RelationServiceImpl implements RelationService {
 			return relation.toRelation();
 		}
 	}
+	@Override
+	public ListRelation getListRelation(String userID) {
+		ListRelation listRelation = new ListRelation();
+		Iterable<RelationshipRepositoryObject> relation = relationshipDatabase.findAll();
+		Iterator<RelationshipRepositoryObject> itr = relation.iterator();
+		while (itr.hasNext()) {
+			RelationshipRepositoryObject relationshipRepositoryObject = itr.next();
+			if (relationshipRepositoryObject.getUserId().equals(userID)){
+				listRelation.getRelation().add(relationshipRepositoryObject.toRelation());
+			}
+		}
+		return listRelation;
+	}
+
 	@Override
 	public Relation createRelation(String userID, Relation relation) {
 		/*
@@ -79,23 +101,6 @@ public class RelationServiceImpl implements RelationService {
 		 relationshipDatabase.save(new RelationshipRepositoryObject(userID,relationIntoDb));
 		return;
 	}
-	public RelationServiceImpl(RelationshipRepositoryInterface RelationshipDatabase, CrudRepository<UserRepositoryObject, String> userDatabase ) {
-		this.relationshipDatabase = RelationshipDatabase;
-		this.userDatabase = userDatabase;
-	}
-		/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.enseirb.telecom.s9.service.AccountService#userExist(java.lang.String)
-	 */
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.enseirb.telecom.s9.service.AccountService#getUser(java.lang.String)
-	 */
-
 	@Override
 	public void deleteRelation(String userID, String email) {
 		if ( userDatabase.exists(email) ) {
@@ -108,4 +113,4 @@ public class RelationServiceImpl implements RelationService {
 		
 	}
 
-	}
+}

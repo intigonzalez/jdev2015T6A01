@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.enseirb.telecom.s9.ListRelation;
 import com.enseirb.telecom.s9.Relation;
 import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.db.CrudRepository;
@@ -54,6 +55,14 @@ public class RelationEndPoints {
 		} else {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_XML)
+	public ListRelation getListRelation(@PathParam("userID") String userIDFromPath) {
+		
+			return rManager.getListRelation(userIDFromPath);
+		
 	}
 
 	@POST
