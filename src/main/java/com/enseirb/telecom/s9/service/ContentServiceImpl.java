@@ -108,10 +108,10 @@ public class ContentServiceImpl implements ContentService {
 	@Override
 	public void updateContent(String contentsID) {
 		// TODO Auto-generated method stub
-		String test;
-		contentDatabase.findOne(contentsID).setStatus("success");
-		test = contentDatabase.findOne(contentsID).getStatus();
-		System.out.println("Done"+ test);
+		Content content = new Content();
+		content.setContentsID(contentsID);
+		content.setStatus("success");
+		contentDatabase.save(new ContentRepositoryObject(content));
 	}
 
 }
