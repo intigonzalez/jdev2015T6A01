@@ -32,7 +32,6 @@ public interface RequestUserService {
 	 * @param user the user to post
 	 * @throws IOException host is not reachable
 	 * @throws SuchUserException user doesn't exist on remote host 
-
 	 */
 	public abstract void post(User user) throws IOException, SuchUserException;
 

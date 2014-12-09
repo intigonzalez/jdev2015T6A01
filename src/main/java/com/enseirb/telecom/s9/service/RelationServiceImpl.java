@@ -2,8 +2,6 @@ package com.enseirb.telecom.s9.service;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
-
 import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.ListRelation;
 import com.enseirb.telecom.s9.Relation;
@@ -16,15 +14,13 @@ import com.enseirb.telecom.s9.exception.NoRelationException;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
 import com.enseirb.telecom.s9.request.RequestContentService;
 import com.enseirb.telecom.s9.request.RequestContentServiceImpl;
-import com.enseirb.telecom.s9.request.RequestUserService;
-import com.enseirb.telecom.s9.request.RequestUserServiceImpl;
 
 public class RelationServiceImpl implements RelationService {
 
 	RelationshipRepositoryInterface relationshipDatabase;
 	CrudRepository<UserRepositoryObject, String> userDatabase;
 	RequestContentService requetUserService = new RequestContentServiceImpl(
-			"http://localhost:9999/api/");
+			"http://localhost:9998/api/app/");
 	
 	public RelationServiceImpl(RelationshipRepositoryInterface RelationshipDatabase, CrudRepository<UserRepositoryObject, String> userDatabase ) {
 		this.relationshipDatabase = RelationshipDatabase;
@@ -127,7 +123,8 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public ListContent getAllContent(String userID,String relationID) {
 		try {
-			requetUserService.get(userID, relationID);
+			ListContent listContent=requetUserService.get(userID, relationID);
+			return listContent;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -139,6 +136,7 @@ public class RelationServiceImpl implements RelationService {
 			e.printStackTrace();
 		}
 		return null;
+	
 	}
 
 }

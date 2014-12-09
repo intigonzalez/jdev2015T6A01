@@ -122,6 +122,7 @@ public class ContentServiceImpl implements ContentService {
 			for (int i = 0;i<groupID.size();i++){
 				if (found) break;
 				if (contentRepositoryObject.getAuthorizations().size()==0){
+					System.err.println("Groupe information err");
 					listContent.getContent().add(contentRepositoryObject.toContent());
 				}
 				for (int j = 0;j>contentRepositoryObject.getAuthorizations().size();j++){

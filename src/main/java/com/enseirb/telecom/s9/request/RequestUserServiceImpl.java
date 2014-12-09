@@ -18,31 +18,22 @@ public class RequestUserServiceImpl implements RequestUserService {
 
 	private String url;
 	private Client client;
-	
+
 	public RequestUserServiceImpl(String url) {
 		this.url = url;
 		client = ClientBuilder.newClient();
 	}
-	
 
 	@Override
 	public User get(User user) throws IOException, NoSuchUserException {
-		User userGet =new User();
-//		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(url+user.getUserID());
-		try {
-		 userGet = target.request(MediaType.APPLICATION_XML_TYPE).get(User.class);
-		}catch (Exception e){
-			System.out.println(target.getUri());
-			e.printStackTrace();
-		}
-		
+		User userGet = new User();
+		// Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(url + user.getUserID());
+		userGet = target.request(MediaType.APPLICATION_XML_TYPE)
+				.get(User.class);
+
 		return userGet;
 	}
-	
-
-
-
 
 	@Override
 	public void post(User user) throws IOException, SuchUserException {
@@ -50,7 +41,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
 				.post(Entity.entity(user, MediaType.APPLICATION_XML),
 						Response.class);
-		
+
 		switch (Status.fromStatusCode(response.getStatus())) {
 		case ACCEPTED:
 			// normal statement but don't is normally not that
@@ -59,26 +50,26 @@ public class RequestUserServiceImpl implements RequestUserService {
 			// normal statement
 			break;
 		case OK:
-			// normal statement but don't use this because normally we need return a object 
+			// normal statement but don't use this because normally we need
+			// return a object
 			break;
-		case CONFLICT :
+		case CONFLICT:
 			throw new SuchUserException();
 		default:
-			throw new IOException("Can not conect to the server :" + response.getStatus());
+			throw new IOException("Can not conect to the server :"
+					+ response.getStatus());
 		}
 
 	}
-
 
 	@Override
 	public void put(User user) throws IOException, NoSuchUserException {
-		
-//		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(url+user.getUserID());
-//		try {
-		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
-				.put(Entity.entity(user, MediaType.APPLICATION_XML),
-						Response.class);
+
+		// Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(url + user.getUserID());
+		// try {
+		Response response = target.request(MediaType.APPLICATION_XML_TYPE).put(
+				Entity.entity(user, MediaType.APPLICATION_XML), Response.class);
 		switch (Status.fromStatusCode(response.getStatus())) {
 		case ACCEPTED:
 			// normal statement but don't is normally not that
@@ -87,42 +78,44 @@ public class RequestUserServiceImpl implements RequestUserService {
 			// normal statement
 			break;
 		case OK:
-			// normal statement but don't use this because normally we need return a object 
-			break;
-		case NOT_FOUND :
-			throw new NoSuchUserException();
-		default:
-			throw new IOException("Can not conect to the server :" + response.getStatus());
-		}
-//		}catch (Exception e){
-//			System.out.println(target.getUri());
-//			e.printStackTrace();
-//		}
-	}
-
-
-	@Override
-	public void delete(String userID) throws IOException, NoSuchUserException {
-//		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(this.url+userID);
-		Response response = target.request(MediaType.APPLICATION_XML_TYPE).delete();
-		switch (Status.fromStatusCode(response.getStatus())) {
-		case ACCEPTED:
-			// normal statement
-			break;
-		case CREATED:
-			// normal statement but don't is normally not that
-			break;
-		case OK:
-			// normal statement but don't use this because normally we need return a object 
+			// normal statement but don't use this because normally we need
+			// return a object
 			break;
 		case NOT_FOUND:
 			throw new NoSuchUserException();
 		default:
-			throw new IOException("Can not conect to the server :" + response.getStatus());
+			throw new IOException("Can not conect to the server :"
+					+ response.getStatus());
 		}
+		// }catch (Exception e){
+		// System.out.println(target.getUri());
+		// e.printStackTrace();
+		// }
 	}
 
-
+	@Override
+	public void delete(String userID) throws IOException, NoSuchUserException {
+		// Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(this.url + userID);
+		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
+				.delete();
+		switch (Status.fromStatusCode(response.getStatus())) {
+		case ACCEPTED:
+			// normal statement
+			break;
+		case CREATED:
+			// normal statement but don't is normally not that
+			break;
+		case OK:
+			// normal statement but don't use this because normally we need
+			// return a object
+			break;
+		case NOT_FOUND:
+			throw new NoSuchUserException();
+		default:
+			throw new IOException("Can not conect to the server :"
+					+ response.getStatus());
+		}
+	}
 
 }

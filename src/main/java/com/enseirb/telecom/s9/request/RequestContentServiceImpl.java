@@ -27,14 +27,11 @@ public class RequestContentServiceImpl implements RequestContentService {
 			NoRelationException {
 		ListContent listContent = new ListContent();
 
-		WebTarget target = client.target(url + relationID +"/relation/" + userID+ "/content/");
-		try {
+		WebTarget target = client.target(url + relationID +"/content/relation/" + userID);
+		
 			listContent = target.request(MediaType.APPLICATION_XML_TYPE).get(
 					ListContent.class);
-		} catch (Exception e) {
-			System.out.println(target.getUri());
-			e.printStackTrace();
-		}
+		
 		return listContent;
 	}
 
