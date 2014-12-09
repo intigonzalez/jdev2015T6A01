@@ -45,11 +45,11 @@ Create a user
 
 	<user>
 	  <userID>userIddD</userID>
+	  <boxID>boxIddD</boxID>
 	  <name>name</name>
 	  <surname>surname</surname>
 	  <password>password</password>
 	  <pubKey>pubKey</pubKey>
-	  <privateKey>privateKey</privateKey>
 	</user>
 
 
