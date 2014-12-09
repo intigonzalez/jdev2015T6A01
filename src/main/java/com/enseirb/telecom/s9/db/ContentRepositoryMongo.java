@@ -5,9 +5,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import org.bson.types.ObjectId;
-
+import com.enseirb.telecom.s9.Content;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
@@ -21,23 +19,102 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 
 	@Override
 	public <S extends ContentRepositoryObject> S save(S entity) {
-		if (entity.getId() != null && exists(entity.getId().toString())) {
-			delete(entity.getId().toString());
+		if (exists(entity.getId())) {
+			entity = update(entity);
+		} else {
+
+			try {
+
+				MongoClient mongoClient = DbInit.Connect();
+				DBCollection db = mongoClient.getDB("mediahome").getCollection("contents");
+				DBObject objectToSave = DbInit.createDBObject(entity);
+				db.save(objectToSave);
+				mongoClient.close();
+			} catch (UnknownHostException | JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
 		}
-		try {
-			MongoClient mongoClient = DbInit.Connect();
-			DBCollection db = mongoClient.getDB("mediahome").getCollection("contents");
-			DBObject objectToSave = DbInit.createDBObject(entity);
-			db.save(objectToSave);
-			mongoClient.close();
-		} catch (UnknownHostException | JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
+
 		return entity;
 	}
+	
 
+	/**
+	 * The method update a content's profile 
+	 * @param entity
+	 * @return entity
+	 */
+	public <S extends ContentRepositoryObject> S update (S entity){
+		
+		MongoClient mongoClient;
+		try {
+			mongoClient = DbInit.Connect();
+
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbBox = db.getCollection("contents");
+			BasicDBObject newDocument = new BasicDBObject();
+
+			if (entity.getId() != null) {
+				newDocument.append("$set",new BasicDBObject().append("id", entity.getId()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getName() != null) {
+				newDocument.append("$set", new BasicDBObject().append("name",entity.getName()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getUserId() != null) {// need to verify
+				newDocument.append("$set",new BasicDBObject().append("userId", entity.getUserId()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getLink() != null) {
+				newDocument.append("$set",new BasicDBObject().append("link", entity.getLink()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getPreviewLink() != null) {
+				newDocument.append("$set",new BasicDBObject().append("previewLink", entity.getPreviewLink()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getUnixTime() != null) {
+				newDocument.append("$set",new BasicDBObject().append("unixTime", entity.getUnixTime()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getStatus() != null) {
+				newDocument.append("$set",new BasicDBObject().append("status", entity.getStatus()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getAuthorizations() != null) {
+				newDocument.append("$set",new BasicDBObject().append("authorizations", entity.getAuthorizations()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getComment() != null) {
+				newDocument.append("$set",new BasicDBObject().append("comment", entity.getComment()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				dbBox.update(searchQuery, newDocument);
+			}
+
+
+			mongoClient.close();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return entity;
+	}
+	
+	
+	
+	
 	@Override
 	public <S extends ContentRepositoryObject> Iterable<S> save(Iterable<S> entities) {
 		// TODO Auto-generated method stub
@@ -75,22 +152,28 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 
 	@Override
 	public boolean exists(String id) {
+
 		try {
 			MongoClient mongoClient = DbInit.Connect();
-			DBCollection db = mongoClient.getDB("mediahome").getCollection("contents");
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbUsers = db.getCollection("contents");
 
-			BasicDBObject query = new BasicDBObject("_id", id);
-			DBCursor cursor = db.find(query);
-			boolean result = cursor.hasNext();
-			mongoClient.close();
-			return result;
+			BasicDBObject query = new BasicDBObject("id", id);
+			DBCursor cursor = dbUsers.find(query);
+
+			if (cursor.hasNext()) {
+				mongoClient.close();
+				return true;
+			} else {
+				mongoClient.close();
+				return false;
+			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.err.println("Connection to database failed ");
 			return true;
 		}
-
 	}
 
 	@Override

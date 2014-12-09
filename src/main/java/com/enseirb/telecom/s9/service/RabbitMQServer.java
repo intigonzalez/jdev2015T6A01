@@ -3,6 +3,7 @@ package com.enseirb.telecom.s9.service;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import com.enseirb.telecom.s9.QueueConsumerApp;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
@@ -13,7 +14,7 @@ public class RabbitMQServer {
 	ConnectionFactory factory;
 	Connection connection;
 	Channel channel;
-	
+
 	public RabbitMQServer() {
 		QUEUE_NAME = "celery";
 		factory = new ConnectionFactory();
@@ -26,13 +27,27 @@ public class RabbitMQServer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	public void addTask(String task) throws UnsupportedEncodingException, IOException {
+
+/**
+ * Add the task and ask for the end message
+ * @param task
+ * @param id
+ * @throws UnsupportedEncodingException
+ * @throws IOException
+ */
+	public void addTask(String task, String id)
+			throws UnsupportedEncodingException, IOException {
 		channel.basicPublish("", QUEUE_NAME, new AMQP.BasicProperties.Builder()
-		.contentType("application/json").contentEncoding("utf-8")
-		.build(), task.getBytes("utf-8"));
+				.contentType("application/json").contentEncoding("utf-8")
+				.build(), task.getBytes("utf-8"));
 
+		try {
+			QueueConsumerApp.getQueueMessage(id);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-
 }

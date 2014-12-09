@@ -3,13 +3,15 @@ import subprocess
 from celery import Celery
 
 app = Celery('tasks', backend='amqp', broker='amqp://')
+app.config_from_object('settings')
+app.conf.CELERY_TASK_SERIALIZER = "json"
 
 @app.task(ignore_result=True)
-def print_hello():
+def print_hello(toto,tot):
     print 'hello there'
 
 #Generate prime numbers (just a test)
-@app.task
+@app.task(serializer="json")
 def gen_prime(x):
     multiples = []
     results = []
