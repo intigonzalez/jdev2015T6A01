@@ -2,6 +2,8 @@ package com.enseirb.telecom.s9.db;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.bson.types.ObjectId;
@@ -93,8 +95,39 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 
 	@Override
 	public Iterable<ContentRepositoryObject> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		//Iterable <UserRepositoryObject> listOfAllUsers = null;
+		List <ContentRepositoryObject> listOfAllContent = new ArrayList<ContentRepositoryObject>();
+		
+		try{
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbUsers = db.getCollection("contents");
+			
+			ObjectMapper mapper = new ObjectMapper();
+			ContentRepositoryObject content = null;
+			
+			DBCursor cursor = dbUsers.find();
+					
+			while(cursor.hasNext()){
+				try {
+					content = mapper.readValue(cursor.next().toString(), ContentRepositoryObject.class);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					System.err.println("User Mapping failed ! ");
+				}
+				
+				listOfAllContent.add(content);
+			}
+			
+		}
+		catch (UnknownHostException e){
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");			
+		}
+		return listOfAllContent;
+		
+		//throw new RuntimeException("not yet invented");
 	}
 
 	@Override

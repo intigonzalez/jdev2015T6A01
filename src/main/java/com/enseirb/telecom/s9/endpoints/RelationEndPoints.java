@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.ListRelation;
 import com.enseirb.telecom.s9.Relation;
 import com.enseirb.telecom.s9.User;
@@ -55,6 +56,25 @@ public class RelationEndPoints {
 		} else {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
+	}
+	
+	/**
+	 * get the video of RelationID (local) for userID
+	 * @param contentsID
+	 * @param relationID
+	 * @param userID
+	 * @return
+	 */
+	@GET
+	@Path("{relationID}/content")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public ListContent getToRelation(@PathParam("contentsID") String contentsID,@PathParam("relationID") String relationID,@PathParam("userID") String userID) {
+
+		if (rManager.RelationExist(userID, relationID)){
+			Relation relation = rManager.getRelation(userID, relationID);
+			return rManager.getAllContent(relation.getGroupID());
+		 }
+		return null;
 	}
 	
 	@GET

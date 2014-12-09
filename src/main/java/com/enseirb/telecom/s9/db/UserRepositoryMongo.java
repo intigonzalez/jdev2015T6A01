@@ -17,6 +17,31 @@ import com.mongodb.MongoClient;
 public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject, String> {
 
 	@Override
+	public boolean exists(String id) {
+		try {
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbUsers = db.getCollection("users");
+	
+			BasicDBObject query = new BasicDBObject("userID", id);
+			DBCursor cursor = dbUsers.find(query);
+	
+			if (cursor.hasNext()) {
+				mongoClient.close();
+				return true;
+			} else {
+				mongoClient.close();
+				return false;
+			}
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.err.println("Connection to database failed ");
+			return true;
+		}
+	}
+
+	@Override
 	public <S extends UserRepositoryObject> S save(S entity) {
 		if (exists(entity.getUserID())) {
 			entity = update(entity);
@@ -122,31 +147,6 @@ public <S extends UserRepositoryObject> S update (S entity){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
-		}
-	}
-
-	@Override
-	public boolean exists(String id) {
-		try {
-			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
-			DBCollection dbUsers = db.getCollection("users");
-
-			BasicDBObject query = new BasicDBObject("userID", id);
-			DBCursor cursor = dbUsers.find(query);
-
-			if (cursor.hasNext()) {
-				mongoClient.close();
-				return true;
-			} else {
-				mongoClient.close();
-				return false;
-			}
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.err.println("Connection to database failed ");
-			return true;
 		}
 	}
 

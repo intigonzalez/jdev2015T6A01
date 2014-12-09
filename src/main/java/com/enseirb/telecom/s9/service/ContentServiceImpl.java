@@ -120,8 +120,11 @@ public class ContentServiceImpl implements ContentService {
 		while (itr.hasNext()) {
 			Boolean found = false;
 			ContentRepositoryObject contentRepositoryObject = itr.next();
-			for (int i = 0;i>groupID.size();i++){
+			for (int i = 0;i<groupID.size();i++){
 				if (found) break;
+				if (contentRepositoryObject.getAuthorizations().size()==0){
+					listContent.getContent().add(contentRepositoryObject.toContent());
+				}
 				for (int j = 0;j>contentRepositoryObject.getAuthorizations().size();j++){
 					if (found) break;
 					if (groupID.get(i)==contentRepositoryObject.getAuthorizations().get(j).getGroup().getGroupID()){

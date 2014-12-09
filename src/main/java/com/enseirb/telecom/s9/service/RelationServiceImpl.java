@@ -1,7 +1,9 @@
 package com.enseirb.telecom.s9.service;
 
 import java.util.Iterator;
+import java.util.List;
 
+import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.ListRelation;
 import com.enseirb.telecom.s9.Relation;
 import com.enseirb.telecom.s9.User;
@@ -111,6 +113,12 @@ public class RelationServiceImpl implements RelationService {
 		}
 		relationshipDatabase.delete(userID, email);
 		
+	}
+
+	@Override
+	public ListContent getAllContent(List<Integer> groupID) {
+		
+		return null;
 	}
 
 }

@@ -1,6 +1,9 @@
 package com.enseirb.telecom.s9.service;
 
 
+import java.util.List;
+
+import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.ListRelation;
 import com.enseirb.telecom.s9.Relation;
 
@@ -17,4 +20,6 @@ public interface RelationService {
 	public abstract void deleteRelation(String userID, String email);
 
 	public abstract ListRelation getListRelation(String userID);
+
+	public abstract ListContent getAllContent(List<Integer> groupID);
 }
