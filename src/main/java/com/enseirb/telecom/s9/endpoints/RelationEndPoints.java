@@ -24,6 +24,7 @@ import com.enseirb.telecom.s9.db.CrudRepository;
 import com.enseirb.telecom.s9.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.s9.db.UserRepositoryMongo;
 import com.enseirb.telecom.s9.db.UserRepositoryObject;
+import com.enseirb.telecom.s9.exception.NoSuchUserException;
 import com.enseirb.telecom.s9.service.AccountService;
 import com.enseirb.telecom.s9.service.AccountServiceImpl;
 import com.enseirb.telecom.s9.service.RelationService;
@@ -35,7 +36,8 @@ import com.enseirb.telecom.s9.service.RelationServiceImpl;
 @Path("app/{userID}/relation")
 public class RelationEndPoints {
 
-	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
+	RelationService rManager = new RelationServiceImpl(
+			new RelationshipRepositoryMongo(), new UserRepositoryMongo());
 
 	// move in groupe
 	// @GET
@@ -46,20 +48,22 @@ public class RelationEndPoints {
 	// WebApplicationException
 	// throw new WebApplicationException(Status.CONFLICT);
 	// }
-	
+
 	@GET
 	@Path("{username}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Relation getRelation(@PathParam("userID") String userIDFromPath, @PathParam("username") String relationIDFromPath) {
+	public Relation getRelation(@PathParam("userID") String userIDFromPath,
+			@PathParam("username") String relationIDFromPath) {
 		if (rManager.RelationExist(userIDFromPath, relationIDFromPath) == true) {
 			return rManager.getRelation(userIDFromPath, relationIDFromPath);
 		} else {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 	}
-	
+
 	/**
 	 * get the video of RelationID (local) for userID
+	 * 
 	 * @param contentsID
 	 * @param relationID
 	 * @param userID
@@ -68,32 +72,61 @@ public class RelationEndPoints {
 	@GET
 	@Path("{relationID}/content")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ListContent getToRelation(@PathParam("userID") String contentsID,@PathParam("relationID") String relationID,@PathParam("userID") String userID) {
+	public ListContent getToRelation(@PathParam("userID") String contentsID,
+			@PathParam("relationID") String relationID,
+			@PathParam("userID") String userID) {
 
-		if (rManager.RelationExist(userID, relationID)){
+		if (rManager.RelationExist(userID, relationID)) {
 			Relation relation = rManager.getRelation(userID, relationID);
-			return rManager.getAllContent(relationID,userID);
-		 }
+			return rManager.getAllContent(relationID, userID);
+		}
 		return null;
 	}
-	
+
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ListRelation getListRelation(@PathParam("userID") String userIDFromPath) {
-		
-			return rManager.getListRelation(userIDFromPath);
-		
+	public ListRelation getListRelation(
+			@PathParam("userID") String userIDFromPath) {
+
+		return rManager.getListRelation(userIDFromPath);
+
 	}
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postFriend(@PathParam("userID") String userIDFromPath, Relation relation) throws URISyntaxException {
+	public Response postFriend(@PathParam("userID") String userIDFromPath,
+			Relation relation) throws URISyntaxException {
 		// TODO: ajout un ami
 		// add a friend
 		if (rManager.RelationExist(userIDFromPath, relation.getEmail()) == false) {
-			rManager.createRelation(userIDFromPath, relation);
+			try {
+				rManager.createRelation(userIDFromPath, relation);
+			} catch (NoSuchUserException e) {
+				throw new WebApplicationException(404);
+			}
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(relation.getEmail())).build();
+		} else {
+
+			return Response.status(409).build();
+		}
+	}
+
+	@POST
+	@Path("{relationID}")
+	public Response postFriend2(@PathParam("userID") String userIDFromPath,
+			@PathParam("relationID") String relationIDString)
+			throws URISyntaxException {
+		// TODO: ajout un ami
+		// add a friend
+		if (rManager.RelationExist(userIDFromPath, relationIDString) == false) {
+			try {
+				rManager.createDefaultRelation(userIDFromPath, relationIDString);
+			} catch (NoSuchUserException e) {
+				throw new WebApplicationException(404);
+			}
+			// NHE that the answer we expect from a post (see location header)
+			return Response.created(new URI(relationIDString)).build();
 		} else {
 
 			return Response.status(409).build();
@@ -103,7 +136,8 @@ public class RelationEndPoints {
 	@PUT
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putFriend(@PathParam("userID") String userIDFromPath, @PathParam("username") String friendEmail, Relation relation) {
+	public Response putFriend(@PathParam("userID") String userIDFromPath,
+			@PathParam("username") String friendEmail, Relation relation) {
 		// TODO: change de groupe et confirme une demande d'ajout
 		// Pour confirme un ami, il faut : regarder la valeur qui existe dans la
 		// data base si on a decide quelle serait sous la forme zero demande
@@ -126,7 +160,8 @@ public class RelationEndPoints {
 	@DELETE
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteFriend(@PathParam("userID") String userIDFromPath, @PathParam("username") String relationIDFromPath) {
+	public Response deleteFriend(@PathParam("userID") String userIDFromPath,
+			@PathParam("username") String relationIDFromPath) {
 		// TODO: delete this friends thinks to send a message to the over box
 		// and after this delete the user
 		rManager.deleteRelation(userIDFromPath, relationIDFromPath);
