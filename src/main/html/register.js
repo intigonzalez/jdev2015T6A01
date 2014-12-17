@@ -1,3 +1,7 @@
+
+PREFIX_RQ = "http://localhost:9998";
+
+
 var RegisterForm = angular.module('RegisterForm', []);
 //Hello
 RegisterForm.controller("mainController", function ($scope, $http) {
@@ -5,7 +9,7 @@ RegisterForm.controller("mainController", function ($scope, $http) {
     $scope.submitData = function (person) {
         var data = {};
         data.user = person;
-        $http.post("/api/app/account/",data )
+        $http.post(PREFIX_RQ+"/api/app/account/",data )
             .success(function (data, status, headers, config)
             {
                 console.log("Succeed");
