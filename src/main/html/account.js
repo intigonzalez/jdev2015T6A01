@@ -1,10 +1,10 @@
 /**
  * Created by Anas on 27/11/2014.
  */
-/**
- * Created by Charles-Damien on 27/11/14.
- */
-var userID = "vince@onehear.nl";
+
+
+var userID = "user4@test.com";
+PREFIX_RQ = "http://192.168.2.120:9998";
 var app = angular.module('Account', []);
 
 app.controller('UserController', function($http) {
@@ -22,7 +22,7 @@ app.controller('UserController', function($http) {
         return this.tab === value;
     };
     this.getUser = function() {
-        $http.get("/api/app/account/"+userID)
+        $http.get(PREFIX_RQ+"/api/app/account/"+userID)
             .success(function( data, status, headers, config) {
                 user.person = data.user;
             })
@@ -33,7 +33,7 @@ app.controller('UserController', function($http) {
     this.putUser = function (person) {
         var data = {};
         data.user = person;
-        $http.put("/api/app/account/"+this.person.userID, data )
+        $http.put(PREFIX_RQ+"/api/app/account/"+this.person.userID, data )
             .success(function (data, status, headers, config)
             {
                 console.log("Succeed");
@@ -58,8 +58,41 @@ app.controller('DisplayController', function() {
     };
 });
 
-app.controller('listFriendCtrl', ['$scope', function ($scope) {
+app.controller('listFriendCtrl' , function ($http) {
 
+    // *****************  Get FriendList ****************
+    var friendList = this;
+    this.getFriendList = function() {
+        $http.get(PREFIX_RQ+"/api/app/"+userID+"/friends")
+            .success(function(data, status, headers, config) {
+                friendList.friend = data.user;
+                // ==> What to Do If success !!
+             })
+            .error(function (data, status, headers, config){
+                console.log("Failed");
+            })
+    };
+    friendList.friend = this.getFriendList();
+
+
+    // ********  Add a Friend to the friendList **********
+    this.addFriend = function(userID,friend) {
+        var data = {};
+        data.user = friend;
+        $http.put(PREFIX_RQ + "/api/app/" + userID + "/friends", data)
+            .success(function (data, status, headers, config) {
+                console.log("Succeed");
+                // Friend Added successfully
+            })
+            .error(function (data, status, headers, config) {
+                console.log("Failed");
+            })
+    }
+  //  this.addFriend();
+
+
+
+    /*
     $scope.friendList = {};
 
     $scope.friendList.friend = [{
@@ -79,8 +112,9 @@ app.controller('listFriendCtrl', ['$scope', function ($scope) {
         "surname": "Mr car",
         "email": "iduA@6.mir"
     }];
+    */
 
-}]);
+});
 
 
 app.controller('listVideoCtrl', ['$scope', function ($scope) {
