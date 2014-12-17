@@ -63,7 +63,7 @@ public class ContentEndPoints {
 	@GET
 	@Path("relation/{relationID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ListContent getLocalFromRelation(@PathParam("contentsID") String contentsID,@PathParam("relationID") String relationID,@PathParam("userID") String userID) {
+	public ListContent getLocalFromRelation(@PathParam("relationID") String relationID,@PathParam("userID") String userID) {
 		RelationServiceImpl relationService = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
 		 if (relationService.RelationExist(userID, relationID)){
 			Relation relation = relationService.getRelation(userID, relationID);
