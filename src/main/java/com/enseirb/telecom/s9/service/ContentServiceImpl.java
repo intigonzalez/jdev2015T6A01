@@ -27,7 +27,7 @@ public class ContentServiceImpl implements ContentService {
 	static CrudRepository<ContentRepositoryObject, String> contentDatabase;
 	RabbitMQServer rabbitMq;
 	private RequestUserService requetUserService = new RequestUserServiceImpl(
-			"http://localhost:9999/api/app/account/");
+			ApplicationContext.getProperties().getProperty("CentralURL") + "/api/app/account/");
 
 	public ContentServiceImpl(
 			CrudRepository<ContentRepositoryObject, String> videoDatabase, RabbitMQServer rabbitMq) {
