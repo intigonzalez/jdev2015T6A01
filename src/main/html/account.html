@@ -3,7 +3,7 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Media Home : Manage your account</title>
-    <script src="template.css"></script>
+    <link rel="stylesheet" href="template.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <script type="text/javascript" src="angular.min.js"></script>
     <script src="account.js"></script>
@@ -150,7 +150,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <button ng-click="user.putUser(user.person)" class="btn btn-lg btn-success btn-block"> Update information </button>
+                                    <button ng-click="user.putUser(user.person)" class="btn btn-lg btn-primary btn-block" ng-class="user.class"> Update information </button>
                                 </div>
 
 
@@ -252,7 +252,8 @@
 </div>
     </div>
 </body>
-
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 

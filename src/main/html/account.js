@@ -3,8 +3,23 @@
  */
 
 
-var userID = "user4@test.com";
-PREFIX_RQ = "http://192.168.2.120:9998";
+var parseQueryString = function() {
+
+    var str = window.location.search;
+    var objURL = {};
+
+    str.replace(
+        new RegExp( "([^?=&]+)(=([^&]*))?", "g" ),
+        function( $0, $1, $2, $3 ){
+            objURL[ $1 ] = $3;
+        }
+    );
+    return objURL;
+};
+var params = parseQueryString();
+
+var userID = params["email"];
+PREFIX_RQ = "http://localhost:9998";
 var app = angular.module('Account', []);
 
 app.controller('UserController', function($http) {
@@ -12,6 +27,7 @@ app.controller('UserController', function($http) {
     user.person = {};
     this.tab = 1;
     this.setTab = function() {
+        user.class = ""; // Reset the buttons.
         if (this.tab==1) {
             this.tab = 2;
         } else {
@@ -27,7 +43,7 @@ app.controller('UserController', function($http) {
                 user.person = data.user;
             })
             .error(function( data, status, headers, config) {
-                console.log("Failed");
+                console.log("Failed while getting User Informations");
             })
     };
     this.putUser = function (person) {
@@ -37,10 +53,12 @@ app.controller('UserController', function($http) {
             .success(function (data, status, headers, config)
             {
                 console.log("Succeed");
+                user.class = "btn-success";
             })
             .error(function (data, status, headers, config)
             {
-                console.log("Failed");
+                console.log("Failed while editing User Informations");
+                user.class = "btn-danger";
             });
     };
     this.getUser();
@@ -69,7 +87,7 @@ app.controller('listFriendCtrl' , function ($http) {
                 // ==> What to Do If success !!
              })
             .error(function (data, status, headers, config){
-                console.log("Failed");
+                console.log("Failed getting Friend list");
             })
     };
     friendList.friend = this.getFriendList();
