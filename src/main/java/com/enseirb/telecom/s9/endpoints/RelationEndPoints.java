@@ -49,7 +49,7 @@ public class RelationEndPoints {
 	
 	@GET
 	@Path("{username}")
-	@Produces(MediaType.APPLICATION_XML)
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Relation getRelation(@PathParam("userID") String userIDFromPath, @PathParam("username") String relationIDFromPath) {
 		if (rManager.RelationExist(userIDFromPath, relationIDFromPath) == true) {
 			return rManager.getRelation(userIDFromPath, relationIDFromPath);
@@ -78,7 +78,7 @@ public class RelationEndPoints {
 	}
 	
 	@GET
-	@Produces(MediaType.APPLICATION_XML)
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ListRelation getListRelation(@PathParam("userID") String userIDFromPath) {
 		
 			return rManager.getListRelation(userIDFromPath);
