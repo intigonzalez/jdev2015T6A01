@@ -3,9 +3,8 @@
  */
 
 
-var userID = "user4@test.com";
-PREFIX_RQ = "http://192.168.2.120:9998";
-var app = angular.module('Account', []);
+var userID = "user10@onehear.nl";
+PREFIX_RQ = "http://blue:9998";var app = angular.module('Account', []);
 
 app.controller('UserController', function($http) {
     var user = this;
@@ -58,14 +57,15 @@ app.controller('DisplayController', function() {
     };
 });
 
-app.controller('listFriendCtrl' , function ($http) {
+app.controller('listFriendCtrl' , function ($http,$scope) {
 
     // *****************  Get FriendList ****************
     var friendList = this;
     this.getFriendList = function() {
-        $http.get(PREFIX_RQ+"/api/app/"+userID+"/friends")
+        $http.get(PREFIX_RQ+"/api/app/"+userID+"/relation")
             .success(function(data, status, headers, config) {
-                friendList.friend = data.user;
+                friendList.friend = data.listRelation;
+                $scope.friendList=friendList;
                 // ==> What to Do If success !!
              })
             .error(function (data, status, headers, config){
@@ -76,10 +76,9 @@ app.controller('listFriendCtrl' , function ($http) {
 
 
     // ********  Add a Friend to the friendList **********
-    this.addFriend = function(userID,friend) {
-        var data = {};
-        data.user = friend;
-        $http.put(PREFIX_RQ + "/api/app/" + userID + "/friends", data)
+    $scope.addFriend = function(friend_userID) {
+
+        $http.post(PREFIX_RQ + "/api/app/" + userID + "/relation/"+friend_userID)
             .success(function (data, status, headers, config) {
                 console.log("Succeed");
                 // Friend Added successfully
