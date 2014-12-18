@@ -3,6 +3,7 @@ package com.enseirb.telecom.s9.service;
 import java.io.IOException;
 import java.util.Iterator;
 
+import com.enseirb.telecom.s9.Box;
 import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.ListRelation;
 import com.enseirb.telecom.s9.Relation;
@@ -12,13 +13,16 @@ import com.enseirb.telecom.s9.db.RelationshipRepositoryInterface;
 import com.enseirb.telecom.s9.db.RelationshipRepositoryObject;
 import com.enseirb.telecom.s9.db.UserRepositoryObject;
 import com.enseirb.telecom.s9.exception.NoRelationException;
+import com.enseirb.telecom.s9.exception.NoSuchBoxException;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
+import com.enseirb.telecom.s9.request.RequestBoxServiceImpl;
 import com.enseirb.telecom.s9.request.RequestContentService;
 import com.enseirb.telecom.s9.request.RequestContentServiceImpl;
 import com.enseirb.telecom.s9.request.RequestRelationService;
 import com.enseirb.telecom.s9.request.RequestRelationServiceImpl;
 import com.enseirb.telecom.s9.request.RequestUserService;
 import com.enseirb.telecom.s9.request.RequestUserServiceImpl;
+import com.sun.research.ws.wadl.Request;
 
 public class RelationServiceImpl implements RelationService {
 
@@ -39,26 +43,39 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public void updateRelation(String userID) throws IOException, NoSuchUserException {
-		Iterable<RelationshipRepositoryObject> relation = relationshipDatabase
-				.findAll();
-		
-		Iterator<RelationshipRepositoryObject> itr = relation.iterator();
+	public void updateRelation(String userID) throws IOException,
+			NoSuchUserException {
+
 		RequestRelationService rrs = new RequestRelationServiceImpl();
-		while (itr.hasNext()) {
-			RelationshipRepositoryObject rro = itr.next();
-			if (rro.getUserId().equals(userID)){
-			User relationUpdate = rrs.get("http://localhost:9998/api/app/"+rro.getEmail()+"/relation/from/"+userID);
-			Relation relationIntoDb = relationshipDatabase.findOne(userID,relationUpdate.getUserID()).toRelation();
-			relationIntoDb.setName(relationUpdate.getName());
-			relationIntoDb.setSurname(relationUpdate.getSurname());
-			relationshipDatabase.save(new RelationshipRepositoryObject(userID,relationIntoDb));
+		RequestUserService requestServ = new RequestUserServiceImpl(
+				"http://localhost:9999/api/app/");
+
+		for (RelationshipRepositoryObject rro : relationshipDatabase.findAll()) {
+
+			if (rro.getUserId().equals(userID)) {
+
+				System.out.println(rro.getEmail());
+
+				try {
+					Box boxRelation = requestServ.getBox(rro.getEmail());
+
+					User relationUpdate = rrs.get("http://"
+							+ boxRelation.getIp() + "/api/app/"
+							+ rro.getEmail() + "/relation/from/" + userID);
+					Relation relationIntoDb = relationshipDatabase.findOne(
+							userID, relationUpdate.getUserID()).toRelation();
+					relationIntoDb.setName(relationUpdate.getName());
+					relationIntoDb.setSurname(relationUpdate.getSurname());
+					relationshipDatabase.save(new RelationshipRepositoryObject(
+							userID, relationIntoDb));
+				} catch (NoSuchBoxException e) {
+					System.out.println("All users should have a box, ignoring");
+				}
+
 			}
 		}
 		rrs.close();
 	}
-
-	
 
 	@Override
 	public Relation getRelation(String userID, String email) {
@@ -185,10 +202,7 @@ public class RelationServiceImpl implements RelationService {
 				relationIntoDb));
 		return;
 	}
-	
-	
 
-	
 	@Override
 	public void deleteRelation(String userID, String email) {
 		if (userDatabase.exists(email)) {
@@ -203,7 +217,8 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public ListContent getAllContent(String userID, String relationID) {
 		try {
-			ListContent listContent = requestContentService.get(userID, relationID);
+			ListContent listContent = requestContentService.get(userID,
+					relationID);
 			return listContent;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
