@@ -19,8 +19,8 @@ var parseQueryString = function() {
 var params = parseQueryString();
 
 var userID = params["email"];
-var app = angular.module('Account', []);
-PREFIX_RQ = "http://blue:9998";
+var app = angular.module('MediaHome', []);
+PREFIX_RQ = "http://localhost:9998";
 
 app.controller('UserController', function($http) {
     var user = this;
