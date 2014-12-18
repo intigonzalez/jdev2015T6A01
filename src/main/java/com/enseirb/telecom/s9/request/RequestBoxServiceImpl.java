@@ -77,10 +77,11 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 	public void put(Box box) throws IOException {
 		// TODO Auto-generated method stub
 		
-		WebTarget target = client.target(url + box.getBoxID());
+		WebTarget target = client.target(url +box.getBoxID());
 		// try {
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE).put(
 				Entity.entity(box, MediaType.APPLICATION_XML), Response.class);
+		
 		switch (Status.fromStatusCode(response.getStatus())) {
 		case ACCEPTED:
 			// normal statement but don't is normally not that

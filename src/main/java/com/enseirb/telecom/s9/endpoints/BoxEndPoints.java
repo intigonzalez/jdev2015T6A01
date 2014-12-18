@@ -42,7 +42,7 @@ public class BoxEndPoints {
 	}
 
 	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postBox(Box box) throws URISyntaxException {
 		// add a comment
 		

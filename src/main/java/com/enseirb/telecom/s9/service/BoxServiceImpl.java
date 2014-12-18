@@ -62,7 +62,7 @@ public class BoxServiceImpl implements BoxService{
 	
 	public Box createBox(Box box){
 		
-		box.setBoxID(ApplicationContext.getProperties().getProperty("BoxID"));
+		//box.setBoxID(ApplicationContext.getProperties().getProperty("BoxID"));
 		try {
 			requetBoxService.post(box);
 		} catch (IOException e) {
@@ -80,6 +80,7 @@ public class BoxServiceImpl implements BoxService{
 	public void saveBox(Box box){
 		
 		try {
+			boxDatabase.save(new BoxRepositoryObject(box));
 			requetBoxService.put(box);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -88,8 +89,6 @@ public class BoxServiceImpl implements BoxService{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		boxDatabase.save(new BoxRepositoryObject(box));
 	}
 	
 	public void deleteBox(String boxID){
