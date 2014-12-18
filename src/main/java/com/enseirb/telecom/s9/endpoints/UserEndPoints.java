@@ -47,7 +47,6 @@ public class UserEndPoints {
 		} else {
 			return Response.status(409).build();
 		}
-
 	}
 
 	@PUT
