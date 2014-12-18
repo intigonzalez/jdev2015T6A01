@@ -18,9 +18,10 @@ import javax.ws.rs.core.Response.Status;
 
 import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.ListRelation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.enseirb.telecom.s9.Relation;
 import com.enseirb.telecom.s9.User;
-import com.enseirb.telecom.s9.db.CrudRepository;
 import com.enseirb.telecom.s9.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.s9.db.UserRepositoryMongo;
 import com.enseirb.telecom.s9.db.UserRepositoryObject;
@@ -35,9 +36,10 @@ import com.enseirb.telecom.s9.service.RelationServiceImpl;
 // The Java class will be hosted at the URI path "/app/friends"
 @Path("app/{userID}/relation")
 public class RelationEndPoints {
+	private static final Logger LOGGER = LoggerFactory.getLogger(RelationEndPoints.class);
 
-	RelationService rManager = new RelationServiceImpl(
-			new RelationshipRepositoryMongo(), new UserRepositoryMongo());
+
+	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
 
 	@GET
 	@Path("from/{username}")
@@ -56,6 +58,7 @@ public class RelationEndPoints {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Relation getRelation(@PathParam("userID") String userIDFromPath,
 			@PathParam("username") String relationIDFromPath) {
+
 		if (rManager.RelationExist(userIDFromPath, relationIDFromPath) == true) {
 			return rManager.getRelation(userIDFromPath, relationIDFromPath);
 		} else {
@@ -139,7 +142,9 @@ public class RelationEndPoints {
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putFriend(@PathParam("userID") String userIDFromPath,
+
 			@PathParam("username") String friendEmail, Relation relation) {
+
 		// TODO: change de groupe et confirme une demande d'ajout
 		// Pour confirme un ami, il faut : regarder la valeur qui existe dans la
 		// data base si on a decide quelle serait sous la forme zero demande
@@ -147,6 +152,7 @@ public class RelationEndPoints {
 		// l'user local qui fait la demande pour passer a deux la valeur et
 		// quelle etait a un OK sinon refus
 		// need to verify the friend and after this modifies the friend
+
 		if (relation.getEmail().equals(friendEmail)) {
 			if (rManager.RelationExist(userIDFromPath, relation.getEmail())) {
 				rManager.saveRelation(userIDFromPath, relation);
@@ -154,15 +160,16 @@ public class RelationEndPoints {
 			} else {
 				return Response.status(404).build();
 			}
+
 		} else {
-			return Response.status(403).build();
+			return Response.status(404).build();
 		}
+
 	}
 	
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateListFriend(@PathParam("userID") String userIDFromPath) {
-
 		try{
 				rManager.updateRelation(userIDFromPath);
 				return Response.status(200).build();
@@ -173,16 +180,18 @@ public class RelationEndPoints {
 		}
 	}
 
+	
+	
 	@DELETE
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteFriend(@PathParam("userID") String userIDFromPath,
 			@PathParam("username") String relationIDFromPath) {
+
 		// TODO: delete this friends thinks to send a message to the over box
 		// and after this delete the user
 		rManager.deleteRelation(userIDFromPath, relationIDFromPath);
 		return Response.status(200).build();
-
 	}
-
 }
+
