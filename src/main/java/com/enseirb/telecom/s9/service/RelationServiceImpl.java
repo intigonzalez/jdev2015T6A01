@@ -46,6 +46,23 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
+	public User getMe(String userID) {
+		UserRepositoryObject user = userDatabase.findOne(userID);
+		
+		if (user == null) {
+			return null;
+		} else {
+			User userComplet = user.toUser();
+			User userReturn = new User();
+			userReturn.setName(userComplet.getName());
+			userReturn.setSurname(userComplet.getSurname());
+			userReturn.setUserID(userComplet.getUserID());
+			return userReturn;
+		}
+
+	}
+
+	@Override
 	public ListRelation getListRelation(String userID) {
 		ListRelation listRelation = new ListRelation();
 		Iterable<RelationshipRepositoryObject> relation = relationshipDatabase

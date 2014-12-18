@@ -6,6 +6,7 @@ import java.util.List;
 import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.ListRelation;
 import com.enseirb.telecom.s9.Relation;
+import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
 
 public interface RelationService {
@@ -26,4 +27,6 @@ public interface RelationService {
 
 	public abstract void createDefaultRelation(String userIDFromPath,
 			String relationIDString) throws NoSuchUserException;
+
+	public abstract User getMe(String userIDFromPath);
 }

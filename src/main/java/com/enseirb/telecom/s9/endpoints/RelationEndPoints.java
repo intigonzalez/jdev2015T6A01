@@ -39,15 +39,17 @@ public class RelationEndPoints {
 	RelationService rManager = new RelationServiceImpl(
 			new RelationshipRepositoryMongo(), new UserRepositoryMongo());
 
-	// move in groupe
-	// @GET
-	// @Produces(MediaType.APPLICATION_XML)
-	// public ListRelation getFriendliste() {
-	// // TODO: get the list of relation
-	// // NHE: easy way to return an error for a rest api: throw an
-	// WebApplicationException
-	// throw new WebApplicationException(Status.CONFLICT);
-	// }
+	@GET
+	@Path("from/{username}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public User getMe(@PathParam("userID") String userIDFromPath,
+			@PathParam("username") String relationIDFromPath) {
+		if (rManager.RelationExist(userIDFromPath, relationIDFromPath) == true) {
+			return rManager.getMe(userIDFromPath);
+		} else {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+	}
 
 	@GET
 	@Path("{username}")
@@ -156,6 +158,24 @@ public class RelationEndPoints {
 			return Response.status(403).build();
 		}
 	}
+	
+//	@PUT
+//	@Path("{username}")
+//	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+//	public Response updateListFriend(@PathParam("userID") String userIDFromPath,
+//			@PathParam("username") String friendEmail, Relation relation) {
+//
+//		if (relation.getEmail().equals(friendEmail)) {
+//			if (rManager.RelationExist(userIDFromPath, relation.getEmail())) {
+//				rManager.saveRelation(userIDFromPath, relation);
+//				return Response.status(200).build();
+//			} else {
+//				return Response.status(404).build();
+//			}
+//		} else {
+//			return Response.status(403).build();
+//		}
+//	}
 
 	@DELETE
 	@Path("{username}")

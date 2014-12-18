@@ -1,8 +1,8 @@
 package com.enseirb.telecom.s9.db;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 
 import com.enseirb.telecom.s9.Authorization;
 import com.enseirb.telecom.s9.Comment;
@@ -19,13 +19,13 @@ public class ContentRepositoryObject {
 	String previewLink;
 	String status;
 	List<Comment> comment;
-	List<Authorization> authorizations;
+	List<Authorization> authorization;
 
 	public ContentRepositoryObject() {
 
 	}
 
-	public ContentRepositoryObject(String id, String name, String userId, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<Authorization> authorizations) {
+	public ContentRepositoryObject(String id, String name, String userId, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<Authorization> authorization) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -35,7 +35,7 @@ public class ContentRepositoryObject {
 		this.previewLink = previewLink;
 		this.status = status;
 		this.comment = comment;
-		this.authorizations = authorizations;
+		this.authorization = authorization;
 	}
 
 	public ContentRepositoryObject(Content content) {
@@ -47,7 +47,7 @@ public class ContentRepositoryObject {
 		previewLink = content.getPreviewLink();
 		status = content.getStatus();
 		this.comment = content.getComment();
-		this.authorizations = content.getAuthorization();
+		this.authorization = content.getAuthorization();
 	}
 	public String getId() {
 		return id;
@@ -97,12 +97,12 @@ public class ContentRepositoryObject {
 		this.comment = comment;
 	}
 
-	public List<Authorization> getAuthorizations() {
-		return authorizations;
+	public List<Authorization> getAuthorization() {
+		return authorization;
 	}
 
-	public void setAuthorizations(List<Authorization> authorizations) {
-		this.authorizations = authorizations;
+	public void setAuthorizations(List<Authorization> authorization) {
+		this.authorization = authorization;
 	}
 	public String getPreviewLink() {
 		return previewLink;
@@ -127,7 +127,7 @@ public class ContentRepositoryObject {
 		content.setPreviewLink(this.getPreviewLink());
 		content.setUnixTime(this.getUnixTime());
 		content.setStatus(this.getStatus());
-		content.getAuthorization().addAll(this.getAuthorizations());
+		content.getAuthorization().addAll(this.getAuthorization());
 		content.getComment().addAll(this.getComment());
 		return content;
 	}
