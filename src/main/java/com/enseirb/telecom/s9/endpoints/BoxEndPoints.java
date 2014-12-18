@@ -16,6 +16,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enseirb.telecom.s9.Box;
 import com.enseirb.telecom.s9.db.BoxRepositoryMongo;
 import com.enseirb.telecom.s9.service.BoxService;
@@ -24,6 +27,8 @@ import com.enseirb.telecom.s9.service.BoxServiceImpl;
 // The Java class will be hosted at the URI path "/myresource"
 @Path("box")
 public class BoxEndPoints {
+	private static final Logger LOGGER = LoggerFactory.getLogger(BoxEndPoints.class);
+
 
 	
 	BoxService boxManager = new BoxServiceImpl(new BoxRepositoryMongo());

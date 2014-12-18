@@ -22,6 +22,8 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.ListContent;
@@ -38,6 +40,8 @@ import com.google.common.io.Files;
 // The Java class will be hosted at the URI path "/app/content"
 @Path("app/{userID}/content")
 public class ContentEndPoints {
+	
+private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.class);
 
 	ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo(), new RabbitMQServer());
 
@@ -100,8 +104,10 @@ public class ContentEndPoints {
 		// save it
 		uManager.writeToFile(uploadedInputStream, upload);
 
-		//System.out.println("File uploaded to : " + upload.getAbsolutePath());
-		System.out.println("File type : " + fileType[0]);
+
+	//	System.out.println("File uploaded to : " + upload.getAbsolutePath());
+		LOGGER.debug("New file uploaded {} with the type {}",fileType[0]);
+
 		
 		Content content = new Content();
 		content.setName(upload.getName());
