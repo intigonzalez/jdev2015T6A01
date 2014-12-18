@@ -1,6 +1,7 @@
 package com.enseirb.telecom.s9.service;
 
 
+import java.io.IOException;
 import java.util.List;
 
 import com.enseirb.telecom.s9.ListContent;
@@ -29,4 +30,6 @@ public interface RelationService {
 			String relationIDString) throws NoSuchUserException;
 
 	public abstract User getMe(String userIDFromPath);
+
+	public abstract void updateRelation(String userIDFromPath) throws IOException, NoSuchUserException;
 }

@@ -15,12 +15,16 @@ import com.enseirb.telecom.s9.exception.NoRelationException;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
 import com.enseirb.telecom.s9.request.RequestContentService;
 import com.enseirb.telecom.s9.request.RequestContentServiceImpl;
+import com.enseirb.telecom.s9.request.RequestRelationService;
+import com.enseirb.telecom.s9.request.RequestRelationServiceImpl;
+import com.enseirb.telecom.s9.request.RequestUserService;
+import com.enseirb.telecom.s9.request.RequestUserServiceImpl;
 
 public class RelationServiceImpl implements RelationService {
 
 	RelationshipRepositoryInterface relationshipDatabase;
 	CrudRepository<UserRepositoryObject, String> userDatabase;
-	RequestContentService requetUserService = new RequestContentServiceImpl(
+	RequestContentService requestContentService = new RequestContentServiceImpl(
 			"http://localhost:9998/api/app/");
 
 	public RelationServiceImpl(
@@ -33,6 +37,28 @@ public class RelationServiceImpl implements RelationService {
 	public boolean RelationExist(String UserID, String email) {
 		return relationshipDatabase.exists(UserID, email);
 	}
+
+	@Override
+	public void updateRelation(String userID) throws IOException, NoSuchUserException {
+		Iterable<RelationshipRepositoryObject> relation = relationshipDatabase
+				.findAll();
+		
+		Iterator<RelationshipRepositoryObject> itr = relation.iterator();
+		RequestRelationService rrs = new RequestRelationServiceImpl();
+		while (itr.hasNext()) {
+			RelationshipRepositoryObject rro = itr.next();
+			if (rro.getUserId().equals(userID)){
+			User relationUpdate = rrs.get("http://localhost:9998/api/app/"+rro.getEmail()+"/relation/from/"+userID);
+			Relation relationIntoDb = relationshipDatabase.findOne(userID,relationUpdate.getUserID()).toRelation();
+			relationIntoDb.setName(relationUpdate.getName());
+			relationIntoDb.setSurname(relationUpdate.getSurname());
+			relationshipDatabase.save(new RelationshipRepositoryObject(userID,relationIntoDb));
+			}
+		}
+		rrs.close();
+	}
+
+	
 
 	@Override
 	public Relation getRelation(String userID, String email) {
@@ -48,7 +74,7 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public User getMe(String userID) {
 		UserRepositoryObject user = userDatabase.findOne(userID);
-		
+
 		if (user == null) {
 			return null;
 		} else {
@@ -80,7 +106,8 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public Relation createRelation(String userID, Relation relation) throws NoSuchUserException {
+	public Relation createRelation(String userID, Relation relation)
+			throws NoSuchUserException {
 		/*
 		 * TODO(0) : Check the content, add a state 1 to the approuve value
 		 * TODO(1) : Check the user really exists from the central server
@@ -109,8 +136,7 @@ public class RelationServiceImpl implements RelationService {
 			return relationshipDatabase.save(
 					new RelationshipRepositoryObject(userID, relation))
 					.toRelation();
-		}
-		else{
+		} else {
 			throw new NoSuchUserException();
 		}
 
@@ -159,7 +185,10 @@ public class RelationServiceImpl implements RelationService {
 				relationIntoDb));
 		return;
 	}
+	
+	
 
+	
 	@Override
 	public void deleteRelation(String userID, String email) {
 		if (userDatabase.exists(email)) {
@@ -174,7 +203,7 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public ListContent getAllContent(String userID, String relationID) {
 		try {
-			ListContent listContent = requetUserService.get(userID, relationID);
+			ListContent listContent = requestContentService.get(userID, relationID);
 			return listContent;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

@@ -159,23 +159,19 @@ public class RelationEndPoints {
 		}
 	}
 	
-//	@PUT
-//	@Path("{username}")
-//	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-//	public Response updateListFriend(@PathParam("userID") String userIDFromPath,
-//			@PathParam("username") String friendEmail, Relation relation) {
-//
-//		if (relation.getEmail().equals(friendEmail)) {
-//			if (rManager.RelationExist(userIDFromPath, relation.getEmail())) {
-//				rManager.saveRelation(userIDFromPath, relation);
-//				return Response.status(200).build();
-//			} else {
-//				return Response.status(404).build();
-//			}
-//		} else {
-//			return Response.status(403).build();
-//		}
-//	}
+	@PUT
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response updateListFriend(@PathParam("userID") String userIDFromPath) {
+
+		try{
+				rManager.updateRelation(userIDFromPath);
+				return Response.status(200).build();
+		}
+		catch (Exception e){
+			e.printStackTrace();
+			return Response.status(403).build();
+		}
+	}
 
 	@DELETE
 	@Path("{username}")
