@@ -2,6 +2,7 @@ package com.enseirb.telecom.s9.request;
 
 import java.io.IOException;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -10,7 +11,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.enseirb.telecom.s9.Box;
 import com.enseirb.telecom.s9.User;
+import com.enseirb.telecom.s9.exception.NoSuchBoxException;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
 import com.enseirb.telecom.s9.exception.SuchUserException;
 
@@ -116,6 +119,22 @@ public class RequestUserServiceImpl implements RequestUserService {
 			throw new IOException("Can not conect to the server :"
 					+ response.getStatus());
 		}
+	}
+
+	public Box getBox(String email) throws IOException, NoSuchBoxException {
+
+		Box boxGet = new Box();
+		// Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(url +"account/"+ email + "/box");
+		try {
+			boxGet = target.request(MediaType.APPLICATION_XML_TYPE).get(
+					Box.class);
+		} catch (WebApplicationException e) {
+			if (e.getResponse().getStatus() == 404)
+				throw new NoSuchBoxException();
+		}
+		return boxGet;
+
 	}
 
 }

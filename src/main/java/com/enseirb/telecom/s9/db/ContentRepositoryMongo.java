@@ -91,8 +91,8 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
 				dbBox.update(searchQuery, newDocument);
 			}
-			if (entity.getAuthorizations() != null) {
-				newDocument.append("$set",new BasicDBObject().append("authorizations", entity.getAuthorizations()));
+			if (entity.getAuthorization() != null) {
+				newDocument.append("$set",new BasicDBObject().append("authorizations", entity.getAuthorization()));
 				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
 				dbBox.update(searchQuery, newDocument);
 			}

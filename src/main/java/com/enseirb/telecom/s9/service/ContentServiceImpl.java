@@ -27,15 +27,18 @@ public class ContentServiceImpl implements ContentService {
 	static CrudRepository<ContentRepositoryObject, String> contentDatabase;
 	RabbitMQServer rabbitMq;
 	private RequestUserService requetUserService = new RequestUserServiceImpl(
-			ApplicationContext.getProperties().getProperty("CentralURL") + "/api/app/account/");
+			ApplicationContext.getProperties().getProperty("CentralURL")
+					+ "/api/app/account/");
 
 	public ContentServiceImpl(
-			CrudRepository<ContentRepositoryObject, String> videoDatabase, RabbitMQServer rabbitMq) {
+			CrudRepository<ContentRepositoryObject, String> videoDatabase,
+			RabbitMQServer rabbitMq) {
 		this.contentDatabase = videoDatabase;
 		this.rabbitMq = rabbitMq;
 	}
-	public ContentServiceImpl(){
-		
+
+	public ContentServiceImpl() {
+
 	}
 
 	@Override
@@ -58,37 +61,43 @@ public class ContentServiceImpl implements ContentService {
 	public Content createContent(Content content, String srcfile, String id) {
 
 		// Only if the file is a video content
-		if(content.getType().equals("video")){
+		if (content.getType().equals("video")) {
 			try {
 
-			Task task = new Task();
-			task.setTask("tasks.print_shell");
-			task.setId(id);
-			task.getArgs().add(srcfile);
-			task.getArgs().add(ApplicationContext.getProperties().getProperty("contentPath") + content.getLink());
-	 
-			XStream xstream = new XStream(new JsonHierarchicalStreamDriver() {
-				public HierarchicalStreamWriter createWriter(Writer writer) {
-					return new JsonWriter(writer, JsonWriter.DROP_ROOT_MODE);
-				}
-			});
-			
-			rabbitMq.addTask(xstream.toXML(task), task.getId());
+				Task task = new Task();
+				task.setTask("tasks.print_shell");
+				task.setId(id);
+				task.getArgs().add(srcfile);
+				task.getArgs().add(
+						ApplicationContext.getProperties().getProperty(
+								"contentPath")
+								+ content.getLink());
+
+				XStream xstream = new XStream(
+						new JsonHierarchicalStreamDriver() {
+							public HierarchicalStreamWriter createWriter(
+									Writer writer) {
+								return new JsonWriter(writer,
+										JsonWriter.DROP_ROOT_MODE);
+							}
+						});
+
+				rabbitMq.addTask(xstream.toXML(task), task.getId());
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
-		
+
 		return contentDatabase.save(new ContentRepositoryObject(content))
 				.toContent();
 	}
 
 	@Override
 	public void saveContent(Content content) {
-		//TODO(0) : Manage the content update. Check all informations are done ! 
+		// TODO(0) : Manage the content update. Check all informations are done
+		// !
 		contentDatabase.save(new ContentRepositoryObject(content));
 	}
 
@@ -97,8 +106,9 @@ public class ContentServiceImpl implements ContentService {
 	public void writeToFile(InputStream uploadedInputStream, File dest) {
 
 		try {
-			//NHE: we are not in C
-			Files.copy(uploadedInputStream, dest.toPath(),StandardCopyOption.REPLACE_EXISTING);
+			// NHE: we are not in C
+			Files.copy(uploadedInputStream, dest.toPath(),
+					StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
 			// TODO deal with it
 			e.printStackTrace();
@@ -119,19 +129,25 @@ public class ContentServiceImpl implements ContentService {
 		while (itr.hasNext()) {
 			Boolean found = false;
 			ContentRepositoryObject contentRepositoryObject = itr.next();
-			for (int i = 0;i<groupID.size();i++){
-				if (found) break;
-				if (contentRepositoryObject.getAuthorizations().size()==0){
-					System.err.println("Groupe information err");
-					listContent.getContent().add(contentRepositoryObject.toContent());
-				}
-				for (int j = 0;j>contentRepositoryObject.getAuthorizations().size();j++){
-					if (found) break;
-					if (groupID.get(i)==contentRepositoryObject.getAuthorizations().get(j).getGroup().getGroupID()){
-						listContent.getContent().add(contentRepositoryObject.toContent());
-						found = true;
+			for (int i = 0; i < groupID.size(); i++) {
+				if (found)
+					break;
+				if (contentRepositoryObject.getAuthorization() != null)
+					if (contentRepositoryObject.getAuthorization().size() == 0) {
+						System.err.println("Groupe information err");
+						listContent.getContent().add(
+								contentRepositoryObject.toContent());
 					}
-					else {
+				for (int j = 0; j < contentRepositoryObject.getAuthorization()
+						.size(); j++) {
+					if (found)
+						break;
+					if (groupID.get(i) == contentRepositoryObject
+							.getAuthorization().get(j).getGroupID()) {
+						listContent.getContent().add(
+								contentRepositoryObject.toContent());
+						found = true;
+					} else {
 						System.err.println("Groupe is not the same");
 					}
 				}
