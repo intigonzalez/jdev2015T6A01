@@ -2350,3 +2350,6 @@ label {
     margin: 30px 0;
 }
 
+#viewHeader button {
+    float: right;
+}

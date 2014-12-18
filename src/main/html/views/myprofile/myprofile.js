@@ -12,19 +12,20 @@ angular.module('myApp.myprofile', ['ngRoute'])
     .controller('ProfileCtrl', ['$http', function ($http) {
 
         var userID = "vince@onehear.nl"
-        var prefixRequestPath = "http://localhost:9998";
+        //var prefixRequestPath = "http://localhost:9998";
+        var prefixRequestPath = "";
 
 
         var user = this;
         user.person = {};
-
-        this.tab = 1;
+        user.class= "";
+        this.tab = 0;
         this.setTab = function () {
-            user.class = ""; // Reset the buttons.
-            if (this.tab == 1) {
-                this.tab = 2;
-            } else {
+            user.class="";
+            if (this.tab == 0) {
                 this.tab = 1;
+            } else {
+                this.tab = 0;
             }
         };
         this.isSetTab = function (value) {
@@ -42,7 +43,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
                     console.log("Failed while getting User Informations");
                 })
         };
-        this.putUser = function ($http, person) {
+        this.putUser = function (person) {
             var data = {};
             data.user = person;
             $http.put(prefixRequestPath + "/api/app/account/" + this.person.userID, data)
