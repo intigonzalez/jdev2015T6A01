@@ -2,13 +2,13 @@
 
 angular.module('myApp.myvideos', ['ngRoute'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/myvideos', {
-    templateUrl: 'views/myvideos/myvideos.html',
-    controller: 'MyVideosCtrl'
-  });
-}])
+    .config(['$routeProvider', function ($routeProvider) {
+        $routeProvider.when('/myvideos', {
+            templateUrl: 'views/myvideos/myvideos.html',
+            controller: 'MyVideosCtrl'
+        });
+    }])
 
-.controller('MyVideosCtrl', [function() {
+    .controller('MyVideosCtrl', [function () {
 
-}]);
+    }]);

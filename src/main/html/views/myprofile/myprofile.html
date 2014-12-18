@@ -1,0 +1,28 @@
+<div class="col-md-12" ng-controller="ProfileCtrl as user">
+    <div id="viewHeader">
+        <h2>My Profile</h2>
+    </div>
+    <div class="row" >
+        <div class="col-md-4 col-xs-12" >
+            <p class="centered"><a href="profile.html"><img src="assets/img/ui-sam.jpg" class="img-circle" width="80"></a></p>
+            <h3 class="centered">{{user.person.name}}</h3>
+            <h3 class="centered">{{user.person.surname}}</h3>
+        </div>
+
+        <div class="col-md-8 col-xs-12">
+
+            <div class="row">
+                <h3 class="heading"> Email : </h3>
+                <p> {{user.person.userID}} </p>
+            </div>
+
+            <div class="row">
+                <h3 class="heading"> Password : </h3>
+                <p> {{user.person.password}} </p>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
