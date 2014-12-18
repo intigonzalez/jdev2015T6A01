@@ -42,7 +42,6 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 	public void post(Box box) throws IOException, SuchUserException {
 		// TODO Auto-generated method stub
 		
-		box.setPrivateKey(null);//??????
 		WebTarget target = client.target(url);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
 				.post(Entity.entity(box, MediaType.APPLICATION_XML),
