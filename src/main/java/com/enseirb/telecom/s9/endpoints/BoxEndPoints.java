@@ -46,15 +46,14 @@ public class BoxEndPoints {
 	public Response postBox(Box box) throws URISyntaxException {
 		// add a comment
 		
-		if (boxManager.boxExist(box.getBoxID()) == false) {
-			boxManager.saveBox(box);
+		if (boxManager.boxExist(box) == false) {
+			boxManager.createBox(box);
 			return Response.created(new URI(box.getBoxID())).build();
 		} else {
 			return Response.status(409).build();
 		}
 		
 		//return Response.status(Status.SERVICE_UNAVAILABLE).build();
-
 	}
 
 	@PUT
@@ -64,7 +63,7 @@ public class BoxEndPoints {
 		// need to verify user
 		// and after this modifies the comment
 		
-		if (boxManager.boxExist(box.getBoxID()) == true) {
+		if (boxManager.boxExist(box) == true) {
 			boxManager.saveBox(box);
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(box.getBoxID())).build();
@@ -78,17 +77,17 @@ public class BoxEndPoints {
 
 	@DELETE
 	@Path("{boxId}")
-	public Response deleteBox(@PathParam("boxId") String boxId) {
+	public Response deleteBox(@PathParam("boxId") String boxID) {
 		// need to verify user
 		// and after this delete the comment
 		
-		if (boxManager.boxExist(boxId) == true) {
-			boxManager.deleteBox(boxId);
+		//if (boxManager.boxExist(box) == true) {
+			boxManager.deleteBox(boxID);
 			// NHE that the answer we expect from a post (see location header)
 			return Response.accepted().build();
-		} else {
-			return Response.status(409).build();
-		}		
+		//} else {
+			//return Response.status(409).build();
+		//}		
 	}
 
 }

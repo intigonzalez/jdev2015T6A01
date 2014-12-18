@@ -5,7 +5,7 @@ import com.enseirb.telecom.s9.Box;
 public interface BoxService {
 
 	
-	public abstract boolean boxExist(String boxID);
+	public abstract boolean boxExist(Box box);
 
 	public abstract Box getBox(String boxID);
 
