@@ -11,11 +11,6 @@ angular.module('myApp.myprofile', ['ngRoute'])
 
     .controller('ProfileCtrl', ['$http', function ($http) {
 
-        var userID = "vince@onehear.nl"
-        //var prefixRequestPath = "http://localhost:9998";
-        var prefixRequestPath = "";
-
-
         var user = this;
         user.person = {};
         user.class= "";
@@ -35,7 +30,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
 
 
         this.getUser = function ($http) {
-            $http.get(prefixRequestPath + "/api/app/account/" + userID)
+            $http.get(PREFIX_RQ + "/api/app/account/" + userID)
                 .success(function (data, status, headers, config) {
                     user.person = data.user;
                 })
@@ -46,7 +41,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
         this.putUser = function (person) {
             var data = {};
             data.user = person;
-            $http.put(prefixRequestPath + "/api/app/account/" + this.person.userID, data)
+            $http.put(PREFIX_RQ + "/api/app/account/" + this.person.userID, data)
                 .success(function (data, status, headers, config) {
                     console.log("Succeed");
                     user.class = "btn-success";
