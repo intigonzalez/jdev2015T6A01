@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.UUID;
 
 import javax.management.relation.RelationService;
@@ -16,8 +17,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -50,11 +54,39 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 	// The Java method will process HTTP GET requests
 	// The Java method will produce content identified by the MIME Media
 	// type "text/plain"
+	
+	/**
+	 * Get all contents for a user. This request only called by videos owners
+	 * @param userID
+	 * @return Content list
+	 */
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public ListContent getAllContentsFromUser(@PathParam("userID") String userID) {
+		return uManager.getAllContentsFromUser(userID);
+	}
+	
+	/**
+	 * Get a specific content from the owner
+	 * @param userID
+	 * @return Content list
+	 */
 	@GET
 	@Path("{contentsID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Content getIt(@PathParam("contentsID") String contentsID) {
-		return uManager.getContent(contentsID);
+	public Content getIt(@PathParam("userID") String userID, @PathParam("contentsID") String contentsID) {
+		Content content = uManager.getContent(contentsID);
+		if ( content.getLogin().equals(userID) ) {
+			return content;
+		}
+		else {
+			// No URL parameter idLanguage was sent
+		    ResponseBuilder builder = Response.status(Response.Status.FORBIDDEN);
+		    builder.entity("This content doesn't belong to you ! ");
+		    Response response = builder.build();
+		    throw new WebApplicationException(response);	
+		}
+		
 	}
 
 	/**

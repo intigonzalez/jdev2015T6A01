@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,8 +14,9 @@ import com.enseirb.telecom.s9.ApplicationContext;
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.Task;
+import com.enseirb.telecom.s9.db.ContentRepositoryInterface;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
-import com.enseirb.telecom.s9.db.CrudRepository;
+import com.enseirb.telecom.s9.db.RelationshipRepositoryObject;
 import com.enseirb.telecom.s9.request.RequestUserService;
 import com.enseirb.telecom.s9.request.RequestUserServiceImpl;
 import com.thoughtworks.xstream.XStream;
@@ -24,14 +26,14 @@ import com.thoughtworks.xstream.io.json.JsonWriter;
 
 public class ContentServiceImpl implements ContentService {
 
-	static CrudRepository<ContentRepositoryObject, String> contentDatabase;
+	static ContentRepositoryInterface contentDatabase;
 	RabbitMQServer rabbitMq;
 	private RequestUserService requetUserService = new RequestUserServiceImpl(
 			ApplicationContext.getProperties().getProperty("CentralURL")
 					+ "/api/app/account/");
 
 	public ContentServiceImpl(
-			CrudRepository<ContentRepositoryObject, String> videoDatabase,
+			ContentRepositoryInterface videoDatabase,
 			RabbitMQServer rabbitMq) {
 		this.contentDatabase = videoDatabase;
 		this.rabbitMq = rabbitMq;
@@ -46,7 +48,22 @@ public class ContentServiceImpl implements ContentService {
 
 		return contentDatabase.exists(contentsID);
 	}
-
+	@Override
+	public ListContent getAllContentsFromUser(String userID) {
+		contentDatabase.findAllFromUser(userID);
+		
+		ListContent listContent = new ListContent();
+		Iterable<ContentRepositoryObject> contentsDb = contentDatabase.findAllFromUser(userID);
+		Iterator<ContentRepositoryObject> itr = contentsDb.iterator();
+		while (itr.hasNext()) {
+			ContentRepositoryObject contentRepositoryObject = itr.next();
+			if (contentRepositoryObject.getUserId().equals(userID)) {
+				listContent.getContent().add(contentRepositoryObject.toContent());
+			}
+		}
+		return listContent;
+		
+	}
 	@Override
 	public Content getContent(String contentsID) {
 		ContentRepositoryObject content = contentDatabase.findOne(contentsID);
@@ -118,7 +135,7 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public void deleteContent(String contentsID) {
-		this.contentDatabase.delete(contentsID);
+		contentDatabase.delete(contentsID);
 
 	}
 

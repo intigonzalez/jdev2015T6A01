@@ -13,6 +13,8 @@ public interface ContentService {
 	
 	public abstract boolean contentExist(String contentsID);
 
+	public abstract ListContent getAllContentsFromUser(String userID);
+	
 	public abstract Content getContent(String contentsID);
 
 	public abstract Content createContent(Content content, String srcfile, String id);
