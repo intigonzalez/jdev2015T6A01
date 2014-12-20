@@ -8,11 +8,10 @@
                 <div class="project">
                     <div class="photo-wrapper">
                         <div class="photo">
-                            <a class="fancybox" href="assets/img/portfolio/port04.jpg">
+                            <a class="fancybox fancybox.iframe" href="baseline.html?url={{content.link}}/dash/low_dash.mpd">
                                 <img class="img-responsive" ng-src="{{content.link}}/folder.jpg" alt="">
                             </a>
                             <p>{{content.link}}</p>
-                            <p>{{content.name}}</p>
                         </div>
                         <div class="overlay"></div>
                     </div>
@@ -25,9 +24,10 @@
 <!--script for this page-->
 
 <script type="text/javascript">
-    $(function () {
+    $(document).ready(function () {
         //    fancybox
-        jQuery(".fancybox").fancybox();
+        $(".fancybox").fancybox();
     });
 
 </script>
+</div>

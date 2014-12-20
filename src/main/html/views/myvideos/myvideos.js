@@ -17,11 +17,16 @@ angular.module('myApp.myvideos', ['ngRoute'])
     .controller('MyVideosController', ['$scope', '$http', function($scope, $http) {
 
     var videos = this;
-    videos.list = {};
+    videos.list = [];
     this.getVideos = function() {
         $http.get(PREFIX_RQ + "/api/app/" + userID + "/content")
             .success(function (data, status, headers, config) {
-                videos.list = data.listContent.content;
+                if (angular.isArray(data.listContent.content) == false) {
+                    videos.list.push(data.listContent.content);
+                }
+                else {
+                    videos.list = data.listContent.content;
+                }
             })
             .error(function (data, status, headers, config) {
                 console.log("Failed while getting Videos Informations");
