@@ -8,8 +8,9 @@ angular.module('myApp.friends', ['ngRoute'])
             controller: 'FriendsCtrl'
         });
     }])
-
-    .controller('FriendsCtrl', ['$scope', '$http', function ($scope, $http) {
+    .controller('FriendsCtrl', [ function () {
+    }])
+    .controller('FriendsController', ['$scope', '$http', function ($scope, $http) {
 
 
         // *****************  Get FriendList ****************

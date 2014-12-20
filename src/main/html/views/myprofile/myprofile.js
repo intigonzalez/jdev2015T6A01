@@ -8,8 +8,10 @@ angular.module('myApp.myprofile', ['ngRoute'])
             controller: 'ProfileCtrl'
         });
     }])
+    .controller('ProfileCtrl',[function() {
 
-    .controller('ProfileCtrl', ['$http', function ($http) {
+    }])
+    .controller('ProfileController', ['$http', function ($http) {
 
         var user = this;
         user.person = {};
@@ -27,9 +29,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
             return this.tab === value;
         };
 
-
-
-        this.getUser = function ($http) {
+        this.getUser = function () {
             $http.get(PREFIX_RQ + "/api/app/account/" + userID)
                 .success(function (data, status, headers, config) {
                     user.person = data.user;
@@ -51,6 +51,6 @@ angular.module('myApp.myprofile', ['ngRoute'])
                     user.class = "btn-danger";
                 });
         };
-        this.getUser($http);
+        this.getUser();
 
     }]);
