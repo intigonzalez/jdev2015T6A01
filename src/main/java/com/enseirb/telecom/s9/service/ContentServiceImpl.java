@@ -82,13 +82,10 @@ public class ContentServiceImpl implements ContentService {
 			try {
 
 				Task task = new Task();
-				task.setTask("tasks.print_shell");
+				task.setTask("adaptation.commons.ddo");
 				task.setId(id);
 				task.getArgs().add(srcfile);
-				task.getArgs().add(
-						ApplicationContext.getProperties().getProperty(
-								"contentPath")
-								+ content.getLink());
+				task.getArgs().add(content.getLink());
 
 				XStream xstream = new XStream(
 						new JsonHierarchicalStreamDriver() {

@@ -23,7 +23,7 @@ angular.module('myApp.myvideos', ['ngRoute'])
         console.log(userAgent);
         if ( userAgent.indexOf("Chrome") >= 0 || userAgent.indexOf("Windows") >=0 ) {
             videos.prefix = 'dash';
-            videos.suffix = 'dash/low_dash.mpd';
+            videos.suffix = 'dash/playlist.mpd';
         }
         else {
             videos.prefix = 'hls';

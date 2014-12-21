@@ -35,7 +35,7 @@ public class QueueConsumerApp {
 		channel.queueDeclare(QUEUE_NAME, true, false, true, map);
 		
 		System.out.println(QUEUE_NAME);
-		System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+		System.out.println(" [*] Waiting for messages from RabbitMQ.");
 
 		channel.basicConsume(QUEUE_NAME, false, new DefaultConsumer(channel) {
 			@Override
