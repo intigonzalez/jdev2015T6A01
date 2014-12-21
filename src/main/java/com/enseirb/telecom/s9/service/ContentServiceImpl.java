@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.Task;
 import com.enseirb.telecom.s9.db.ContentRepositoryInterface;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
-import com.enseirb.telecom.s9.db.RelationshipRepositoryObject;
 import com.enseirb.telecom.s9.request.RequestUserService;
 import com.enseirb.telecom.s9.request.RequestUserServiceImpl;
 import com.thoughtworks.xstream.XStream;
@@ -169,6 +167,7 @@ public class ContentServiceImpl implements ContentService {
 		}
 		return listContent;
 	}
+
 
 	@Override
 	public void updateContent(String contentsID, String status) {
