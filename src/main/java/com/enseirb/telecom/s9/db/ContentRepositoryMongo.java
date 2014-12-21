@@ -60,13 +60,13 @@ public class ContentRepositoryMongo implements ContentRepositoryInterface {
 			DBCollection dbBox = db.getCollection("contents");
 			BasicDBObject newDocument = new BasicDBObject();
 
-			if (entity.getId() != null) {
-				newDocument.append("$set",
-						new BasicDBObject().append("id", entity.getId()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",
-						entity.getId());
-				dbBox.update(searchQuery, newDocument);
-			}
+//			if (entity.getId() != null) {
+//				newDocument.append("$set",
+//						new BasicDBObject().append("id", entity.getId()));
+//				BasicDBObject searchQuery = new BasicDBObject().append("id",
+//						entity.getId());
+//				dbBox.update(searchQuery, newDocument);
+//			}
 			if (entity.getName() != null) {
 				newDocument.append("$set",
 						new BasicDBObject().append("name", entity.getName()));
@@ -116,7 +116,7 @@ public class ContentRepositoryMongo implements ContentRepositoryInterface {
 			if (entity.getAuthorization() != null) {
 				newDocument.append(
 						"$set",
-						new BasicDBObject().append("authorizations",
+						new BasicDBObject().append("authorization",
 								entity.getAuthorization()));
 				BasicDBObject searchQuery = new BasicDBObject().append("id",
 						entity.getId());

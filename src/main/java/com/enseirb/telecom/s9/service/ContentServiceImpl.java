@@ -171,11 +171,11 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public void updateContent(String contentsID) {
+	public void updateContent(String contentsID, String status) {
 		// TODO Auto-generated method stub
 		Content content = new Content();
 		content.setContentsID(contentsID);
-		content.setStatus("success");
+		content.setStatus(status);
 		contentDatabase.save(new ContentRepositoryObject(content));
 	}
 

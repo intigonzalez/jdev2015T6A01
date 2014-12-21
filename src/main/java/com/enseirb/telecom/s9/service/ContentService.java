@@ -33,5 +33,5 @@ public interface ContentService {
 
 	public abstract ListContent getAllContent(List<Integer> groupID);
 
-	public abstract void updateContent(String contentsID);
+	public abstract void updateContent(String contentsID, String status);
 }
