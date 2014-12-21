@@ -14,7 +14,7 @@ var parseQueryString = function() {
 };
 var params = parseQueryString();
 var PREFIX_RQ = "";
-//var PREFIX_RQ = "http://localhost:9998";
+//var PREFIX_RQ = "http://purple:9998";
 var userID = params["email"];
 
 // Declare app level module which depends on views, and components

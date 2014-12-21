@@ -2353,3 +2353,6 @@ label {
 #viewHeader button {
     float: right;
 }
+iframe {
+    background-color: black;
+}

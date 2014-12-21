@@ -8,10 +8,10 @@
                 <div class="project">
                     <div class="photo-wrapper">
                         <div class="photo">
-                            <a class="fancybox fancybox.iframe" href="baseline.html?url={{content.link}}/dash/low_dash.mpd">
+                            <!--<a class="fancybox fancybox.iframe" href="dash.html?url={{content.link}}/dash/low_dash.mpd">-->
+                            <a class="fancybox fancybox.iframe" href="{{videos.prefix}}.html?url={{content.link}}/{{videos.suffix}}">
                                 <img class="img-responsive" ng-src="{{content.link}}/folder.jpg" alt="">
                             </a>
-                            <p>{{content.link}}</p>
                         </div>
                         <div class="overlay"></div>
                     </div>
@@ -24,9 +24,33 @@
 <!--script for this page-->
 
 <script type="text/javascript">
+    //Try to adapt dimensions with display
+    var height = null;
+    var width=  null;
+    if ( $(window).width() < 854) {
+        width = '90%';
+        height = $(window).width()*0.9/(16/9)+50;
+        height = height.toString() + 'px';
+    }
+    else {
+        width = '854px';
+        height = '510px'
+    }
+
     $(document).ready(function () {
         //    fancybox
-        $(".fancybox").fancybox();
+        $(".fancybox").fancybox({
+            autoSize:     false,
+            width:        width,
+            height:       height,
+            scrolling:    false,
+            openEffect  : 'none',
+            closeEffect : 'none',
+            nextEffect  : 'none',
+            prevEffect  : 'none',
+            padding     : 0,
+            margin      : [0, 0, 0, 0] // Increase left/right margin
+        });
     });
 
 </script>
