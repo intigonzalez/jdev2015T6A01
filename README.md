@@ -16,12 +16,16 @@ then, you can deploy the all-in-one jar file and run it with just the jvm
    java -jar ./media-home-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 
+you need this to work fine :
+	sudo apt-get install 
+
 # Deploy Celery with RabbitMQ
-sudo apt-get install rabbitmq-server
-sudo apt-get install python-celery python-pip
-sudo pip install celery
+	sudo apt-get install rabbitmq-server
+	sudo apt-get install python-celery python-pip
+	sudo pip install celery
 To start celery : celery -A tasks worker --loglevel=info --concurrency=1
-If Segfault  sudo apt-get remove python-librabbitmq
+If Segfault 
+	sudo apt-get remove python-librabbitmq
 
 
 # API #
@@ -64,6 +68,16 @@ Create a relation
 	  <unix_time>0</unix_time>
 	  <groupID>0</groupID>
 	</relation>
+
+Create a box
+
+	<box>
+	  <boxID>boxID</boxID>
+	  <privateKey>privateKey</privateKey>
+	  <pubKey>pubKey</pubKey>
+	  <ip>localhost:9998</ip>
+	  <TTL>0</TTL>
+	</box>
 
 
 # Web Interface #

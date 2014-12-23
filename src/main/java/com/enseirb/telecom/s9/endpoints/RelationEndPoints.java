@@ -1,5 +1,6 @@
 package com.enseirb.telecom.s9.endpoints;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -16,18 +17,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.enseirb.telecom.s9.ListContent;
-import com.enseirb.telecom.s9.ListRelation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.enseirb.telecom.s9.ListContent;
+import com.enseirb.telecom.s9.ListRelation;
 import com.enseirb.telecom.s9.Relation;
 import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.s9.db.UserRepositoryMongo;
-import com.enseirb.telecom.s9.db.UserRepositoryObject;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
-import com.enseirb.telecom.s9.service.AccountService;
-import com.enseirb.telecom.s9.service.AccountServiceImpl;
 import com.enseirb.telecom.s9.service.RelationService;
 import com.enseirb.telecom.s9.service.RelationServiceImpl;
 
@@ -38,8 +37,8 @@ import com.enseirb.telecom.s9.service.RelationServiceImpl;
 public class RelationEndPoints {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RelationEndPoints.class);
 
-
-	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
+	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(),
+			new UserRepositoryMongo());
 
 	@GET
 	@Path("from/{username}")
@@ -78,8 +77,7 @@ public class RelationEndPoints {
 	@Path("{relationID}/content")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ListContent getToRelation(@PathParam("userID") String contentsID,
-			@PathParam("relationID") String relationID,
-			@PathParam("userID") String userID) {
+			@PathParam("relationID") String relationID, @PathParam("userID") String userID) {
 
 		if (rManager.RelationExist(userID, relationID)) {
 			Relation relation = rManager.getRelation(userID, relationID);
@@ -90,22 +88,29 @@ public class RelationEndPoints {
 
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ListRelation getListRelation(
-			@PathParam("userID") String userIDFromPath) {
+	public ListRelation getListRelation(@PathParam("userID") String userIDFromPath) {
 
 		return rManager.getListRelation(userIDFromPath);
 
 	}
 
+	/**
+	 * add relation on database of userID
+	 * 
+	 * @param userIDFromPath
+	 * @param relation
+	 * @return
+	 * @throws URISyntaxException
+	 */
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postFriend(@PathParam("userID") String userIDFromPath,
-			Relation relation) throws URISyntaxException {
+	public Response postFriend(@PathParam("userID") String userIDFromPath, Relation relation)
+			throws URISyntaxException {
 		// TODO: ajout un ami
 		// add a friend
 		if (rManager.RelationExist(userIDFromPath, relation.getEmail()) == false) {
 			try {
-				rManager.createRelation(userIDFromPath, relation);
+				rManager.createRelation(userIDFromPath, relation, false);
 			} catch (NoSuchUserException e) {
 				throw new WebApplicationException(404);
 			}
@@ -117,16 +122,25 @@ public class RelationEndPoints {
 		}
 	}
 
+	/**
+	 * add relationID on database of userID
+	 * 
+	 * @param userIDFromPath
+	 *            user id of dataBase
+	 * @param relationIDString
+	 *            relation to add
+	 * @return
+	 * @throws URISyntaxException
+	 */
 	@POST
 	@Path("{relationID}")
 	public Response postFriend2(@PathParam("userID") String userIDFromPath,
-			@PathParam("relationID") String relationIDString)
-			throws URISyntaxException {
+			@PathParam("relationID") String relationIDString) throws URISyntaxException {
 		// TODO: ajout un ami
 		// add a friend
 		if (rManager.RelationExist(userIDFromPath, relationIDString) == false) {
 			try {
-				rManager.createDefaultRelation(userIDFromPath, relationIDString);
+				rManager.createDefaultRelation(userIDFromPath, relationIDString, false);
 			} catch (NoSuchUserException e) {
 				throw new WebApplicationException(404);
 			}
@@ -138,12 +152,41 @@ public class RelationEndPoints {
 		}
 	}
 
+	/**
+	 * add relation on database of userID from this relation
+	 * 
+	 * @param userIDFromPath
+	 * @param relation
+	 * @return
+	 * @throws URISyntaxException
+	 */
+	@POST
+	@Path("frombox")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response postFriendFromBox(@PathParam("userID") String userIDFromPath, Relation relation)
+			throws URISyntaxException {
+		// TODO: ajout un ami
+		// add a friend
+		if (rManager.RelationExist(userIDFromPath, relation.getEmail()) == false) {
+			try {
+				rManager.createRelation(userIDFromPath, relation, true);
+			} catch (NoSuchUserException e) {
+				throw new WebApplicationException(Status.NOT_FOUND);
+			}
+			// NHE that the answer we expect from a post (see location header)
+			return Response.created(new URI(relation.getEmail())).build();
+		} else {
+
+			return Response.status(Status.CONFLICT).build();
+		}
+	}
+
 	@PUT
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putFriend(@PathParam("userID") String userIDFromPath,
 
-			@PathParam("username") String friendEmail, Relation relation) {
+	@PathParam("username") String friendEmail, Relation relation) {
 
 		// TODO: change de groupe et confirme une demande d'ajout
 		// Pour confirme un ami, il faut : regarder la valeur qui existe dans la
@@ -166,22 +209,31 @@ public class RelationEndPoints {
 		}
 
 	}
-	
+
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateListFriend(@PathParam("userID") String userIDFromPath) {
-		try{
-				rManager.updateRelation(userIDFromPath);
-				return Response.status(200).build();
-		}
-		catch (Exception e){
+
+		try {
+			rManager.updateRelation(userIDFromPath);
+			return Response.status(200).build();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return Response.status(403).build();
+		} catch (NoSuchUserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return Response.status(403).build();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return Response.status(403).build();
+
 		}
+
 	}
 
-	
-	
 	@DELETE
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -194,4 +246,3 @@ public class RelationEndPoints {
 		return Response.status(200).build();
 	}
 }
-
