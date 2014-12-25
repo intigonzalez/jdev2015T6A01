@@ -45,6 +45,7 @@ public class Main {
 		resources.register(CORSResponseFilter.class);
 		resources.register(MultiPartFeature.class);
 		resources.register(JettisonFeature.class);
+		//resources.register(SecurityFilter.class);
 		System.out.println("Starting grizzly2...");
 		// return GrizzlyServerFactory.createHttpServer(BASE_URI,
 		// resourceConfig);
