@@ -1,29 +1,35 @@
-<div class="col-md-offset-3 col-md-6" ng-controller="FriendsController as friendList">
+<div class="col-md-offset-3 col-md-6" ng-controller="FriendsController as friends">
 
 <!-- the Show Friend button used to be here -- Anas -->
 <input class="form-control" placeholder=" Friend ID " ng-model="friend.userID" type="text">
-<button ng-click="addFriend(friend.userID)" class="btn btn-warning btn-block"> Add Friend</button>
+<button ng-click="addFriend(friend.userID)" class="btn btn-primary btn-block"> Add Friend</button>
 
+    <div id="FriendsList" class="row">
+        <div class="col-md-4 mb" ng-repeat="friend in friends.list">
+            <!-- WHITE PANEL - TOP USER -->
+            <div class="white-panel pn">
+                <div class="white-header">
+                    <h5>{{friend.name}} {{friend.surname}}</h5>
+                </div>
+                <p><img src="assets/img/ui-zac.jpg" class="img-circle" width="80"></p>
+                <p><b>{{friend.email}}</b></p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="small mt">Number of Videos</p>
+                        <p>?</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="small mt">Status</p>
+                      <i class="fa fa-check"  ng-show="friends.isStatus(friend, 3)"></i>
+                        <i class="fa fa-times" ng-show="friends.isStatus(friend,1)"></i>
+                        <a class="btn btn-xs btn-primary" ng-show="friends.isStatus(friend, 2)" ng-click="friends.AprouveFriend(friend)">Yes</a>
+                    </div>
 
-<table id="listFriend" class="table table-striped table-bordered" cellspacing="0" width="100%">
-    <thead>
-    <tr>
-        <th> Name</th>
-        <th> Surname</th>
-        <th> Email</th>
-    </tr>
-    </thead>
+                    
 
+                </div>
+            </div>
+        </div> <!-- End ng-repeat -->
+    </div>
 
-    <tbody ng-repeat="friend in friendList.friend.relation">
-
-    <tr>
-        <td> {{friend.name}}</td>
-        <td> {{friend.surname}}</td>
-        <td> {{friend.email}}</td>
-    </tr>
-    </tbody>
-
-
-</table>
 </div>

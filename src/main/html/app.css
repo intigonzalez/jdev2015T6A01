@@ -34,6 +34,13 @@
 .photo-wrapper.disabled {
   opacity: 0.4;
 }
+
+/* Videos List : myvideos */
 img.img-responsive {
   margin: 0 auto;
+}
+
+/* Friends List : */
+#FriendsList {
+  margin: 20px auto;
 }
