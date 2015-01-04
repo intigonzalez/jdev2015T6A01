@@ -2,7 +2,7 @@
 
 <!-- the Show Friend button used to be here -- Anas -->
 <input class="form-control" placeholder=" Friend ID " ng-model="friend.userID" type="text">
-<button ng-click="addFriend(friend.userID)" class="btn btn-primary btn-block"> Add Friend</button>
+<button ng-click="addFriend(friend.userID)" class="btn btn-primary btn-block" ng-class="isFriendAddingSuccess()"> Add Friend</button>
 
     <div id="FriendsList" class="row">
         <div class="col-md-4 mb" ng-repeat="friend in friends.list">
