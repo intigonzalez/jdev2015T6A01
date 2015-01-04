@@ -15,7 +15,6 @@ import com.enseirb.telecom.s9.Box;
 import com.enseirb.telecom.s9.exception.NoSuchBoxException;
 //import com.enseirb.telecom.s9.exception.NoSuchUserException;
 //import com.enseirb.telecom.s9.exception.SuchUserException;
-import com.enseirb.telecom.s9.exception.NoSuchUserException;
 
 public class RequestBoxServiceImpl implements RequestBoxService{
 	

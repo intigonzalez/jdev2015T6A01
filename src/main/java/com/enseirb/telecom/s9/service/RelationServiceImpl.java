@@ -15,24 +15,19 @@ import com.enseirb.telecom.s9.db.UserRepositoryObject;
 import com.enseirb.telecom.s9.exception.NoRelationException;
 import com.enseirb.telecom.s9.exception.NoSuchBoxException;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
-import com.enseirb.telecom.s9.request.RequestBoxServiceImpl;
 import com.enseirb.telecom.s9.request.RequestContentService;
 import com.enseirb.telecom.s9.request.RequestContentServiceImpl;
 import com.enseirb.telecom.s9.request.RequestRelationService;
 import com.enseirb.telecom.s9.request.RequestRelationServiceImpl;
 import com.enseirb.telecom.s9.request.RequestUserService;
 import com.enseirb.telecom.s9.request.RequestUserServiceImpl;
-import com.sun.research.ws.wadl.Request;
 
 public class RelationServiceImpl implements RelationService {
 
 	RelationshipRepositoryInterface relationshipDatabase;
 	CrudRepository<UserRepositoryObject, String> userDatabase;
-	RequestContentService requestContentService = new RequestContentServiceImpl(
-			"http://localhost:9998/api/app/");
 
-	public RelationServiceImpl(
-			RelationshipRepositoryInterface RelationshipDatabase,
+	public RelationServiceImpl(RelationshipRepositoryInterface RelationshipDatabase,
 			CrudRepository<UserRepositoryObject, String> userDatabase) {
 		this.relationshipDatabase = RelationshipDatabase;
 		this.userDatabase = userDatabase;
@@ -43,12 +38,9 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public void updateRelation(String userID) throws IOException,
-			NoSuchUserException {
+	public void updateRelation(String userID) throws IOException, NoSuchUserException {
 
 		RequestRelationService rrs = new RequestRelationServiceImpl();
-		RequestUserService requestServ = new RequestUserServiceImpl(
-				"http://localhost:9999/api/app/");
 
 		for (RelationshipRepositoryObject rro : relationshipDatabase.findAll()) {
 
@@ -57,17 +49,15 @@ public class RelationServiceImpl implements RelationService {
 				System.out.println(rro.getEmail());
 
 				try {
-					Box boxRelation = requestServ.getBox(rro.getEmail());
+					// Box boxRelation = requestServ.getBox(rro.getEmail());
 
-					User relationUpdate = rrs.get("http://"
-							+ boxRelation.getIp() + "/api/app/"
-							+ rro.getEmail() + "/relation/from/" + userID);
-					Relation relationIntoDb = relationshipDatabase.findOne(
-							userID, relationUpdate.getUserID()).toRelation();
+					User relationUpdate = rrs.get(userID, rro.getEmail());
+					Relation relationIntoDb = relationshipDatabase.findOne(userID,
+							relationUpdate.getUserID()).toRelation();
 					relationIntoDb.setName(relationUpdate.getName());
 					relationIntoDb.setSurname(relationUpdate.getSurname());
-					relationshipDatabase.save(new RelationshipRepositoryObject(
-							userID, relationIntoDb));
+					relationshipDatabase.save(new RelationshipRepositoryObject(userID,
+							relationIntoDb));
 				} catch (NoSuchBoxException e) {
 					System.out.println("All users should have a box, ignoring");
 				}
@@ -79,8 +69,7 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public Relation getRelation(String userID, String email) {
-		RelationshipRepositoryObject relation = relationshipDatabase.findOne(
-				userID, email);
+		RelationshipRepositoryObject relation = relationshipDatabase.findOne(userID, email);
 		if (relation == null) {
 			return null;
 		} else {
@@ -108,22 +97,19 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public ListRelation getListRelation(String userID) {
 		ListRelation listRelation = new ListRelation();
-		Iterable<RelationshipRepositoryObject> relation = relationshipDatabase
-				.findAll();
+		Iterable<RelationshipRepositoryObject> relation = relationshipDatabase.findAll();
 		Iterator<RelationshipRepositoryObject> itr = relation.iterator();
 		while (itr.hasNext()) {
-			RelationshipRepositoryObject relationshipRepositoryObject = itr
-					.next();
+			RelationshipRepositoryObject relationshipRepositoryObject = itr.next();
 			if (relationshipRepositoryObject.getUserId().equals(userID)) {
-				listRelation.getRelation().add(
-						relationshipRepositoryObject.toRelation());
+				listRelation.getRelation().add(relationshipRepositoryObject.toRelation());
 			}
 		}
 		return listRelation;
 	}
 
 	@Override
-	public Relation createRelation(String userID, Relation relation)
+	public Relation createRelation(String userID, Relation relation, Boolean fromBox)
 			throws NoSuchUserException {
 		/*
 		 * TODO(0) : Check the content, add a state 1 to the approuve value
@@ -144,14 +130,28 @@ public class RelationServiceImpl implements RelationService {
 			relation2.setAprouve(2);
 			relation2.setUnixTime(relation.getUnixTime());
 
-			if (userDatabase.exists(relation.getEmail())) {
-				relationshipDatabase.save(new RelationshipRepositoryObject(
-						relation.getEmail(), relation2));
-			} else {
-				// Send a request to the right box with the profile of userID
+			if (!fromBox) {
+				if (userDatabase.exists(relation.getEmail())) {
+					relationshipDatabase.save(new RelationshipRepositoryObject(relation.getEmail(),
+							relation2));
+				} else {
+
+					RequestRelationService rss = new RequestRelationServiceImpl();
+					try {
+						rss.postRelation(relation, relation2);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (NoSuchBoxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					// Send a request to the right box with the profile of
+					// userID
+
+				}
 			}
-			return relationshipDatabase.save(
-					new RelationshipRepositoryObject(userID, relation))
+			return relationshipDatabase.save(new RelationshipRepositoryObject(userID, relation))
 					.toRelation();
 		} else {
 			throw new NoSuchUserException();
@@ -160,13 +160,13 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public void createDefaultRelation(String userIDFromPath,
-			String relationIDString) throws NoSuchUserException {
+	public void createDefaultRelation(String userIDFromPath, String relationIDString,
+			Boolean fromBox) throws NoSuchUserException {
 		Relation relation = new Relation();
 		relation.setEmail(relationIDString);
 		relation.setAprouve(1);
 		relation.getGroupID().add(0);
-		createRelation(userIDFromPath, relation);
+		createRelation(userIDFromPath, relation, fromBox);
 
 	}
 
@@ -174,19 +174,18 @@ public class RelationServiceImpl implements RelationService {
 	public void saveRelation(String userID, Relation relation) {
 		// Here, the user is only allowed to edit the approuve value if the
 		// current value is = 2
-		Relation relationIntoDb = relationshipDatabase.findOne(userID,
-				relation.getEmail()).toRelation();
+		Relation relationIntoDb = relationshipDatabase.findOne(userID, relation.getEmail())
+				.toRelation();
 		if (relationIntoDb.getAprouve() != relation.getAprouve()
-				&& relationIntoDb.getAprouve() == 2
-				&& relation.getAprouve() == 3) {
+				&& relationIntoDb.getAprouve() == 2 && relation.getAprouve() == 3) {
 			relationIntoDb.setAprouve(3);
 
 			if (userDatabase.exists(relation.getEmail())) {
-				Relation relation2 = relationshipDatabase.findOne(
-						relation.getEmail(), userID).toRelation();
+				Relation relation2 = relationshipDatabase.findOne(relation.getEmail(), userID)
+						.toRelation();
 				relation2.setAprouve(3);
-				relationshipDatabase.save(new RelationshipRepositoryObject(
-						relation.getEmail(), relation2));
+				relationshipDatabase.save(new RelationshipRepositoryObject(relation.getEmail(),
+						relation2));
 			} else {
 				// Send a request to the box to tell it the user accepts the
 				// relationship
@@ -198,8 +197,7 @@ public class RelationServiceImpl implements RelationService {
 			relationIntoDb.getGroupID().clear();
 			relationIntoDb.getGroupID().addAll(relation.getGroupID());
 		}
-		relationshipDatabase.save(new RelationshipRepositoryObject(userID,
-				relationIntoDb));
+		relationshipDatabase.save(new RelationshipRepositoryObject(userID, relationIntoDb));
 		return;
 	}
 
@@ -217,8 +215,10 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public ListContent getAllContent(String userID, String relationID) {
 		try {
-			ListContent listContent = requestContentService.get(userID,
-					relationID);
+			RequestContentService requestContentService = new RequestContentServiceImpl(
+					"http://localhost:9998/api/app/");
+
+			ListContent listContent = requestContentService.get(userID, relationID);
 			return listContent;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

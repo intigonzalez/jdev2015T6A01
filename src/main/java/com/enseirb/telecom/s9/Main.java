@@ -50,6 +50,8 @@ public class Main {
 		resources.register(JettisonFeature.class);
 		//System.out.println("Starting grizzly2...");
 		LOGGER.info("Starting grizzly2");
+
+		LOGGER.info("wadl here -> /api/application.wadl");
 		// return GrizzlyServerFactory.createHttpServer(BASE_URI,
 		// resourceConfig);
 		return GrizzlyHttpServerFactory.createHttpServer(getBaseURI(), resources);
