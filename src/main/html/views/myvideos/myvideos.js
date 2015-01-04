@@ -41,38 +41,28 @@ angular.module('myApp.myvideos', ['ngRoute'])
                     else {
                         videos.list = data.listContent.content;
                     }
-
                 })
                 .error(function (data, status, headers, config) {
                     console.log("Failed while getting Videos Informations");
                 })
         };
-        /*this.videoInProgress = function(status) {
-         if (status.equals("success")) {
-         return "";
-         }
-         else {
-         return disabled;
-         }
-         };*/
-        this.getVideos();
-        var toto = {"listContent": {"content": [
-            {
-                "contentsID": "66a5550230cf4f4796c596fcd3fc86b3",
-                "name": "vince@onehear.nl8471597667882151009.mp4",
-                "login": "vince@onehear.nl",
-                "unix_time": 1419016140,
-                "link": "/videos/vince@onehear.nl/66a55502-30cf-4f47-96c5-96fcd3fc86b3",
-                "status": "success"
-            },
-            {
-                "contentsID": "66a5550230cf4f4796c596fcd3fc86b4",
-                "name": "vince@onehear.nl8471597667882151009.mp4",
-                "login": "vince@onehear.nl",
-                "unix_time": 1419016140,
-                "link": "/videos/vince@onehear.nl/66a55502-30cf-4f47-96c5-96fcd3fc86b3",
-                "status": "success"
+        this.generateLink = function(content) {
+             if (content.status == "success") {
+                return videos.prefix + ".html?url=" + content.link + "/" + videos.suffix;
             }
-        ]}}
+            else {
+                return "";
+            }
+        };
+        this.videoInProgress = function(content) {
+             if (content.status == "success") {
+                 return "";
+             }
+             else {
+                return "disabled";
+             }
+         };
+
+        this.getVideos();
 
     }]);

@@ -28,3 +28,12 @@
   content: "";
   padding: 0;
 }
+.photo-wrapper {
+  height: 240px;
+}
+.photo-wrapper.disabled {
+  opacity: 0.4;
+}
+img.img-responsive {
+  margin: 0 auto;
+}

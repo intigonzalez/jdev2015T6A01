@@ -6,10 +6,10 @@
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 desc" ng-repeat="content in videos.list">
             <div class="project-wrapper">
                 <div class="project">
-                    <div class="photo-wrapper">
+                    <div class="photo-wrapper" ng-class="videos.videoInProgress(content)">
                         <div class="photo">
                             <!--<a class="fancybox fancybox.iframe" href="dash.html?url={{content.link}}/dash/low_dash.mpd">-->
-                            <a class="fancybox fancybox.iframe" href="{{videos.prefix}}.html?url={{content.link}}/{{videos.suffix}}">
+                            <a ng-class="fancybox fancybox.iframe" ng-href="{{videos.generateLink(content)}}">
                                 <img class="img-responsive" ng-src="{{content.link}}/folder.jpg" alt="">
                             </a>
                         </div>
@@ -24,6 +24,7 @@
 <!--script for this page-->
 
 <script type="text/javascript">
+    // This script manages the display for the fancybox (i.e. the display when we click on the images) */
     //Try to adapt dimensions with display
     var height = null;
     var width=  null;
@@ -39,6 +40,7 @@
 
     $(document).ready(function () {
         //    fancybox
+        console.log("init fancybox");
         $(".fancybox").fancybox({
             autoSize:     false,
             width:        width,

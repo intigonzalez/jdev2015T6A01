@@ -1,5 +1,6 @@
 
-PREFIX_RQ = "http://localhost:9998";
+PREFIX_RQ = "";
+//PREFIX_RQ = "http://localhost:9998";
 
 
 var RegisterForm = angular.module('RegisterForm', []);
