@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Properties;
 
 import javax.ws.rs.core.UriBuilder;
@@ -18,6 +19,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enseirb.telecom.s9.endpoints.BoxEndPoints;
 import com.enseirb.telecom.s9.endpoints.ContentEndPoints;
 import com.google.common.base.Throwables;
 
@@ -52,8 +54,17 @@ public class Main {
 		LOGGER.info("Starting grizzly2");
 
 		LOGGER.info("wadl here -> /api/application.wadl");
+		
 		// return GrizzlyServerFactory.createHttpServer(BASE_URI,
 		// resourceConfig);
+		LOGGER.info("Send information to the server central ...");
+		try {
+			(new BoxEndPoints()).postBox2();
+		} catch (Exception e) {
+			LOGGER.error("Error for send information to the server central");
+			e.printStackTrace();
+		}
+		LOGGER.info("Sucess ");
 		return GrizzlyHttpServerFactory.createHttpServer(getBaseURI(), resources);
 	}
 
