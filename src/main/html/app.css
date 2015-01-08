@@ -44,3 +44,7 @@ img.img-responsive {
 #FriendsList {
   margin: 20px auto;
 }
+.top_right_delete {
+  position: absolute;
+  right: 10%;
+}

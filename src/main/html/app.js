@@ -17,10 +17,20 @@ var PREFIX_RQ = "";
 //var PREFIX_RQ = "http://purple:9998";
 var userID = params["email"];
 
+var searchItemIntoArrayWithAttribute = function(array, attr, value) {
+    for (var i = 0; i < array.length - 1; i++) {
+        if (array[i][attr] == value) {
+            return i;
+        }
+    }
+    return null;
+}
+
 // Declare app level module which depends on views, and components
 angular.module('myApp', [
     'ngRoute',
     'angularFileUpload',
+    'ui.bootstrap',
     'myApp.home',
     'myApp.myvideos',
     'myApp.myprofile',
