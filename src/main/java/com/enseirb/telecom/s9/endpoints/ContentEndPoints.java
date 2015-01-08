@@ -166,9 +166,9 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 	@PUT
 	@Path("{contentsID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putContent(Content content) {
+	public Response putContent(Content content,@PathParam("contentsID") String contentsID) {
 		// TODO: need to check the authentication of the user
-		
+		content.setContentsID(contentsID);
 		// modify the content
 		if (uManager.contentExist(content.getContentsID()) == true) {
 			uManager.saveContent(content);

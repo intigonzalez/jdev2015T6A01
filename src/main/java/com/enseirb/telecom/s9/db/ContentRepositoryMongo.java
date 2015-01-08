@@ -3,13 +3,16 @@ package com.enseirb.telecom.s9.db;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enseirb.telecom.s9.Authorization;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -113,15 +116,39 @@ public class ContentRepositoryMongo implements ContentRepositoryInterface {
 						entity.getId());
 				dbBox.update(searchQuery, newDocument);
 			}
-			if (entity.getAuthorization() != null) {
-				newDocument.append(
-						"$set",
-						new BasicDBObject().append("authorization",
-								entity.getAuthorization()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",
-						entity.getId());
+//			if (entity.getAuthorization() != null) {
+//				newDocument.append(
+//						"$set",
+//						new BasicDBObject().append("authorization",
+//								entity.getAuthorization()));
+//				BasicDBObject searchQuery = new BasicDBObject().append("id",
+//						entity.getId());
+//				dbBox.update(searchQuery, newDocument);
+//			}
+			if (entity.getAuthorization() != null) {// need to verify
+				
+				List<Authorization> authorizations = entity.getAuthorization();
+				Iterator<Authorization> userIterator = authorizations.iterator();														
+				List<Object> entityDBList = new BasicDBList();
+								
+				while(userIterator.hasNext()) {	
+				    DBObject userDBObject = new BasicDBObject();
+				    try {
+						userDBObject = DbInit.createDBObject(userIterator.next());
+					} catch (JsonProcessingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						System.out.println("Impossible to create userDBObject");
+					}			    
+				    
+					entityDBList.add(userDBObject);
+					
+				}
+				
+				newDocument.append("$set",new BasicDBObject().append("authorization", entityDBList));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
 				dbBox.update(searchQuery, newDocument);
-			}
+				}
 			if (entity.getComment() != null) {
 				newDocument.append(
 						"$set",

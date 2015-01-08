@@ -78,7 +78,24 @@ Create a box
 	  <ip>localhost:9998</ip>
 	  <TTL>0</TTL>
 	</box>
+	
+Edit group of a content
+for contentid 54b76bf2-0330-4aa8-99d4-45d05edac051 of vince@onehear.nl
+put
+	/api/app/vince@onehear.nl/content/54b76bf2-0330-4aa8-99d4-45d05edac051
 
+	<?xml version="1.0" encoding="UTF-8"?>
+	<content>
+	   <authorization>
+	    <groupID>0</groupID>
+	    <action>action</action>
+	  </authorization>
+	  <authorization>
+	    <groupID>4</groupID>
+	    <action>action</action>
+	  </authorization>
+	</content>
+	   
 
 # Web Interface #
 URL : http://localhost:9998/index.html?email=vince@onehear.nl#/home

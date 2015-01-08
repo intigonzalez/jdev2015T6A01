@@ -1,22 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<content xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../src/main/xsd/content.xsd">
+<content>
   <contentsID>contentsID</contentsID>
-  <name>name</name>
-  <login>login</login>
-  <unix_time>0</unix_time>
-  <link>http://tempuri.org</link>
-  <previewLink>http://tempuri.org</previewLink>
-  <status>status</status>
-  <coment>coment</coment>
-  <type>type</type>
-  <comment>
-    <commentID>commentID</commentID>
-    <login>login</login>
-    <unix_time>0.0</unix_time>
-    <comment>comment</comment>
-  </comment>
-  <authorization>
+   <authorization>
     <groupID>0</groupID>
+    <action>action</action>
+  </authorization>
+  <authorization>
+    <groupID>4</groupID>
     <action>action</action>
   </authorization>
 </content>
