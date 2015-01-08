@@ -37,8 +37,8 @@ public class QueueConsumerApp {
 		map.put("x-expires", 86400000);
 		channel.queueDeclare(QUEUE_NAME, true, false, true, map);
 		
-		System.out.println(QUEUE_NAME);
-		System.out.println(" [*] Waiting for messages from RabbitMQ.");
+		LOGGER.info("Queue Name : ", QUEUE_NAME);
+		LOGGER.info(" [*] Waiting for messages from RabbitMQ.");
 
 		channel.basicConsume(QUEUE_NAME, false, new DefaultConsumer(channel) {
 			@Override
