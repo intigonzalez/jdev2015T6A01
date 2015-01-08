@@ -9,21 +9,28 @@ import java.nio.file.StandardCopyOption;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enseirb.telecom.s9.ApplicationContext;
+import com.enseirb.telecom.s9.Authorization;
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.Task;
 import com.enseirb.telecom.s9.db.ContentRepositoryInterface;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
+import com.enseirb.telecom.s9.endpoints.ContentEndPoints;
 import com.enseirb.telecom.s9.request.RequestUserService;
 import com.enseirb.telecom.s9.request.RequestUserServiceImpl;
+import com.enseirb.telecom.s9.utils.FileService;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.json.JsonWriter;
 
 public class ContentServiceImpl implements ContentService {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.class);
+	static FileService fileservice;
 	static ContentRepositoryInterface contentDatabase;
 	RabbitMQServer rabbitMq;
 	private RequestUserService requetUserService = new RequestUserServiceImpl();
@@ -99,7 +106,10 @@ public class ContentServiceImpl implements ContentService {
 				e.printStackTrace();
 			}
 		}
-
+		Authorization authorization = new Authorization();
+		authorization.setGroupID(0);
+		authorization.getAction().add("action");
+		content.getAuthorization().add(authorization);
 		return contentDatabase.save(new ContentRepositoryObject(content))
 				.toContent();
 	}
@@ -128,6 +138,17 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public void deleteContent(String contentsID) {
+		//The content then must be deleted into the folder !
+		Content content = contentDatabase.findOne(contentsID).toContent();
+		String path = ApplicationContext.getProperties().getProperty("contentPath") + content.getLink();
+		LOGGER.info("remove content : {}", path);
+		try {
+			fileservice.deleteFolder(path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error("Removing content failed for {}", new Object[] {path, e});
+		}
+		//Delete into database
 		contentDatabase.delete(contentsID);
 
 	}

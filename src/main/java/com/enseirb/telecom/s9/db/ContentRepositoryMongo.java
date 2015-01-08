@@ -342,7 +342,7 @@ public class ContentRepositoryMongo implements ContentRepositoryInterface {
 			DBCollection db = mongoClient.getDB("mediahome").getCollection(
 					"contents");
 
-			BasicDBObject query = new BasicDBObject("_id", id);
+			BasicDBObject query = new BasicDBObject("id", id);
 			db.remove(query);
 			mongoClient.close();
 		} catch (UnknownHostException e) {
@@ -362,7 +362,7 @@ public class ContentRepositoryMongo implements ContentRepositoryInterface {
 			MongoClient mongoClient = DbInit.Connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("contents");
-			BasicDBObject query = new BasicDBObject("_id", entity.getId()
+			BasicDBObject query = new BasicDBObject("id", entity.getId()
 					.toString());
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
