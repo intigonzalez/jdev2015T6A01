@@ -14,11 +14,15 @@ import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jettison.JettisonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.message.filtering.SecurityEntityFilteringFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 
 public class Main {
+	final static Logger logger = LoggerFactory.getLogger(Main.class);
 
 	private static int getPort(int defaultPort) {
 		// grab port from environment, otherwise fall back to default port 9998
@@ -45,8 +49,10 @@ public class Main {
 		resources.register(CORSResponseFilter.class);
 		resources.register(MultiPartFeature.class);
 		resources.register(JettisonFeature.class);
-		//resources.register(SecurityFilter.class);
+        resources.register(SecurityEntityFilteringFeature.class);
+		resources.register(SecurityRequestFilter.class);
 		System.out.println("Starting grizzly2...");
+		logger.trace("Program start");
 		// return GrizzlyServerFactory.createHttpServer(BASE_URI,
 		// resourceConfig);
 		return GrizzlyHttpServerFactory.createHttpServer(getBaseURI(), resources);

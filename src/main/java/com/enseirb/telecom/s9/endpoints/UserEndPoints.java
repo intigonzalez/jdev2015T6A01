@@ -3,6 +3,8 @@ package com.enseirb.telecom.s9.endpoints;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -21,6 +23,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.db.UserRepositoryMongo;
@@ -29,46 +32,47 @@ import com.enseirb.telecom.s9.service.AccountServiceImpl;
 
 // The Java class will be hosted at the URI path "/app/account"
 @Path("app/account")
+//@DeclareRoles({"user"})
 public class UserEndPoints extends HttpServlet {
 
 	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo());
 
-
-    	//@RolesAllowed("user")
-		@GET
-		@Path("/get")
-		public Response addUser(@Context HttpHeaders headers) {//@HeaderParam("cookie") String userAgent) {
-			String userAgent = headers.getRequestHeader("cookie").get(0);
-			System.out.println(userAgent);
-			return Response.status(200)
-				.entity("addUser is called, userAgent : " + userAgent)
-				.build();
-	 
-		}
-	
-
-	
+	@GET
+	@Path("get")
+	@RolesAllowed("toto")
+	//@PermitAll
+	public Response addUser(@Context HttpHeaders headers,@Context SecurityContext context) {//@HeaderParam("cookie") String userAgent) {
+		
+		String userAgent = headers.getRequestHeader("cookie").get(0);
+		System.out.println(userAgent);
+		//System.out.println(context.isUserInRole("toto"));
+		return Response.status(200)
+			.entity("addUser is called, userAgent : " + userAgent)
+			.build();
+ 
+	}
 	
 	@POST()
 	@Path("Connect")
+	//@RolesAllowed("user")
 	@Produces({ "application/json"})// resultat en JSON
 	public Response getConnect(@HeaderParam("cookie") String userAgent,@FormParam("username") String username, @FormParam("password")String password){ //FormParam ce sont les parametres d'un formulaire. 
  
  
-		User wantConnect=new User();
- 
-		if(username.length()>0 && password.length()>0){
-			System.out.println("Both are positives" +"Username:"+username+" - Password:"+password);
-			wantConnect = authenfication(username, password);
- 
-			if (wantConnect != null) {
-				System.out.println(wantConnect);
-				return Response.ok().build();
-			}
-			System.out.println(wantConnect);
-		}
+//		User wantConnect=new User();
+// 
+//		if(username.length()>0 && password.length()>0){
+//			System.out.println("Both are positives" +"Username:"+username+" - Password:"+password);
+//			wantConnect = authenfication(username, password);
+// 
+//			if (wantConnect != null) {
+//				System.out.println(wantConnect);
+//				return Response.ok().build();
+//			}
+//			System.out.println(wantConnect);
+//		}
 		return Response.ok()
-	               .cookie(new NewCookie("name", username, "/", null,1,      
+	               .cookie(new NewCookie("test", username, "/", null,1,      
 	                       "no comment",      
 	                       1073741823 , // maxAge max int value/2      
 	                       false ))
@@ -78,19 +82,19 @@ public class UserEndPoints extends HttpServlet {
  
 	}
 	
-	private User authenfication(String username, String password) {
-		// TODO Auto-generated method stub
-		User user=new User();
-		user.setName(username);
-		user.setPassword(password);
-		//Split username and password tokens
-//		final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
-//		final String username = tokenizer.nextToken();
-//		final String password = tokenizer.nextToken();
-		Cookie test = new Cookie("userTest",username);
-		System.out.println(test.getName());
-		return user;
-	}
+//	private User authenfication(String username, String password) {
+//		// TODO Auto-generated method stub
+//		User user=new User();
+//		user.setName(username);
+//		user.setPassword(password);
+//		//Split username and password tokens
+////		final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
+////		final String username = tokenizer.nextToken();
+////		final String password = tokenizer.nextToken();
+//		Cookie test = new Cookie("userTest",username);
+//		System.out.println(test.getName());
+//		return user;
+//	}
 
 	// TODO: update the class to suit your needs
 
@@ -99,6 +103,7 @@ public class UserEndPoints extends HttpServlet {
 	// type "text/plain"
 	@GET
 	@Path("{userID}")
+	@RolesAllowed("account")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public User getIt(@PathParam("userID") String userID) {
 		return uManager.getUser(userID);
