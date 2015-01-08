@@ -234,6 +234,12 @@ public class RelationEndPoints {
 
 	}
 
+	/**
+	 * delete a relation on this box and in the over box
+	 * @param userIDFromPath
+	 * @param relationIDFromPath
+	 * @return
+	 */
 	@DELETE
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

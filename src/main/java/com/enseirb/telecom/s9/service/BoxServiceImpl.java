@@ -31,7 +31,6 @@ public class BoxServiceImpl implements BoxService{
 		boolean exist = boxDatabase.exists(box.getBoxID());
 		
 		try {
-			
 			Box boxGet = requetBoxService.get(box);
 			if (boxGet == null)
 				exist = false;

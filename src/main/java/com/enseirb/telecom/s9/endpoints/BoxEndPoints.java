@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enseirb.telecom.s9.ApplicationContext;
 import com.enseirb.telecom.s9.Box;
 import com.enseirb.telecom.s9.db.BoxRepositoryMongo;
 import com.enseirb.telecom.s9.service.BoxService;
@@ -46,11 +47,18 @@ public class BoxEndPoints {
 		//throw new WebApplicationException(Status.CONFLICT);
 	}
 
+	/**
+	 * if box don't exist create this (local and on the central serveur)
+	 * @return
+	 * @throws URISyntaxException
+	 */
 	@POST
 	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postBox(Box box) throws URISyntaxException {
+	public Response postBox2() throws URISyntaxException {
 		// add a comment
-		
+		Box box = new Box();
+		box.setBoxID(ApplicationContext.getProperties().getProperty("BoxID"));
+		box.setIp(ApplicationContext.getProperties().getProperty("PublicAddr"));
 		if (boxManager.boxExist(box) == false) {
 			boxManager.createBox(box);
 			return Response.created(new URI(box.getBoxID())).build();
@@ -60,6 +68,21 @@ public class BoxEndPoints {
 		
 		//return Response.status(Status.SERVICE_UNAVAILABLE).build();
 	}
+	
+//	@POST
+//	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+//	public Response postBox(Box box) throws URISyntaxException {
+//		// add a comment
+//		
+//		if (boxManager.boxExist(box) == false) {
+//			boxManager.createBox(box);
+//			return Response.created(new URI(box.getBoxID())).build();
+//		} else {
+//			return Response.status(409).build();
+//		}
+//		
+//		//return Response.status(Status.SERVICE_UNAVAILABLE).build();
+//	}
 
 	@PUT
 	@Path("{boxId}")
