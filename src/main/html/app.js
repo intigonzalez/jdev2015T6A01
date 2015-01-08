@@ -18,7 +18,8 @@ var PREFIX_RQ = "";
 var userID = params["email"];
 
 var searchItemIntoArrayWithAttribute = function(array, attr, value) {
-    for (var i = 0; i < array.length - 1; i++) {
+    for (var i = 0; i < array.length; i++) {
+        console.log("check value "+ array[i][attr] + " and "+value);
         if (array[i][attr] == value) {
             return i;
         }
