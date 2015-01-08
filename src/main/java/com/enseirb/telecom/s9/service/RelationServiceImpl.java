@@ -129,7 +129,7 @@ public class RelationServiceImpl implements RelationService {
 			relation2.setPubKey(userWhoAsked.getPubKey());
 			relation2.setAprouve(2);
 			relation2.setUnixTime(relation.getUnixTime());
-
+			relation2.getGroupID().add(0);
 			if (!fromBox) {
 				if (userDatabase.exists(relation.getEmail())) {
 					relationshipDatabase.save(new RelationshipRepositoryObject(relation.getEmail(),

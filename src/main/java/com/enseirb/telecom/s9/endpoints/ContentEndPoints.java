@@ -29,6 +29,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enseirb.telecom.s9.Authorization;
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.Relation;
@@ -146,6 +147,9 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 		content.setLogin(email);
 		content.setStatus("In progress");
 		content.setType(fileType[0]);
+//		Authorization authorization = new Authorization();
+//		authorization.setGroupID(0);
+//		content.getAuthorization().add(authorization);
 		UUID uuid = UUID.randomUUID();
 		content.setContentsID(uuid.toString().replace("-", ""));
 		String link = "/videos/"+email+"/"+uuid.toString();

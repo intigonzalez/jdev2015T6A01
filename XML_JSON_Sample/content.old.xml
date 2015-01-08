@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<content xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../src/main/xsd/content.xsd">
+<content>
   <contentsID>contentsID</contentsID>
   <name>name</name>
   <login>login</login>
@@ -16,7 +16,19 @@
     <comment>comment</comment>
   </comment>
   <authorization>
-    <groupID>0</groupID>
+    <group>
+      <groupID>0</groupID>
+      <groupName>groupName</groupName>
+      <info>info</info>
+    </group>
+    <action>action</action>
+  </authorization>
+   <authorization>
+    <group>
+      <groupID>1</groupID>
+      <groupName>groupName</groupName>
+      <info>info</info>
+    </group>
     <action>action</action>
   </authorization>
 </content>
