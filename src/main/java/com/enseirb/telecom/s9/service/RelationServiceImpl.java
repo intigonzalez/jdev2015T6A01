@@ -2,6 +2,7 @@ package com.enseirb.telecom.s9.service;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 import com.enseirb.telecom.s9.Box;
 import com.enseirb.telecom.s9.ListContent;
@@ -109,6 +110,23 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
+	public ListRelation getListRelation(String userID, int groupID) {
+		ListRelation listRelation = getListRelation(userID);
+		ListRelation listRelation2 = new ListRelation();
+		for (int i=0;i<listRelation.getRelation().size();i++){
+			List<Integer> groupeIDs = listRelation.getRelation().get(i).getGroupID();
+			for (Integer groupeID : groupeIDs) {
+					if (groupeID==groupID){
+				listRelation2.getRelation().add(listRelation.getRelation().get(i));
+			}}
+		
+			
+		}
+			
+		return listRelation2;
+	}
+
+	@Override
 	public Relation createRelation(String userID, Relation relation, Boolean fromBox)
 			throws NoSuchUserException {
 		/*
@@ -116,6 +134,17 @@ public class RelationServiceImpl implements RelationService {
 		 * TODO(1) : Check the user really exists from the central server
 		 * TODO(1) : Send a request to the right box to say it add as a friend
 		 */
+		RequestUserService rus= new RequestUserServiceImpl();
+		try {
+			User user = rus.get(relation.getEmail());
+			if (user==null){
+				throw new NoSuchUserException();
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		relation.setAprouve(1);
 
 		// Prepare the relation for the "UserAsked"
@@ -148,7 +177,7 @@ public class RelationServiceImpl implements RelationService {
 					}
 					// Send a request to the right box with the profile of
 					// userID
-
+					rss.close();
 				}
 			}
 			return relationshipDatabase.save(new RelationshipRepositoryObject(userID, relation))

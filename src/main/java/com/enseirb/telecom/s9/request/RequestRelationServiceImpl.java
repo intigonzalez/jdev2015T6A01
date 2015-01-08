@@ -27,7 +27,7 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 
 		client = ClientBuilder.newClient();
 		centralServer = ApplicationContext.getProperties().getProperty("CentralURL");
-		requestServ = new RequestUserServiceImpl("http://localhost:9999/api/app/");
+		requestServ = new RequestUserServiceImpl();
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 			NoSuchBoxException {
 		Box boxRelation = requestServ.getBox(UserToGet);
 		User userGet = new User();
-		WebTarget target = client.target("http://"+boxRelation.getIp() + "/api/app/" + UserToGet
+		WebTarget target = client.target(boxRelation.getIp() + "/api/app/" + UserToGet
 				+ "/relation/from/" + UserID);
 		userGet = target.request(MediaType.APPLICATION_XML_TYPE).get(User.class);
 

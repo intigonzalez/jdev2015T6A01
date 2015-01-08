@@ -14,16 +14,18 @@ public interface RelationService {
 
 	public abstract Relation getRelation(String userID, String email);
 
+	public abstract ListRelation getListRelation(String userID);
+
+	public abstract ListRelation getListRelation(String userID, int groupID);
+
+	public abstract ListContent getAllContent(String userIDToGet, String userIDForm);
+
 	public abstract Relation createRelation(String userID, Relation relation, Boolean fromBox)
 			throws NoSuchUserException;
 
 	public abstract void saveRelation(String userID, Relation relation);
 
 	public abstract void deleteRelation(String userID, String email);
-
-	public abstract ListRelation getListRelation(String userID);
-
-	public abstract ListContent getAllContent(String userIDToGet, String userIDForm);
 
 	public abstract void createDefaultRelation(String userIDFromPath, String relationIDString,
 			Boolean fromBox) throws NoSuchUserException;

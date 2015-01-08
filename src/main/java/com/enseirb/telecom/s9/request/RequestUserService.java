@@ -27,7 +27,7 @@ public interface RequestUserService {
 	 * @throws IOException host is not reachable
 	 * @throws NoSuchUserException user doesn't exist on remote host 
 	 */
-	public abstract User get(User user) throws IOException, NoSuchUserException;
+	public abstract User get(String string) throws IOException, NoSuchUserException;
 
 	/**
 	 * post a user on remote host

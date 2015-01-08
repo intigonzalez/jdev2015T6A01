@@ -26,9 +26,7 @@ public class ContentServiceImpl implements ContentService {
 
 	static ContentRepositoryInterface contentDatabase;
 	RabbitMQServer rabbitMq;
-	private RequestUserService requetUserService = new RequestUserServiceImpl(
-			ApplicationContext.getProperties().getProperty("CentralURL")
-					+ "/api/app/account/");
+	private RequestUserService requetUserService = new RequestUserServiceImpl();
 
 	public ContentServiceImpl(
 			ContentRepositoryInterface videoDatabase,
