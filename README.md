@@ -113,6 +113,12 @@ put this uri
 		<groupID>4</groupID>
 	</relation>
 
+get list user of a group
+get this url
+	
+	/api/app/{userID}/group/{groupId}
+
+
 
 # Web Interface #
 URL : http://localhost:9998/index.html?email=vince@onehear.nl#/home

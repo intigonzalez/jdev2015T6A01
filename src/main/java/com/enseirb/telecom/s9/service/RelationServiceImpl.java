@@ -2,6 +2,7 @@ package com.enseirb.telecom.s9.service;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 import com.enseirb.telecom.s9.Box;
 import com.enseirb.telecom.s9.ListContent;
@@ -106,6 +107,23 @@ public class RelationServiceImpl implements RelationService {
 			}
 		}
 		return listRelation;
+	}
+
+	@Override
+	public ListRelation getListRelation(String userID, int groupID) {
+		ListRelation listRelation = getListRelation(userID);
+		ListRelation listRelation2 = new ListRelation();
+		for (int i=0;i<listRelation.getRelation().size();i++){
+			List<Integer> groupeIDs = listRelation.getRelation().get(i).getGroupID();
+			for (Integer groupeID : groupeIDs) {
+					if (groupeID==groupID){
+				listRelation2.getRelation().add(listRelation.getRelation().get(i));
+			}}
+		
+			
+		}
+			
+		return listRelation2;
 	}
 
 	@Override
