@@ -197,7 +197,7 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
                 });
             }
             else {
-                $scope.listGroups[friend.groupID].value=true;
+                $scope.listGroups[friend.groupID].value=true; //to improve, quite dirty
             }
         }
         //console.log(listGroups);
