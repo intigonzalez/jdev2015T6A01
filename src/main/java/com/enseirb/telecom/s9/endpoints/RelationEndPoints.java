@@ -195,7 +195,9 @@ public class RelationEndPoints {
 		// l'user local qui fait la demande pour passer a deux la valeur et
 		// quelle etait a un OK sinon refus
 		// need to verify the friend and after this modifies the friend
-
+		if (relation.getEmail()==null){
+			relation.setEmail(friendEmail);
+		}
 		if (relation.getEmail().equals(friendEmail)) {
 			if (rManager.RelationExist(userIDFromPath, relation.getEmail())) {
 				rManager.saveRelation(userIDFromPath, relation);
@@ -205,7 +207,7 @@ public class RelationEndPoints {
 			}
 
 		} else {
-			return Response.status(404).build();
+			return Response.status(Status.NOT_ACCEPTABLE).build();
 		}
 
 	}

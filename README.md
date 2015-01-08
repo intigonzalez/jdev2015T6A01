@@ -100,6 +100,19 @@ white
 	  </authorization>
 	</content>
 	   
+edit group of relation
+
+for local userId = user1@test.com and relationId = user2@test.com
+put this uri
+
+	/api/app/user1@test.com/relation/user2@test.com
+
+	<?xml version="1.0"?>
+	<relation>
+	  	<groupID>3</groupID>
+		<groupID>4</groupID>
+	</relation>
+
 
 # Web Interface #
 URL : http://localhost:9998/index.html?email=vince@onehear.nl#/home

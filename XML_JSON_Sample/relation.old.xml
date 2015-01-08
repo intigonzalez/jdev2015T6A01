@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<relation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../src/main/xsd/relation.xsd">
+<relation>
   <email>email</email>
   <name>name</name>
   <surname>surname</surname>

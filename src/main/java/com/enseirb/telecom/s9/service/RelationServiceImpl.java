@@ -116,6 +116,17 @@ public class RelationServiceImpl implements RelationService {
 		 * TODO(1) : Check the user really exists from the central server
 		 * TODO(1) : Send a request to the right box to say it add as a friend
 		 */
+		RequestUserService rus= new RequestUserServiceImpl();
+		try {
+			User user = rus.get(relation.getEmail());
+			if (user==null){
+				throw new NoSuchUserException();
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		relation.setAprouve(1);
 
 		// Prepare the relation for the "UserAsked"
@@ -148,7 +159,7 @@ public class RelationServiceImpl implements RelationService {
 					}
 					// Send a request to the right box with the profile of
 					// userID
-
+					rss.close();
 				}
 			}
 			return relationshipDatabase.save(new RelationshipRepositoryObject(userID, relation))
