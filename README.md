@@ -80,10 +80,11 @@ Create a box
 	</box>
 	
 Edit group of a content
-for contentid 54b76bf2-0330-4aa8-99d4-45d05edac051 of vince@onehear.nl
-put
+for contentId 54b76bf2-0330-4aa8-99d4-45d05edac051 of vince@onehear.nl
+if before you have group 0 and 1 and you want 0 and 4 make
+put this uri
 	/api/app/vince@onehear.nl/content/54b76bf2-0330-4aa8-99d4-45d05edac051
-
+whit
 	<?xml version="1.0" encoding="UTF-8"?>
 	<content>
 	   <authorization>
