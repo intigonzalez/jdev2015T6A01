@@ -31,8 +31,7 @@ import com.mongodb.util.JSON;
 public class AccountServiceImpl implements AccountService {
 
 	CrudRepository<UserRepositoryObject, String> userDatabase;
-	RequestUserService requetUserService = new RequestUserServiceImpl(
-			"http://localhost:9999/api/app/account/");
+	RequestUserService requetUserService = new RequestUserServiceImpl();
 
 	public AccountServiceImpl(
 			CrudRepository<UserRepositoryObject, String> userDatabase) {
@@ -51,14 +50,14 @@ public class AccountServiceImpl implements AccountService {
 		// TODO: change to the correct page and add fontion for get addr of
 		// server
 		try {
-			User userGet = requetUserService.get(user);
+			User userGet = requetUserService.get(user.getUserID());
 			if (userGet == null)
 				exist = false;
 			else if (userGet.getUserID().equals(user.getUserID()))
 				exist = true;
 		} catch (IOException e) {
 			e.printStackTrace();
-			// System.err.printf("Can not connect on the server :(\n");
+			 System.err.printf("Can not connect on the server :(\n");
 		} catch (NoSuchUserException e) {
 			e.printStackTrace();
 		}

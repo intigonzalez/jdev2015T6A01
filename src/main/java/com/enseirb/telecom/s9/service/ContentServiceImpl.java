@@ -9,39 +9,62 @@ import java.nio.file.StandardCopyOption;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enseirb.telecom.s9.ApplicationContext;
+import com.enseirb.telecom.s9.Authorization;
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.ListContent;
 import com.enseirb.telecom.s9.Task;
+import com.enseirb.telecom.s9.db.ContentRepositoryInterface;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
-import com.enseirb.telecom.s9.db.CrudRepository;
+import com.enseirb.telecom.s9.endpoints.ContentEndPoints;
 import com.enseirb.telecom.s9.request.RequestUserService;
 import com.enseirb.telecom.s9.request.RequestUserServiceImpl;
+import com.enseirb.telecom.s9.utils.FileService;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.json.JsonWriter;
 
 public class ContentServiceImpl implements ContentService {
-
-	static CrudRepository<ContentRepositoryObject, String> contentDatabase;
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.class);
+	static FileService fileservice;
+	static ContentRepositoryInterface contentDatabase;
 	RabbitMQServer rabbitMq;
-	private RequestUserService requetUserService = new RequestUserServiceImpl(
-			"http://localhost:9999/api/app/account/");
+	private RequestUserService requetUserService = new RequestUserServiceImpl();
 
-	public ContentServiceImpl(
-			CrudRepository<ContentRepositoryObject, String> videoDatabase, RabbitMQServer rabbitMq) {
+	public ContentServiceImpl(ContentRepositoryInterface videoDatabase, RabbitMQServer rabbitMq) {
 		this.contentDatabase = videoDatabase;
 		this.rabbitMq = rabbitMq;
 	}
-	public ContentServiceImpl(){
-		
+
+	public ContentServiceImpl() {
+
 	}
 
 	@Override
 	public boolean contentExist(String contentsID) {
 
 		return contentDatabase.exists(contentsID);
+	}
+
+	@Override
+	public ListContent getAllContentsFromUser(String userID) {
+		contentDatabase.findAllFromUser(userID);
+
+		ListContent listContent = new ListContent();
+		Iterable<ContentRepositoryObject> contentsDb = contentDatabase.findAllFromUser(userID);
+		Iterator<ContentRepositoryObject> itr = contentsDb.iterator();
+		while (itr.hasNext()) {
+			ContentRepositoryObject contentRepositoryObject = itr.next();
+			if (contentRepositoryObject.getUserId().equals(userID)) {
+				listContent.getContent().add(contentRepositoryObject.toContent());
+			}
+		}
+		return listContent;
+
 	}
 
 	@Override
@@ -58,37 +81,39 @@ public class ContentServiceImpl implements ContentService {
 	public Content createContent(Content content, String srcfile, String id) {
 
 		// Only if the file is a video content
-		if(content.getType().equals("video")){
+		if (content.getType().equals("video")) {
 			try {
 
-			Task task = new Task();
-			task.setTask("tasks.print_shell");
-			task.setId(id);
-			task.getArgs().add(srcfile);
-			task.getArgs().add(ApplicationContext.getProperties().getProperty("contentPath") + content.getLink());
-	 
-			XStream xstream = new XStream(new JsonHierarchicalStreamDriver() {
-				public HierarchicalStreamWriter createWriter(Writer writer) {
-					return new JsonWriter(writer, JsonWriter.DROP_ROOT_MODE);
-				}
-			});
-			
-			rabbitMq.addTask(xstream.toXML(task), task.getId());
+				Task task = new Task();
+				task.setTask("adaptation.commons.ddo");
+				task.setId(id);
+				task.getArgs().add(srcfile);
+				task.getArgs().add(content.getLink());
+
+				XStream xstream = new XStream(new JsonHierarchicalStreamDriver() {
+					public HierarchicalStreamWriter createWriter(Writer writer) {
+						return new JsonWriter(writer, JsonWriter.DROP_ROOT_MODE);
+					}
+				});
+
+				rabbitMq.addTask(xstream.toXML(task), task.getId());
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
-		
-		return contentDatabase.save(new ContentRepositoryObject(content))
-				.toContent();
+		Authorization authorization = new Authorization();
+		authorization.setGroupID(0);
+		authorization.getAction().add("action");
+		content.getAuthorization().add(authorization);
+		return contentDatabase.save(new ContentRepositoryObject(content)).toContent();
 	}
 
 	@Override
 	public void saveContent(Content content) {
-		//TODO(0) : Manage the content update. Check all informations are done ! 
+		// TODO(0) : Manage the content update. Check all informations are done
+		// !
 		contentDatabase.save(new ContentRepositoryObject(content));
 	}
 
@@ -97,8 +122,8 @@ public class ContentServiceImpl implements ContentService {
 	public void writeToFile(InputStream uploadedInputStream, File dest) {
 
 		try {
-			//NHE: we are not in C
-			Files.copy(uploadedInputStream, dest.toPath(),StandardCopyOption.REPLACE_EXISTING);
+			// NHE: we are not in C
+			Files.copy(uploadedInputStream, dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
 			// TODO deal with it
 			e.printStackTrace();
@@ -108,7 +133,18 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public void deleteContent(String contentsID) {
-		this.contentDatabase.delete(contentsID);
+		// The content then must be deleted into the folder !
+		Content content = contentDatabase.findOne(contentsID).toContent();
+		String path = ApplicationContext.getProperties().getProperty("contentPath") + content.getLink();
+		LOGGER.info("remove content : {}", path);
+		try {
+			fileservice.deleteFolder(path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error("Removing content failed for {}", new Object[] { path, e });
+		}
+		// Delete into database
+		contentDatabase.delete(contentsID);
 
 	}
 
@@ -119,19 +155,19 @@ public class ContentServiceImpl implements ContentService {
 		while (itr.hasNext()) {
 			Boolean found = false;
 			ContentRepositoryObject contentRepositoryObject = itr.next();
-			for (int i = 0;i<groupID.size();i++){
-				if (found) break;
-				if (contentRepositoryObject.getAuthorizations().size()==0){
-					System.err.println("Groupe information err");
-					listContent.getContent().add(contentRepositoryObject.toContent());
-				}
-				for (int j = 0;j>contentRepositoryObject.getAuthorizations().size();j++){
-					if (found) break;
-					if (groupID.get(i)==contentRepositoryObject.getAuthorizations().get(j).getGroup().getGroupID()){
+			for (int i = 0; i < groupID.size(); i++) {
+				if (found)
+					break;
+				if (contentRepositoryObject.getAuthorization() != null)
+					if (contentRepositoryObject.getAuthorization().size() == 0) {
+						LOGGER.error("Groupe information err");
 						listContent.getContent().add(contentRepositoryObject.toContent());
-						found = true;
 					}
-					else {
+				for (int j = 0; j < contentRepositoryObject.getAuthorization().size(); j++) {
+					if (groupID.get(i) == contentRepositoryObject.getAuthorization().get(j).getGroupID()) {
+						listContent.getContent().add(contentRepositoryObject.toContent());
+						break;
+					} else {
 						System.err.println("Groupe is not the same");
 					}
 				}
@@ -141,11 +177,11 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public void updateContent(String contentsID) {
+	public void updateContent(String contentsID, String status) {
 		// TODO Auto-generated method stub
 		Content content = new Content();
 		content.setContentsID(contentsID);
-		content.setStatus("success");
+		content.setStatus(status);
 		contentDatabase.save(new ContentRepositoryObject(content));
 	}
 

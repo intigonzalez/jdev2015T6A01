@@ -1,0 +1,75 @@
+<div class="" ng-controller="FriendsController as friends">
+
+<!-- the Show Friend button used to be here -- Anas -->
+<input class="form-control" placeholder=" Friend ID " ng-model="friend.userID" type="text">
+<button ng-click="addFriend(friend.userID)" class="btn btn-primary btn-block" ng-class="isFriendAddingSuccess()"> Add Friend</button>
+
+    <div id="FriendsList" class="row">
+        <div class="col-md-4 mb" ng-repeat="friend in friends.list">
+            <!-- WHITE PANEL - TOP USER -->
+            <div class="white-panel pn">
+                <div class="white-header">
+                    <h5>{{friend.name}} {{friend.surname}}</h5>
+                </div>
+                <div class="top_right_delete">
+                    <button class="btn btn-primary btn-xs fa fa-pencil" ng-click="friends.showgroups(friend)"></button>
+                    <button class="btn btn-danger btn-xs fa fa-trash-o" ng-click="friends.removeRelation(friend)"></button>
+                </div>
+                <p><img src="assets/img/ui-zac.jpg" class="img-circle" width="80"></p>
+                <p><b>{{friend.email}}</b></p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="small mt">Member of</p>
+                        <p class="small"><span ng-repeat="groupName in friends.generateGroupList(friend)">
+                            {{groupName}}, </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="small mt">Status</p>
+                      <i class="fa fa-check template-black"  ng-show="friends.isStatus(friend, 3)"></i>
+                        <i class="fa fa-times template-black" ng-show="friends.isStatus(friend,1)"></i>
+                        <a class="btn btn-xs btn-primary" ng-show="friends.isStatus(friend, 2)" ng-click="friends.AprouveFriend(friend)">Yes</a>
+                    </div>
+                </div>
+
+                <script type="text/ng-template" id="myModalContent.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">This user belongs to : </h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mt">
+                            <div class="col-md-12">
+                                <div class="white-panel">
+                                    <div class="panel-heading">
+                                        <div class="pull-left"><h5><i class="fa fa-tasks"></i> Groups List</h5></div>
+                                        <br>
+                                    </div>
+                                    <div class="custom-check goleft mt">
+                                        <table id="todo" class="table table-hover custom-check">
+                                            <tbody>
+                                            <tr>
+                                                <td ng-repeat="group in listGroups">
+                                                    <span class="check"><input class="checked" type="checkbox" ng-model="group.value"></span>
+                                                    {{group.groupName}}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div><!-- /table-responsive -->
+                                </div><!--/ White-panel -->
+                            </div><!-- --/col-md-12 ---->
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" ng-click="ok()">OK</button>
+                        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+                    </div>
+                </script>
+
+            </div>
+        </div> <!-- End ng-repeat -->
+    </div>
+
+</div>

@@ -7,9 +7,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enseirb.telecom.s9.Comment;
+import com.enseirb.telecom.s9.endpoints.ContentEndPoints;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
@@ -20,6 +23,8 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
 public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryObject, String>{	
+	private static final Logger LOGGER = LoggerFactory.getLogger(CommentRepositoryMongo.class);
+
 
 	private static final ObjectMapper mapper = null;
 
@@ -42,11 +47,14 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 			
 		} catch (UnknownHostException e){
 			e.printStackTrace();
-			System.err.println("Connection to database failed");
+			// System.err.println("Connection to database failed");
+			LOGGER.error("Connection to database failed");
+
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.err.println("Creation of dbObjectToSave failed");
+			//System.err.println("Creation of dbObjectToSave failed");
+			LOGGER.error("Creation of dbObjectToSave failed");
 		}
 		
 		return entity;
@@ -78,12 +86,16 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					LOGGER.error("Mapping falied from Json to Java object  ");
+
 				}
 			}
 						
 		}catch (UnknownHostException e){
 			e.printStackTrace();
-			System.err.println("Connection to database failed");
+			// System.err.println("Connection to database failed");
+			LOGGER.error("Connection to database failed");
+
 		}
 		
 		return comment;
@@ -110,7 +122,10 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 		catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			// System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
+
 		}
 		
 		return result;
@@ -148,7 +163,9 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-						System.err.println("User Mapping failed ! ");
+					//	System.err.println("User Mapping failed ! ");
+						LOGGER.error("User Mapping failed !");
+
 					}
 
 					listOfAllComments.add(user);
@@ -157,7 +174,9 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+		//	System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
 		}
 		return listOfAllComments;
 		
@@ -181,7 +200,9 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 		catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			// System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
 		}
 		
 		
@@ -203,7 +224,9 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 			
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			// System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
 		}
 		
 	}
@@ -220,7 +243,10 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 			dbComments.remove(query);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			 //System.err.println("Connection to database failed ");
+			
+			LOGGER.error("Connection to database failed");
+
 		}
 		
 	}
@@ -246,7 +272,9 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 			}
 		catch(UnknownHostException e){
 			e.printStackTrace();
-			System.err.println();
+			// System.err.println();
+			LOGGER.error("unKnown Host");
+
 		}
 				
 	}	

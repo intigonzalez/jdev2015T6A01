@@ -3,11 +3,16 @@ package com.enseirb.telecom.s9.db;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
-import com.enseirb.telecom.s9.Content;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.enseirb.telecom.s9.Authorization;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -15,7 +20,8 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
-public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryObject, String> {
+public class ContentRepositoryMongo implements ContentRepositoryInterface {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContentRepositoryMongo.class);
 
 	@Override
 	public <S extends ContentRepositoryObject> S save(S entity) {
@@ -26,7 +32,8 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 			try {
 
 				MongoClient mongoClient = DbInit.Connect();
-				DBCollection db = mongoClient.getDB("mediahome").getCollection("contents");
+				DBCollection db = mongoClient.getDB("mediahome").getCollection(
+						"contents");
 				DBObject objectToSave = DbInit.createDBObject(entity);
 				db.save(objectToSave);
 				mongoClient.close();
@@ -39,15 +46,15 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 
 		return entity;
 	}
-	
 
 	/**
-	 * The method update a content's profile 
+	 * The method update a content's profile
+	 * 
 	 * @param entity
 	 * @return entity
 	 */
-	public <S extends ContentRepositoryObject> S update (S entity){
-		
+	public <S extends ContentRepositoryObject> S update(S entity) {
+
 		MongoClient mongoClient;
 		try {
 			mongoClient = DbInit.Connect();
@@ -56,67 +63,114 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 			DBCollection dbBox = db.getCollection("contents");
 			BasicDBObject newDocument = new BasicDBObject();
 
-			if (entity.getId() != null) {
-				newDocument.append("$set",new BasicDBObject().append("id", entity.getId()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
-				dbBox.update(searchQuery, newDocument);
-			}
+//			if (entity.getId() != null) {
+//				newDocument.append("$set",
+//						new BasicDBObject().append("id", entity.getId()));
+//				BasicDBObject searchQuery = new BasicDBObject().append("id",
+//						entity.getId());
+//				dbBox.update(searchQuery, newDocument);
+//			}
 			if (entity.getName() != null) {
-				newDocument.append("$set", new BasicDBObject().append("name",entity.getName()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				newDocument.append("$set",
+						new BasicDBObject().append("name", entity.getName()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",
+						entity.getId());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getUserId() != null) {// need to verify
-				newDocument.append("$set",new BasicDBObject().append("userId", entity.getUserId()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				newDocument.append("$set", new BasicDBObject().append("userId",
+						entity.getUserId()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",
+						entity.getId());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getLink() != null) {
-				newDocument.append("$set",new BasicDBObject().append("link", entity.getLink()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				newDocument.append("$set",
+						new BasicDBObject().append("link", entity.getLink()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",
+						entity.getId());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getPreviewLink() != null) {
-				newDocument.append("$set",new BasicDBObject().append("previewLink", entity.getPreviewLink()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				newDocument.append(
+						"$set",
+						new BasicDBObject().append("previewLink",
+								entity.getPreviewLink()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",
+						entity.getId());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getUnixTime() != null) {
-				newDocument.append("$set",new BasicDBObject().append("unixTime", entity.getUnixTime()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				newDocument.append(
+						"$set",
+						new BasicDBObject().append("unixTime",
+								entity.getUnixTime()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",
+						entity.getId());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getStatus() != null) {
-				newDocument.append("$set",new BasicDBObject().append("status", entity.getStatus()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				newDocument.append("$set", new BasicDBObject().append("status",
+						entity.getStatus()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",
+						entity.getId());
 				dbBox.update(searchQuery, newDocument);
 			}
-			if (entity.getAuthorizations() != null) {
-				newDocument.append("$set",new BasicDBObject().append("authorizations", entity.getAuthorizations()));
+//			if (entity.getAuthorization() != null) {
+//				newDocument.append(
+//						"$set",
+//						new BasicDBObject().append("authorization",
+//								entity.getAuthorization()));
+//				BasicDBObject searchQuery = new BasicDBObject().append("id",
+//						entity.getId());
+//				dbBox.update(searchQuery, newDocument);
+//			}
+			if (entity.getAuthorization() != null) {// need to verify
+				
+				List<Authorization> authorizations = entity.getAuthorization();
+				Iterator<Authorization> userIterator = authorizations.iterator();														
+				List<Object> entityDBList = new BasicDBList();
+								
+				while(userIterator.hasNext()) {	
+				    DBObject userDBObject = new BasicDBObject();
+				    try {
+						userDBObject = DbInit.createDBObject(userIterator.next());
+					} catch (JsonProcessingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						System.out.println("Impossible to create userDBObject");
+					}			    
+				    
+					entityDBList.add(userDBObject);
+					
+				}
+				
+				newDocument.append("$set",new BasicDBObject().append("authorization", entityDBList));
 				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
 				dbBox.update(searchQuery, newDocument);
-			}
+				}
 			if (entity.getComment() != null) {
-				newDocument.append("$set",new BasicDBObject().append("comment", entity.getComment()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+				newDocument.append(
+						"$set",
+						new BasicDBObject().append("comment",
+								entity.getComment()));
+				BasicDBObject searchQuery = new BasicDBObject().append("id",
+						entity.getId());
 				dbBox.update(searchQuery, newDocument);
 			}
-
 
 			mongoClient.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error("User Saving Failed");
 		}
 
 		return entity;
 	}
-	
-	
-	
-	
+
 	@Override
-	public <S extends ContentRepositoryObject> Iterable<S> save(Iterable<S> entities) {
+	public <S extends ContentRepositoryObject> Iterable<S> save(
+			Iterable<S> entities) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -125,7 +179,8 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 	public ContentRepositoryObject findOne(String id) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
-			DBCollection db = mongoClient.getDB("mediahome").getCollection("contents");
+			DBCollection db = mongoClient.getDB("mediahome").getCollection(
+					"contents");
 
 			BasicDBObject query = new BasicDBObject("id", id);
 			DBCursor cursor = db.find(query);
@@ -133,19 +188,25 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 			ObjectMapper mapper = new ObjectMapper();
 			if (cursor.hasNext()) {
 				try {
-					content = mapper.readValue(cursor.next().toString(), ContentRepositoryObject.class);
+					content = mapper.readValue(cursor.next().toString(),
+							ContentRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					System.err.println("Content Mapping failed ! ");
+					// System.err.println("Content Mapping failed ! ");
+					LOGGER.error("Connection to database failed");
+
 				}
-			};
+			}
+			;
 			mongoClient.close();
 			return content;
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			// System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
 			return null;
 		}
 	}
@@ -171,46 +232,48 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			// System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
 			return true;
 		}
 	}
 
 	@Override
 	public Iterable<ContentRepositoryObject> findAll() {
-		//Iterable <UserRepositoryObject> listOfAllUsers = null;
-		List <ContentRepositoryObject> listOfAllContent = new ArrayList<ContentRepositoryObject>();
-		
-		try{
+		// Iterable <UserRepositoryObject> listOfAllUsers = null;
+		List<ContentRepositoryObject> listOfAllContent = new ArrayList<ContentRepositoryObject>();
+
+		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("contents");
-			
+
 			ObjectMapper mapper = new ObjectMapper();
 			ContentRepositoryObject content = null;
-			
+
 			DBCursor cursor = dbUsers.find();
-					
-			while(cursor.hasNext()){
+
+			while (cursor.hasNext()) {
 				try {
-					content = mapper.readValue(cursor.next().toString(), ContentRepositoryObject.class);
+					content = mapper.readValue(cursor.next().toString(),
+							ContentRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					System.err.println("User Mapping failed ! ");
 				}
-				
+
 				listOfAllContent.add(content);
 			}
-			
-		}
-		catch (UnknownHostException e){
+
+		} catch (UnknownHostException e) {
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");			
+			System.err.println("Connection to database failed ");
 		}
 		return listOfAllContent;
-		
-		//throw new RuntimeException("not yet invented");
+
+		// throw new RuntimeException("not yet invented");
 	}
 
 	@Override
@@ -222,7 +285,7 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 	@Override
 	public long count() {
 		// TODO Auto-generated method stub
-		
+
 		long nbOfContents = 0;
 
 		try {
@@ -231,29 +294,63 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 			DBCollection dbUsers = db.getCollection("contents");
 
 			nbOfContents = dbUsers.getCount();
-		}
-		catch (UnknownHostException e) {
+		} catch (UnknownHostException e) {
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			// System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
 		}
 
 		return nbOfContents;
-		
+
+	}
+
+	@Override
+	public List<ContentRepositoryObject> findAllFromUser(String userID) {
+		List<ContentRepositoryObject> list = new ArrayList<ContentRepositoryObject>();
+
+		try {
+			MongoClient mongoClient = DbInit.Connect();
+			DB db = mongoClient.getDB("mediahome");
+			DBCollection dbContents = db.getCollection("contents");
+			BasicDBObject query = new BasicDBObject("userId", userID);
+
+			ObjectMapper mapper = new ObjectMapper();
+			ContentRepositoryObject content = null;
+
+			DBCursor cursor = dbContents.find(query);
+
+			while (cursor.hasNext()) {
+				try {
+					content = mapper.readValue(cursor.next().toString(),
+							ContentRepositoryObject.class);
+				} catch (IOException e) {
+					LOGGER.error("Connection to database failed to get contents");
+				}
+				list.add(content);
+			}
+		} catch (UnknownHostException e) {
+			LOGGER.error("Connection to database failed", e);
+		}
+		return list;
 	}
 
 	@Override
 	public void delete(String id) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
-			DBCollection db = mongoClient.getDB("mediahome").getCollection("contents");
+			DBCollection db = mongoClient.getDB("mediahome").getCollection(
+					"contents");
 
-			BasicDBObject query = new BasicDBObject("_id", id);
+			BasicDBObject query = new BasicDBObject("id", id);
 			db.remove(query);
 			mongoClient.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			// System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed");
+
 		}
 	}
 
@@ -265,13 +362,16 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 			MongoClient mongoClient = DbInit.Connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("contents");
-			BasicDBObject query = new BasicDBObject("_id", entity.getId().toString());
+			BasicDBObject query = new BasicDBObject("id", entity.getId()
+					.toString());
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			// System.err.println("Connection to database failed ");
+			LOGGER.error("Connnection to database failed");
+
 		}
-		
+
 	}
 
 	@Override
@@ -283,21 +383,21 @@ public class ContentRepositoryMongo implements CrudRepository<ContentRepositoryO
 	@Override
 	public void deleteAll() {
 		// TODO Auto-generated method stub
-		
-		try{
+
+		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbContents = db.getCollection("contents");
-			
+
 			dbContents.drop();
 			mongoClient.close();
-			
-			}
-		catch(UnknownHostException e){
+
+		} catch (UnknownHostException e) {
 			e.printStackTrace();
-			System.err.println("Connnection to database failed");
+			// System.err.println("Connection to database failed");
+			LOGGER.error("Connnection to database failed");
+
 		}
-		
 
 	}
 

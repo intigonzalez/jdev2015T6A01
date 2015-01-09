@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <content>
   <contentsID>contentsID</contentsID>
-  <name>name</name>
-  <login>login</login>
-  <unix_time>0</unix_time>
-  <link>http://tempuri.org</link>
-  <previewLink>http://tempuri.org</previewLink>
-  <status>status</status>
-  <comment>
-    <commentID>commentID</commentID>
-    <login>login</login>
-    <unix_time>0.0</unix_time>
-    <comment>comment</comment>
-  </comment>
+   <authorization>
+    <groupID>0</groupID>
+    <action>action</action>
+  </authorization>
   <authorization>
-    <group>0</group>
+    <groupID>4</groupID>
     <action>action</action>
   </authorization>
 </content>

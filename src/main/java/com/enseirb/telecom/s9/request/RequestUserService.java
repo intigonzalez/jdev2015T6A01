@@ -10,7 +10,9 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.enseirb.telecom.s9.Box;
 import com.enseirb.telecom.s9.User;
+import com.enseirb.telecom.s9.exception.NoSuchBoxException;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
 import com.enseirb.telecom.s9.exception.SuchUserException;
 
@@ -25,7 +27,7 @@ public interface RequestUserService {
 	 * @throws IOException host is not reachable
 	 * @throws NoSuchUserException user doesn't exist on remote host 
 	 */
-	public abstract User get(User user) throws IOException, NoSuchUserException;
+	public abstract User get(String string) throws IOException, NoSuchUserException;
 
 	/**
 	 * post a user on remote host
@@ -50,5 +52,7 @@ public interface RequestUserService {
 	 * @throws NoSuchUserException user doesn't exist on remote host 
 	 */
 	public abstract void delete(String userID) throws IOException, NoSuchUserException;
+
+	public abstract Box getBox(String email) throws IOException, NoSuchBoxException;
 
 }

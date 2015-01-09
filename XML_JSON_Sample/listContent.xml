@@ -7,29 +7,22 @@
     <unix_time>0</unix_time>
     <link>http://tempuri.org</link>
     <previewLink>http://tempuri.org</previewLink>
+    <status>status</status>
+    <coment>coment</coment>
+    <type>type</type>
     <comment>
       <commentID>commentID</commentID>
       <login>login</login>
       <unix_time>0.0</unix_time>
       <comment>comment</comment>
     </comment>
-    <groupe>groupe</groupe>
-    <action>action</action>
-  </content>
-   <content>
-    <contentsID>contentsID2</contentsID>
-    <name>name</name>
-    <login>login</login>
-    <unix_time>0</unix_time>
-    <link>http://tempuri.org</link>
-    <previewLink>http://tempuri.org</previewLink>
-    <comment>
-      <commentID>commentID</commentID>
-      <login>login</login>
-      <unix_time>0.0</unix_time>
-      <comment>comment</comment>
-    </comment>
-    <groupe>groupe</groupe>
-    <action>action</action>
+    <authorization>
+      <group>
+        <groupID>0</groupID>
+        <groupName>groupName</groupName>
+        <info>info</info>
+      </group>
+      <action>action</action>
+    </authorization>
   </content>
 </listContent>

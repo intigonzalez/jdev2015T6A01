@@ -6,7 +6,10 @@ import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.enseirb.telecom.s9.db.ContentRepositoryMongo;
 import com.enseirb.telecom.s9.service.ContentServiceImpl;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
@@ -15,7 +18,7 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
 public class QueueConsumerApp {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(QueueConsumerApp.class);
 	/**
 	 * Create a queue with the correlation_id of the task, as we can wait the end message
 	 * @param queue
@@ -34,8 +37,8 @@ public class QueueConsumerApp {
 		map.put("x-expires", 86400000);
 		channel.queueDeclare(QUEUE_NAME, true, false, true, map);
 		
-		System.out.println(QUEUE_NAME);
-		System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+		LOGGER.info("Queue Name : ", QUEUE_NAME);
+		LOGGER.info(" [*] Waiting for messages from RabbitMQ.");
 
 		channel.basicConsume(QUEUE_NAME, false, new DefaultConsumer(channel) {
 			@Override
@@ -55,12 +58,15 @@ public class QueueConsumerApp {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				ContentServiceImpl contentServiceImpl =new ContentServiceImpl();
 				if (status.equals("SUCCESS")) {
 					// TODO : change the status in DataBase
-					System.out.println(QUEUE_NAME);
-					ContentServiceImpl contentServiceImpl =new ContentServiceImpl();
-					contentServiceImpl.updateContent(QUEUE_NAME);
-					
+					LOGGER.info("Response from Celery : Success for task ", QUEUE_NAME);
+					contentServiceImpl.updateContent(QUEUE_NAME, "success");
+				}
+				else {
+					contentServiceImpl.updateContent(QUEUE_NAME, "failure");
+					LOGGER.info("Response from Celery : Failure for task ", QUEUE_NAME);
 				}
 			}
 		});

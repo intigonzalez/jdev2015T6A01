@@ -88,7 +88,6 @@ public class UserEndPoints extends HttpServlet {
 		} else {
 			return Response.status(409).build();
 		}
-
 	}
 
 	@PUT
