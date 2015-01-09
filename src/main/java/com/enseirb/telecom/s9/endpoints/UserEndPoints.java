@@ -36,6 +36,7 @@ public class UserEndPoints extends HttpServlet {
 
 	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo());
 
+	// Only for tests
 	@GET
 	@Path("get")
 	@RolesAllowed("account")
@@ -55,19 +56,6 @@ public class UserEndPoints extends HttpServlet {
 	@Produces({ "application/json"})// resultat en JSON
 	public Response getConnect(@HeaderParam("cookie") String userAgent,@FormParam("username") String username, @FormParam("password")String password){ //FormParam ce sont les parametres d'un formulaire. 
  
- 
-//		User wantConnect=new User();
-// 
-//		if(username.length()>0 && password.length()>0){
-//			System.out.println("Both are positives" +"Username:"+username+" - Password:"+password);
-//			wantConnect = authenfication(username, password);
-// 
-//			if (wantConnect != null) {
-//				System.out.println(wantConnect);
-//				return Response.ok().build();
-//			}
-//			System.out.println(wantConnect);
-//		}
 		return Response.ok()
 	               .cookie(new NewCookie("test", username, "/", null,1,      
 	                       "no comment",      
@@ -75,24 +63,8 @@ public class UserEndPoints extends HttpServlet {
 	                       false ))
 	               .build();
  
-		//return wantConnect;
- 
 	}
 	
-//	private User authenfication(String username, String password) {
-//		// TODO Auto-generated method stub
-//		User user=new User();
-//		user.setName(username);
-//		user.setPassword(password);
-//		//Split username and password tokens
-////		final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
-////		final String username = tokenizer.nextToken();
-////		final String password = tokenizer.nextToken();
-//		Cookie test = new Cookie("userTest",username);
-//		System.out.println(test.getName());
-//		return user;
-//	}
-
 	// TODO: update the class to suit your needs
 
 	// The Java method will process HTTP GET requests

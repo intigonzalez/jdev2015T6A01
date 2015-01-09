@@ -95,7 +95,7 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
 	        		String userConnected = requestContext.getCookies().get("test").getValue();
 	        		
 	        		System.out.println(requestContext.getUriInfo().getPath());  
-	        		String[] test  = requestContext.getUriInfo().getPath().split("/");
+	        		String[] test = requestContext.getUriInfo().getPath().split("/");
 	        		System.out.println(test[test.length-1]);   
 
 	        		 // User is authentified and access to his own page
