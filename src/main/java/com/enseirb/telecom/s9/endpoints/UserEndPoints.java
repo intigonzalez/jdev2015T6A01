@@ -32,15 +32,13 @@ import com.enseirb.telecom.s9.service.AccountServiceImpl;
 
 // The Java class will be hosted at the URI path "/app/account"
 @Path("app/account")
-//@DeclareRoles({"user"})
 public class UserEndPoints extends HttpServlet {
 
 	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo());
 
 	@GET
 	@Path("get")
-	@RolesAllowed("toto")
-	//@PermitAll
+	@RolesAllowed("account")
 	public Response addUser(@Context HttpHeaders headers,@Context SecurityContext context) {//@HeaderParam("cookie") String userAgent) {
 		
 		String userAgent = headers.getRequestHeader("cookie").get(0);
@@ -54,7 +52,6 @@ public class UserEndPoints extends HttpServlet {
 	
 	@POST()
 	@Path("Connect")
-	//@RolesAllowed("user")
 	@Produces({ "application/json"})// resultat en JSON
 	public Response getConnect(@HeaderParam("cookie") String userAgent,@FormParam("username") String username, @FormParam("password")String password){ //FormParam ce sont les parametres d'un formulaire. 
  
@@ -124,6 +121,7 @@ public class UserEndPoints extends HttpServlet {
 
 	@PUT
 	@Path("{userID}")
+	@RolesAllowed("account")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putUser(User user, @PathParam("userID") String userIDFromPath) {
 		// TODO: need to check the authentication of the user
@@ -139,6 +137,7 @@ public class UserEndPoints extends HttpServlet {
 
 	@DELETE
 	@Path("{userID}")
+	@RolesAllowed("account")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteUser(@PathParam("userID") String userID) {
 		// TODO: need to check the authentication of the user

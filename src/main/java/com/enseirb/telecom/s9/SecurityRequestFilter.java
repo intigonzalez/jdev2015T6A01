@@ -58,6 +58,10 @@ import javax.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enseirb.telecom.s9.db.UserRepositoryMongo;
+import com.enseirb.telecom.s9.service.AccountService;
+import com.enseirb.telecom.s9.service.AccountServiceImpl;
+
 import sun.security.util.Length;
 
 /**
@@ -84,13 +88,21 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
             public boolean isUserInRole(final String role) {
             	String auth = "denied";
             	
-        		System.out.println(requestContext.getCookies().get("test").getValue()); 
-        		System.out.println(requestContext.getUriInfo().getPath());  
-        		String[] test  = requestContext.getUriInfo().getPath().split("/");
-        		System.out.println(test[test.length-1]);   
-        		if (test[test.length-1].equals("toto")) {
-        			auth = "account";
-				}      	
+            	if(role.equals("account")){
+            		AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo());
+            		
+	        		System.out.println(requestContext.getCookies().get("test").getValue()); 
+	        		String userConnected = requestContext.getCookies().get("test").getValue();
+	        		
+	        		System.out.println(requestContext.getUriInfo().getPath());  
+	        		String[] test  = requestContext.getUriInfo().getPath().split("/");
+	        		System.out.println(test[test.length-1]);   
+
+	        		 // User is authentified and access to his own page
+	        		if(uManager.getUser(userConnected) != null && userConnected.equals(test[test.length-1])){
+	        			auth = "account";
+					}      	
+            	}
         		
         		return auth.equals(role);
             }
