@@ -81,7 +81,7 @@ public class RelationEndPoints {
 
 		if (rManager.RelationExist(userID, relationID)) {
 			Relation relation = rManager.getRelation(userID, relationID);
-			return rManager.getAllContent(relationID, userID);
+			return rManager.getAllContent(userID,relationID);
 		}
 		return null;
 	}

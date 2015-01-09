@@ -10,8 +10,7 @@ import javax.ws.rs.core.MediaType;
 import com.enseirb.telecom.s9.Box;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.enseirb.telecom.s9.ListContent;
-import com.enseirb.telecom.s9.User;
+import com.enseirb.telecom.s9.ListContent; 
 import com.enseirb.telecom.s9.endpoints.ContentEndPoints;
 import com.enseirb.telecom.s9.exception.NoRelationException;
 import com.enseirb.telecom.s9.exception.NoSuchBoxException;
@@ -19,7 +18,6 @@ import com.enseirb.telecom.s9.exception.NoSuchUserException;
 
 public class RequestContentServiceImpl implements RequestContentService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.class);
-    private String url;
     private Client client;
 
     public RequestContentServiceImpl() {
