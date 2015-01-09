@@ -264,10 +264,10 @@ public class RelationServiceImpl implements RelationService {
 	public ListContent getAllContent(String userID, String relationID) {
 		try {
 			
-			RequestContentService requestContentService = new RequestContentServiceImpl(
-					"http://localhost:9998/api/app/");
+			RequestContentService requestContentService = new RequestContentServiceImpl();
 
 			ListContent listContent = requestContentService.get(userID, relationID);
+			
 			return listContent;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -275,7 +275,11 @@ public class RelationServiceImpl implements RelationService {
 		} catch (NoSuchUserException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (NoRelationException e) {
+		} 
+		catch (NoSuchBoxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch (NoRelationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
