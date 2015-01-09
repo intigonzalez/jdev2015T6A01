@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.ListContent;
+import com.enseirb.telecom.s9.Relation;
 
 
 public interface ContentService {
@@ -67,7 +68,7 @@ public interface ContentService {
 	 * @param groupID list of group to get video
 	 * @return a list a content
 	 */
-	public abstract ListContent getAllContent(List<Integer> groupID);
+	public ListContent getAllContent(String userID, Relation relation);
 
 	/**
 	 * is use just for change status a video

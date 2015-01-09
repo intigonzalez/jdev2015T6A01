@@ -16,6 +16,7 @@ import com.enseirb.telecom.s9.ApplicationContext;
 import com.enseirb.telecom.s9.Authorization;
 import com.enseirb.telecom.s9.Content;
 import com.enseirb.telecom.s9.ListContent;
+import com.enseirb.telecom.s9.Relation;
 import com.enseirb.telecom.s9.Task;
 import com.enseirb.telecom.s9.db.ContentRepositoryInterface;
 import com.enseirb.telecom.s9.db.ContentRepositoryObject;
@@ -148,27 +149,32 @@ public class ContentServiceImpl implements ContentService {
 
 	}
 
-	public ListContent getAllContent(List<Integer> groupID) {
+	public ListContent getAllContent(String userID, Relation relation) {
+		//List that will be return.
 		ListContent listContent = new ListContent();
-		Iterable<ContentRepositoryObject> content = contentDatabase.findAll();
+
+		// Get all the content the UserID stores
+		Iterable<ContentRepositoryObject> content = contentDatabase.findAll();//FromUser(userID);
 		Iterator<ContentRepositoryObject> itr = content.iterator();
-		while (itr.hasNext()) {
-			Boolean found = false;
+		while (itr.hasNext()) { //For each content
 			ContentRepositoryObject contentRepositoryObject = itr.next();
-			for (int i = 0; i < groupID.size(); i++) {
-				if (found)
-					break;
-				if (contentRepositoryObject.getAuthorization() != null)
+			
+			for (int i = 0; i < relation.getGroupID().size(); i++) { // For each group the relation belongs to
+				
+				if (contentRepositoryObject.getAuthorization() != null) {
 					if (contentRepositoryObject.getAuthorization().size() == 0) {
-						LOGGER.error("Groupe information err");
-						listContent.getContent().add(contentRepositoryObject.toContent());
-					}
-				for (int j = 0; j < contentRepositoryObject.getAuthorization().size(); j++) {
-					if (groupID.get(i) == contentRepositoryObject.getAuthorization().get(j).getGroupID()) {
+						LOGGER.error("Groupe information : Relation in no group or video never allowed");
 						listContent.getContent().add(contentRepositoryObject.toContent());
 						break;
+					}
+				}
+				for (int j = 0; j < contentRepositoryObject.getAuthorization().size(); j++) {
+					if (relation.getGroupID().get(i) == contentRepositoryObject.getAuthorization().get(j).getGroupID()) {
+						listContent.getContent().add(contentRepositoryObject.toContent());
+						LOGGER.debug("");
+						break;
 					} else {
-						System.err.println("Groupe is not the same");
+						LOGGER.debug("Group is not the same. ");
 					}
 				}
 			}
