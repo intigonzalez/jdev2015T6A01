@@ -167,7 +167,9 @@ public class RelationServiceImpl implements RelationService {
 
 					RequestRelationService rss = new RequestRelationServiceImpl();
 					try {
-						rss.postRelation(relation, relation2);
+						relation.setAprouve(1);
+						relation2.setAprouve(2);
+						rss.postRelation(relation2, relation);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -179,6 +181,9 @@ public class RelationServiceImpl implements RelationService {
 					// userID
 					rss.close();
 				}
+			}
+			else {
+				relation.setAprouve(2);
 			}
 			return relationshipDatabase.save(new RelationshipRepositoryObject(userID, relation))
 					.toRelation();

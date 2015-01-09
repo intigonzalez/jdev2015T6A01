@@ -167,6 +167,7 @@ public class RelationEndPoints {
 			throws URISyntaxException {
 		// TODO: ajout un ami
 		// add a friend
+	
 		if (rManager.RelationExist(userIDFromPath, relation.getEmail()) == false) {
 			try {
 				rManager.createRelation(userIDFromPath, relation, true);
