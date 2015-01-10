@@ -19,7 +19,7 @@ var userID = params["email"];
 
 var searchItemIntoArrayWithAttribute = function(array, attr, value) {
     for (var i = 0; i < array.length; i++) {
-        console.log("check value "+ array[i][attr] + " and "+value);
+        //console.log("check value "+ array[i][attr] + " and "+value);
         if (array[i][attr] == value) {
             return i;
         }
@@ -32,6 +32,7 @@ angular.module('myApp', [
     'ngRoute',
     'angularFileUpload',
     'ui.bootstrap',
+    'myApp.index',
     'myApp.home',
     'myApp.myvideos',
     'myApp.myprofile',
