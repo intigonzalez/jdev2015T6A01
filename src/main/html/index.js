@@ -6,5 +6,8 @@
 angular.module('myApp.index', [])
 
     .controller('IndexController', [ function () {
-        this.email = "Hello";
+        this.logout = function() {
+        	document.cookie = "authentication=; expires=Thu, 01 Jan 2000 00:00:00 GMT"; 
+            window.location.replace("http://localhost:9998/connection.html");	
+        }
     }]);
