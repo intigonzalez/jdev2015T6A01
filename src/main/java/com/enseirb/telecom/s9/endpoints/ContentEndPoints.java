@@ -77,7 +77,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 	@GET
 	@Path("{contentsID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Content getIt(@PathParam("userID") String userID, @PathParam("contentsID") String contentsID) {
+	public Content getSpecificContentInformations(@PathParam("userID") String userID, @PathParam("contentsID") String contentsID) {
 		Content content = uManager.getContent(contentsID);
 		if ( content.getLogin().equals(userID) ) {
 			return content;
@@ -90,25 +90,6 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 		    throw new WebApplicationException(response);	
 		}
 		
-	}
-
-	/**
-	 * This endpoint is used by a box, to get the content of one of its relations.
-	 * @param relationID : remote user (the relation)
-	 * @param userID : local user (the one who stores content)
-	 * @return
-	 */
-	@GET
-	@Path("relation/{relationID}")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ListContent getLocalFromRelation(@PathParam("relationID") String relationID,@PathParam("userID") String userID) {
-		RelationServiceImpl relationService = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
-		 if (relationService.RelationExist(userID, relationID)){
-			Relation relation = relationService.getRelation(userID, relationID);
-			LOGGER.debug("Check the relation : {}" ,relation);
-			return uManager.getAllContent(userID, relation);
-		 }
-		return null;
 	}
 	
 

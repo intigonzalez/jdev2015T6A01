@@ -20,11 +20,17 @@ import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.s9.ApplicationContext;
 import com.enseirb.telecom.s9.Box;
+import com.enseirb.telecom.s9.ListContent;
+import com.enseirb.telecom.s9.Relation;
 import com.enseirb.telecom.s9.db.BoxRepositoryMongo;
+import com.enseirb.telecom.s9.db.ContentRepositoryMongo;
 import com.enseirb.telecom.s9.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.s9.db.UserRepositoryMongo;
 import com.enseirb.telecom.s9.service.BoxService;
 import com.enseirb.telecom.s9.service.BoxServiceImpl;
+import com.enseirb.telecom.s9.service.ContentService;
+import com.enseirb.telecom.s9.service.ContentServiceImpl;
+import com.enseirb.telecom.s9.service.RabbitMQServer;
 import com.enseirb.telecom.s9.service.RelationService;
 import com.enseirb.telecom.s9.service.RelationServiceImpl;
 
@@ -58,7 +64,7 @@ public class BoxEndPoints {
      */
     @POST
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Response postBox2() throws URISyntaxException {
+    public Response postBox() throws URISyntaxException {
 	// add a comment
 	Box box = new Box();
 	box.setBoxID(ApplicationContext.getProperties().getProperty("BoxID"));
@@ -131,5 +137,29 @@ public class BoxEndPoints {
 	// return Response.status(409).build();
 	// }
     }
+    
+    
+    /**
+	 * This endpoint is used by a box, to get the content of one of its relations.
+	 * @param relationID : remote user (the relation)
+	 * @param userID : local user (the one who stores content)
+	 * @return
+	 */
+	@GET
+	@Path("{userID}/content/{relationID}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public ListContent getLocalContentForRelation(@PathParam("relationID") String relationID,@PathParam("userID") String userID) {
+		RelationServiceImpl relationService = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
+		ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo(), new RabbitMQServer());
+		
+		LOGGER.debug("Receive Request to get list content from {}", relationID); 
+		if (relationService.RelationExist(userID, relationID)){
+			Relation relation = relationService.getRelation(userID, relationID);
+			
+			LOGGER.debug("Check the relation : {}" ,relation);
+			return uManager.getAllContent(userID, relation);
+		 }
+		return null;
+	}
 
 }

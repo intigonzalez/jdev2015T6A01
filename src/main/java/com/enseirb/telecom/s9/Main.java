@@ -62,7 +62,7 @@ public class Main {
 		// resourceConfig);
 		LOGGER.info("Send information to the server central ...");
 		try {
-			(new BoxEndPoints()).postBox2();
+			(new BoxEndPoints()).postBox();
 		} catch (Exception e) {
 			LOGGER.error("Error for send information to the server central");
 			e.printStackTrace();

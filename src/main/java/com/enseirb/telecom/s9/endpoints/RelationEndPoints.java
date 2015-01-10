@@ -78,8 +78,7 @@ public class RelationEndPoints {
 	@GET
 	@Path("{relationID}/content")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ListContent getRelationContents(@PathParam("userID") String contentsID,
-			@PathParam("relationID") String relationID, @PathParam("userID") String userID) {
+	public ListContent getRelationContents(@PathParam("relationID") String relationID, @PathParam("userID") String userID) {
 
 		if (rManager.RelationExist(userID, relationID)) {
 			Relation relation = rManager.getRelation(userID, relationID);
