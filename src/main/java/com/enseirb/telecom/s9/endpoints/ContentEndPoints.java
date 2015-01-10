@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.security.RolesAllowed;
 import javax.management.relation.RelationService;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -44,6 +45,7 @@ import com.google.common.io.Files;
 
 // The Java class will be hosted at the URI path "/app/content"
 @Path("app/{userID}/content")
+@RolesAllowed("other")
 public class ContentEndPoints {
 	
 private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.class);

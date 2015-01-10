@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.enseirb.telecom.s9.Box;
+import com.enseirb.telecom.s9.ListUser;
 import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.exception.NoSuchBoxException;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
@@ -28,6 +29,8 @@ public interface RequestUserService {
 	 * @throws NoSuchUserException user doesn't exist on remote host 
 	 */
 	public abstract User get(String string) throws IOException, NoSuchUserException;
+
+	public abstract ListUser getUserFromName(String name) throws IOException;
 
 	/**
 	 * post a user on remote host

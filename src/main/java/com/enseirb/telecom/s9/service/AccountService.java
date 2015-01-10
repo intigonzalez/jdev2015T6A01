@@ -1,5 +1,6 @@
 package com.enseirb.telecom.s9.service;
 
+import com.enseirb.telecom.s9.ListUser;
 import com.enseirb.telecom.s9.User;
 
 public interface AccountService {
@@ -12,6 +13,13 @@ public interface AccountService {
 	public abstract boolean userExist(User user);
 
 	public abstract User getUser(String email);
+
+	/**
+	 * get user by name form server
+	 * @param name to get list
+	 * @return
+	 */
+	public abstract ListUser getUserFromNameOnServer(String name);
 
 	/**
 	 *  create user like XSD
