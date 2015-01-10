@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -128,7 +129,9 @@ public <S extends UserRepositoryObject> S update (S entity){
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("users");
 
-			BasicDBObject query = new BasicDBObject("userID", id);
+//			BasicDBObject query = new BasicDBObject("userID", id);
+			BasicDBObject query = new BasicDBObject();
+			query.put("userID",  Pattern.compile(id , Pattern.CASE_INSENSITIVE));
 			DBCursor cursor = dbUsers.find(query);
 			UserRepositoryObject user = null;
 			ObjectMapper mapper = new ObjectMapper();

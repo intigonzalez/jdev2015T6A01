@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.enseirb.telecom.s9.ListUser;
 import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.db.UserRepositoryMongo;
 import com.enseirb.telecom.s9.service.AccountService;
@@ -35,6 +36,20 @@ public class UserEndPoints {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public User getIt(@PathParam("userID") String userID) {
 		return uManager.getUser(userID);
+	}
+	
+	/**
+	 * Find a list of users from their name on server
+	 * @param name
+	 * @return a list of user
+	 */
+	@GET
+	@Path("name/{name}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public ListUser getUserFromName(@PathParam("name") String name){
+		
+		return uManager.getUserFromNameOnServer(name);
+		
 	}
 
 	@POST

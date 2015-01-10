@@ -1,24 +1,9 @@
 package com.enseirb.telecom.s9.service;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.ContentHandler;
-import java.net.URLConnection;
-
-import javax.validation.Path.Node;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.xml.bind.JAXB;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.transform.Result;
 
 import com.enseirb.telecom.s9.ApplicationContext;
+import com.enseirb.telecom.s9.ListUser;
 import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.db.CrudRepository;
 import com.enseirb.telecom.s9.db.UserRepositoryObject;
@@ -26,7 +11,6 @@ import com.enseirb.telecom.s9.exception.NoSuchUserException;
 import com.enseirb.telecom.s9.exception.SuchUserException;
 import com.enseirb.telecom.s9.request.RequestUserService;
 import com.enseirb.telecom.s9.request.RequestUserServiceImpl;
-import com.mongodb.util.JSON;
 
 public class AccountServiceImpl implements AccountService {
 
@@ -88,6 +72,17 @@ public class AccountServiceImpl implements AccountService {
 	 * com.enseirb.telecom.s9.service.AccountService#createUser(com.enseirb.
 	 * telecom.s9.User)
 	 */
+
+	@Override
+	public ListUser getUserFromNameOnServer(String name) {
+	    try {
+		return requetUserService.getUserFromName(name);
+	    } catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
+	    return null;
+	}
 
 	@Override
 	public User createUser(User user) {
