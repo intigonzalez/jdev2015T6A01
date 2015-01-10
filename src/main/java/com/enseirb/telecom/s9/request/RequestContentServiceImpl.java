@@ -17,7 +17,7 @@ import com.enseirb.telecom.s9.exception.NoSuchBoxException;
 import com.enseirb.telecom.s9.exception.NoSuchUserException;
 
 public class RequestContentServiceImpl implements RequestContentService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequestContentServiceImpl.class);
 	private Client client;
 
 	public RequestContentServiceImpl() {

@@ -29,7 +29,7 @@ import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.json.JsonWriter;
 
 public class ContentServiceImpl implements ContentService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContentServiceImpl.class);
     static FileService fileservice;
     static ContentRepositoryInterface contentDatabase;
     RabbitMQServer rabbitMq;
