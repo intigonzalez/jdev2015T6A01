@@ -3,8 +3,11 @@ package com.enseirb.telecom.s9.utils;
 import java.io.File;
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class FileService {
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(FileService.class);
 	public void deleteFolder(String folder) throws IOException {
 		File directory = new File(folder);
 		delete(directory);
@@ -17,8 +20,7 @@ public class FileService {
 	    		if(file.list().length==0){
 	 
 	    		   file.delete();
-	    		   System.out.println("Directory is deleted : " 
-	                                                 + file.getAbsolutePath());
+	    		   LOGGER.debug("Directory is deleted : {}", file.getAbsolutePath());
 	 
 	    		}else{
 	 
@@ -36,15 +38,14 @@ public class FileService {
 	        	   //check the directory again, if empty then delete it
 	        	   if(file.list().length==0){
 	           	     file.delete();
-	        	     System.out.println("Directory is deleted : " 
-	                                                  + file.getAbsolutePath());
+	           	  LOGGER.debug("Directory is deleted : {}", file.getAbsolutePath());
 	        	   }
 	    		}
 	 
 	    	}else{
 	    		//if file, then delete it
 	    		file.delete();
-	    		System.out.println("File is deleted : " + file.getAbsolutePath());
+	    		LOGGER.debug("File is deleted : {}",  file.getAbsolutePath());
 	    	}
 	    }
 }

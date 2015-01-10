@@ -103,6 +103,7 @@ public class ContentServiceImpl implements ContentService {
 		e.printStackTrace();
 	    }
 	}
+	//Initialise with public authorization by default ! 
 	Authorization authorization = new Authorization();
 	authorization.setGroupID(0);
 	authorization.getAction().add("action");
@@ -172,10 +173,9 @@ public class ContentServiceImpl implements ContentService {
 			    contentRepositoryObject.setLink(ApplicationContext.getProperties().getProperty("PublicAddr")+contentRepositoryObject.getLink());
 			   
 			    listContent.getContent().add(contentRepositoryObject.toContent());
-			    // LOGGER.debug("");
 			    break search;
 			} else {
-			    LOGGER.debug("Group is not the same. ");
+//			    LOGGER.debug("Group is not the same. ");
 			}
 		    }
 		}

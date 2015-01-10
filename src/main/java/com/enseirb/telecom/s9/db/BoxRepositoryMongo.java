@@ -5,6 +5,10 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.enseirb.telecom.s9.endpoints.ContentEndPoints;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
@@ -15,7 +19,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
 public class BoxRepositoryMongo implements CrudRepository<BoxRepositoryObject, String>{
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(BoxRepositoryMongo.class);
 	public BoxRepositoryMongo(){
 		
 	}
@@ -29,7 +33,7 @@ public class BoxRepositoryMongo implements CrudRepository<BoxRepositoryObject, S
 				DB db = mongoClient.getDB("mediahome");
 				DBCollection dbbox = db.getCollection("box");
 				DBObject objectToSave = DbInit.createDBObject(entity);
-				System.out.println("DB Object" + objectToSave.toString());
+				LOGGER.info("DB Object Saved {}",objectToSave.toString());
 				dbbox.save(objectToSave);
 				mongoClient.close();
 			} catch (UnknownHostException | JsonProcessingException e) {

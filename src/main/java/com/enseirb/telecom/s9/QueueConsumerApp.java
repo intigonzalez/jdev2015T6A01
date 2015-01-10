@@ -9,7 +9,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enseirb.telecom.s9.db.ContentRepositoryMongo;
 import com.enseirb.telecom.s9.service.ContentServiceImpl;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
@@ -37,7 +36,7 @@ public class QueueConsumerApp {
 		map.put("x-expires", 86400000);
 		channel.queueDeclare(QUEUE_NAME, true, false, true, map);
 		
-		LOGGER.info("Queue Name : ", QUEUE_NAME);
+		LOGGER.info("Queue Name : {}", QUEUE_NAME);
 		LOGGER.info(" [*] Waiting for messages from RabbitMQ.");
 
 		channel.basicConsume(QUEUE_NAME, false, new DefaultConsumer(channel) {
@@ -48,12 +47,10 @@ public class QueueConsumerApp {
 				JSONObject obj;
 				String status = null;
 				
-				System.out.println(result);
-				
 				try {
 					obj = new JSONObject(result);
 					status = obj.getString("status");
-					System.out.println(status);
+					LOGGER.info("Result for element {}" , new Object[] {result, status});
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

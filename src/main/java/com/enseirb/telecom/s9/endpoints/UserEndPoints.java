@@ -25,6 +25,9 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enseirb.telecom.s9.ListUser;
 import com.enseirb.telecom.s9.User;
 import com.enseirb.telecom.s9.db.UserRepositoryMongo;
@@ -34,7 +37,7 @@ import com.enseirb.telecom.s9.service.AccountServiceImpl;
 // The Java class will be hosted at the URI path "/app/account"
 @Path("app/account")
 public class UserEndPoints extends HttpServlet {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserEndPoints.class);
 	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo());
 
 	// Only for tests
@@ -44,8 +47,7 @@ public class UserEndPoints extends HttpServlet {
 	public Response addUser(@Context HttpHeaders headers,@Context SecurityContext context) {//@HeaderParam("cookie") String userAgent) {
 		
 		String userAgent = headers.getRequestHeader("cookie").get(0);
-		System.out.println(userAgent);
-		//System.out.println(context.isUserInRole("toto"));
+		LOGGER.debug("userAgent : {}",userAgent);
 		return Response.status(200)
 			.entity("addUser is called, userAgent : " + userAgent)
 			.build();
@@ -64,9 +66,9 @@ public class UserEndPoints extends HttpServlet {
 	@Produces({ "application/json"})// resultat en JSON
 	public Response getConnect(User user){//@FormParam("username") String username, @FormParam("password")String password){ //FormParam ce sont les parametres d'un formulaire. 
 		String username = user.getName();
-		System.out.println("TEST"+username);
+//		System.out.println("TEST"+username);
 		String test = uManager.getUser(username).getUserID();
-		System.out.println("TEST" + test);
+//		System.out.println("TEST" + test);
 		if (uManager.userExist(uManager.getUser(username))) {
 			User userAuth = uManager.getUser(username);
 			if (user.getPassword().equals(userAuth.getPassword() ) ) {

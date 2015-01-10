@@ -52,7 +52,7 @@ public class RelationServiceImpl implements RelationService {
 
 	    if (rro.getUserId().equals(userID)) {
 
-		System.out.println(rro.getEmail());
+		LOGGER.debug("{}", rro.getEmail());
 
 		try {
 		    // Box boxRelation = requestServ.getBox(rro.getEmail());
@@ -63,7 +63,7 @@ public class RelationServiceImpl implements RelationService {
 		    relationIntoDb.setSurname(relationUpdate.getSurname());
 		    relationshipDatabase.save(new RelationshipRepositoryObject(userID, relationIntoDb));
 		} catch (NoSuchBoxException e) {
-		    System.out.println("All users should have a box, ignoring");
+		    LOGGER.warn("All users should have a box, ignoring");
 		}
 
 	    }
@@ -285,9 +285,9 @@ public class RelationServiceImpl implements RelationService {
 	try {
 
 	    RequestContentService requestContentService = new RequestContentServiceImpl();
-
+	    
 	    ListContent listContent = requestContentService.get(userID, relationID);
-
+	    LOGGER.debug("Content from {} fetched ! ", relationID);
 	    return listContent;
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block

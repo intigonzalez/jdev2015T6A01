@@ -138,7 +138,7 @@ public class ContentRepositoryMongo implements ContentRepositoryInterface {
 					} catch (JsonProcessingException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-						System.out.println("Impossible to create userDBObject");
+						LOGGER.error("Impossible to create userDBObject");
 					}			    
 				    
 					entityDBList.add(userDBObject);

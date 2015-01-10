@@ -122,7 +122,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 
 
 	//	System.out.println("File uploaded to : " + upload.getAbsolutePath());
-		LOGGER.debug("New file uploaded {} with the type {}",fileType[0]);
+		LOGGER.debug("New file uploaded with the type {}",fileType[0]);
 
 		
 		Content content = new Content();
@@ -130,9 +130,6 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 		content.setLogin(email);
 		content.setStatus("In progress");
 		content.setType(fileType[0]);
-//		Authorization authorization = new Authorization();
-//		authorization.setGroupID(0);
-//		content.getAuthorization().add(authorization);
 		UUID uuid = UUID.randomUUID();
 		content.setContentsID(uuid.toString().replace("-", ""));
 		String link = "/videos/"+email+"/"+uuid.toString();
