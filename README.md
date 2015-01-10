@@ -118,7 +118,11 @@ get this url
 	
 	/api/app/{userID}/group/{groupId}
 
-
+for information group 
+0 public
+1 family
+2 friends
+3 work
 
 # Web Interface #
 URL : http://localhost:9998/index.html?email=vince@onehear.nl#/home

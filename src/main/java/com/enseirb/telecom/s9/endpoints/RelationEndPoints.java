@@ -83,7 +83,7 @@ public class RelationEndPoints {
 
 		if (rManager.RelationExist(userID, relationID)) {
 			Relation relation = rManager.getRelation(userID, relationID);
-			return rManager.getAllContent(relationID, userID);
+			return rManager.getAllContent(userID,relationID);
 		}
 		return null;
 	}
@@ -169,6 +169,7 @@ public class RelationEndPoints {
 			throws URISyntaxException {
 		// TODO: ajout un ami
 		// add a friend
+	
 		if (rManager.RelationExist(userIDFromPath, relation.getEmail()) == false) {
 			try {
 				rManager.createRelation(userIDFromPath, relation, true);

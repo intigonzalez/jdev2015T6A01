@@ -93,10 +93,9 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 	}
 
 	/**
-	 * get the local video of userID (local) for RelationID
-	 * @param contentsID
-	 * @param relationID
-	 * @param userID
+	 * This endpoint is used by a box, to get the content of one of its relations.
+	 * @param relationID : remote user (the relation)
+	 * @param userID : local user (the one who stores content)
 	 * @return
 	 */
 	@GET
@@ -106,7 +105,8 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 		RelationServiceImpl relationService = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
 		 if (relationService.RelationExist(userID, relationID)){
 			Relation relation = relationService.getRelation(userID, relationID);
-			return uManager.getAllContent(relation.getGroupID());
+			LOGGER.debug("Check the relation : {}" ,relation);
+			return uManager.getAllContent(userID, relation);
 		 }
 		return null;
 	}
