@@ -35,7 +35,7 @@ import com.enseirb.telecom.s9.service.RelationServiceImpl;
 
 // The Java class will be hosted at the URI path "/app/friends"
 @Path("app/{userID}/relation")
-@RolesAllowed("relation")
+@RolesAllowed("other")
 public class RelationEndPoints {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RelationEndPoints.class);
 

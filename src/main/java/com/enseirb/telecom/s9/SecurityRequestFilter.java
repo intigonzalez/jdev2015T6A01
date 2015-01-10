@@ -94,19 +94,20 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
         		String userConnected = requestContext.getCookies().get("authentication").getValue(); // get the cookie
         		//System.out.println(requestContext.getCookies().get("test").getValue()); 
         		String[] test = requestContext.getUriInfo().getPath().split("/");
-        		//System.out.println(requestContext.getUriInfo().getPath());  
+        		System.out.println(requestContext.getUriInfo().getPath());  
             	
             	if(role.equals("account")){
-	        		//System.out.println(test[test.length-1]);   
+	        		System.out.println(test[test.length-1]);   
 	        		// User is authenticated and access to his own page
 	        		if(uManager.getUser(userConnected) != null && userConnected.equals(test[test.length-1])){
 	        			auth = "account";
 					}      	
             	}
-            	else if (role.equals("content") || role.equals("relation")) {
+            	else if (role.equals("other")) {
+    		System.out.println(test[1]); 
 	        		// User is authenticated and access to his own page of contents
 	        		if(uManager.getUser(userConnected) != null && userConnected.equals(test[1])){
-	        			auth = "content";
+	        			auth = "other";
 					}	
 				}
         		

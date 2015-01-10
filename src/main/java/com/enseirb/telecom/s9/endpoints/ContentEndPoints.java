@@ -45,7 +45,7 @@ import com.google.common.io.Files;
 
 // The Java class will be hosted at the URI path "/app/content"
 @Path("app/{userID}/content")
-@RolesAllowed("content")
+@RolesAllowed("other")
 public class ContentEndPoints {
 	
 private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.class);
