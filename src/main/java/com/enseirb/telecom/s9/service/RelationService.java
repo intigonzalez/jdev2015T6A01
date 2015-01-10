@@ -34,4 +34,6 @@ public interface RelationService {
 
 	public abstract void updateRelation(String userIDFromPath) throws IOException,
 			NoSuchUserException;
+
+	public abstract void setAprouveBox(String userId, String relationId);
 }
