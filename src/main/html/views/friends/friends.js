@@ -37,7 +37,7 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
                         else {
                             $scope.FriendProfileController.videos = data.listContent.content;
                         }
-                        console.log($scope.FriendProfileController.videos);
+                        //console.log($scope.FriendProfileController.videos);
                     }
                 })
                 .error(function (data, status, headers, config){
@@ -75,7 +75,7 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
             $scope.FriendsCtrl.tabValue = int;
         }
         $scope.DisplayFriendProfile = function(friend) {
-            console.log("Display Friend Profile");
+            //console.log("Display Friend Profile");
             $scope.FriendsCtrl.SetTab(1);
             $scope.FriendProfileController.friend= friend;
             $scope.FriendProfileController.getVideoContent(friend);

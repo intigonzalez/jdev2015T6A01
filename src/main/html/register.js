@@ -14,7 +14,7 @@ RegisterForm.controller("mainController", function ($scope, $http) {
             .success(function (data, status, headers, config)
             {
                 console.log("Succeed");
-                window.location.replace("http://localhost:9998/index.html?email="+person.name);
+                window.location.replace("/home.html");
             })
             .error(function (data, status, headers, config)
             {
@@ -48,27 +48,4 @@ RegisterForm.controller("mainController", function ($scope, $http) {
     // End of js part for validating the form inputs
 
 
-});
-
-$(document).ready(function(){
-    $("registerForm").validate({
-        rules: {
-            name:{
-                minlength: 3,
-                maxlength: 20,
-                required: true
-            },
-            email:{
-                minlength: 3,
-                maxlength: 20,
-                required: true
-            }
-        },
-        highlight: function (element) {
-            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-        },
-        unhighlight: function (element) {
-            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
-        }
-    });
 });

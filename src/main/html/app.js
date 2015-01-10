@@ -1,21 +1,20 @@
 'use strict';
 
-var parseQueryString = function() {
-    var str = window.location.search;
-    var objURL = {};
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
+}
+var userID = getCookie("authentication");
+console.log(userID);
 
-    str.replace(
-        new RegExp( "([^?=&]+)(=([^&]*))?", "g" ),
-        function( $0, $1, $2, $3 ){
-            objURL[ $1 ] = $3;
-        }
-    );
-    return objURL;
-};
-var params = parseQueryString();
 var PREFIX_RQ = "";
 //var PREFIX_RQ = "http://purple:9998";
-var userID = params["email"];
 
 var searchItemIntoArrayWithAttribute = function(array, attr, value) {
     for (var i = 0; i < array.length; i++) {
