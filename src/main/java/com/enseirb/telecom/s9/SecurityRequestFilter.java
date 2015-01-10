@@ -66,6 +66,9 @@ import sun.security.util.Length;
 
 /**
  * @author Michal Gajdos (michal.gajdos at oracle.com)
+ * The first file has been taken on https://github.com/jersey/jersey
+ * Thus the first author is Michal Gajdos
+ * Then it has been modified for our needs
  */
 @Provider
 @PreMatching
@@ -83,26 +86,29 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
                     }
                 };
             }
-
+ 
             @Override
             public boolean isUserInRole(final String role) {
             	String auth = "denied";
+        		AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo());
+        		String userConnected = requestContext.getCookies().get("authentication").getValue(); // get the cookie
+        		//System.out.println(requestContext.getCookies().get("test").getValue()); 
+        		String[] test = requestContext.getUriInfo().getPath().split("/");
+        		//System.out.println(requestContext.getUriInfo().getPath());  
             	
             	if(role.equals("account")){
-            		AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo());
-            		
-	        		System.out.println(requestContext.getCookies().get("test").getValue()); 
-	        		String userConnected = requestContext.getCookies().get("test").getValue();
-	        		
-	        		System.out.println(requestContext.getUriInfo().getPath());  
-	        		String[] test = requestContext.getUriInfo().getPath().split("/");
-	        		System.out.println(test[test.length-1]);   
-
-	        		 // User is authentified and access to his own page
+	        		//System.out.println(test[test.length-1]);   
+	        		// User is authenticated and access to his own page
 	        		if(uManager.getUser(userConnected) != null && userConnected.equals(test[test.length-1])){
 	        			auth = "account";
 					}      	
             	}
+            	else if (role.equals("content") || role.equals("relation")) {
+	        		// User is authenticated and access to his own page of contents
+	        		if(uManager.getUser(userConnected) != null && userConnected.equals(test[1])){
+	        			auth = "content";
+					}	
+				}
         		
         		return auth.equals(role);
             }

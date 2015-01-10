@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -34,6 +35,7 @@ import com.enseirb.telecom.s9.service.RelationServiceImpl;
 
 // The Java class will be hosted at the URI path "/app/friends"
 @Path("app/{userID}/relation")
+@RolesAllowed("relation")
 public class RelationEndPoints {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RelationEndPoints.class);
 

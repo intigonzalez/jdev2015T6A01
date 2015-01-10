@@ -39,7 +39,7 @@ public class UserEndPoints extends HttpServlet {
 	// Only for tests
 	@GET
 	@Path("get")
-	@RolesAllowed("account")
+	//@RolesAllowed("account")
 	public Response addUser(@Context HttpHeaders headers,@Context SecurityContext context) {//@HeaderParam("cookie") String userAgent) {
 		
 		String userAgent = headers.getRequestHeader("cookie").get(0);
@@ -51,17 +51,38 @@ public class UserEndPoints extends HttpServlet {
  
 	}
 	
+	/**
+	 * Create the cookie on user side when the user is connected
+	 * @param userAgent
+	 * @param username
+	 * @param password
+	 * @return
+	 */
 	@POST()
 	@Path("Connect")
 	@Produces({ "application/json"})// resultat en JSON
-	public Response getConnect(@HeaderParam("cookie") String userAgent,@FormParam("username") String username, @FormParam("password")String password){ //FormParam ce sont les parametres d'un formulaire. 
- 
-		return Response.ok()
-	               .cookie(new NewCookie("test", username, "/", null,1,      
-	                       "no comment",      
-	                       1073741823 , // maxAge max int value/2      
-	                       false ))
-	               .build();
+	public Response getConnect(User user){//@FormParam("username") String username, @FormParam("password")String password){ //FormParam ce sont les parametres d'un formulaire. 
+		String username = user.getName();
+		System.out.println("TEST"+username);
+		String test = uManager.getUser(username).getUserID();
+		System.out.println("TEST" + test);
+		if (uManager.userExist(uManager.getUser(username))) {
+			User userAuth = uManager.getUser(username);
+			if (user.getPassword().equals(userAuth.getPassword() ) ) {
+				return Response.ok()
+			               .cookie(new NewCookie("authentication", username, "/", null,1,      
+			                       "no comment",      
+			                       1073741823 , // maxAge max int value/2      
+			                       false ))
+			               .build();
+				
+			}
+			return Response.status(403).build();
+			
+		}
+		else{
+			return Response.status(403).build();
+		}
  
 	}
 	
