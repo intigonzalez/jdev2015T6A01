@@ -145,7 +145,8 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
                 });
             }
             else {
-                $scope.listGroups[video.authorization.groupID].value=true; //to improve, quite dirty
+                var index = searchItemIntoArrayWithAttribute($scope.listGroups, "groupID", video.authorization.groupID);
+                $scope.listGroups[index].value=true;
             }
         }
         //console.log(listGroups);

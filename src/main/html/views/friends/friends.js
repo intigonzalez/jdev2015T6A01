@@ -8,9 +8,87 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
             controller: 'FriendsCtrl'
         });
     }])
-    .controller('FriendsCtrl', [ function () {
+    .controller('FriendsCtrl', ['$scope', '$http', '$window', function ($scope, $http, $window) {
+
+        var videos = this;
+        //Determine the right steraming protocol.
+        var userAgent = $window.navigator.userAgent;
+        if ( userAgent.indexOf("Chrome") >= 0 || userAgent.indexOf("Windows") >=0 ) {
+            videos.prefix = 'dash';
+            videos.suffix = 'dash/playlist.mpd';
+        }
+        else {
+            videos.prefix = 'hls';
+            videos.suffix = 'hls/playlist.m3u8';
+        }
+
+        //Init Objects
+        $scope.FriendsCtrl ={}; // Just use for tabs
+
+        $scope.FriendProfileController = {}; // use to give all the items to the other controller
+        $scope.FriendProfileController.getVideoContent = function(friend) {
+            $scope.FriendProfileController.videos = []; // object to store videos
+            $http.get(PREFIX_RQ+"/api/app/"+userID+"/relation/"+friend.email +"/content")
+                .success(function(data, status, headers, config) {
+                    if ( data.listContent !== "" ) {
+                        if (angular.isArray(data.listContent.content) == false) {
+                            $scope.FriendProfileController.videos.push(data.listContent.content);
+                        }
+                        else {
+                            $scope.FriendProfileController.videos = data.listContent.content;
+                        }
+                        console.log($scope.FriendProfileController.videos);
+                    }
+                })
+                .error(function (data, status, headers, config){
+                    console.log("Failed getting Video Content from your relation");
+                })
+
+        }
+        $scope.FriendProfileController.generateLink = function(content) {
+            if (content.status == "success") {
+                return videos.prefix + ".html?url=" + content.link + "/" + videos.suffix;
+            }
+            else {
+                return "";
+            }
+        }
+        $scope.FriendProfileController.videoInProgress = function(content) {
+            if (content.status == "success") {
+                return "";
+            }
+            else {
+                return "disabled";
+            }
+        };
+
+        $scope.FriendsCtrl.tabValue = 0;
+        $scope.FriendsCtrl.isSet = function(int) {
+            if ($scope.FriendsCtrl.tabValue == int) {
+                return true
+            }
+            else {
+                return false;
+            }
+        }
+        $scope.FriendsCtrl.SetTab = function(int) {
+            $scope.FriendsCtrl.tabValue = int;
+        }
+        $scope.DisplayFriendProfile = function(friend) {
+            console.log("Display Friend Profile");
+            $scope.FriendsCtrl.SetTab(1);
+            $scope.FriendProfileController.friend= friend;
+            $scope.FriendProfileController.getVideoContent(friend);
+        }
+        $scope.HideFriendProfile = function() {
+            $scope.FriendProfileController.friend= null;
+            $scope.FriendsCtrl.SetTab(0);
+            console.log("Hide Friend Profile");
+        }
+
+
     }])
-    .controller('FriendsController', ['$scope', '$http', '$modal', '$log', function ($scope, $http, $modal, $log) {
+    .controller('FriendsListController', ['$scope', '$http', '$modal', '$log', function ($scope, $http, $modal, $log) {
 
         var friends = this; // This element to get it easily
         friends.list = []; //Friend list into the controller
@@ -41,6 +119,7 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
         };
         //this.getGroupList(); //Disabled because the endpoint doesn't exist yet !
 
+        //This function is called to display the list of groups a relation belongs to.
         this.generateGroupList = function(friend) {
             var result = [];
             if (friend.groupID !== undefined) {
@@ -89,8 +168,8 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
            }
         }
 
-        // **** Function to update a friend
-        this.updateFriend = function(friend) {
+        // **** Function to update a friend with PUT Request
+        this.updateRelation = function(friend) {
             var data = {"relation" : friend};
             $http.put(PREFIX_RQ+"/api/app/"+userID+"/relation/"+friend.email, data)
                 .success(function() {
@@ -101,11 +180,12 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
                 })
         }
 
-
-        this.AprouveFriend = function(friend) {
+        //Function to call to accept a relation request
+        this.AprouveRelation = function(friend) {
             friend.aprouve = 3;
-            friends.updateFriend(friend);
+            friends.updateRelation(friend);
         }
+
         //function to change the color of add Friend button
         this.isFriendAddingSuccess = function() {
             if (friends.addFriendSuccess == null) {
@@ -121,7 +201,7 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
         }
 
         // ********  Add a Friend to the friendList **********
-        $scope.addFriend = function(friend_userID) {
+        $scope.addRelation = function(friend_userID) {
 
             $http.post(PREFIX_RQ + "/api/app/" + userID + "/relation/"+friend_userID)
                 .success(function (data, status, headers, config) {
@@ -139,6 +219,7 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
         this.getIndex = function(friend) {
             return friends.list.indexOf(friend);
         }
+
         // ***** Remove a friend *****
         this.removeRelation = function(friend) {
             $http.delete(PREFIX_RQ + "/api/app/" + userID + "/relation/"+friend.email)
@@ -153,11 +234,12 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
                 })
         }
 
+        // ***** Modal *****
         this.showgroups = function(friend) {
             $scope.open(friend);
         }
 
-
+        //Enable Modal to edit groups
         $scope.open = function (friend, size) {
             var modalInstance = $modal.open({
                 templateUrl: 'myModalContent.html',
@@ -174,11 +256,31 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
             });
 
             modalInstance.result.then(function (friend) {
-                friends.updateFriend(friend);
+                friends.updateRelation(friend);
             }, function () {
                 $log.info('Modal dismissed at: ' + new Date());
             });
         };
+
+        // ***** Collapse *****
+        //friends.collapse = null;
+        //friends.isCollapsed = function(friend) {
+        //    if (friends.collapse == friend.email ) {
+        //        return false;
+        //    }
+        //    else {
+        //        return true;
+        //    }
+        //}
+        //friends.setCollapsed = function(friend) {
+        //    if (friends.isCollapsed(friend) == false) {
+        //        friends.collapse = null;
+        //    }
+        //    else {
+        //        friends.collapse = friend.email;
+        //    }
+        //}
+
 
     }])
 
@@ -197,7 +299,8 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
                 });
             }
             else {
-                $scope.listGroups[friend.groupID].value=true; //to improve, quite dirty
+                var index = searchItemIntoArrayWithAttribute($scope.listGroups, "groupID", friend.groupID);
+                $scope.listGroups[index].value=true;
             }
         }
         //console.log(listGroups);

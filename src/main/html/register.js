@@ -14,6 +14,7 @@ RegisterForm.controller("mainController", function ($scope, $http) {
             .success(function (data, status, headers, config)
             {
                 console.log("Succeed");
+                window.location.replace("http://localhost:9998/index.html?email="+person.name);
             })
             .error(function (data, status, headers, config)
             {

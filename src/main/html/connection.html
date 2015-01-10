@@ -3,7 +3,16 @@
 <head>
     <meta charset="utf-8" />
     <title>Medi@Home Connection Form</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <!--external css-->
+    <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+        
+    <!-- Custom styles for this template -->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/style-responsive.css" rel="stylesheet">
+    
     <script type="text/javascript" src="angular.min.js"></script>
     <script src="connection.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -11,53 +20,38 @@
 </head>
 
 <body ng-app="ConnectionForm">
-<div ng-controller="mainController"><div class="container">
-    <div class="col-md-6 col-md-offset-3">
-        <div class="page-header">
-            <!--   span class adds a tower to the register title -->
-            <h1><span class="glyphicon glyphicon-cog"></span> Register Form Medi@Home</h1>
-        </div>
+<div id="login-page"  ng-controller="mainController">
+<div class="container">
 
-        <form class="form-horizontal" name="ConnectionForm" validate>
+        <form class="form-login" name="ConnectionForm" validate>
 
 
 <!-- ConnectionForm Form -->
 
 
                                 <form role="form" action="#" method="POST">
+		        				<h2 class="form-login-heading">connection</h2>
                                     <fieldset>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-10  col-md-offset-1 ">
+                                        <div class="login-wrap">
                                                 <!-- Name -->
-                                                <div class="form-group">
-                                                    <div class="input-group">
-												<span class="input-group-addon">
-													<i class="glyphicon glyphicon-user"></i>
-												</span>
-                                                        <input class="form-control" placeholder="Username" ng-model="person.name" type="text" autofocus required>
-                                                    </div>
-                                                </div>
+                                                <input class="form-control" placeholder="Username" ng-model="person.name" type="text" autofocus required>
+                                                <br>
+                                                
                                                 <!-- Password -->
-                                                <div class="form-group">
-                                                    <div class="input-group">
-												<span class="input-group-addon">
-													<i class="glyphicon glyphicon-lock"></i>
-												</span>
-                                                        <input class="form-control" placeholder="Password" ng-model="person.password" type="password">
-                                                    </div>
-                                                </div>
+                                                <input class="form-control" placeholder="Password" ng-model="person.password" type="password">
+                                                <br>
 
                                                 <div class="form-group">
-                                                    <button ng-click="submitData(person)" class="btn btn-lg btn-primary btn-block"> Sign Up </button>
+                                                    <button ng-click="submitData(person)" class="btn btn-theme btn-block"><i class="fa fa-lock"></i> Log In </button>
                                                 </div>
-                                            </div>
+		            						<hr>
+								            <div class="registration">
+								                 You don't have an account !!<br/>
+								                 <a href="register.html" onClick=""> Register Here</a>
+								            </div>
                                         </div>
                                     </fieldset>
                                 </form>
-
-                            <div class="panel-footer ">
-                                You don't have an account !! <a href="#" onClick=""> Register Here</a>
-                            </div>
 
 
 
@@ -82,8 +76,22 @@
             -->
 
         </form>
-</div></div></div>
-    </div>
+</div></div>
+        
+        
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+
+    <!--BACKSTRETCH-->
+    <!-- You can use an image of whatever size. This script will stretch to fit in any screen size.-->
+    <script type="text/javascript" src="assets/js/jquery.backstretch.min.js"></script>
+    <script>
+        $.backstretch("assets/img/login-bg.jpg", {speed: 500});
+    </script>
+
+        
+   
 </body>
 
 
