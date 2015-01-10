@@ -47,7 +47,7 @@
         TOP BAR CONTENT & NOTIFICATIONS
         *********************************************************************************************************************************************************** -->
     <!--header start-->
-    <header class="header black-bg">
+    <header class="header black-bg" ng-controller="IndexController as index">
         <div class="sidebar-toggle-box">
             <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
         </div>
@@ -201,7 +201,7 @@
 
         <div class="top-menu">
             <ul class="nav pull-right top-menu">
-                <li><a class="logout" href="login.html">Logout</a></li>
+                <li><button class="logout" ng-click="index.logout()">Logout</button></li>
             </ul>
         </div>
     </header>
@@ -315,6 +315,7 @@
     <script src="angular-file-upload.js"></script>
     <script src="ui-bootstrap-tpls-0.12.0.js"></script>
     <script src="app.js"></script>
+    <script src="index.js"></script>
     <script src="views/home/home.js"></script>
     <script src="views/myvideos/myvideos.js"></script>
     <script src="views/newvideo/newvideo.js"></script>
