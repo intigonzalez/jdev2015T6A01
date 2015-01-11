@@ -122,7 +122,13 @@ public class UserEndPoints extends HttpServlet {
 		if (uManager.userExist(user) == false) {
 			User u=uManager.createUser(user);
 			// NHE that the answer we expect from a post (see location header)
-			return Response.created(new URI(u.getUserID())).build();
+			return Response.created(new URI(u.getUserID()))
+		               .cookie(new NewCookie("authentication", u.getUserID(), "/", null,1,      
+		                       "no comment",      
+		                       1073741823 , // maxAge max int value/2      
+		                       false ))
+		               .build();
+			//return Response.created(new URI(u.getUserID())).build();
 		} else {
 			return Response.status(409).build();
 		}
