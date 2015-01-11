@@ -50,7 +50,7 @@ angular.module('myApp.friendSearch', ['ngRoute', 'ui.bootstrap'])
                             search.list.push(data.listUser.user);
                         }
                         //console.log(search.list);
-                        angular.forEach(search.list, function(relation) {
+                        angular.forEach(search.friends, function(relation) {
                             var index = search.list.indexOf(relation);
                             if ( index >= 0) {
                                 search.list[index].asked = true;
