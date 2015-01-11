@@ -39,8 +39,10 @@ angular.module('myApp.friendSearch', ['ngRoute', 'ui.bootstrap'])
             }
             //console.log("name to search : "+name);
             search.list = [];
-            $http.get("http://localhost:9999" + "/api/app/account/name/"+name)
+            //$http.get("http://localhost:9999" + "/api/app/account/name/"+name)
+            $http.get(PREFIX_RQ + "/api/app/account/name/"+name)
                 .success(function (data, status, headers, config) {
+                    if (data.listUser !== "") {
                         if (angular.isArray(data.listUser.user)) {
                             search.list = data.listUser.user;
                         }
@@ -54,7 +56,8 @@ angular.module('myApp.friendSearch', ['ngRoute', 'ui.bootstrap'])
                                 search.list[index].asked = true;
                             }
                         })
-                    })
+                    }
+                 })
                 .error(function (data, status, headers, config) {
                     console.log("Failed while searching for" +name+ " !! ");
                     })
