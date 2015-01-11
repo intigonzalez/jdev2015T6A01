@@ -36,6 +36,7 @@ angular.module('myApp', [
     'myApp.myvideos',
     'myApp.myprofile',
     'myApp.friends',
+    'myApp.friendSearch',
     'myApp.newvideo'
 ]).
     config(['$routeProvider', function ($routeProvider) {

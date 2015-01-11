@@ -21,8 +21,9 @@ you need this to work fine :
 
 # Deploy Celery with RabbitMQ
 	sudo apt-get install rabbitmq-server
-	sudo apt-get install python-celery python-pip
-	sudo pip install celery
+	sudo apt-get install python-pip
+	sudo pip install celery pymediainfo
+	sudo apt-get install mediainfo python-lxml
 To start celery : celery -A tasks worker --loglevel=info --concurrency=1
 If Segfault 
 	sudo apt-get remove python-librabbitmq
