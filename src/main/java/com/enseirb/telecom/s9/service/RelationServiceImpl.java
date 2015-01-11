@@ -180,9 +180,7 @@ public class RelationServiceImpl implements RelationService {
 
 		    RequestRelationService rss = new RequestRelationServiceImpl();
 		    try {
-			relation.setAprouve(1);
-			relation2.setAprouve(2);
-			rss.postRelation(relation2, relation);
+		    	rss.postRelation(relation2, relation);
 		    } catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
