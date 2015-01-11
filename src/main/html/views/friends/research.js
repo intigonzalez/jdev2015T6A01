@@ -12,6 +12,26 @@ angular.module('myApp.friendSearch', ['ngRoute', 'ui.bootstrap'])
 
     .controller('friendSearchController', ['$scope', '$http', function ($scope, $http) {
         var search = this;
+        search.friends = [];
+        this.getFriendList = function() {
+            $http.get(PREFIX_RQ+"/api/app/"+userID+"/relation")
+                .success(function(data, status, headers, config) {
+                    if ( data.listRelation !== "" ) {
+                        if (angular.isArray(data.listRelation.relation) == false) {
+                            search.friends.push(data.listRelation.relation);
+                        }
+                        else {
+                            search.friends = data.listRelation.relation;
+                        }
+                    }
+                    //console.log(friends.list);
+                })
+                .error(function (data, status, headers, config){
+                    console.log("Failed getting Friend list");
+                })
+        };
+        this.getFriendList();
+
         search.list = [];
         this.searchRelation = function(name) {
             if (name == undefined) { //Disabled if blank !
@@ -28,6 +48,12 @@ angular.module('myApp.friendSearch', ['ngRoute', 'ui.bootstrap'])
                             search.list.push(data.listUser.user);
                         }
                         //console.log(search.list);
+                        angular.forEach(search.list, function(relation) {
+                            var index = search.list.indexOf(relation);
+                            if ( index >= 0) {
+                                search.list[index].asked = true;
+                            }
+                        })
                     })
                 .error(function (data, status, headers, config) {
                     console.log("Failed while searching for" +name+ " !! ");
