@@ -30,7 +30,6 @@ import com.thoughtworks.xstream.io.json.JsonWriter;
 
 public class ContentServiceImpl implements ContentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContentServiceImpl.class);
-    static FileService fileservice;
     static ContentRepositoryInterface contentDatabase;
     RabbitMQServer rabbitMq;
 //    private RequestUserService requetUserService = new RequestUserServiceImpl();
@@ -134,13 +133,14 @@ public class ContentServiceImpl implements ContentService {
 
     @Override
     public void deleteContent(String contentsID) {
+    	FileService fileservice = new FileService();
 	// The content then must be deleted into the folder !
 	Content content = contentDatabase.findOne(contentsID).toContent();
 	String path = ApplicationContext.getProperties().getProperty("contentPath") + content.getLink();
 	LOGGER.info("remove content : {}", path);
 	try {
 	    fileservice.deleteFolder(path);
-	} catch (IOException e) {
+	} catch (Exception e) {
 	    // TODO Auto-generated catch block
 	    LOGGER.error("Removing content failed for {}", new Object[] { path, e });
 	}
