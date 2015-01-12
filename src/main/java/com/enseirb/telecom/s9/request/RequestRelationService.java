@@ -49,6 +49,7 @@ public interface RequestRelationService {
      * @param emailOfRelation the user to request
      * @throws NoSuchBoxException 
      * @throws IOException 
+     * @throws NoSuchUserException 
      */
-    public abstract void setAprouve(String userID, String emailOfRelation) throws IOException, NoSuchBoxException;
+    public abstract void setAprouve(String userID, String emailOfRelation) throws IOException, NoSuchBoxException, NoSuchUserException;
 }

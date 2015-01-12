@@ -116,10 +116,10 @@ public class BoxEndPoints {
     @PUT
     @Path("relation/{userId}/{relationId}")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Response setAprouve(@PathParam("userId") String userId,@PathParam("relationId") String relationId) throws URISyntaxException {
-	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(),
-		new UserRepositoryMongo());
-	rManager.setAprouveBox(userId,relationId);
+    public Response setAprouve(@PathParam("userId") String userId, @PathParam("relationId") String relationId) throws URISyntaxException {
+	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
+	LOGGER.debug("try to setAprouve a relation from a other box {} and {}", userId, relationId);
+	rManager.setAprouveBox(userId, relationId);
 	return Response.status(Status.ACCEPTED).build();
     }
 
@@ -137,49 +137,51 @@ public class BoxEndPoints {
 	// return Response.status(409).build();
 	// }
     }
-    
-	/**
-	 * delete a relation on this box and in the over box
-	 * @param userIDFromPath
-	 * @param relationIDFromPath
-	 * @return
-	 */
-	@DELETE
-	@Path("relation/{userId}/{relationId}")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteFriend(@PathParam("userId") String userId,
-			@PathParam("relationId") String relationId) {
 
-		// TODO: delete this friends thinks to send a message to the over box
-		// and after this delete the user
-	    RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(),
-			new UserRepositoryMongo());
-		rManager.deleteRelationBox(userId, relationId);
-		return Response.status(200).build();
-	}
-    
-    
     /**
-	 * This endpoint is used by a box, to get the content of one of its relations.
-	 * @param relationID : remote user (the relation)
-	 * @param userID : local user (the one who stores content)
-	 * @return
-	 */
-	@GET
-	@Path("{userID}/content/{relationID}")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ListContent getLocalContentForRelation(@PathParam("relationID") String relationID,@PathParam("userID") String userID) {
-		RelationServiceImpl relationService = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
-		ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo(), new RabbitMQServer());
-		
-		LOGGER.debug("Receive Request to get list content from {}", relationID); 
-		if (relationService.RelationExist(userID, relationID)){
-			Relation relation = relationService.getRelation(userID, relationID);
-			
-			LOGGER.debug("Check the relation : {}" ,relation);
-			return uManager.getAllContent(userID, relation);
-		 }
-		return null;
+     * delete a relation on this box and in the over box
+     * 
+     * @param userIDFromPath
+     * @param relationIDFromPath
+     * @return
+     */
+    @DELETE
+    @Path("relation/{userId}/{relationId}")
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Response deleteFriend(@PathParam("userId") String userId, @PathParam("relationId") String relationId) {
+
+	// TODO: delete this friends thinks to send a message to the over box
+	// and after this delete the user 
+	LOGGER.debug("try to delete a relation from a other box {} and {}", userId, relationId);
+	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
+	rManager.deleteRelationBox(userId, relationId);
+	return Response.status(200).build();
+    }
+
+    /**
+     * This endpoint is used by a box, to get the content of one of its relations.
+     * 
+     * @param relationID
+     *            : remote user (the relation)
+     * @param userID
+     *            : local user (the one who stores content)
+     * @return
+     */
+    @GET
+    @Path("{userID}/content/{relationID}")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public ListContent getLocalContentForRelation(@PathParam("relationID") String relationID, @PathParam("userID") String userID) {
+	RelationServiceImpl relationService = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
+	ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo(), new RabbitMQServer());
+
+	LOGGER.debug("Receive Request to get list content from {}", relationID);
+	if (relationService.RelationExist(userID, relationID)) {
+	    Relation relation = relationService.getRelation(userID, relationID);
+
+	    LOGGER.debug("Check the relation : {}", relation);
+	    return uManager.getAllContent(userID, relation);
 	}
+	return null;
+    }
 
 }
