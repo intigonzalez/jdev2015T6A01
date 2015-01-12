@@ -111,7 +111,7 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	@Override
 	public void setAprouve(String userID, String emailOfRelation) throws IOException, NoSuchBoxException, NoSuchUserException {
 		Box boxRelation = requestServ.getBox(emailOfRelation);
-		WebTarget target = client.target(boxRelation.getIp() + "/api/app/box/relation/" + emailOfRelation + "/" + userID);
+		WebTarget target = client.target(boxRelation.getIp() + "/api/box/relation/" + emailOfRelation + "/" + userID);
 		Relation relation=new Relation();
 		try{
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE).put(Entity.entity(relation,MediaType.APPLICATION_XML));
