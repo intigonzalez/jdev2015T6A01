@@ -85,7 +85,7 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	public void delete(String relationOfRequest, String relationToRequest) throws IOException, NoSuchUserException, NoSuchBoxException {
 		// Client client = ClientBuilder.newClient();
 		Box boxRelation = requestServ.getBox(relationToRequest);
-		WebTarget target = client.target(boxRelation.getIp() + "/api/app/" + relationToRequest + "/relation/" + relationOfRequest);
+		WebTarget target = client.target(boxRelation.getIp() + "/api/box/relation/" + relationToRequest + "/" + relationOfRequest);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE).delete();
 		switch (Status.fromStatusCode(response.getStatus())) {
 		case ACCEPTED:

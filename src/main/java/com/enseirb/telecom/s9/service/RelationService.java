@@ -36,4 +36,6 @@ public interface RelationService {
 			NoSuchUserException;
 
 	public abstract void setAprouveBox(String userId, String relationId);
+
+	public abstract void deleteRelationBox(String userId, String relationId);
 }

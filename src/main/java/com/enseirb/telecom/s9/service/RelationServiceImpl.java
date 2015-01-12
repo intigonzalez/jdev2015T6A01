@@ -254,31 +254,6 @@ public class RelationServiceImpl implements RelationService {
     }
 
     @Override
-    public void deleteRelation(String userID, String email) {
-	if (userDatabase.exists(email)) {
-	    relationshipDatabase.delete(email, userID);
-
-	} else {
-	    RequestRelationService rss = new RequestRelationServiceImpl();
-	    try {
-		rss.delete(userID, email);
-	    } catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    } catch (NoSuchUserException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    } catch (NoSuchBoxException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    }
-	    rss.close();
-	}
-	relationshipDatabase.delete(userID, email);
-
-    }
-
-    @Override
     public ListContent getAllContent(String userID, String relationID) {
 	try {
 
@@ -302,6 +277,40 @@ public class RelationServiceImpl implements RelationService {
 	}
 	return null;
 
+    }
+
+    @Override
+    public void deleteRelationBox(String userId, String relationId) {
+	 if (userDatabase.exists(userId)) {
+	            relationshipDatabase.delete(userId, relationId);
+	 }
+	    
+	
+    }
+
+    @Override
+    public void deleteRelation(String userID, String email) {
+        if (userDatabase.exists(email)) {
+            relationshipDatabase.delete(email, userID);
+    
+        } else {
+            RequestRelationService rss = new RequestRelationServiceImpl();
+            try {
+        	rss.delete(userID, email);
+            } catch (IOException e) {
+        	// TODO Auto-generated catch block
+        	e.printStackTrace();
+            } catch (NoSuchUserException e) {
+        	// TODO Auto-generated catch block
+        	e.printStackTrace();
+            } catch (NoSuchBoxException e) {
+        	// TODO Auto-generated catch block
+        	e.printStackTrace();
+            }
+            rss.close();
+        }
+        relationshipDatabase.delete(userID, email);
+    
     }
 
 }
