@@ -138,6 +138,26 @@ public class BoxEndPoints {
 	// }
     }
     
+	/**
+	 * delete a relation on this box and in the over box
+	 * @param userIDFromPath
+	 * @param relationIDFromPath
+	 * @return
+	 */
+	@DELETE
+	@Path("relation/{userId}/{relationId}")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response deleteFriend(@PathParam("userID") String userId,
+			@PathParam("username") String relationId) {
+
+		// TODO: delete this friends thinks to send a message to the over box
+		// and after this delete the user
+	    RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(),
+			new UserRepositoryMongo());
+		rManager.deleteRelationBox(userId, relationId);
+		return Response.status(200).build();
+	}
+    
     
     /**
 	 * This endpoint is used by a box, to get the content of one of its relations.
