@@ -147,8 +147,8 @@ public class BoxEndPoints {
 	@DELETE
 	@Path("relation/{userId}/{relationId}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteFriend(@PathParam("userID") String userId,
-			@PathParam("username") String relationId) {
+	public Response deleteFriend(@PathParam("userId") String userId,
+			@PathParam("relationId") String relationId) {
 
 		// TODO: delete this friends thinks to send a message to the over box
 		// and after this delete the user
