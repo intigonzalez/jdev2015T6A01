@@ -34,18 +34,13 @@ import com.enseirb.telecom.s9.service.RabbitMQServer;
 import com.enseirb.telecom.s9.service.RelationService;
 import com.enseirb.telecom.s9.service.RelationServiceImpl;
 
-// The Java class will be hosted at the URI path "/myresource"
 @Path("box")
 public class BoxEndPoints {
     private static final Logger LOGGER = LoggerFactory.getLogger(BoxEndPoints.class);
 
     BoxService boxManager = new BoxServiceImpl(new BoxRepositoryMongo());
 
-    // TODO: update the class to suit your needs
 
-    // The Java method will process HTTP GET requests
-    // The Java method will produce content identified by the MIME Media
-    // type "text/plain"
     @GET
     @Path("id/{boxId}")
     @Produces(MediaType.APPLICATION_XML)
