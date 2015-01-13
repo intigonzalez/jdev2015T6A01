@@ -6,7 +6,15 @@ PREFIX_RQ = "";
 var ConnectionForm = angular.module('ConnectionForm', []);
 //Hello
 ConnectionForm.controller("mainController", function ($scope, $http) {
-
+    var errorConnection = false;
+    $scope.CredentialsCheck = function(){
+      if(errorConnection == true){
+          return "btn-theme04";
+      }
+        else{
+          return "btn-theme";
+      }
+    };
     $scope.submitData = function (person) {
         var data = {};
         data.user = person;
@@ -20,6 +28,7 @@ ConnectionForm.controller("mainController", function ($scope, $http) {
             })
             .error(function (data, status, headers, config)
             {
+                errorConnection = true;
                 console.log("Failed");
             });
     };

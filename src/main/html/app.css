@@ -48,3 +48,17 @@ img.img-responsive {
   position: absolute;
   right: 10%;
 }
+
+#NameTop {
+  font-size: 150%;
+  color: white;
+
+}
+
+#homepage-text p {
+  font-size: 120%;
+}
+
+#homepage-text > ul {
+  font-size: 120%;
+}
