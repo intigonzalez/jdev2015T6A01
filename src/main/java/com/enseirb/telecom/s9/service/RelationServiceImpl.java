@@ -224,6 +224,9 @@ public class RelationServiceImpl implements RelationService {
 		} catch (NoSuchBoxException e) {
 		    // TODO Auto-generated catch block
 		    e.printStackTrace();
+		} catch (NoSuchUserException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
 		}
 		 rss.close();
 		// Send a request to the box to tell it the user accepts the

@@ -1,7 +1,9 @@
 package com.enseirb.telecom.s9.request;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -56,6 +58,7 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 		String requestUrl = boxRelation.getIp() + "/api/app/" + relationToRequest.getEmail() + "/relation/frombox";
 		LOGGER.debug("Request : {}", requestUrl);
 		WebTarget target = client.target(requestUrl);
+		
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE).post(Entity.entity(relationOfRequest, MediaType.APPLICATION_XML), Response.class);
 		switch (Status.fromStatusCode(response.getStatus())) {
 		case ACCEPTED:
@@ -106,10 +109,31 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	}
 
 	@Override
-	public void setAprouve(String userID, String emailOfRelation) throws IOException, NoSuchBoxException {
+	public void setAprouve(String userID, String emailOfRelation) throws IOException, NoSuchBoxException, NoSuchUserException {
 		Box boxRelation = requestServ.getBox(emailOfRelation);
-		WebTarget target = client.target(boxRelation.getIp() + "/api/app/box/relation/" + emailOfRelation + "/" + userID);
-		Response response = target.request(MediaType.APPLICATION_XML_TYPE).put(null);
-
+		WebTarget target = client.target(boxRelation.getIp() + "/api/box/relation/" + emailOfRelation + "/" + userID);
+		Relation relation=new Relation();
+		try{
+		Response response = target.request(MediaType.APPLICATION_XML_TYPE).put(Entity.entity(relation,MediaType.APPLICATION_XML));
+		
+		switch (Status.fromStatusCode(response.getStatus())) {
+		case ACCEPTED:
+			// normal statement
+			break;
+		case CREATED:
+			// normal statement but don't is normally not that
+			break;
+		case OK:
+			// normal statement but don't use this because normally we need
+			// return a object
+			break;
+		case NOT_FOUND:
+			throw new NoSuchUserException();
+		default:
+			throw new IOException("Can not conect to the server :" + response.getStatus());
+		}
+		}catch (RuntimeException  e){
+		    e.printStackTrace();
+		}
 	}
 }
