@@ -25,8 +25,14 @@ function userAuth(){
 angular.module('myApp.index', [])
 
     .controller('IndexController', [ function () {
+        this.cookie = getCookie("authentication");
+    	//$scope.Cookie = getCookie("authentication");
         this.logout = function() {
         	document.cookie = "authentication=; expires=Thu, 01 Jan 2000 00:00:00 GMT"; 
             window.location.replace("/");
         }
+//        this.theCookie = function() {
+//            console.log(getCookie("authentication"));
+//            var cookie = getCookie("authentication");
+//        }
     }]);
