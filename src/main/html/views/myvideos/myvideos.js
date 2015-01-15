@@ -21,7 +21,7 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
         //Determine the right steraming protocol.
         var userAgent = $window.navigator.userAgent;
         console.log(userAgent);
-        if ( userAgent.indexOf("Chrome") >= 0 || userAgent.indexOf("Windows") >=0 ) {
+        if ( userAgent.indexOf("Chrome") >= 0 || userAgent.indexOf("Windows") >=0 || userAgent.indexOf("Chromium") >=0 ) {
             videos.prefix = 'dash';
             videos.suffix = 'dash/playlist.mpd';
         }
