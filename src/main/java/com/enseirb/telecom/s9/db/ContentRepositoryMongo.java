@@ -19,6 +19,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.WriteResult;
 
 public class ContentRepositoryMongo implements ContentRepositoryInterface {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContentRepositoryMongo.class);
@@ -35,7 +36,8 @@ public class ContentRepositoryMongo implements ContentRepositoryInterface {
 				DBCollection db = mongoClient.getDB("mediahome").getCollection(
 						"contents");
 				DBObject objectToSave = DbInit.createDBObject(entity);
-				db.save(objectToSave);
+				LOGGER.debug("object to save {}",objectToSave);
+				WriteResult a = db.save(objectToSave);
 				mongoClient.close();
 			} catch (UnknownHostException | JsonProcessingException e) {
 				// TODO Auto-generated catch block

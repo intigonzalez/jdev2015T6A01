@@ -65,7 +65,8 @@ public class UserEndPoints extends HttpServlet {
 	@Path("Connect")
 	@Produces({ "application/json"})// resultat en JSON
 	public Response getConnect(User user){//@FormParam("username") String username, @FormParam("password")String password){ //FormParam ce sont les parametres d'un formulaire. 
-		String username = user.getName();
+		String username = user.getName().toLowerCase();
+
 //		System.out.println("TEST"+username);
 		String test = uManager.getUser(username).getUserID();
 //		System.out.println("TEST" + test);

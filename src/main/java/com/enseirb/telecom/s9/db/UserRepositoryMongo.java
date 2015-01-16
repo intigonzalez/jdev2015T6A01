@@ -87,12 +87,12 @@ public <S extends UserRepositoryObject> S update (S entity){
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getSurname() != null) {// need to verify
-				newDocument.append("$set",new BasicDBObject().append("name", entity.getSurname()));
+				newDocument.append("$set",new BasicDBObject().append("surname", entity.getSurname()));
 				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getName() != null) {
-				newDocument.append("$set",new BasicDBObject().append("firstname", entity.getName()));
+				newDocument.append("$set",new BasicDBObject().append("name", entity.getName()));
 				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}

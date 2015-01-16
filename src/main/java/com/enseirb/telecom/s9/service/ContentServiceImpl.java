@@ -103,10 +103,10 @@ public class ContentServiceImpl implements ContentService {
 	    }
 	}
 	//Initialise with public authorization by default ! 
-	Authorization authorization = new Authorization();
-	authorization.setGroupID(0);
-	authorization.getAction().add("action");
-	content.getAuthorization().add(authorization);
+//	Authorization authorization = new Authorization();
+//	authorization.setGroupID(0);
+//	authorization.getAction().add("action");
+//	content.getAuthorization().add(authorization);
 	return contentDatabase.save(new ContentRepositoryObject(content)).toContent();
     }
 
@@ -156,30 +156,38 @@ public class ContentServiceImpl implements ContentService {
 	// Get all the content the UserID stores
 	Iterable<ContentRepositoryObject> content = contentDatabase.findAll();// FromUser(userID);
 	Iterator<ContentRepositoryObject> itr = content.iterator();
-	while (itr.hasNext()) { // For each content
-	    ContentRepositoryObject contentRepositoryObject = itr.next();
-	    search: if (contentRepositoryObject.getUserId().equals(userID)) {
-		for (int i = 0; i < relation.getGroupID().size(); i++) { // For each group the relation belongs to
-		    if (contentRepositoryObject.getAuthorization() != null) {
-			if (contentRepositoryObject.getAuthorization().size() == 0) {
-			    LOGGER.error("Groupe information : Relation in no group or video never allowed");
-			    // listContent.getContent().add(contentRepositoryObject.toContent());
-			    break search;
-			}
-		    }
-		    for (int j = 0; j < contentRepositoryObject.getAuthorization().size(); j++) {
-			if (relation.getGroupID().get(i) == contentRepositoryObject.getAuthorization().get(j).getGroupID()) {
-			    contentRepositoryObject.getAuthorization().clear();
-			    contentRepositoryObject.setLink(ApplicationContext.getProperties().getProperty("PublicAddr")+contentRepositoryObject.getLink());
-			   
-			    listContent.getContent().add(contentRepositoryObject.toContent());
-			    break search;
-			} else {
+	
+	try {
+	    while (itr.hasNext()) { // For each content
+	        ContentRepositoryObject contentRepositoryObject = itr.next();
+	        search: 
+	            
+	    	if ((contentRepositoryObject.getUserId()!=null)&&(contentRepositoryObject.getUserId().equals(userID))) {
+	    	for (int i = 0; i < relation.getGroupID().size(); i++) { // For each group the relation belongs to
+	    	    if (contentRepositoryObject.getAuthorization() != null) {
+	    		if (contentRepositoryObject.getAuthorization().size() == 0) {
+	    		    LOGGER.error("Groupe information : Relation in no group or video never allowed");
+	    		    // listContent.getContent().add(contentRepositoryObject.toContent());
+	    		    break search;
+	    		}
+	    	    }
+	    	    for (int j = 0; j < contentRepositoryObject.getAuthorization().size(); j++) {
+	    		if (relation.getGroupID().get(i) == contentRepositoryObject.getAuthorization().get(j).getGroupID()) {
+	    		    contentRepositoryObject.getAuthorization().clear();
+	    		    contentRepositoryObject.setLink(ApplicationContext.getProperties().getProperty("PublicAddr")+contentRepositoryObject.getLink());
+	    		   
+	    		    listContent.getContent().add(contentRepositoryObject.toContent());
+	    		    break search;
+	    		} else {
 //			    LOGGER.debug("Group is not the same. ");
-			}
-		    }
-		}
+	    		}
+	    	    }
+	    	}
+	        }
 	    }
+	} catch (Exception e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
 	}
 	return listContent;
     }
@@ -187,7 +195,7 @@ public class ContentServiceImpl implements ContentService {
     @Override
     public void updateContent(String contentsID, String status) {
 	// TODO Auto-generated method stub
-	Content content = new Content();
+	Content content = contentDatabase.findOne(contentsID).toContent();
 	content.setContentsID(contentsID);
 	content.setStatus(status);
 	contentDatabase.save(new ContentRepositoryObject(content));
