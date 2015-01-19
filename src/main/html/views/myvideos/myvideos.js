@@ -36,7 +36,7 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
             {"groupID":"0" , "groupName":"public", "info":"Seen by all your relations"},
             {"groupID":"1" , "groupName":"Family", "info":"Seen by all your family only"},
             {"groupID":"2" , "groupName":"Friends", "info":"Seen by all your friends only"},
-            {"groupID":"3" , "groupName":"Acquaintance", "info":"Seen by all your acquaintance"},
+            {"groupID":"3" , "groupName":"Pro", "info":"Seen by all your professional contacts"},
         ];  //List of groups
         this.getVideos = function() {
             $http.get(PREFIX_RQ + "/api/app/" + userID + "/content")
