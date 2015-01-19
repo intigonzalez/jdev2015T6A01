@@ -70,6 +70,21 @@ var Script = function () {
         }
     });
 
+    $('li.sub-menu > ul.sub > li').on('click', function() {
+        var wSize = $(window).width();
+        if (wSize <= 768) {
+            $('#container').addClass('sidebar-close');
+            $('#sidebar > ul').hide();
+        }
+    });
+    $('li.home > a').on('click', function() {
+        var wSize = $(window).width();
+        if (wSize <= 768) {
+            $('#container').addClass('sidebar-close');
+            $('#sidebar > ul').hide();
+        }
+    });
+
 // custom scrollbar
     $("#sidebar").niceScroll({styler:"fb",cursorcolor:"#4ECDC4", cursorwidth: '3', cursorborderradius: '10px', background: '#404040', spacebarenabled:false, cursorborder: ''});
 
