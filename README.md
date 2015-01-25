@@ -6,28 +6,53 @@ Projet S9 : Enseirb : Réseaux social décentralisé avec partage de videos
 
 # Deployement #
 
-To compile and package the application for single jar deployement, run
+## Application ##
 
+First install :
+
+    apt-get install openjdk-7-jre openjdk-7-jdk maven apache2 mongodb-server git
+
+To run the application for development, run :
+
+    mvn clean package exec:java
+
+To compile and package the application for single jar deployement, run
 
     mvn clean package assembly:single
 
 then, you can deploy the all-in-one jar file and run it with just the jvm
 
-   java -jar ./media-home-1.0-SNAPSHOT-jar-with-dependencies.jar
+    java -jar ./media-home-1.0-SNAPSHOT-jar-with-dependencies.jar
 
+## Other Dependencies ##
 
-you need this to work fine :
-	sudo apt-get install 
+This application lanches a video processing in background. To do it, it sends messge to Celery with RabbtiMQ. Please check vhg-adaptation-worker project. There is a deploy.sh script to install all required packages and programs.
 
-# Deploy Celery with RabbitMQ
-	sudo apt-get install rabbitmq-server
-	sudo apt-get install python-pip
-	sudo pip install celery pymediainfo
-	sudo apt-get install mediainfo python-lxml
-To start celery : celery -A tasks worker --loglevel=info --concurrency=1
-If Segfault 
-	sudo apt-get remove python-librabbitmq
+If you have a segFault when you start celery, you shoud do this :
 
+    sudo apt-get remove python-librabbitmq
+
+## Apache Server Configuration ##
+
+An Apache Proxy is used to link HTTP Port (80) to Grizzly server. After Apache Installation, you have to enable HTTP Proxy module :
+
+    a2enmod proxy proxy_http
+
+Then, you have to edit the virutalhost configuration file and add the following lines :
+
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
+    Header always set Access-Control-Max-Age "1000"
+    Header always set Access-Control-Allow-Headers "x-requested-with, Content-Type, origin, authorization, accept, client-security-token, range"
+
+    ProxyPass /videos !
+    ProxyPass / http://localhost:9998/
+    ProxyPassReverse / http://localhost:9998/
+    ProxyPreserveHost On
+
+Be carefull on right acces for videos folder into your virtualhost folder (usually /var/www/html for Ubuntu 14.04). If you run Celery with you account you should change right access on videos folder with  this command into your virtualhost folder :
+
+    sudo chown -R {username} ./videos
 
 # API #
 
@@ -35,8 +60,8 @@ If Segfault
 
 ### POST ###
 
-Create a user
-	
+#### Create a user ####
+
 	{
 	  "user": {
 	    "userID": "user1@onehear.nl",
@@ -57,7 +82,15 @@ Create a user
 	  <privateKey>privateKey</privateKey>
 	</user>
 
-Create a relation
+#### Create a relation ####
+
+Relationships have an Approuve Value :
+
+1 - I asked the relationships.
+
+2 - I received a request for a relationships
+
+3 - Both accepted the relationship.
 
 	<?xml version="1.0" encoding="UTF-8"?>
 	<relation>
@@ -70,7 +103,7 @@ Create a relation
 	  <groupID>0</groupID>
 	</relation>
 
-Create a box
+#### Create a box ####
 
 	<box>
 	  <boxID>boxID</boxID>
@@ -79,15 +112,15 @@ Create a box
 	  <ip>localhost:9998</ip>
 	  <TTL>0</TTL>
 	</box>
-	
-Edit group of a content
+
+#### Edit group of a conten t####
 for contentId 54b76bf2-0330-4aa8-99d4-45d05edac051 of vince@onehear.nl
 if before you have group 0 and 1 and you want 0 and 4 make
 put this uri
 
 	/api/app/vince@onehear.nl/content/54b76bf2-0330-4aa8-99d4-45d05edac051
-	
-white
+
+with
 
 	<?xml version="1.0" encoding="UTF-8"?>
 	<content>
@@ -100,8 +133,8 @@ white
 	    <action>action</action>
 	  </authorization>
 	</content>
-	   
-edit group of relation
+
+#### edit group of relation ####
 
 for local userId = user1@test.com and relationId = user2@test.com
 put this uri
@@ -114,16 +147,19 @@ put this uri
 		<groupID>4</groupID>
 	</relation>
 
-get list user of a group
+#### get list user of a group ####
 get this url
-	
+
 	/api/app/{userID}/group/{groupId}
 
-for information group 
+# Other informations #
+
+## Web Interface ##
+URL : http://localhost:9998/index.html
+
+## Groups names ##
+Groups are only manage with IDs and you cannot change the display, All groups are created manually into JS Code :
 0 public
 1 family
 2 friends
 3 work
-
-# Web Interface #
-URL : http://localhost:9998/index.html?email=vince@onehear.nl#/home
