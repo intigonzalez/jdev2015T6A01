@@ -177,8 +177,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<packageName>com.enseirb.telecom.s9</packageName>
-					<!-- The name of your generated source package -->
+					<packageName>com.enseirb.telecom.dvd2c</packageName>
+					
 				</configuration>
 			</plugin>
 		</plugins>
