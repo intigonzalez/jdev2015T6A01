@@ -3,7 +3,6 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>dvd2c-box</artifactId>
   <packaging>jar</packaging>
-  <name>dvd2c Box</name>
   <parent>
     <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
     <artifactId>dvd2c-parent</artifactId>
