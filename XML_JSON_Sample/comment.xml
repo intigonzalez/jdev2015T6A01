@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<comment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../src/main/xsd/comment.xsd">
-  <commentID>commentID</commentID>
-  <login>login</login>
-  <unix_time>0.0</unix_time>
-  <comment>comment</comment>
-</comment>

@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.enseirb.telecom.s9</groupId>
-	<artifactId>media-home</artifactId>
+	<groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
+	<artifactId>dvd2c-box</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0-SNAPSHOT</version>
-	<name>media-home</name>
+	<name>dvd2c Box</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>

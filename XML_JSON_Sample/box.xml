@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<box xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../src/main/xsd/box.xsd">
-  <boxID>boxID</boxID>
-  <privateKey>privateKey</privateKey>
-  <pubKey>pubKey</pubKey>
-  <ip>ip</ip>
-  <TTL>0</TTL>
-</box>
