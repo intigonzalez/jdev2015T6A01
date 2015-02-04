@@ -12,7 +12,7 @@
     <module>dvd2c-box</module>
     <module>dvd2c-bom</module>
     <module>dvd2c-central</module>
-<module>dvd2c-model</module>
+    <module>dvd2c-model</module>
   </modules>
   <dependencyManagement>
     <dependencies>
@@ -22,7 +22,17 @@
         <version>1.0-SNAPSHOT</version>
         <type>pom</type>
       </dependency>
-      
     </dependencies>
   </dependencyManagement>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.5.2</version>
+        <configuration>
+          <skipAssembly>false</skipAssembly>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
