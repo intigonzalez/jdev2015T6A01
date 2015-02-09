@@ -17,7 +17,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
-public class BoxRepositoryMongo implements BoxRepositoryInterface {
+public class BoxRepositoryMongo implements BoxRepository {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BoxRepositoryMongo.class);
 	public BoxRepositoryMongo(){

@@ -1,6 +1,6 @@
 package com.enseirb.telecom.dngroup.dvd2c.db;
 
-public interface RelationshipRepositoryInterface extends CrudRepository<RelationshipRepositoryObject, String> {
+public interface RelationshipRepository extends CrudRepository<RelationshipRepositoryObject, String> {
 	
 	public RelationshipRepositoryObject findOne(String userId, String relationEmail);
 	

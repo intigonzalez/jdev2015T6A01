@@ -21,7 +21,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.WriteResult;
 
-public class ContentRepositoryMongo implements ContentRepositoryInterface {
+public class ContentRepositoryMongo implements ContentRepository {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContentRepositoryMongo.class);
 
 	@Override

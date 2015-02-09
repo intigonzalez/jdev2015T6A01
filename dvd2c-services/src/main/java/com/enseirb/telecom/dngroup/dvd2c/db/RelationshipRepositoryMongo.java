@@ -16,7 +16,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
-public class RelationshipRepositoryMongo implements RelationshipRepositoryInterface {
+public class RelationshipRepositoryMongo implements RelationshipRepository {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RelationshipRepositoryMongo.class);
 
 

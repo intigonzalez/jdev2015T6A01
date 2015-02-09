@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryInterface;
+import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryObject;
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
@@ -31,11 +31,11 @@ public class RelationServiceImpl implements RelationService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RelationServiceImpl.class);
 
-	RelationshipRepositoryInterface relationshipDatabase;
+	RelationshipRepository relationshipDatabase;
 	CrudRepository<UserRepositoryObject, String> userDatabase;
 
 	public RelationServiceImpl(
-			RelationshipRepositoryInterface RelationshipDatabase,
+			RelationshipRepository RelationshipDatabase,
 			CrudRepository<UserRepositoryObject, String> userDatabase) {
 		this.relationshipDatabase = RelationshipDatabase;
 		this.userDatabase = userDatabase;

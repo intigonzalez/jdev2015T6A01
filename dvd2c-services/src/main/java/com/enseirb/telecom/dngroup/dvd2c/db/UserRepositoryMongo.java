@@ -15,7 +15,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
-public class UserRepositoryMongo implements UserRepositoryInterface {
+public class UserRepositoryMongo implements UserRepository {
 
 	@Override
 	public boolean exists(String id) {

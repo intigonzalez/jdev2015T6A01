@@ -2,7 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.util.Iterator;
 
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryInterface;
+import com.enseirb.telecom.dngroup.dvd2c.db.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
@@ -12,13 +12,13 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 public class AccountServiceCentralImpl implements AccountServiceCentral {
 
 	// CrudRepository<UserRepositoryObject, String> userDatabase;
-	UserRepositoryInterface userDatabase;
+	UserRepository userDatabase;
 
 	// public AccountServiceImpl(CrudRepository<UserRepositoryObject, String>
 	// userDatabase) {
 	// this.userDatabase = userDatabase;
 	// }
-	public AccountServiceCentralImpl(UserRepositoryInterface userDatabase) {
+	public AccountServiceCentralImpl(UserRepository userDatabase) {
 		this.userDatabase = userDatabase;
 	}
 

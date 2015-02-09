@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
-import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryInterface;
+import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryObject;
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.ContentEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.request.RequestUserService;
@@ -30,11 +30,11 @@ import com.thoughtworks.xstream.io.json.JsonWriter;
 
 public class ContentServiceImpl implements ContentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContentServiceImpl.class);
-    static ContentRepositoryInterface contentDatabase;
+    static ContentRepository contentDatabase;
     RabbitMQServer rabbitMq;
 //    private RequestUserService requetUserService = new RequestUserServiceImpl();
 
-    public ContentServiceImpl(ContentRepositoryInterface videoDatabase, RabbitMQServer rabbitMq) {
+    public ContentServiceImpl(ContentRepository videoDatabase, RabbitMQServer rabbitMq) {
 	this.contentDatabase = videoDatabase;
 	this.rabbitMq = rabbitMq;
     }

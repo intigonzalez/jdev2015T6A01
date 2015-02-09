@@ -1,6 +1,6 @@
 package com.enseirb.telecom.dngroup.dvd2c.db;
 
-public interface BoxRepositoryInterface extends
+public interface BoxRepository extends
 		CrudRepository<BoxRepositoryObject, String> {
 
 }
