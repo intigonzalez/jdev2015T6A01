@@ -15,7 +15,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
-public class UserRepositoryMongo implements CrudRepository<UserRepositoryObject, String> {
+public class UserRepositoryMongo implements UserRepositoryInterface {
 
 	@Override
 	public boolean exists(String id) {
@@ -354,6 +354,12 @@ public <S extends UserRepositoryObject> S update (S entity){
 				
 		return listOfAllUsers ;
 		
+	}
+
+	@Override
+	public BoxRepositoryObject findBoxFromUserID(String userID) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

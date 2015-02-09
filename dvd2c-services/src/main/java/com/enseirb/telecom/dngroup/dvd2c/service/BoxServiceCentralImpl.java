@@ -3,7 +3,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 import java.util.Iterator;
 import java.util.List;
 
-import com.enseirb.telecom.dngroup.dvd2c.db.BoxServRepositoryObject;
+import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
@@ -11,13 +11,13 @@ import com.enseirb.telecom.dngroup.dvd2c.model.ListBox;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
-public class BoxServiceImpl implements BoxService {
+public class BoxServiceCentralImpl implements BoxServiceCentral {
 
 	// add test
-	CrudRepository<BoxServRepositoryObject, String> boxServDatabase;
+	CrudRepository<BoxRepositoryObject, String> boxServDatabase;
 
-	public BoxServiceImpl(
-			CrudRepository<BoxServRepositoryObject, String> boxServDatabase) {
+	public BoxServiceCentralImpl(
+			CrudRepository<BoxRepositoryObject, String> boxServDatabase) {
 		this.boxServDatabase = boxServDatabase;
 	}
 
@@ -29,7 +29,7 @@ public class BoxServiceImpl implements BoxService {
 
 	@Override
 	public Box getBox(String boxID) {
-		BoxServRepositoryObject box = boxServDatabase.findOne(boxID);
+		BoxRepositoryObject box = boxServDatabase.findOne(boxID);
 		if (box == null) {
 			return null;
 		} else {
@@ -40,13 +40,13 @@ public class BoxServiceImpl implements BoxService {
 
 	@Override
 	public Box createBox(Box box) {
-		return boxServDatabase.save(new BoxServRepositoryObject(box)).toBox();
+		return boxServDatabase.save(new BoxRepositoryObject(box)).toBox();
 
 	}
 
 	@Override
 	public void saveBox(Box box) {
-		boxServDatabase.save(new BoxServRepositoryObject(box));
+		boxServDatabase.save(new BoxRepositoryObject(box));
 
 	}
 
@@ -66,16 +66,16 @@ public class BoxServiceImpl implements BoxService {
 
 	public ListBox getBoxesFromIP(String ip) {
 
-		Iterable<BoxServRepositoryObject> boxIterable = boxServDatabase
+		Iterable<BoxRepositoryObject> boxIterable = boxServDatabase
 				.findAll();
 		ListBox listBox = new ListBox();
 
 		if (boxIterable == null)
 			return listBox;
 		else {
-			Iterator<BoxServRepositoryObject> itr = boxIterable.iterator();
+			Iterator<BoxRepositoryObject> itr = boxIterable.iterator();
 			while (itr.hasNext()) {
-				BoxServRepositoryObject box = itr.next();
+				BoxRepositoryObject box = itr.next();
 
 				if (box.getIp().equals(ip)) {
 					listBox.getBox().add(box.toBox());
@@ -88,7 +88,7 @@ public class BoxServiceImpl implements BoxService {
 
 	public ListUser getUsersFromBoxes(ListBox listBox) {
 
-		AccountService uManager = new AccountServiceImpl(
+		AccountServiceCentral uManager = new AccountServiceCentralImpl(
 				new UserRepositoryMongo());
 		ListUser listUsersFinal = new ListUser(), listUsersOfBoxes = new ListUser();
 
@@ -117,15 +117,15 @@ public class BoxServiceImpl implements BoxService {
 
 	@Override
 	public ListBox getAllBox() {
-		Iterable<BoxServRepositoryObject> boxIterable = boxServDatabase
+		Iterable<BoxRepositoryObject> boxIterable = boxServDatabase
 				.findAll();
 		ListBox listBox = new ListBox();
 		if (boxIterable == null)
 			return listBox;
 		else {
-			Iterator<BoxServRepositoryObject> itr = boxIterable.iterator();
+			Iterator<BoxRepositoryObject> itr = boxIterable.iterator();
 			while (itr.hasNext()) {
-				BoxServRepositoryObject box = itr.next();
+				BoxRepositoryObject box = itr.next();
 				int temp = box.getUser().size();
 				listBox.getBox().add(box.toBox());
 

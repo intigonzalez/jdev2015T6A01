@@ -4,7 +4,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListBox;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 
-public interface BoxService {
+public interface BoxServiceCentral {
 
 	/**
 	 * 

@@ -8,7 +8,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
@@ -18,7 +17,8 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
-public class BoxRepositoryMongo implements CrudRepository<BoxRepositoryObject, String>{
+public class BoxRepositoryMongo implements BoxRepositoryInterface {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(BoxRepositoryMongo.class);
 	public BoxRepositoryMongo(){
 		
@@ -251,6 +251,5 @@ public class BoxRepositoryMongo implements CrudRepository<BoxRepositoryObject, S
 		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
-	
 	
 }

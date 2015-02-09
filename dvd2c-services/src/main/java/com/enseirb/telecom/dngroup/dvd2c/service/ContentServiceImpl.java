@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryInterface;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryObject;
-import com.enseirb.telecom.dngroup.dvd2c.endpoints.ContentEndPoints;
+//import com.enseirb.telecom.dngroup.dvd2c.endpoints.ContentEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.request.RequestUserService;
 import com.enseirb.telecom.dngroup.dvd2c.request.RequestUserServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.utils.FileService;

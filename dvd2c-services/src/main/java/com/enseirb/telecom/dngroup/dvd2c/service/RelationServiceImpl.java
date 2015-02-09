@@ -11,7 +11,7 @@ import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryInterface;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryObject;
-import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
+//import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;

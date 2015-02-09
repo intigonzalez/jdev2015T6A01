@@ -7,6 +7,6 @@ public interface UserRepositoryInterface extends
 
 	// void findBoxFromBoxID(String boxID);
 
-	BoxServRepositoryObject findBoxFromUserID(String userID);
+	BoxRepositoryObject findBoxFromUserID(String userID);
 
 }

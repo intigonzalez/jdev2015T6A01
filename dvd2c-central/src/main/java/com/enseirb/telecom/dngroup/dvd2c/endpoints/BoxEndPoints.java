@@ -15,8 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryMongo;
-import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
-import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceImpl;
+import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceCentral;
+import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceCentralImpl;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListBox;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
@@ -25,7 +25,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 @Path("app/box")
 public class BoxEndPoints {
 
-	BoxService boxManager = new BoxServiceImpl(new BoxRepositoryMongo());
+	BoxServiceCentral boxManager = new BoxServiceCentralImpl(new BoxRepositoryMongo());
 
 	/**
 	 * Get List of box

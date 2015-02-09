@@ -4,7 +4,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
-public interface AccountService {
+public interface AccountServiceCentral {
 
 	/**
 	 * Check if a user already exists in the database from his userID

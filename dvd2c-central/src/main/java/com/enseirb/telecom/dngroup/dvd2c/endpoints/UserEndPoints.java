@@ -15,8 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
-import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
-import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
+import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceCentral;
+import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceCentralImpl;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
@@ -25,7 +25,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 @Path("app/account")
 public class UserEndPoints {
 
-	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo());
+	AccountServiceCentral uManager = new AccountServiceCentralImpl(new UserRepositoryMongo());
 
 	@GET
 	@Path("{userID}")
