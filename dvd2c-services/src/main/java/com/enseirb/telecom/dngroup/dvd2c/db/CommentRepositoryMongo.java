@@ -27,8 +27,6 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 
 	@Override
 	public <S extends CommentRepositoryObject> S save(S entity){
-		// TODO Auto-generated method stub
-		
 		if(entity.getCommentId() != null & exists(entity.getCommentId().toString())){
 			delete(entity.getCommentId().toString());
 		}
@@ -40,6 +38,7 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 			
 			collection.save(dbObjectToSave);
 			entity.setCommentId((ObjectId)dbObjectToSave.get("_id"));
+			//NHE: you should clode and open connection in the same class
 			mongoClient.close();
 			
 		} catch (UnknownHostException e){
@@ -62,6 +61,8 @@ e.printStackTrace();
 	@Override
 	public <S extends CommentRepositoryObject> Iterable<S> save(
 			Iterable<S> entities) {
+		//NHE: a non implemented class should throw eg. new RuntimeException("not implemented yet")
+		
 		// TODO Auto-generated method stub
 		return null;
 	}
