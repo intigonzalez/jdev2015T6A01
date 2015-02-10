@@ -19,11 +19,13 @@ import com.mongodb.MongoClient;
 
 public class BoxRepositoryMongo implements BoxRepository {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(BoxRepositoryMongo.class);
-	public BoxRepositoryMongo(){
-		
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(BoxRepositoryMongo.class);
+
+	public BoxRepositoryMongo() {
+
 	}
-	
+
 	public <S extends BoxRepositoryObject> S save(S entity) {
 		if (exists(entity.getBoxID())) {
 			entity = update(entity);
@@ -33,13 +35,15 @@ public class BoxRepositoryMongo implements BoxRepository {
 				DB db = mongoClient.getDB("mediahome");
 				DBCollection dbbox = db.getCollection("box");
 				DBObject objectToSave = DbInit.createDBObject(entity);
-				LOGGER.info("DB Object Saved {}",objectToSave.toString());
+				LOGGER.info("DB Object Saved {}", objectToSave.toString());
 				dbbox.save(objectToSave);
 				mongoClient.close();
 			} catch (UnknownHostException | JsonProcessingException e) {
 				// TODO Auto-generated catch block
-				//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+				// NHE: no print stack trace allowed in the project. Please
+				// replace it with appropriate logger and Exception handling.
+				e.printStackTrace();
+				//NHE please handle error correctly by rethrowing RuntimeException for example
 				return null;
 			}
 		}
@@ -57,60 +61,66 @@ e.printStackTrace();
 			BasicDBObject newDocument = new BasicDBObject();
 
 			if (entity.getIp() != null) {
-				newDocument.append("$set",new BasicDBObject().append("ip", entity.getIp()));
-				BasicDBObject searchQuery = new BasicDBObject().append("boxID",entity.getBoxID());
+				newDocument.append("$set",
+						new BasicDBObject().append("ip", entity.getIp()));
+				BasicDBObject searchQuery = new BasicDBObject().append("boxID",
+						entity.getBoxID());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getPubKey() != null) {
-				newDocument.append("$set", new BasicDBObject().append("pubKey",entity.getPubKey()));
-				BasicDBObject searchQuery = new BasicDBObject().append("boxID",entity.getBoxID());
+				newDocument.append("$set", new BasicDBObject().append("pubKey",
+						entity.getPubKey()));
+				BasicDBObject searchQuery = new BasicDBObject().append("boxID",
+						entity.getBoxID());
 				dbBox.update(searchQuery, newDocument);
 			}
 
-			/*if (entity.getUser() != null) {// need to verify
-				
-				List<User> users = entity.getUser();
-				Iterator<User> userIterator = users.iterator();														
-				List<Object> entityDBList = new BasicDBList();
-								
-				while(userIterator.hasNext()) {	
-				    DBObject userDBObject = new BasicDBObject();
-				    try {
-						userDBObject = DbInit.createDBObject(userIterator.next());
-					} catch (JsonProcessingException e) {
-						// TODO Auto-generated catch block
-						//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-						System.out.println("Impossible to create userDBObject");
-					}			    
-				    
-					entityDBList.add(userDBObject);
-					
-				}
-				
-				newDocument.append("$set",new BasicDBObject().append("user", entityDBList));
-				BasicDBObject searchQuery = new BasicDBObject().append("boxID",entity.getBoxID());
-				dbBox.update(searchQuery, newDocument);
-			}*/
-			
+			/*
+			 * if (entity.getUser() != null) {// need to verify
+			 * 
+			 * List<User> users = entity.getUser(); Iterator<User> userIterator
+			 * = users.iterator(); List<Object> entityDBList = new
+			 * BasicDBList();
+			 * 
+			 * while(userIterator.hasNext()) { DBObject userDBObject = new
+			 * BasicDBObject(); try { userDBObject =
+			 * DbInit.createDBObject(userIterator.next()); } catch
+			 * (JsonProcessingException e) { // TODO Auto-generated catch block
+			 * //NHE: no print stack trace allowed in the project. Please
+			 * replace it with appropriate logger and Exception handling.
+			 * e.printStackTrace();
+			 * System.out.println("Impossible to create userDBObject"); }
+			 * 
+			 * entityDBList.add(userDBObject);
+			 * 
+			 * }
+			 * 
+			 * newDocument.append("$set",new BasicDBObject().append("user",
+			 * entityDBList)); BasicDBObject searchQuery = new
+			 * BasicDBObject().append("boxID",entity.getBoxID());
+			 * dbBox.update(searchQuery, newDocument); }
+			 */
+
 			if (entity.getTTL() != null) {
-				newDocument.append("$set",new BasicDBObject().append("ttl", entity.getTTL()));
-				BasicDBObject searchQuery = new BasicDBObject().append("boxID",entity.getBoxID());
+				newDocument.append("$set",
+						new BasicDBObject().append("ttl", entity.getTTL()));
+				BasicDBObject searchQuery = new BasicDBObject().append("boxID",
+						entity.getBoxID());
 				dbBox.update(searchQuery, newDocument);
 			}
 
 			mongoClient.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			// NHE: no print stack trace allowed in the project. Please replace
+			// it with appropriate logger and Exception handling.
+			e.printStackTrace();
 		}
 
 		return entity;
 	}
 
-	public <S extends BoxRepositoryObject> Iterable<S> save(
-			Iterable<S> entities) {
+	public <S extends BoxRepositoryObject> Iterable<S> save(Iterable<S> entities) {
 		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
@@ -132,8 +142,10 @@ e.printStackTrace();
 							BoxRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+					// NHE: no print stack trace allowed in the project. Please
+					// replace it with appropriate logger and Exception
+					// handling.
+					e.printStackTrace();
 					System.err.println("Box Mapping failed ! ");
 				}
 			}
@@ -141,8 +153,9 @@ e.printStackTrace();
 
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			// NHE: no print stack trace allowed in the project. Please replace
+			// it with appropriate logger and Exception handling.
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -165,8 +178,9 @@ e.printStackTrace();
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			// NHE: no print stack trace allowed in the project. Please replace
+			// it with appropriate logger and Exception handling.
+			e.printStackTrace();
 			System.err.println("Connection to database failed ");
 			return true;
 		}
@@ -174,46 +188,49 @@ e.printStackTrace();
 
 	public Iterable<BoxRepositoryObject> findAll() {
 		// TODO Auto-generated method stub
-		
-		List <BoxRepositoryObject> listOfAllBox = new ArrayList<BoxRepositoryObject>();
-		
+
+		List<BoxRepositoryObject> listOfAllBox = new ArrayList<BoxRepositoryObject>();
+
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbBox = db.getCollection("box");
-			
+
 			DBCursor cursor = dbBox.find();
 			BoxRepositoryObject box = null;
 			ObjectMapper mapper = new ObjectMapper();
-			
-			while(cursor.hasNext()){
+
+			while (cursor.hasNext()) {
 				try {
-					box = mapper.readValue(cursor.next().toString(), BoxRepositoryObject.class);
+					box = mapper.readValue(cursor.next().toString(),
+							BoxRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+					// NHE: no print stack trace allowed in the project. Please
+					// replace it with appropriate logger and Exception
+					// handling.
+					e.printStackTrace();
 					System.err.println("User Mapping failed ! ");
 				}
-				
+
 				listOfAllBox.add(box);
 			}
 
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			// NHE: no print stack trace allowed in the project. Please replace
+			// it with appropriate logger and Exception handling.
+			e.printStackTrace();
 			return null;
 		}
-		
+
 		return listOfAllBox;
-		
+
 	}
 
 	public Iterable<BoxRepositoryObject> findAll(Iterable<String> ids) {
 		throw new RuntimeException("not yet invented");
-		
-		
+
 	}
 
 	public long count() {
@@ -230,8 +247,9 @@ e.printStackTrace();
 			BasicDBObject query = new BasicDBObject("boxID", id);
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			// NHE: no print stack trace allowed in the project. Please replace
+			// it with appropriate logger and Exception handling.
+			e.printStackTrace();
 			System.err.println("Connection to database failed ");
 		}
 
@@ -245,8 +263,9 @@ e.printStackTrace();
 			BasicDBObject query = new BasicDBObject("boxID", entity.getBoxID());
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			// NHE: no print stack trace allowed in the project. Please replace
+			// it with appropriate logger and Exception handling.
+			e.printStackTrace();
 			System.err.println("Connection to database failed ");
 		}
 
@@ -261,5 +280,5 @@ e.printStackTrace();
 		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
-	
+
 }

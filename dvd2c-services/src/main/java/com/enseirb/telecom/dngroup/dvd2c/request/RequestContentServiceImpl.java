@@ -52,7 +52,7 @@ public class RequestContentServiceImpl implements RequestContentService {
 	// }catch (Exception e){
 	// System.out.println(target.getUri());
 	// //NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+//e.printStackTrace();
 	// }
 	//
 	// return userGet;
