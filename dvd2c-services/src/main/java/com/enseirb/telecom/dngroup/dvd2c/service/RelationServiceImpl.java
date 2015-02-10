@@ -26,6 +26,8 @@ import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListRelation;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 
 public class RelationServiceImpl implements RelationService {
 	private static final Logger LOGGER = LoggerFactory
@@ -34,8 +36,7 @@ public class RelationServiceImpl implements RelationService {
 	RelationshipRepository relationshipDatabase;
 	CrudRepository<UserRepositoryObject, String> userDatabase;
 
-	public RelationServiceImpl(
-			RelationshipRepository RelationshipDatabase,
+	public RelationServiceImpl(RelationshipRepository RelationshipDatabase,
 			CrudRepository<UserRepositoryObject, String> userDatabase) {
 		this.relationshipDatabase = RelationshipDatabase;
 		this.userDatabase = userDatabase;
@@ -105,7 +106,7 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public ListRelation getListRelation(String userID) {
+	public ListRelation getListRelation(final String userID) {
 		ListRelation listRelation = new ListRelation();
 		Iterable<RelationshipRepositoryObject> relation = relationshipDatabase
 				.findAll();
@@ -123,6 +124,8 @@ public class RelationServiceImpl implements RelationService {
 						relationshipRepositoryObject.toRelation().toString());
 			}
 		}
+
+		
 		return listRelation;
 	}
 
