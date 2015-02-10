@@ -133,7 +133,8 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 			throw new IOException("Can not conect to the server :" + response.getStatus());
 		}
 		}catch (RuntimeException  e){
-		    e.printStackTrace();
+		    //NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		}
 	}
 }

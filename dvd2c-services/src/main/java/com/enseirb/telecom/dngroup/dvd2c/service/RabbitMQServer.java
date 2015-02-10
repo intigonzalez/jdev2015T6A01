@@ -25,7 +25,8 @@ public class RabbitMQServer {
 			channel.queueDeclare(QUEUE_NAME, true, false, false, null);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		}
 
 	}
@@ -47,7 +48,8 @@ public class RabbitMQServer {
 			QueueConsumerApp.getQueueMessage(id);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		}
 	}
 }

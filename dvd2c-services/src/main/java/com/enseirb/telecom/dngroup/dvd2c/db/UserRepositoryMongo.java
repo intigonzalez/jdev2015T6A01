@@ -36,7 +36,8 @@ public class UserRepositoryMongo implements UserRepository {
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			System.err.println("Connection to database failed ");
 			return true;
 		}
@@ -58,7 +59,8 @@ public class UserRepositoryMongo implements UserRepository {
 				mongoClient.close();
 			} catch (UnknownHostException | JsonProcessingException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 				return null;
 			}
 		}
@@ -115,7 +117,8 @@ public <S extends UserRepositoryObject> S update (S entity){
 			mongoClient.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		}
 
 		return entity;
@@ -140,7 +143,8 @@ public <S extends UserRepositoryObject> S update (S entity){
 					user = mapper.readValue(cursor.next().toString(), UserRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 					System.err.println("User Mapping failed ! ");
 				}
 			}
@@ -148,7 +152,8 @@ public <S extends UserRepositoryObject> S update (S entity){
 
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			return null;
 		}
 	}
@@ -173,7 +178,8 @@ public <S extends UserRepositoryObject> S update (S entity){
 					user = mapper.readValue(cursor.next().toString(), UserRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 					System.err.println("User Mapping failed ! ");
 				}
 				
@@ -182,7 +188,8 @@ public <S extends UserRepositoryObject> S update (S entity){
 			
 		}
 		catch (UnknownHostException e){
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			System.err.println("Connection to database failed ");			
 		}
 		return listOfAllUsers;
@@ -216,7 +223,8 @@ public <S extends UserRepositoryObject> S update (S entity){
 								UserRepositoryObject.class);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 						System.err.println("User Mapping failed ! ");
 					}
 
@@ -226,7 +234,8 @@ public <S extends UserRepositoryObject> S update (S entity){
 			}
 
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			System.err.println("Connection to database failed ");
 		}
 		return listOfAllUsers;
@@ -274,7 +283,8 @@ public <S extends UserRepositoryObject> S update (S entity){
 			BasicDBObject query = new BasicDBObject("userID", id);
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			System.err.println("Connection to database failed ");
 		}
 
@@ -289,7 +299,8 @@ public <S extends UserRepositoryObject> S update (S entity){
 			BasicDBObject query = new BasicDBObject("userID", entity.getUserID());
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			System.err.println("Connection to database failed ");
 		}
 
@@ -316,7 +327,8 @@ public <S extends UserRepositoryObject> S update (S entity){
 			
 			}
 		catch(UnknownHostException e){
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			System.err.println();
 		}
 	}
@@ -342,11 +354,13 @@ public <S extends UserRepositoryObject> S update (S entity){
 					dbUsers.save(DbInit.createDBObject(iterator.next()));
 				} catch (JsonProcessingException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 				}
 			}
 			catch(UnknownHostException e){
-				e.printStackTrace();
+				//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 				System.err.println("Connection to database failed ");
 				
 			}

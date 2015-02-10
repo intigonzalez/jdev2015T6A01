@@ -51,7 +51,8 @@ public class RequestContentServiceImpl implements RequestContentService {
 	// userGet = target.request(MediaType.APPLICATION_XML_TYPE).get(User.class);
 	// }catch (Exception e){
 	// System.out.println(target.getUri());
-	// e.printStackTrace();
+	// //NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 	// }
 	//
 	// return userGet;

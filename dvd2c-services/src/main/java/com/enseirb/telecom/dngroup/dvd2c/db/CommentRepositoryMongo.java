@@ -43,13 +43,15 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 			mongoClient.close();
 			
 		} catch (UnknownHostException e){
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.println("Connection to database failed");
 			LOGGER.error("Connection to database failed");
 
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			//System.err.println("Creation of dbObjectToSave failed");
 			LOGGER.error("Creation of dbObjectToSave failed");
 		}
@@ -82,14 +84,16 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 					comment = mapper.readValue(cursor.next().toString(), CommentRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 					LOGGER.error("Mapping falied from Json to Java object  ");
 
 				}
 			}
 						
 		}catch (UnknownHostException e){
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.println("Connection to database failed");
 			LOGGER.error("Connection to database failed");
 
@@ -118,7 +122,8 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 		}
 		catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.println("Connection to database failed ");
 			LOGGER.error("Connection to database failed");
 
@@ -159,7 +164,8 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 								CommentRepositoryObject.class);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 					//	System.err.println("User Mapping failed ! ");
 						LOGGER.error("User Mapping failed !");
 
@@ -170,7 +176,8 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 			}
 
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		//	System.err.println("Connection to database failed ");
 			LOGGER.error("Connection to database failed");
 
@@ -196,7 +203,8 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 		}
 		catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.println("Connection to database failed ");
 			LOGGER.error("Connection to database failed");
 
@@ -220,7 +228,8 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 			mongoClient.close();
 			
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.println("Connection to database failed ");
 			LOGGER.error("Connection to database failed");
 
@@ -239,7 +248,8 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 			BasicDBObject query = new BasicDBObject("commentId", entity.getCommentId());
 			dbComments.remove(query);
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			 //System.err.println("Connection to database failed ");
 			
 			LOGGER.error("Connection to database failed");
@@ -268,7 +278,8 @@ public class CommentRepositoryMongo implements CrudRepository<CommentRepositoryO
 			
 			}
 		catch(UnknownHostException e){
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.println();
 			LOGGER.error("unKnown Host");
 

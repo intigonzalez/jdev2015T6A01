@@ -33,7 +33,8 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 			mongoClient.close();
 		} catch (UnknownHostException | JsonProcessingException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			LOGGER.error("???");
 			return null;
 		}
@@ -66,7 +67,8 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 					relation = mapper.readValue(cursor.next().toString(), RelationshipRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 				//	System.err.println("User Mapping failed ! ");
 					LOGGER.error("User Mapping failed !");
 
@@ -76,7 +78,8 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 			return relation;
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		//	System.err.println("Connection to database failed ");
 			LOGGER.error("Connection to database failed");
 
@@ -103,7 +106,8 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		//	System.err.println("Connection to database failed ");
 			LOGGER.error("Connection to database failed");
 
@@ -129,7 +133,8 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 					relation = mapper.readValue(cursor.next().toString(), RelationshipRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 					System.err.println("User Mapping failed ! ");
 				}
 				
@@ -138,7 +143,8 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 			
 		}
 		catch (UnknownHostException e){
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			System.err.println("Connection to database failed ");			
 		}
 		return listOfAllRelation;
@@ -169,7 +175,8 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 			BasicDBObject query = new BasicDBObject("userId", userId).append("email", relationEmail);
 			db.remove(query);
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		//	System.err.println("Connection to database failed ");
 			LOGGER.error("Connection to database failed");
 

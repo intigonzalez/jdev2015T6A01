@@ -125,7 +125,8 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 	// }catch (Exception e){
 	// System.out.println(target.getUri());
-	// e.printStackTrace();
+	// //NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 	// }
     }
 

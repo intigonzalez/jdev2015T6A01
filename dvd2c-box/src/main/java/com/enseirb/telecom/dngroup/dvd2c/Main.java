@@ -65,7 +65,8 @@ public class Main {
 			(new BoxEndPoints()).postBox();
 		} catch (Exception e) {
 			LOGGER.error("Error for send information to the server central");
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		}
 		LOGGER.info("Sucess ");
 		return GrizzlyHttpServerFactory.createHttpServer(getBaseURI(), resources);
