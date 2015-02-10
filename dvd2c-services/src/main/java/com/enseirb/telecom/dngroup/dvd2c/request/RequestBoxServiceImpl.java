@@ -65,7 +65,7 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 		case CONFLICT:
 			//throw new SuchUserException();
 		default:
-			throw new IOException("Can not conect to the server :"
+			throw new IOException("Can not conect to the server : POST on this link" + target.getUri() +
 					+ response.getStatus());
 		}			
 	}

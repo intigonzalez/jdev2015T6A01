@@ -115,40 +115,37 @@ public class RelationServiceImpl implements RelationService {
 			RelationshipRepositoryObject relationshipRepositoryObject = itr
 					.next();
 			if (relationshipRepositoryObject.getUserId().equals(userID)) {
-				// FIXME: REWORK#1 won't compile
-				// before:
-				// listRelation.getRelation().add(relationshipRepositoryObject.toRelation().toString());
-				// after:
-				// listRelation.getRelation().add(relationshipRepositoryObject.toRelation().toString());
+				// XXX: REWORK#1 won't compile
+
 				listRelation.getRelation().add(
-						relationshipRepositoryObject.toRelation().toString());
+						relationshipRepositoryObject.toRelation());
 			}
 		}
 
-		
 		return listRelation;
 	}
 
 	@Override
 	public ListRelation getListRelation(String userID, int groupID) {
-		// FIXME: won't compile since the following line doesn't compile
+		// XXX: won't compile since the following line doesn't compile
 		// List<Integer> groupeIDs =
 		// listRelation.getRelation().get(i).getGroupID();
-		// ListRelation listRelation = getListRelation(userID);
-		// ListRelation listRelation2 = new ListRelation();
-		// for (int i = 0; i < listRelation.getRelation().size(); i++) {
-		// List<Integer> groupeIDs =
-		// listRelation.getRelation().get(i).getGroupID();
-		// for (Integer groupeID : groupeIDs) {
-		// if (groupeID == groupID) {
-		// listRelation2.getRelation().add(listRelation.getRelation().get(i));
-		// }
-		// }
-		//
-		// }
-		//
-		// return listRelation2;
-		return null;
+		ListRelation listRelation = getListRelation(userID);
+		ListRelation listRelation2 = new ListRelation();
+		for (int i = 0; i < listRelation.getRelation().size(); i++) {
+			List<Integer> groupeIDs = listRelation.getRelation().get(i)
+					.getGroupID();
+			for (Integer groupeID : groupeIDs) {
+				if (groupeID == groupID) {
+					listRelation2.getRelation().add(
+							listRelation.getRelation().get(i));
+				}
+			}
+
+		}
+
+		return listRelation2;
+
 	}
 
 	@Override
@@ -210,12 +207,16 @@ public class RelationServiceImpl implements RelationService {
 						rss.postRelation(relation2, relation);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
-						//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+						// NHE: no print stack trace allowed in the project.
+						// Please replace it with appropriate logger and
+						// Exception handling.
+						e.printStackTrace();
 					} catch (NoSuchBoxException e) {
 						// TODO Auto-generated catch block
-						//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+						// NHE: no print stack trace allowed in the project.
+						// Please replace it with appropriate logger and
+						// Exception handling.
+						e.printStackTrace();
 					}
 					// Send a request to the right box with the profile of
 					// userID
@@ -256,16 +257,22 @@ e.printStackTrace();
 					rss.setAprouve(userID, relation.getEmail());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+					// NHE: no print stack trace allowed in the project. Please
+					// replace it with appropriate logger and Exception
+					// handling.
+					e.printStackTrace();
 				} catch (NoSuchBoxException e) {
 					// TODO Auto-generated catch block
-					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+					// NHE: no print stack trace allowed in the project. Please
+					// replace it with appropriate logger and Exception
+					// handling.
+					e.printStackTrace();
 				} catch (NoSuchUserException e) {
 					// TODO Auto-generated catch block
-					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+					// NHE: no print stack trace allowed in the project. Please
+					// replace it with appropriate logger and Exception
+					// handling.
+					e.printStackTrace();
 				}
 				rss.close();
 				// Send a request to the box to tell it the user accepts the
@@ -309,20 +316,24 @@ e.printStackTrace();
 			return listContent;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			// NHE: no print stack trace allowed in the project. Please replace
+			// it with appropriate logger and Exception handling.
+			e.printStackTrace();
 		} catch (NoSuchUserException e) {
 			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			// NHE: no print stack trace allowed in the project. Please replace
+			// it with appropriate logger and Exception handling.
+			e.printStackTrace();
 		} catch (NoSuchBoxException e) {
 			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			// NHE: no print stack trace allowed in the project. Please replace
+			// it with appropriate logger and Exception handling.
+			e.printStackTrace();
 		} catch (NoRelationException e) {
 			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			// NHE: no print stack trace allowed in the project. Please replace
+			// it with appropriate logger and Exception handling.
+			e.printStackTrace();
 		}
 		return null;
 
@@ -347,16 +358,19 @@ e.printStackTrace();
 				rss.delete(userID, email);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+				// NHE: no print stack trace allowed in the project. Please
+				// replace it with appropriate logger and Exception handling.
+				e.printStackTrace();
 			} catch (NoSuchUserException e) {
 				// TODO Auto-generated catch block
-				//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+				// NHE: no print stack trace allowed in the project. Please
+				// replace it with appropriate logger and Exception handling.
+				e.printStackTrace();
 			} catch (NoSuchBoxException e) {
 				// TODO Auto-generated catch block
-				//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+				// NHE: no print stack trace allowed in the project. Please
+				// replace it with appropriate logger and Exception handling.
+				e.printStackTrace();
 			}
 			rss.close();
 		}

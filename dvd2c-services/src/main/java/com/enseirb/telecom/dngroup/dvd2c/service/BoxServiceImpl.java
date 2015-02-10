@@ -2,6 +2,9 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
@@ -13,7 +16,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public class BoxServiceImpl implements BoxService{
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(BoxServiceImpl.class);
 	CrudRepository<BoxRepositoryObject, String> boxDatabase;
 	RequestBoxService requetBoxService = new RequestBoxServiceImpl(
 			ApplicationContext.getProperties().getProperty("CentralURL") + "/api/app/box/");
@@ -68,11 +71,11 @@ e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			LOGGER.error("error during creating a box ", e);
 		} catch (SuchBoxException e) {
 			// TODO Auto-generated catch block
 			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			e.printStackTrace();
 		}
 		Box b = boxDatabase.save(new BoxRepositoryObject(box)).toBox();
 		return b;

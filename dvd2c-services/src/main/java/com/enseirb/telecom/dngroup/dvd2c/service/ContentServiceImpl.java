@@ -29,7 +29,7 @@ import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.json.JsonWriter;
 
 public class ContentServiceImpl implements ContentService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContentServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContentServiceImpl.class);
     static ContentRepository contentDatabase;
     RabbitMQServer rabbitMq;
 //    private RequestUserService requetUserService = new RequestUserServiceImpl();
@@ -163,32 +163,32 @@ e.printStackTrace();
 	    while (itr.hasNext()) { // For each content
 	        ContentRepositoryObject contentRepositoryObject = itr.next();
 	        search: 
-	            
-	    	if ((contentRepositoryObject.getUserId()!=null)&&(contentRepositoryObject.getUserId().equals(userID))) {
-	    	for (int i = 0; i < relation.getGroupID().size(); i++) { // For each group the relation belongs to
-	    	    if (contentRepositoryObject.getAuthorization() != null) {
-	    		if (contentRepositoryObject.getAuthorization().size() == 0) {
-	    		    LOGGER.error("Groupe information : Relation in no group or video never allowed");
-	    		    // listContent.getContent().add(contentRepositoryObject.toContent());
-	    		    break search;
-	    		}
-	    	    }
-	    	    for (int j = 0; j < contentRepositoryObject.getAuthorization().size(); j++) {
-	    	    	//FIXME: won't compile due to the following line:
-	    	    	//relation.getGroupID().get(i) == contentRepositoryObject.getAuthorization().get(j).getGroupID()
-	    	    	/*
-	    		if (relation.getGroupID().get(i) == contentRepositoryObject.getAuthorization().get(j).getGroupID()) {
-	    		    contentRepositoryObject.getAuthorization().clear();
-	    		    contentRepositoryObject.setLink(ApplicationContext.getProperties().getProperty("PublicAddr")+contentRepositoryObject.getLink());
-	    		   
-	    		    listContent.getContent().add(contentRepositoryObject.toContent());
-	    		    break search;
-	    		} else {
-//			    LOGGER.debug("Group is not the same. ");
-	    		}*/
-	    	    }
-	    	}
-	        }
+
+	        	if ((contentRepositoryObject.getUserId()!=null)&&(contentRepositoryObject.getUserId().equals(userID))) {
+	        		for (int i = 0; i < relation.getGroupID().size(); i++) { // For each group the relation belongs to
+	        			if (contentRepositoryObject.getAuthorization() != null) {
+	        				if (contentRepositoryObject.getAuthorization().size() == 0) {
+	        					LOGGER.error("Groupe information : Relation in no group or video never allowed");
+	        					// listContent.getContent().add(contentRepositoryObject.toContent());
+	        					break search;
+	        				}
+	        			}
+	        			for (int j = 0; j < contentRepositoryObject.getAuthorization().size(); j++) {
+	        				//XXX: won't compile due to the following line:
+	        				//relation.getGroupID().get(i) == contentRepositoryObject.getAuthorization().get(j).getGroupID()
+
+	        				if (relation.getGroupID().get(i) == contentRepositoryObject.getAuthorization().get(j).getGroupID()) {
+	        					contentRepositoryObject.getAuthorization().clear();
+	        					contentRepositoryObject.setLink(ApplicationContext.getProperties().getProperty("PublicAddr")+contentRepositoryObject.getLink());
+
+	        					listContent.getContent().add(contentRepositoryObject.toContent());
+	        					break search;
+	        				} else {
+	        					//LOGGER.debug("Group is not the same. ");
+	        				}
+	        			}
+	        		}
+	        	}
 	    }
 	} catch (Exception e) {
 	    // TODO Auto-generated catch block
