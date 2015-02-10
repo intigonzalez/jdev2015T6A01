@@ -12,7 +12,6 @@
 					minOccurs="0" />
 				<xs:element name="comment" type="xs:string" maxOccurs="1"
 					minOccurs="0" />
-					
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

@@ -11,18 +11,29 @@ Projet S9 : Enseirb : Réseaux social décentralisé avec partage de videos
 First install :
 
     apt-get install openjdk-7-jre openjdk-7-jdk maven apache2 mongodb-server git
+    
+add this central.properties in /etc/mediahome
 
+    bindIp=0.0.0.0
+    bindPort=9999
+add this box.properties in /etc/mediahome
+
+    bindIp=0.0.0.0
+    bindPort=9998
+    contentPath=/var/www/html
+    BoxID=BOX_TEST
+    CentralURL=http://localhost:9999
+    PublicAddr=http://localhost
+    
 To run the application for development, run :
 
-    mvn clean package exec:java
+    mvn clean package
+    java -jar ./dvd2c-box/target/dvd2c-box-1.0-SNAPSHOT-jar-with-dependencies.jar 
+or for the central server
 
-To compile and package the application for single jar deployement, run
+	java -jar ./dvd2c-central/target/dvd2c-box-1.0-SNAPSHOT-jar-with-dependencies.jar 
 
-    mvn clean package assembly:single
 
-then, you can deploy the all-in-one jar file and run it with just the jvm
-
-    java -jar ./media-home-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 ## Other Dependencies ##
 

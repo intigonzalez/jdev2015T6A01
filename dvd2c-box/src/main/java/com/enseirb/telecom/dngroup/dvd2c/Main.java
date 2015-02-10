@@ -63,27 +63,38 @@ public class Main {
 		LOGGER.info("Send information to the server central ...");
 		try {
 			(new BoxEndPoints()).postBox();
+			LOGGER.info("Sucess ");
 		} catch (Exception e) {
 			LOGGER.error("Error for send information to the server central");
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			LOGGER.error("{}", e);
+			
 		}
-		LOGGER.info("Sucess ");
+
 		return GrizzlyHttpServerFactory.createHttpServer(getBaseURI(), resources);
 	}
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		// Properties 
 		FileInputStream in;
+		String aPPath;
+		if (args.length>0){
+			aPPath = args[0];
+		}
+		else {
+			aPPath = "/etc/mediahome/box.properties";
+		}
+		
 		try {
-			ApplicationContext.properties = new Properties();
-			in = new FileInputStream("application.properties");
+			in = new FileInputStream(aPPath);
 			ApplicationContext.properties.load(in);
 			in.close();
-		} catch (IOException e1) {
+		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LOGGER.error("File not found Path ={} ",aPPath, e1);
+			return;
 		}
+		LOGGER.debug("File Found Path={} ",aPPath);
+
 		
 		// Grizzly 2 initialization
 		new Thread(new Runnable() {

@@ -1,6 +1,7 @@
 package com.enseirb.telecom.dngroup.dvd2c;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
@@ -13,11 +14,13 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jettison.JettisonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 
 public class Main {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 	private static int getPort(int defaultPort) {
 		// grab port from environment, otherwise fall back to default port 9999
 		String httpPort = ApplicationContext.getProperties().getProperty(
@@ -55,15 +58,26 @@ public class Main {
 			InterruptedException {
 		// Properties
 		FileInputStream in;
+		ApplicationContext.properties = new Properties();
+		//try to find application.properties
+		String aPPath = new String();
+		if (args.length>0){
+			aPPath = args[0];
+		}
+		else {
+			aPPath = "/etc/mediahome/central.properties";
+		}
+		
 		try {
-			ApplicationContext.properties = new Properties();
-			in = new FileInputStream("application.properties");
+			in = new FileInputStream(aPPath);
 			ApplicationContext.properties.load(in);
 			in.close();
-		} catch (IOException e1) {
+		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LOGGER.error("File not found Path ={} ",aPPath, e1);
+			return;
 		}
+		LOGGER.debug("File Found Path={} ",aPPath);
 
 		// Grizzly 2 initialization
 		new Thread(new Runnable() {

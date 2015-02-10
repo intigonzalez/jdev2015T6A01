@@ -4,7 +4,6 @@
 
     <xs:include schemaLocation="user.xsd"></xs:include>
     <xs:element name="listUser">
-
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="user" maxOccurs="unbounded" minOccurs="0"></xs:element>
