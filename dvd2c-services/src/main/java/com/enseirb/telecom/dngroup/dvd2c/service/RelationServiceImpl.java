@@ -210,10 +210,12 @@ public class RelationServiceImpl implements RelationService {
 						rss.postRelation(relation2, relation);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 					} catch (NoSuchBoxException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 					}
 					// Send a request to the right box with the profile of
 					// userID
@@ -254,13 +256,16 @@ public class RelationServiceImpl implements RelationService {
 					rss.setAprouve(userID, relation.getEmail());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 				} catch (NoSuchBoxException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 				} catch (NoSuchUserException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 				}
 				rss.close();
 				// Send a request to the box to tell it the user accepts the
@@ -304,16 +309,20 @@ public class RelationServiceImpl implements RelationService {
 			return listContent;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		} catch (NoSuchUserException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		} catch (NoSuchBoxException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		} catch (NoRelationException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		}
 		return null;
 
@@ -338,13 +347,16 @@ public class RelationServiceImpl implements RelationService {
 				rss.delete(userID, email);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			} catch (NoSuchUserException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			} catch (NoSuchBoxException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			}
 			rss.close();
 		}

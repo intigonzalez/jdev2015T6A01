@@ -40,10 +40,12 @@ public class AccountServiceImpl implements AccountService {
 			else if (userGet.getUserID().equals(user.getUserID()))
 				exist = true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			 System.err.printf("Can not connect on the server :(\n");
 		} catch (NoSuchUserException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		}
 		return exist;
 	}
@@ -79,7 +81,8 @@ public class AccountServiceImpl implements AccountService {
 		return requetUserService.getUserFromName(name);
 	    } catch (IOException e) {
 		// TODO Auto-generated catch block
-		e.printStackTrace();
+		//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 	    }
 	    return null;
 	}
@@ -95,9 +98,11 @@ public class AccountServiceImpl implements AccountService {
 		} catch (IOException e) {
 			// System.err.printf(user.getUserID()+
 			// " can not registerd on the server");
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		} catch (SuchUserException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.printf("Can not connect on the server :(\n");
 
 		}
@@ -113,9 +118,11 @@ public class AccountServiceImpl implements AccountService {
 		} catch (IOException e) {
 			// System.err.printf(user.getUserID()+
 			// " can not registerd on the server");
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		} catch (NoSuchUserException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.printf("Can not connect on the server :(\n");
 
 		}
@@ -131,9 +138,11 @@ public class AccountServiceImpl implements AccountService {
 		} catch (IOException e) {
 			// System.err.printf(user.getUserID()+
 			// " can not registerd on the server");
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		} catch (NoSuchUserException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.printf("Can not connect on the server :(\n");
 
 		}

@@ -99,7 +99,8 @@ public class ContentServiceImpl implements ContentService {
 
 	    } catch (IOException e) {
 		// TODO Auto-generated catch block
-		e.printStackTrace();
+		//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 	    }
 	}
 	//Initialise with public authorization by default ! 
@@ -126,7 +127,8 @@ public class ContentServiceImpl implements ContentService {
 	    Files.copy(uploadedInputStream, dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
 	} catch (IOException e) {
 	    // TODO deal with it
-	    e.printStackTrace();
+	    //NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 	}
 
     }
@@ -190,7 +192,8 @@ public class ContentServiceImpl implements ContentService {
 	    }
 	} catch (Exception e) {
 	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	    //NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 	}
 	return listContent;
     }

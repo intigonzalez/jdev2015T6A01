@@ -228,15 +228,18 @@ public class RelationEndPoints {
 	    return Response.status(200).build();
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	    //NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 	    return Response.status(403).build();
 	} catch (NoSuchUserException e) {
 	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	    //NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 	    return Response.status(403).build();
 	} catch (Exception e) {
 	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	    //NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 	    return Response.status(403).build();
 
 	}

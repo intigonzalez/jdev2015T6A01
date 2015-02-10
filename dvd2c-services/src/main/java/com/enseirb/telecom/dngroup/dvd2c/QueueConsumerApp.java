@@ -53,7 +53,8 @@ public class QueueConsumerApp {
 					LOGGER.info("Result for element {}" , new Object[] {result, status});
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 				}
 				ContentServiceImpl contentServiceImpl =new ContentServiceImpl();
 				if (status.equals("SUCCESS")) {

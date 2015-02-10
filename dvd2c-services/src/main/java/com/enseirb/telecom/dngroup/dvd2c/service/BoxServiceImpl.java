@@ -37,7 +37,8 @@ public class BoxServiceImpl implements BoxService{
 			else if (boxGet.getBoxID().equals(box.getBoxID()))
 				exist = true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			 System.err.printf("Can not connect on the server :(\n");
 			 
 		} catch (NoSuchBoxException e) {
@@ -66,10 +67,12 @@ public class BoxServiceImpl implements BoxService{
 			requetBoxService.post(box);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		} catch (SuchBoxException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		}
 		Box b = boxDatabase.save(new BoxRepositoryObject(box)).toBox();
 		return b;
@@ -83,10 +86,12 @@ public class BoxServiceImpl implements BoxService{
 			requetBoxService.put(box);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		} catch (NoSuchBoxException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		}
 	}
 	
@@ -96,10 +101,12 @@ public class BoxServiceImpl implements BoxService{
 			requetBoxService.delete(boxID);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		} catch (NoSuchBoxException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		}
 		
 		boxDatabase.delete(boxID);

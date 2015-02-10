@@ -38,7 +38,8 @@ public class BoxRepositoryMongo implements BoxRepository {
 				mongoClient.close();
 			} catch (UnknownHostException | JsonProcessingException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 				return null;
 			}
 		}
@@ -78,7 +79,8 @@ public class BoxRepositoryMongo implements BoxRepository {
 						userDBObject = DbInit.createDBObject(userIterator.next());
 					} catch (JsonProcessingException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 						System.out.println("Impossible to create userDBObject");
 					}			    
 				    
@@ -100,7 +102,8 @@ public class BoxRepositoryMongo implements BoxRepository {
 			mongoClient.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 		}
 
 		return entity;
@@ -129,7 +132,8 @@ public class BoxRepositoryMongo implements BoxRepository {
 							BoxRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 					System.err.println("Box Mapping failed ! ");
 				}
 			}
@@ -137,7 +141,8 @@ public class BoxRepositoryMongo implements BoxRepository {
 
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			return null;
 		}
 	}
@@ -160,7 +165,8 @@ public class BoxRepositoryMongo implements BoxRepository {
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			System.err.println("Connection to database failed ");
 			return true;
 		}
@@ -185,7 +191,8 @@ public class BoxRepositoryMongo implements BoxRepository {
 					box = mapper.readValue(cursor.next().toString(), BoxRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 					System.err.println("User Mapping failed ! ");
 				}
 				
@@ -194,7 +201,8 @@ public class BoxRepositoryMongo implements BoxRepository {
 
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			return null;
 		}
 		
@@ -222,7 +230,8 @@ public class BoxRepositoryMongo implements BoxRepository {
 			BasicDBObject query = new BasicDBObject("boxID", id);
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			System.err.println("Connection to database failed ");
 		}
 
@@ -236,7 +245,8 @@ public class BoxRepositoryMongo implements BoxRepository {
 			BasicDBObject query = new BasicDBObject("boxID", entity.getBoxID());
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			System.err.println("Connection to database failed ");
 		}
 

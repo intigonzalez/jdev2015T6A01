@@ -41,7 +41,8 @@ public class ContentRepositoryMongo implements ContentRepository {
 				mongoClient.close();
 			} catch (UnknownHostException | JsonProcessingException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 				return null;
 			}
 		}
@@ -139,7 +140,8 @@ public class ContentRepositoryMongo implements ContentRepository {
 						userDBObject = DbInit.createDBObject(userIterator.next());
 					} catch (JsonProcessingException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 						LOGGER.error("Impossible to create userDBObject");
 					}			    
 				    
@@ -194,7 +196,8 @@ public class ContentRepositoryMongo implements ContentRepository {
 							ContentRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 					// System.err.println("Content Mapping failed ! ");
 					LOGGER.error("Connection to database failed");
 
@@ -205,7 +208,8 @@ public class ContentRepositoryMongo implements ContentRepository {
 			return content;
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.println("Connection to database failed ");
 			LOGGER.error("Connection to database failed");
 
@@ -233,7 +237,8 @@ public class ContentRepositoryMongo implements ContentRepository {
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.println("Connection to database failed ");
 			LOGGER.error("Connection to database failed");
 
@@ -262,7 +267,8 @@ public class ContentRepositoryMongo implements ContentRepository {
 							ContentRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 					System.err.println("User Mapping failed ! ");
 				}
 
@@ -270,7 +276,8 @@ public class ContentRepositoryMongo implements ContentRepository {
 			}
 
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			System.err.println("Connection to database failed ");
 		}
 		return listOfAllContent;
@@ -297,7 +304,8 @@ public class ContentRepositoryMongo implements ContentRepository {
 
 			nbOfContents = dbUsers.getCount();
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.println("Connection to database failed ");
 			LOGGER.error("Connection to database failed");
 
@@ -349,7 +357,8 @@ public class ContentRepositoryMongo implements ContentRepository {
 			mongoClient.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.println("Connection to database failed ");
 			LOGGER.error("Connection to database failed");
 
@@ -368,7 +377,8 @@ public class ContentRepositoryMongo implements ContentRepository {
 					.toString());
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.println("Connection to database failed ");
 			LOGGER.error("Connnection to database failed");
 
@@ -395,7 +405,8 @@ public class ContentRepositoryMongo implements ContentRepository {
 			mongoClient.close();
 
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
+e.printStackTrace();
 			// System.err.println("Connection to database failed");
 			LOGGER.error("Connnection to database failed");
 
