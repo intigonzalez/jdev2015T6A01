@@ -51,8 +51,12 @@ public class Main {
 		resources.register(CORSResponseFilter.class);
 		resources.register(MultiPartFeature.class);
 		resources.register(JettisonFeature.class);
-        resources.register(SecurityEntityFilteringFeature.class);
+		/**
+		 * this two follow line is for security
+		 */
+		resources.register(SecurityEntityFilteringFeature.class);
 		resources.register(SecurityRequestFilter.class);
+
 		//System.out.println("Starting grizzly2...");
 		LOGGER.info("Starting grizzly2");
 

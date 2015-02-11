@@ -94,7 +94,7 @@ public class BoxServiceCentralImpl implements BoxServiceCentral {
 	public ListUser getUsersFromBoxes(ListBox listBox) {
 
 		AccountServiceCentral uManager = new AccountServiceCentralImpl(
-				new UserRepositoryMongo("BoxMediaHome"));
+				new UserRepositoryMongo("mediahome"));
 		ListUser listUsersFinal = new ListUser(), listUsersOfBoxes = new ListUser();
 
 		List<User> u;

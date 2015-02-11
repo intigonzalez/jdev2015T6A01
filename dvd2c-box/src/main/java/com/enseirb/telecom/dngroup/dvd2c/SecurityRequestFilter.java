@@ -90,7 +90,7 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
             @Override
             public boolean isUserInRole(final String role) {
             	String auth = "denied";
-        		AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo("BoxMediaHome"));
+        		AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo("mediahome"));
         		String userConnected = requestContext.getCookies().get("authentication").getValue(); // get the cookie
         		//System.out.println(requestContext.getCookies().get("test").getValue()); 
         		String[] test = requestContext.getUriInfo().getPath().split("/");
