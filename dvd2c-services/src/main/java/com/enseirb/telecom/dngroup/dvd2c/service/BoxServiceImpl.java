@@ -11,7 +11,7 @@ import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
-import com.enseirb.telecom.dngroup.dvd2c.request.*;
+import com.enseirb.telecom.dngroup.dvd2c.service.request.*;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
