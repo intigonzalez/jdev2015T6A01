@@ -6,8 +6,9 @@ import org.bson.types.ObjectId;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class BoxRepositoryObject {
 
 	

@@ -23,6 +23,9 @@ import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
+import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
+import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceCentral;
+import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceCentralImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
@@ -38,8 +41,9 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 public class BoxEndPoints {
     private static final Logger LOGGER = LoggerFactory.getLogger(BoxEndPoints.class);
 
-    BoxService boxManager = new BoxServiceImpl(new BoxRepositoryMongo());
-
+    BoxService boxManager = new BoxServiceImpl(new BoxRepositoryMongo("mediahome"));
+    UserRepositoryMongo uRM = new UserRepositoryMongo("mediahome");
+   
 
     @GET
     @Path("id/{boxId}")
@@ -112,7 +116,7 @@ public class BoxEndPoints {
     @Path("relation/{userId}/{relationId}")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response setAprouve(@PathParam("userId") String userId, @PathParam("relationId") String relationId) throws URISyntaxException {
-	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
+	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), uRM);
 	LOGGER.debug("try to setAprouve a relation from a other box {} and {}", userId, relationId);
 	rManager.setAprouveBox(userId, relationId);
 	return Response.status(Status.ACCEPTED).build();
@@ -148,7 +152,7 @@ public class BoxEndPoints {
 	// TODO: delete this friends thinks to send a message to the over box
 	// and after this delete the user 
 	LOGGER.debug("try to delete a relation from a other box {} and {}", userId, relationId);
-	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
+	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), uRM);
 	rManager.deleteRelationBox(userId, relationId);
 	return Response.status(200).build();
     }
@@ -166,7 +170,7 @@ public class BoxEndPoints {
     @Path("{userID}/content/{relationID}")
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public ListContent getLocalContentForRelation(@PathParam("relationID") String relationID, @PathParam("userID") String userID) {
-	RelationServiceImpl relationService = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
+	RelationServiceImpl relationService = new RelationServiceImpl(new RelationshipRepositoryMongo(), uRM);
 	ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo(), new RabbitMQServer());
 
 	LOGGER.debug("Receive Request to get list content from {}", relationID);

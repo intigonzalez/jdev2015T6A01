@@ -38,7 +38,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 @Path("app/account")
 public class UserEndPoints extends HttpServlet {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserEndPoints.class);
-	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo());
+	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo("mediahome"));
 
 	// Only for tests
 	@GET

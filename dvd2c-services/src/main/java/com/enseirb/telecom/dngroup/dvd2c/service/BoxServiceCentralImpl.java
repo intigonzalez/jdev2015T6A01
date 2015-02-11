@@ -3,6 +3,10 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
@@ -12,12 +16,13 @@ import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public class BoxServiceCentralImpl implements BoxServiceCentral {
+	private static final Logger LOGGER = LoggerFactory.getLogger(BoxServiceCentralImpl.class);
 
 	// add test
-	CrudRepository<BoxRepositoryObject, String> boxServDatabase;
+	BoxRepository boxServDatabase;
 
 	public BoxServiceCentralImpl(
-			CrudRepository<BoxRepositoryObject, String> boxServDatabase) {
+			BoxRepository boxServDatabase) {
 		this.boxServDatabase = boxServDatabase;
 	}
 
@@ -89,7 +94,7 @@ public class BoxServiceCentralImpl implements BoxServiceCentral {
 	public ListUser getUsersFromBoxes(ListBox listBox) {
 
 		AccountServiceCentral uManager = new AccountServiceCentralImpl(
-				new UserRepositoryMongo());
+				new UserRepositoryMongo("BoxMediaHome"));
 		ListUser listUsersFinal = new ListUser(), listUsersOfBoxes = new ListUser();
 
 		List<User> u;

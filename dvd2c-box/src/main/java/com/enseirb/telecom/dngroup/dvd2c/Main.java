@@ -47,7 +47,7 @@ public class Main {
 	protected static HttpServer startServer() throws IOException {
 
 		ResourceConfig resources = new ResourceConfig();
-		resources.packages("com.enseirb.telecom.s9.endpoints");
+		resources.packages("com.enseirb.telecom.dngroup.dvd2c.endpoints");
 		resources.register(CORSResponseFilter.class);
 		resources.register(MultiPartFeature.class);
 		resources.register(JettisonFeature.class);
@@ -65,8 +65,8 @@ public class Main {
 			(new BoxEndPoints()).postBox();
 			LOGGER.info("Sucess ");
 		} catch (Exception e) {
-			LOGGER.error("Error for send information to the server central");
-			LOGGER.error("{}", e);
+			LOGGER.error("Error for send information to the server central",e);
+			
 			
 		}
 

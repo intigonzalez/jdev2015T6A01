@@ -25,7 +25,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 @Path("app/account")
 public class UserEndPoints {
 
-	AccountServiceCentral uManager = new AccountServiceCentralImpl(new UserRepositoryMongo());
+	AccountServiceCentral uManager = new AccountServiceCentralImpl(new UserRepositoryMongo("CentralMediaHome"));
 
 	@GET
 	@Path("{userID}")

@@ -17,11 +17,17 @@ import com.mongodb.MongoClient;
 
 public class UserRepositoryMongo implements UserRepository {
 
+	private String dbName;
+
+	public UserRepositoryMongo(String dbName) {
+		this.dbName=dbName;
+	}
+
 	@Override
 	public boolean exists(String id) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 	
 			BasicDBObject query = new BasicDBObject("userID", id);
@@ -52,7 +58,7 @@ e.printStackTrace();
 			try {
 
 				MongoClient mongoClient = DbInit.Connect();
-				DB db = mongoClient.getDB("mediahome");
+				DB db = mongoClient.getDB(dbName);
 				DBCollection dbUsers = db.getCollection("users");
 
 				dbUsers.save(DbInit.createDBObject(entity));
@@ -74,7 +80,7 @@ public <S extends UserRepositoryObject> S update (S entity){
 		try {
 			mongoClient = DbInit.Connect();
 
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbBox = db.getCollection("users");
 			BasicDBObject newDocument = new BasicDBObject();
 
@@ -129,7 +135,7 @@ e.printStackTrace();
 		// The id is the email address
 		try {
 			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 
 //			BasicDBObject query = new BasicDBObject("userID", id);
@@ -165,7 +171,7 @@ e.printStackTrace();
 		
 		try{
 			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 			
 			ObjectMapper mapper = new ObjectMapper();
@@ -206,7 +212,7 @@ e.printStackTrace();
 
 		try {
 			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 
 			ObjectMapper mapper = new ObjectMapper();
@@ -251,7 +257,7 @@ e.printStackTrace();
 
 		try {
 			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 
 			DBCursor cursor = dbUsers.find();
@@ -277,7 +283,7 @@ e.printStackTrace();
 	public void delete(String id) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 
 			BasicDBObject query = new BasicDBObject("userID", id);
@@ -294,7 +300,7 @@ e.printStackTrace();
 	public void delete(UserRepositoryObject entity) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 			BasicDBObject query = new BasicDBObject("userID", entity.getUserID());
 			dbUsers.remove(query);
@@ -319,7 +325,7 @@ e.printStackTrace();
 
 		try{
 			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 			
 			dbUsers.drop();
@@ -347,7 +353,7 @@ e.printStackTrace();
 			
 			try{
 				MongoClient mongoClient = DbInit.Connect();
-				DB db = mongoClient.getDB("mediahome");
+				DB db = mongoClient.getDB(dbName);
 				DBCollection dbUsers = db.getCollection("user");
 				
 				try {

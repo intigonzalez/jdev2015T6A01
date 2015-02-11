@@ -39,7 +39,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 public class RelationEndPoints {
     private static final Logger LOGGER = LoggerFactory.getLogger(RelationEndPoints.class);
 
-    RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo());
+    RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo("mediahome"));
 
     @GET
     @Path("from/{username}")

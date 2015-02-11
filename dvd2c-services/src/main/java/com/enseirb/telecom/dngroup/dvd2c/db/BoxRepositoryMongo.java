@@ -21,18 +21,21 @@ public class BoxRepositoryMongo implements BoxRepository {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(BoxRepositoryMongo.class);
+	private String dbName;
 
-	public BoxRepositoryMongo() {
+	public BoxRepositoryMongo(String dbName) {
+		this.dbName = dbName;
 
 	}
 
+	@Override
 	public <S extends BoxRepositoryObject> S save(S entity) {
 		if (exists(entity.getBoxID())) {
 			entity = update(entity);
 		} else {
 			try {
 				MongoClient mongoClient = DbInit.Connect();
-				DB db = mongoClient.getDB("mediahome");
+				DB db = mongoClient.getDB(dbName);
 				DBCollection dbbox = db.getCollection("box");
 				DBObject objectToSave = DbInit.createDBObject(entity);
 				LOGGER.info("DB Object Saved {}", objectToSave.toString());
@@ -47,7 +50,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 				return null;
 			}
 		}
-
+	
 		return entity;
 	}
 
@@ -56,7 +59,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 		try {
 			mongoClient = DbInit.Connect();
 
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbBox = db.getCollection("box");
 			BasicDBObject newDocument = new BasicDBObject();
 
@@ -129,7 +132,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 		// The id is the email address
 		try {
 			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("box");
 
 			BasicDBObject query = new BasicDBObject("boxID", id);
@@ -138,6 +141,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 			ObjectMapper mapper = new ObjectMapper();
 			if (cursor.hasNext()) {
 				try {
+					LOGGER.debug("cursor.next() ={}",cursor.next().toString());
 					box = mapper.readValue(cursor.next().toString(),
 							BoxRepositoryObject.class);
 				} catch (IOException e) {
@@ -145,6 +149,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 					// NHE: no print stack trace allowed in the project. Please
 					// replace it with appropriate logger and Exception
 					// handling.
+					LOGGER.error("Box Mapping failed ! ",e);
 					e.printStackTrace();
 					System.err.println("Box Mapping failed ! ");
 				}
@@ -163,7 +168,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 	public boolean exists(String id) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("box");
 
 			BasicDBObject query = new BasicDBObject("boxID", id);
@@ -193,7 +198,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 
 		try {
 			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbBox = db.getCollection("box");
 
 			DBCursor cursor = dbBox.find();
@@ -241,7 +246,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 	public void delete(String id) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("box");
 
 			BasicDBObject query = new BasicDBObject("boxID", id);
@@ -258,7 +263,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 	public void delete(BoxRepositoryObject entity) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
-			DB db = mongoClient.getDB("mediahome");
+			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("box");
 			BasicDBObject query = new BasicDBObject("boxID", entity.getBoxID());
 			dbUsers.remove(query);

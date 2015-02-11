@@ -34,10 +34,10 @@ public class BoxServiceImpl implements BoxService{
 		boolean exist = boxDatabase.exists(box.getBoxID());
 		
 		try {
-			Box boxGet = requetBoxService.get(box);
-			if (boxGet == null)
+ 			Box boxGet = requetBoxService.get(box);
+			if ((boxGet == null))
 				exist = false;
-			else if (boxGet.getBoxID().equals(box.getBoxID()))
+			else if (box.getBoxID().equals(boxGet.getBoxID()))
 				exist = true;
 		} catch (IOException e) {
 			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 

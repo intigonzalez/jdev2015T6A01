@@ -25,7 +25,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 @Path("app/box")
 public class BoxEndPoints {
 
-	BoxServiceCentral boxManager = new BoxServiceCentralImpl(new BoxRepositoryMongo());
+	BoxServiceCentral boxManager = new BoxServiceCentralImpl(new BoxRepositoryMongo("CentralMediaHome"));
 
 	/**
 	 * Get List of box
