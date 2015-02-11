@@ -1,4 +1,4 @@
-package com.enseirb.telecom.dngroup.dvd2c.request;
+package com.enseirb.telecom.dngroup.dvd2c.service.request;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
