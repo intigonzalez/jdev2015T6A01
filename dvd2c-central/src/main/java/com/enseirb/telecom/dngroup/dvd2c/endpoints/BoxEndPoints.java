@@ -15,8 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryMongo;
-import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceCentral;
-import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceCentralImpl;
+import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
+import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListBox;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
@@ -25,7 +25,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 @Path("app/box")
 public class BoxEndPoints {
 
-	BoxServiceCentral boxManager = new BoxServiceCentralImpl(new BoxRepositoryMongo("CentralMediaHome"));
+	BoxService boxManager = new BoxServiceImpl(new BoxRepositoryMongo("CentralMediaHome"));
 
 	/**
 	 * Get List of box
@@ -48,7 +48,7 @@ public class BoxEndPoints {
 	@Path("id/{boxId}")
 	@Produces(MediaType.APPLICATION_XML)
 	public Box getBox(@PathParam("boxId") String boxId) {
-		return boxManager.getBox(boxId);
+		return boxManager.getBoxOnLocal(boxId);
 	}
 
 	/**
@@ -74,8 +74,8 @@ public class BoxEndPoints {
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postBox(Box box) throws URISyntaxException {
-		if (boxManager.boxExist(box.getBoxID()) == false) {
-			boxManager.saveBox(box);
+		if (boxManager.boxExistOnLocal(box.getBoxID()) == false) {
+			boxManager.saveBoxOnLocal(box);
 			return Response.created(new URI(box.getBoxID())).build();
 		} else {
 			return Response.status(409).build();
@@ -93,8 +93,8 @@ public class BoxEndPoints {
 	@Path("{boxId}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putBox(Box box) throws URISyntaxException {
-		if (boxManager.boxExist(box.getBoxID()) == true) {
-			boxManager.saveBox(box);
+		if (boxManager.boxExistOnLocal(box.getBoxID()) == true) {
+			boxManager.saveBoxOnLocal(box);
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(box.getBoxID())).build();
 		} else {
@@ -111,8 +111,8 @@ public class BoxEndPoints {
 	@DELETE
 	@Path("{boxId}")
 	public Response deleteBox(@PathParam("boxId") String boxId) {
-		if (boxManager.boxExist(boxId) == true) {
-			boxManager.deleteBox(boxId);
+		if (boxManager.boxExistOnLocal(boxId) == true) {
+			boxManager.deleteBoxOnLocal(boxId);
 			// NHE that the answer we expect from a post (see location header)
 			return Response.accepted().build();
 		} else {

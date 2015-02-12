@@ -25,12 +25,12 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 	}
 
 	@Override
-	public Box get(Box box) throws IOException,NoSuchBoxException {
+	public Box get(String boxID) throws IOException,NoSuchBoxException {
 		// TODO Auto-generated method stub
 		
 		Box boxGet = new Box();
 		// Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(url +"id/"+ box.getBoxID());
+		WebTarget target = client.target(url +"id/"+ boxID);
 		
 		try{
 		boxGet = target.request(MediaType.APPLICATION_XML_TYPE).get(Box.class);

@@ -50,7 +50,7 @@ public class BoxEndPoints {
     @Produces(MediaType.APPLICATION_XML)
     public Box getBox(@PathParam("boxId") String boxId) {
 
-	return boxManager.getBox(boxId);
+	return boxManager.getBoxOnLocal(boxId);
 	// NHE: easy way to return an error for a rest api: throw an WebApplicationException
 	// throw new WebApplicationException(Status.CONFLICT);
     }
@@ -68,10 +68,11 @@ public class BoxEndPoints {
 	Box box = new Box();
 	box.setBoxID(ApplicationContext.getProperties().getProperty("BoxID"));
 	box.setIp(ApplicationContext.getProperties().getProperty("PublicAddr"));
-	if (boxManager.boxExist(box) == false) {
-	    boxManager.createBox(box);
+	if (boxManager.boxExistOnServer(box.getBoxID()) == false) {
+	    boxManager.createBoxOnServer(box);
 	    return Response.created(new URI(box.getBoxID())).build();
-	} else {
+	} 
+	else {
 	    return Response.status(409).build();
 	}
 
@@ -100,8 +101,8 @@ public class BoxEndPoints {
 	// need to verify user
 	// and after this modifies the comment
 
-	if (boxManager.boxExist(box) == true) {
-	    boxManager.saveBox(box);
+	if (boxManager.boxExistOnLocal(box.getBoxID()) == true) {
+	    boxManager.saveBoxOnLocal(box);
 	    // NHE that the answer we expect from a post (see location header)
 	    return Response.created(new URI(box.getBoxID())).build();
 	} else {
@@ -129,7 +130,7 @@ public class BoxEndPoints {
 	// and after this delete the comment
 
 	// if (boxManager.boxExist(box) == true) {
-	boxManager.deleteBox(boxID);
+	boxManager.deleteBoxOnServer(boxID);
 	// NHE that the answer we expect from a post (see location header)
 	return Response.accepted().build();
 	// } else {

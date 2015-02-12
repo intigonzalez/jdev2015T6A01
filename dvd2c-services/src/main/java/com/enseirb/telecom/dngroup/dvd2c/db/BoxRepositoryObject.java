@@ -33,6 +33,16 @@ public class BoxRepositoryObject {
 		this.TTL = tTL;
 		this.user = user;
 	}
+	public BoxRepositoryObject(String boxID, String ip, String pubKey, String privateKey, Integer tTL, List<User> user) {
+		super();
+//		this._id = _id;
+		this.boxID = boxID;
+		this.ip = ip;
+		this.pubKey = pubKey;
+		this.privateKey = privateKey;
+		this.TTL = tTL;
+		this.user = user;
+	}
 
 	public BoxRepositoryObject(Box box) {
 		this.boxID = box.getBoxID();

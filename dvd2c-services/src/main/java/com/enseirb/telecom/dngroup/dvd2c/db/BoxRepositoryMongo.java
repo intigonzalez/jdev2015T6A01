@@ -141,8 +141,9 @@ public class BoxRepositoryMongo implements BoxRepository {
 			ObjectMapper mapper = new ObjectMapper();
 			if (cursor.hasNext()) {
 				try {
-					LOGGER.debug("cursor.next() ={}",cursor.next().toString());
-					box = mapper.readValue(cursor.next().toString(),
+					DBObject temp = cursor.next();
+					LOGGER.debug("cursor.next() ={}",temp.toString());
+					box = mapper.readValue(temp.toString(),
 							BoxRepositoryObject.class);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

@@ -27,7 +27,7 @@ public interface RequestBoxService {
 	 * @throws IOException host is not reachable
 	 * @throws NoSuchBoxException user doesn't exist on remote host 
 	 */
-	public abstract Box get(Box box) throws IOException, NoSuchBoxException;
+	public abstract Box get(String boxID) throws IOException, NoSuchBoxException;
 
 	/**
 	 * post a box on remote host

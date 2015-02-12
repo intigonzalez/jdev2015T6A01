@@ -1,6 +1,8 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,111 +10,198 @@ import org.slf4j.LoggerFactory;
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
+import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.*;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
+import com.enseirb.telecom.dngroup.dvd2c.model.ListBox;
+import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
-public class BoxServiceImpl implements BoxService{
-	private static final Logger LOGGER = LoggerFactory.getLogger(BoxServiceImpl.class);
+public class BoxServiceImpl implements BoxService {
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(BoxServiceImpl.class);
 	CrudRepository<BoxRepositoryObject, String> boxDatabase;
 	RequestBoxService requetBoxService = new RequestBoxServiceImpl(
-			ApplicationContext.getProperties().getProperty("CentralURL") + "/api/app/box/");
-	
-	
-	public BoxServiceImpl(CrudRepository<BoxRepositoryObject, String> boxDatabase){
-		
+			ApplicationContext.getProperties().getProperty("CentralURL")
+					+ "/api/app/box/");
+
+	public BoxServiceImpl(
+			CrudRepository<BoxRepositoryObject, String> boxDatabase) {
+
 		this.boxDatabase = boxDatabase;
 	}
 
-	public boolean boxExist(Box box){
-		
-		// TODO: change to the correct page and add fontion for get addr of
-		// server
-		boolean exist = boxDatabase.exists(box.getBoxID());
-		
+	@Override
+	public boolean boxExistOnServer(String boxID) {
+		boolean exist = boxExistOnLocal(boxID);
 		try {
- 			Box boxGet = requetBoxService.get(box);
+			Box boxGet = requetBoxService.get(boxID);
 			if ((boxGet == null))
 				exist = false;
-			else if (box.getBoxID().equals(boxGet.getBoxID()))
+			else if (boxID.equals(boxGet.getBoxID()))
 				exist = true;
+			else{
+				exist = false;
+			}
 		} catch (IOException e) {
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			 System.err.printf("Can not connect on the server :(\n");
-			 
+			LOGGER.error("Can not connect on the server : {}",boxID, e);
 		} catch (NoSuchBoxException e) {
-			exist =false;
+			exist = false;
 		}
-		
 		return exist;
 	}
-	
-	public Box getBox(String boxID){
+
+	public boolean boxExistOnLocal(String boxID) {
+		return boxDatabase.exists(boxID);
+	}
+
+	public Box getBoxOnLocal(String boxID) {
 		
-		Box box = boxDatabase.findOne(boxID).toBox();
-		
-		if(box == null){
-			
+		Box box = null;
+		box = boxDatabase.findOne(boxID).toBox();
+		if (box == null) {
+			LOGGER.debug("No Box Found : {}",boxID);
 			return null;
 		}
-		
+		LOGGER.debug("Box Found : {}",box.getBoxID());
 		return box;
 	}
-	
-	public Box createBox(Box box){
-		
-		//box.setBoxID(ApplicationContext.getProperties().getProperty("BoxID"));
+
+	public Box createBoxOnServer(Box box) {
+
+		// box.setBoxID(ApplicationContext.getProperties().getProperty("BoxID"));
 		try {
 			requetBoxService.post(box);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-			LOGGER.error("error during creating a box ", e);
+			LOGGER.error("Error during creating a box on server : ",
+					box.getBoxID(), e);
 		} catch (SuchBoxException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-			e.printStackTrace();
+			LOGGER.debug("Box already existing : ", box.getBoxID());
 		}
+		return createBoxOnLocal(box);
+
+	}
+
+	private Box createBoxOnLocal(Box box) {
+
 		Box b = boxDatabase.save(new BoxRepositoryObject(box)).toBox();
 		return b;
-		
+
 	}
-	
-	public void saveBox(Box box){
-		
+
+	public void saveBoxOnServer(Box box) {
+
 		try {
-			boxDatabase.save(new BoxRepositoryObject(box));
+
 			requetBoxService.put(box);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			LOGGER.error("can't save Box On Server : {}", box.getBoxID(), e);
 		} catch (NoSuchBoxException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			LOGGER.error("Box not found: {}", box.getBoxID(), e);
 		}
+		saveBoxOnLocal(box);
 	}
-	
-	public void deleteBox(String boxID){
-		
+
+	public void saveBoxOnLocal(Box box) {
+		boxDatabase.save(new BoxRepositoryObject(box));
+	}
+
+	public void deleteBoxOnServer(String boxID) {
+
 		try {
 			requetBoxService.delete(boxID);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			LOGGER.error("can't delete box : {}", boxID, e);
 		} catch (NoSuchBoxException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			LOGGER.error("box not found : {}", boxID, e);
 		}
-		
-		boxDatabase.delete(boxID);
+
+		// XXX: Good to delete on local ???
+		deleteBoxOnLocal(boxID);
 	}
-	
+
+	public void deleteBoxOnLocal(String boxID) {
+		this.boxDatabase.delete(boxID);
+
+	}
+
+	@Override
+	public ListUser getUserFromIP(String ip) {
+		ListBox listBox = getBoxesFromIP(ip);
+		return getUsersFromBoxes(listBox);
+	}
+
+	@Override
+	public ListBox getAllBox() {
+		Iterable<BoxRepositoryObject> boxIterable = boxDatabase.findAll();
+		ListBox listBox = new ListBox();
+		if (boxIterable == null)
+			return listBox;
+		else {
+			Iterator<BoxRepositoryObject> itr = boxIterable.iterator();
+			while (itr.hasNext()) {
+				BoxRepositoryObject box = itr.next();
+//				int temp = box.getUser().size();
+				listBox.getBox().add(box.toBox());
+
+			}
+			return listBox;
+		}
+	}
+
+	@Override
+	public ListBox getBoxesFromIP(String ip) {
+
+		Iterable<BoxRepositoryObject> boxIterable = boxDatabase.findAll();
+		ListBox listBox = new ListBox();
+
+		if (boxIterable == null)
+			return listBox;
+		else {
+			Iterator<BoxRepositoryObject> itr = boxIterable.iterator();
+			while (itr.hasNext()) {
+				BoxRepositoryObject box = itr.next();
+
+				if (box.getIp().equals(ip)) {
+					listBox.getBox().add(box.toBox());
+				}
+			}
+			return listBox;
+		}
+
+	}
+
+	@Override
+	public ListUser getUsersFromBoxes(ListBox listBox) {
+
+		AccountServiceCentral uManager = new AccountServiceCentralImpl(
+				new UserRepositoryMongo("mediahome"));
+		ListUser listUsersFinal = new ListUser(), listUsersOfBoxes = new ListUser();
+
+		List<User> u;
+		User user;
+		Box box = new Box();
+		List<Box> boxes = listBox.getBox();
+
+		Iterator<Box> itrBoxes = boxes.iterator();
+		while (itrBoxes.hasNext()) {
+
+			box = itrBoxes.next();
+			listUsersOfBoxes = uManager.getUserFromBoxID(box.getBoxID());
+			u = listUsersOfBoxes.getUser();
+			Iterator<User> itrUsers = u.iterator();
+
+			while (itrUsers.hasNext()) {
+
+				user = itrUsers.next();
+				listUsersFinal.getUser().add(user);
+			}
+		}
+
+		return listUsersFinal;
+	}
+
 }
