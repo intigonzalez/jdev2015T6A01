@@ -1,9 +1,7 @@
 package com.enseirb.telecom.dngroup.dvd2c.service.request;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
-import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;

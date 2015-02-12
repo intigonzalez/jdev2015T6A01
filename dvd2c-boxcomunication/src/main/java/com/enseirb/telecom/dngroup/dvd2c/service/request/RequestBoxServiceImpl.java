@@ -11,11 +11,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 
 public class RequestBoxServiceImpl implements RequestBoxService{
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequestContentServiceImpl.class);
 	private String url;
 	private Client client;
 	

@@ -7,7 +7,6 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
-import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public interface RequestContentService {
 
