@@ -177,7 +177,7 @@ public class BoxServiceImpl implements BoxService {
 	@Override
 	public ListUser getUsersFromBoxes(ListBox listBox) {
 
-		AccountServiceCentral uManager = new AccountServiceCentralImpl(
+		AccountService uManager = new AccountServiceImpl(
 				new UserRepositoryMongo("mediahome"));
 		ListUser listUsersFinal = new ListUser(), listUsersOfBoxes = new ListUser();
 
@@ -203,5 +203,7 @@ public class BoxServiceImpl implements BoxService {
 
 		return listUsersFinal;
 	}
+	
+
 
 }

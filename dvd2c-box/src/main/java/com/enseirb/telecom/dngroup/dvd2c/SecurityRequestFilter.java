@@ -99,14 +99,14 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
             	if(role.equals("account")){
 	        		LOGGER.debug("{}",test[test.length-1]);   
 	        		// User is authenticated and access to his own page
-	        		if(uManager.getUser(userConnected) != null && userConnected.equals(test[test.length-1])){
+	        		if(uManager.getUserOnLocal(userConnected) != null && userConnected.equals(test[test.length-1])){
 	        			auth = "account";
 					}      	
             	}
             	else if (role.equals("other")) {
             		LOGGER.debug("{}", test[1]); 
 	        		// User is authenticated and access to his own page of contents
-	        		if(uManager.getUser(userConnected) != null && userConnected.equals(test[1])){
+	        		if(uManager.getUserOnLocal(userConnected) != null && userConnected.equals(test[1])){
 	        			auth = "other";
 					}	
 				}

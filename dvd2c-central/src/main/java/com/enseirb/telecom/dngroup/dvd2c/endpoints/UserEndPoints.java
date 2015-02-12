@@ -15,8 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
-import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceCentral;
-import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceCentralImpl;
+import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
+import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
@@ -25,13 +25,13 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 @Path("app/account")
 public class UserEndPoints {
 
-	AccountServiceCentral uManager = new AccountServiceCentralImpl(new UserRepositoryMongo("CentralMediaHome"));
+	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo("CentralMediaHome"));
 
 	@GET
 	@Path("{userID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public User getIt(@PathParam("userID") String userID) {
-		return uManager.getUser(userID);
+		return uManager.getUserOnLocal(userID);
 	}
 
 	/**
@@ -67,8 +67,8 @@ public class UserEndPoints {
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postUser(User user) throws URISyntaxException {
-		if (uManager.userExist(user.getUserID()) == false) {
-			uManager.createUser(user);
+		if (uManager.userExistOnLocal(user.getUserID()) == false) {
+			uManager.createUserOnLocal(user);
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(user.getUserID())).build();
 		} else {
@@ -90,8 +90,8 @@ public class UserEndPoints {
 		// TODO: need to check the authentication of the user
 
 		// modify the user
-		if (uManager.userExist(user.getUserID())) {
-			uManager.saveUser(user);
+		if (uManager.userExistOnLocal(user.getUserID())) {
+			uManager.saveUserOnLocal(user);
 			return Response.status(200).build();
 		} else {
 			return Response.status(409).build();
@@ -106,7 +106,7 @@ public class UserEndPoints {
 		// TODO: need to check the authentication of the user
 
 		// delete the user
-		uManager.deleteUser(userID);
+		uManager.deleteUserOnLocal(userID);
 		return Response.status(200).build();
 
 	}

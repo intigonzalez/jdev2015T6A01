@@ -78,6 +78,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 
 	@Override
 	public void post(User user) throws IOException, SuchUserException {
+		user.setPassword(null);
 		WebTarget target = client.target(url);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
 				.post(Entity.entity(user, MediaType.APPLICATION_XML),
@@ -105,7 +106,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 
 	@Override
 	public void put(User user) throws IOException, NoSuchUserException {
-
+		user.setPassword(null);
 		// Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(url + user.getUserID());
 		// try {
@@ -128,12 +129,6 @@ public class RequestUserServiceImpl implements RequestUserService {
 			throw new IOException("Can not conect to the server :"
 					+ response.getStatus());
 		}
-		// }catch (Exception e){
-		// System.out.println(target.getUri());
-		// //NHE: no print stack trace allowed in the project. Please replace it
-		// with appropriate logger and Exception handling.
-		// e.printStackTrace();
-		// }
 	}
 
 	@Override

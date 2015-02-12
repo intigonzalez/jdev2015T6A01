@@ -65,16 +65,16 @@ public class UserEndPoints extends HttpServlet {
 	@Path("Connect")
 	@Produces({ "application/json"})// resultat en JSON
 	public Response getConnect(User user){//@FormParam("username") String username, @FormParam("password")String password){ //FormParam ce sont les parametres d'un formulaire. 
-		String username = user.getName().toLowerCase();
+		String userID = user.getUserID().toLowerCase();
 
 //		System.out.println("TEST"+username);
-		String test = uManager.getUser(username).getUserID();
+		String test = uManager.getUserOnLocal(userID).getUserID();
 //		System.out.println("TEST" + test);
-		if (uManager.userExist(uManager.getUser(username))) {
-			User userAuth = uManager.getUser(username);
+		if (uManager.userExistOnLocal(userID)) {
+			User userAuth = uManager.getUserOnLocal(userID);
 			if (user.getPassword().equals(userAuth.getPassword() ) ) {
 				return Response.ok()
-			               .cookie(new NewCookie("authentication", username, "/", null,1,      
+			               .cookie(new NewCookie("authentication", userID, "/", null,1,      
 			                       "no comment",      
 			                       1073741823 , // maxAge max int value/2      
 			                       false ))
@@ -100,7 +100,7 @@ public class UserEndPoints extends HttpServlet {
 	@RolesAllowed("account")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public User getIt(@PathParam("userID") String userID) {
-		return uManager.getUser(userID);
+		return uManager.getUserOnLocal(userID);
 	}
 	
 	/**
@@ -120,8 +120,8 @@ public class UserEndPoints extends HttpServlet {
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postUser(User user) throws URISyntaxException {
-		if (uManager.userExist(user) == false) {
-			User u=uManager.createUser(user);
+		if (uManager.userExistOnLocal(user.getUserID()) == false) {
+			User u=uManager.createUserOnServer(user);
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(u.getUserID()))
 		               .cookie(new NewCookie("authentication", u.getUserID(), "/", null,1,      
@@ -142,8 +142,8 @@ public class UserEndPoints extends HttpServlet {
 	public Response putUser(User user, @PathParam("userID") String userIDFromPath) {
 		// TODO: need to check the authentication of the user
 		// modify the user, check if the user has changed his email address, and check the ability of the new email address
-		if ( user.getUserID().equals(userIDFromPath ) || uManager.userExist(user) == false ) {
-			uManager.saveUser(user);
+		if ( user.getUserID().equals(userIDFromPath ) || uManager.userExistOnLocal(user.getUserID()) == false ) {
+			uManager.saveUserOnServer(user);
 			return Response.status(200).build();
 		} else {
 			return Response.status(409).build();
@@ -159,7 +159,7 @@ public class UserEndPoints extends HttpServlet {
 		// TODO: need to check the authentication of the user
 
 		// delete the user
-		uManager.deleteUser(userID);
+		uManager.deleteUserOnServer(userID);
 		return Response.status(200).build();
 
 	}

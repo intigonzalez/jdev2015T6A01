@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
@@ -376,10 +377,31 @@ e.printStackTrace();
 		
 	}
 
+
 	@Override
 	public BoxRepositoryObject findBoxFromUserID(String userID) {
 		// TODO Auto-generated method stub
-		return null;
+
+		UserRepositoryMongo userRepositoryMongo = this;
+		BoxRepositoryMongo boxRepositoryMongo = new BoxRepositoryMongo(dbName);
+
+		UserRepositoryObject userRepositoryObject = userRepositoryMongo
+				.findOne(userID);
+		if (userRepositoryObject == null) {
+			System.err.println("userRepositoryObject is null");
+			return null;
+		}
+
+		User user = userRepositoryObject.toUser();
+		String boxID = user.getBoxID();
+		if (boxID == null) {
+			System.err.println("The user box ID is null");
+			return null;
+		}
+		BoxRepositoryObject boxRepositoryObject = boxRepositoryMongo
+				.findOne(boxID);
+
+		return boxRepositoryObject;
 	}
 
 }

@@ -30,7 +30,9 @@ public interface BoxService {
 
 	public abstract ListBox getAllBox();
 
-	public ListBox getBoxesFromIP(String ip);
+	public abstract ListBox getBoxesFromIP(String ip);
 
 	public abstract ListUser getUsersFromBoxes(ListBox listBox);
+
+//	public abstract Box getBox(String userID);
 }
