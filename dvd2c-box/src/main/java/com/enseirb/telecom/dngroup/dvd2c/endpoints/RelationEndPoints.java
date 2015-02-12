@@ -110,8 +110,6 @@ public class RelationEndPoints {
     @POST
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response postFriend(@PathParam("userID") String userIDFromPath, Relation relation) throws URISyntaxException {
-	// TODO: ajout un ami
-	// add a friend
 	if (rManager.RelationExist(userIDFromPath, relation.getEmail()) == false) {
 	    try {
 		rManager.createRelation(userIDFromPath, relation, false);
