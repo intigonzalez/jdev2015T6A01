@@ -39,7 +39,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
-			<artifactId>dvd2c-boxcomunication</artifactId>
+			<artifactId>dvd2c-service_communication</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
@@ -103,6 +103,11 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-grizzly2-http</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
+			<artifactId>dvd2c-service_user</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>

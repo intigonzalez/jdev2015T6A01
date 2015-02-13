@@ -54,9 +54,9 @@ public class QueueConsumerApp {
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+					e.printStackTrace();
 				}
-				ContentServiceImpl contentServiceImpl =new ContentServiceImpl();
+				ContentServiceImpl contentServiceImpl = new ContentServiceImpl();
 				if (status.equals("SUCCESS")) {
 					// TODO : change the status in DataBase
 					LOGGER.info("Response from Celery : Success for task ", QUEUE_NAME);

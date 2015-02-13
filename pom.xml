@@ -1,6 +1,5 @@
-<?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
 	<artifactId>dvd2c-parent</artifactId>
@@ -15,11 +14,12 @@
 		<module>dvd2c-central</module>
 		<module>dvd2c-model</module>
 		<module>dvd2c-services</module>
-		<module>dvd2c-boxcomunication</module>
-		<module>dvd2c-content</module>
-		<module>dvd2c-techincal</module>
-		<module>dvd2c-user</module>
-	</modules>
+		<module>dvd2c-service_communication</module>
+		<module>dvd2c-service_content</module>
+		<module>dvd2c-service_techincal</module>
+		<module>dvd2c-service_user</module>
+    	<module>dvd2c-service_db</module>
+  </modules>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
