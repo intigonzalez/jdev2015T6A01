@@ -3,6 +3,9 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enseirb.telecom.dngroup.dvd2c.QueueConsumerApp;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Connection;
@@ -10,6 +13,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConnectionFactory;
 
 public class RabbitMQServer {
+	private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQServer.class);
 	String QUEUE_NAME;
 	ConnectionFactory factory;
 	Connection connection;
@@ -24,9 +28,7 @@ public class RabbitMQServer {
 			channel = connection.createChannel();
 			channel.queueDeclare(QUEUE_NAME, true, false, false, null);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			LOGGER.error("Error to conect with RabbitMQ",e);
 		}
 
 	}
@@ -47,9 +49,7 @@ e.printStackTrace();
 		try {
 			QueueConsumerApp.getQueueMessage(id);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+		LOGGER.error("Queue interrupted",e);
 		}
 	}
 }

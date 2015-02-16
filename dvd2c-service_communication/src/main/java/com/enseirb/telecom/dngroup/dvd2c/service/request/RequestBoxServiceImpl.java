@@ -29,10 +29,7 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 
 	@Override
 	public Box get(String boxID) throws IOException,NoSuchBoxException {
-		// TODO Auto-generated method stub
-		
 		Box boxGet = new Box();
-		// Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(url +"id/"+ boxID);
 		
 		try{
@@ -48,7 +45,6 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 
 	@Override
 	public void post(Box box) throws IOException {
-		// TODO Auto-generated method stub
 		
 		WebTarget target = client.target(url);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
@@ -75,7 +71,6 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 
 	@Override
 	public void put(Box box) throws IOException {
-		// TODO Auto-generated method stub
 		
 		WebTarget target = client.target(url +box.getBoxID());
 		// try {
@@ -104,7 +99,6 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 
 	@Override
 	public void delete(String boxID) throws IOException, NoSuchBoxException {
-		// TODO Auto-generated method stub
 	
 		WebTarget target = client.target(this.url + boxID);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)

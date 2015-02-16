@@ -40,9 +40,7 @@ public class ContentRepositoryMongo implements ContentRepository {
 				WriteResult a = db.save(objectToSave);
 				mongoClient.close();
 			} catch (UnknownHostException | JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+				LOGGER.error("Connection to database failed (mongoDB installed and run ?) OR error for parsing json",e);
 				return null;
 			}
 		}
@@ -139,10 +137,8 @@ e.printStackTrace();
 				    try {
 						userDBObject = DbInit.createDBObject(userIterator.next());
 					} catch (JsonProcessingException e) {
-						// TODO Auto-generated catch block
-						//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-						LOGGER.error("Impossible to create userDBObject");
+					
+						LOGGER.error("Impossible to create userDBObject",e);
 					}			    
 				    
 					entityDBList.add(userDBObject);
@@ -165,8 +161,7 @@ e.printStackTrace();
 
 			mongoClient.close();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			LOGGER.error("User Saving Failed");
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 		}
 
 		return entity;
@@ -175,8 +170,7 @@ e.printStackTrace();
 	@Override
 	public <S extends ContentRepositoryObject> Iterable<S> save(
 			Iterable<S> entities) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not yet invented");
 	}
 
 	@Override
@@ -195,11 +189,7 @@ e.printStackTrace();
 					content = mapper.readValue(cursor.next().toString(),
 							ContentRepositoryObject.class);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-					// System.err.println("Content Mapping failed ! ");
-					LOGGER.error("Connection to database failed");
+					LOGGER.error("Connection to database failed",e);
 
 				}
 			}
@@ -207,11 +197,8 @@ e.printStackTrace();
 			mongoClient.close();
 			return content;
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			// System.err.println("Connection to database failed ");
-			LOGGER.error("Connection to database failed");
+			
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 
 			return null;
 		}
@@ -236,12 +223,7 @@ e.printStackTrace();
 				return false;
 			}
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			// System.err.println("Connection to database failed ");
-			LOGGER.error("Connection to database failed");
-
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 			return true;
 		}
 	}
@@ -266,10 +248,8 @@ e.printStackTrace();
 					content = mapper.readValue(cursor.next().toString(),
 							ContentRepositoryObject.class);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-					System.err.println("User Mapping failed ! ");
+				
+					LOGGER.error("User Mapping failed ! ",e);
 				}
 
 				listOfAllContent.add(content);
@@ -287,13 +267,11 @@ e.printStackTrace();
 
 	@Override
 	public Iterable<ContentRepositoryObject> findAll(Iterable<String> ids) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not yet invented");
 	}
 
 	@Override
 	public long count() {
-		// TODO Auto-generated method stub
 
 		long nbOfContents = 0;
 
@@ -356,18 +334,13 @@ e.printStackTrace();
 			db.remove(query);
 			mongoClient.close();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			// System.err.println("Connection to database failed ");
-			LOGGER.error("Connection to database failed");
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 
 		}
 	}
 
 	@Override
 	public void delete(ContentRepositoryObject entity) {
-		// TODO Auto-generated method stub
 
 		try {
 			MongoClient mongoClient = DbInit.Connect();
@@ -388,13 +361,11 @@ e.printStackTrace();
 
 	@Override
 	public void delete(Iterable<? extends ContentRepositoryObject> entities) {
-		// TODO Auto-generated method stub
-
+		throw new RuntimeException("not yet invented");
 	}
 
 	@Override
 	public void deleteAll() {
-		// TODO Auto-generated method stub
 
 		try {
 			MongoClient mongoClient = DbInit.Connect();
@@ -405,10 +376,8 @@ e.printStackTrace();
 			mongoClient.close();
 
 		} catch (UnknownHostException e) {
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			// System.err.println("Connection to database failed");
-			LOGGER.error("Connnection to database failed");
+
+			LOGGER.error("Connnection to database failed",e);
 
 		}
 

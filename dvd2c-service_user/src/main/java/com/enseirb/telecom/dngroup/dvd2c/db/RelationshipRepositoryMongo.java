@@ -32,10 +32,7 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 			db.save(DbInit.createDBObject(entity));
 			mongoClient.close();
 		} catch (UnknownHostException | JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			LOGGER.error("???");
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 			return null;
 		}
 		return entity;
@@ -43,13 +40,11 @@ e.printStackTrace();
 
 	@Override
 	public <S extends RelationshipRepositoryObject> Iterable<S> save(Iterable<S> entities) {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
 
 	@Override
 	public RelationshipRepositoryObject findOne(String id) {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
 
@@ -66,30 +61,19 @@ e.printStackTrace();
 				try {
 					relation = mapper.readValue(cursor.next().toString(), RelationshipRepositoryObject.class);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-				//	System.err.println("User Mapping failed ! ");
-					LOGGER.error("User Mapping failed !");
-
+					LOGGER.error("User Mapping failed !",e);
 				}
 			}
 			mongoClient.close();
 			return relation;
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-		//	System.err.println("Connection to database failed ");
-			LOGGER.error("Connection to database failed");
-
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 			return null;
 		}
 	}
 
 	@Override
 	public boolean exists(String id) {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
 	
@@ -105,11 +89,7 @@ e.printStackTrace();
 			return exists;
 			
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-		//	System.err.println("Connection to database failed ");
-			LOGGER.error("Connection to database failed");
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 
 			return true;
 		}
@@ -132,39 +112,29 @@ e.printStackTrace();
 				try {
 					relation = mapper.readValue(cursor.next().toString(), RelationshipRepositoryObject.class);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-					System.err.println("User Mapping failed ! ");
+					LOGGER.error("User Mapping failed ! ",e);
 				}
-				
 				listOfAllRelation.add(relation);
 			}
-			
 		}
 		catch (UnknownHostException e){
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			System.err.println("Connection to database failed ");			
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 		}
 		return listOfAllRelation;
 	}
 
 	@Override
 	public Iterable<RelationshipRepositoryObject> findAll(Iterable<String> ids) {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
 
 	@Override
 	public long count() {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
 
 	@Override
 	public void delete(String id) {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
 	public void delete(String userId, String relationEmail) {
@@ -175,29 +145,22 @@ e.printStackTrace();
 			BasicDBObject query = new BasicDBObject("userId", userId).append("email", relationEmail);
 			db.remove(query);
 		} catch (UnknownHostException e) {
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-		//	System.err.println("Connection to database failed ");
-			LOGGER.error("Connection to database failed");
-
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 		}
 	}
 
 	@Override
 	public void delete(RelationshipRepositoryObject entity) {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
 
 	@Override
 	public void delete(Iterable<? extends RelationshipRepositoryObject> entities) {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
 
 	@Override
 	public void deleteAll() {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
 

@@ -52,13 +52,13 @@ public class QueueConsumerApp {
 					status = obj.getString("status");
 					LOGGER.info("Result for element {}" , new Object[] {result, status});
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-					e.printStackTrace();
+					LOGGER.error("error for pars element",e);
 				}
+				
+				
 				ContentServiceImpl contentServiceImpl = new ContentServiceImpl();
 				if (status.equals("SUCCESS")) {
-					// TODO : change the status in DataBase
+					// change the status in DataBase
 					LOGGER.info("Response from Celery : Success for task ", QUEUE_NAME);
 					contentServiceImpl.updateContent(QUEUE_NAME, "success");
 				}

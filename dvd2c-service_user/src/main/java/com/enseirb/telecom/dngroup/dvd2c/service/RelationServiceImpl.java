@@ -48,7 +48,7 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public void updateRelation(String userID) throws IOException,
-			NoSuchUserException {
+	NoSuchUserException {
 
 		RequestRelationService rrs = new RequestRelationServiceImpl();
 
@@ -151,7 +151,7 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public void createDefaultRelation(String userIDFromPath,
 			String relationIDString, Boolean fromBox)
-			throws NoSuchUserException {
+					throws NoSuchUserException {
 		Relation relation = new Relation();
 		relation.setEmail(relationIDString);
 		relation.setAprouve(1);
@@ -175,10 +175,8 @@ public class RelationServiceImpl implements RelationService {
 			if (user == null) {
 				throw new NoSuchUserException();
 			}
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-
+		} catch (IOException e) {
+			LOGGER.error("get user fail",e);
 		}
 		relation.setName(user.getName());
 		relation.setSurname(user.getSurname());
@@ -206,20 +204,12 @@ public class RelationServiceImpl implements RelationService {
 					try {
 						rss.postRelation(relation2, relation);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						// NHE: no print stack trace allowed in the project.
-						// Please replace it with appropriate logger and
-						// Exception handling.
+						LOGGER.error("Error during create the relation  betewen {} and {}",relation2,relation,e);
 						e.printStackTrace();
 					} catch (NoSuchBoxException e) {
-						// TODO Auto-generated catch block
-						// NHE: no print stack trace allowed in the project.
-						// Please replace it with appropriate logger and
-						// Exception handling.
-						e.printStackTrace();
+						LOGGER.error("Error during create the relation  betewen {} and {} box not found",relation2,relation,e);
 					}
-					// Send a request to the right box with the profile of
-					// userID
+					// Send a request to the right box with the profile of userID
 					rss.close();
 				}
 			} else {
@@ -256,23 +246,12 @@ public class RelationServiceImpl implements RelationService {
 				try {
 					rss.setAprouve(userID, relation.getEmail());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					// NHE: no print stack trace allowed in the project. Please
-					// replace it with appropriate logger and Exception
-					// handling.
+					LOGGER.error("Can not set aprouve {} for {} Error IO",userID,relation.getEmail(),e);
 					e.printStackTrace();
 				} catch (NoSuchBoxException e) {
-					// TODO Auto-generated catch block
-					// NHE: no print stack trace allowed in the project. Please
-					// replace it with appropriate logger and Exception
-					// handling.
-					e.printStackTrace();
+					LOGGER.error("Can not set aprouve {} for {} no box found",userID,relation.getEmail(),e);
 				} catch (NoSuchUserException e) {
-					// TODO Auto-generated catch block
-					// NHE: no print stack trace allowed in the project. Please
-					// replace it with appropriate logger and Exception
-					// handling.
-					e.printStackTrace();
+					LOGGER.error("Can not set aprouve {} for {} user not found",userID,relation.getEmail(),e);
 				}
 				rss.close();
 				// Send a request to the box to tell it the user accepts the
@@ -315,25 +294,13 @@ public class RelationServiceImpl implements RelationService {
 			LOGGER.debug("Content from {} fetched ! ", relationID);
 			return listContent;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			// NHE: no print stack trace allowed in the project. Please replace
-			// it with appropriate logger and Exception handling.
-			e.printStackTrace();
+			LOGGER.error("Error for get all content of {}",userID,e);
 		} catch (NoSuchUserException e) {
-			// TODO Auto-generated catch block
-			// NHE: no print stack trace allowed in the project. Please replace
-			// it with appropriate logger and Exception handling.
-			e.printStackTrace();
+			LOGGER.error("Error for get all content of {} user not found",userID,e);
 		} catch (NoSuchBoxException e) {
-			// TODO Auto-generated catch block
-			// NHE: no print stack trace allowed in the project. Please replace
-			// it with appropriate logger and Exception handling.
-			e.printStackTrace();
+			LOGGER.error("Error for get all content of {} box not found",userID,e);
 		} catch (NoRelationException e) {
-			// TODO Auto-generated catch block
-			// NHE: no print stack trace allowed in the project. Please replace
-			// it with appropriate logger and Exception handling.
-			e.printStackTrace();
+			LOGGER.debug("Error for get all content of {} relation not found with {}",userID,relationID,e);
 		}
 		return null;
 
@@ -357,20 +324,11 @@ public class RelationServiceImpl implements RelationService {
 			try {
 				rss.delete(userID, email);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				// NHE: no print stack trace allowed in the project. Please
-				// replace it with appropriate logger and Exception handling.
-				e.printStackTrace();
+				LOGGER.error("Can not delete a relation betewen {} and {} Error IO",userID,email,e);
 			} catch (NoSuchUserException e) {
-				// TODO Auto-generated catch block
-				// NHE: no print stack trace allowed in the project. Please
-				// replace it with appropriate logger and Exception handling.
-				e.printStackTrace();
+				LOGGER.debug("Can not delete a relation betewen {} and {} Error user not found (already delete ???)",userID,email,e);
 			} catch (NoSuchBoxException e) {
-				// TODO Auto-generated catch block
-				// NHE: no print stack trace allowed in the project. Please
-				// replace it with appropriate logger and Exception handling.
-				e.printStackTrace();
+				LOGGER.error("Can not delete a relation betewen {} and {} box of the first not found",userID,email,e);
 			}
 			rss.close();
 		}

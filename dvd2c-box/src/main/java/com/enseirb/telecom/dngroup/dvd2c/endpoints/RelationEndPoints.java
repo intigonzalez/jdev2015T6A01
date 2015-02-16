@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.glassfish.grizzly.http.util.UEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,229 +38,213 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 @Path("app/{userID}/relation")
 // @RolesAllowed("other") //The roles must be adapted depending on the function !
 public class RelationEndPoints {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RelationEndPoints.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RelationEndPoints.class);
 
-    RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo("mediahome"));
+	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo("mediahome"));
 
-    @GET
-    @Path("from/{username}")
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public User getMe(@PathParam("userID") String userIDFromPath, @PathParam("username") String relationIDFromPath) {
-	if (rManager.RelationExist(userIDFromPath, relationIDFromPath) == true) {
-	    return rManager.getMe(userIDFromPath);
-	} else {
-	    throw new WebApplicationException(Status.NOT_FOUND);
+	@GET
+	@Path("from/{username}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public User getMe(@PathParam("userID") String userIDFromPath, @PathParam("username") String relationIDFromPath) {
+		if (rManager.RelationExist(userIDFromPath, relationIDFromPath) == true) {
+			return rManager.getMe(userIDFromPath);
+		} else {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
 	}
-    }
 
-    @RolesAllowed("other")
-    @GET
-    @Path("{username}")
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Relation getRelation(@PathParam("userID") String userIDFromPath, @PathParam("username") String relationIDFromPath) {
+	@RolesAllowed("other")
+	@GET
+	@Path("{username}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Relation getRelation(@PathParam("userID") String userIDFromPath, @PathParam("username") String relationIDFromPath) {
 
-	if (rManager.RelationExist(userIDFromPath, relationIDFromPath) == true) {
-	    return rManager.getRelation(userIDFromPath, relationIDFromPath);
-	} else {
-	    throw new WebApplicationException(Status.NOT_FOUND);
+		if (rManager.RelationExist(userIDFromPath, relationIDFromPath) == true) {
+			return rManager.getRelation(userIDFromPath, relationIDFromPath);
+		} else {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
 	}
-    }
 
-    /**
-     * get the video of RelationID (local) for userID
-     * 
-     * @param contentsID
-     * @param relationID
-     * @param userID
-     * @return
-     */
-    @GET
-    @Path("{relationID}/content")
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public ListContent getRelationContents(@PathParam("relationID") String relationID, @PathParam("userID") String userID) {
+	/**
+	 * get the video of RelationID (local) for userID
+	 * 
+	 * @param contentsID
+	 * @param relationID
+	 * @param userID
+	 * @return
+	 */
+	@GET
+	@Path("{relationID}/content")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public ListContent getRelationContents(@PathParam("relationID") String relationID, @PathParam("userID") String userID) {
 
-	if (rManager.RelationExist(userID, relationID)) {
-	    Relation relation = rManager.getRelation(userID, relationID);
-	    if (relation.getAprouve() == 3)
-		return rManager.getAllContent(userID, relationID);
-	    else {
-		throw new WebApplicationException(Status.FORBIDDEN);
-	    }
-	} else {
-	    throw new WebApplicationException(Status.NOT_FOUND);
+		if (rManager.RelationExist(userID, relationID)) {
+			Relation relation = rManager.getRelation(userID, relationID);
+			if (relation.getAprouve() == 3)
+				return rManager.getAllContent(userID, relationID);
+			else {
+				throw new WebApplicationException(Status.FORBIDDEN);
+			}
+		} else {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
 	}
-    }
 
-    @RolesAllowed("other")
-    @GET
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public ListRelation getListRelation(@PathParam("userID") String userIDFromPath) {
+	@RolesAllowed("other")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public ListRelation getListRelation(@PathParam("userID") String userIDFromPath) {
 
-	return rManager.getListRelation(userIDFromPath);
+		return rManager.getListRelation(userIDFromPath);
 
-    }
-
-    /**
-     * add relation on database of userID
-     * 
-     * @param userIDFromPath
-     * @param relation
-     * @return
-     * @throws URISyntaxException
-     */
-    @POST
-    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Response postFriend(@PathParam("userID") String userIDFromPath, Relation relation) throws URISyntaxException {
-	if (rManager.RelationExist(userIDFromPath, relation.getEmail()) == false) {
-	    try {
-		rManager.createRelation(userIDFromPath, relation, false);
-	    } catch (NoSuchUserException e) {
-		throw new WebApplicationException(404);
-	    }
-	    // NHE that the answer we expect from a post (see location header)
-	    return Response.created(new URI(relation.getEmail())).build();
-	} else {
-
-	    return Response.status(409).build();
 	}
-    }
 
-    /**
-     * add relationID on database of userID
-     * 
-     * @param userIDFromPath
-     *            user id of dataBase
-     * @param relationIDString
-     *            relation to add
-     * @return
-     * @throws URISyntaxException
-     */
-    @RolesAllowed("other")
-    @POST
-    @Path("{relationID}")
-    public Response postFriend2(@PathParam("userID") String userIDFromPath, @PathParam("relationID") String relationIDString)
-	    throws URISyntaxException {
-	// TODO: ajout un ami
-	// add a friend
-	if (rManager.RelationExist(userIDFromPath, relationIDString) == false) {
-	    try {
-		rManager.createDefaultRelation(userIDFromPath, relationIDString, false);
-	    } catch (NoSuchUserException e) {
-		throw new WebApplicationException(404);
-	    }
-	    // NHE that the answer we expect from a post (see location header)
-	    return Response.created(new URI(relationIDString)).build();
-	} else {
+	/**
+	 * add relation on database of userID
+	 * 
+	 * @param userIDFromPath
+	 * @param relation
+	 * @return
+	 * @throws URISyntaxException
+	 */
+	@POST
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response postFriend(@PathParam("userID") String userIDFromPath, Relation relation) throws URISyntaxException {
+		if (rManager.RelationExist(userIDFromPath, relation.getEmail()) == false) {
+			try {
+				rManager.createRelation(userIDFromPath, relation, false);
+			} catch (NoSuchUserException e) {
+				throw new WebApplicationException(404);
+			}
+			// NHE that the answer we expect from a post (see location header)
+			return Response.created(new URI(relation.getEmail())).build();
+		} else {
 
-	    return Response.status(409).build();
+			return Response.status(409).build();
+		}
 	}
-    }
 
-    /**
-     * add relation on database of userID from this relation
-     * 
-     * @param userIDFromPath
-     * @param relation
-     * @return
-     * @throws URISyntaxException
-     */
-    @POST
-    @Path("frombox")
-    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Response postFriendFromBox(@PathParam("userID") String userIDFromPath, Relation relation) throws URISyntaxException {
-	// TODO: ajout un ami
-	// add a friend
+	/**
+	 * add relationID on database of userID
+	 * 
+	 * @param userIDFromPath
+	 *            user id of dataBase
+	 * @param relationIDString
+	 *            relation to add
+	 * @return
+	 * @throws URISyntaxException
+	 */
+	@RolesAllowed("other")
+	@POST
+	@Path("{relationID}")
+	public Response postFriend2(@PathParam("userID") String userIDFromPath, @PathParam("relationID") String relationIDString)
+			throws URISyntaxException {
+		LOGGER.debug("add a relation between {} and {} ",userIDFromPath,relationIDString);
+		if (rManager.RelationExist(userIDFromPath, relationIDString) == false) {
+			try {
+				rManager.createDefaultRelation(userIDFromPath, relationIDString, false);
+			} catch (NoSuchUserException e) {
+				throw new WebApplicationException(404);
+			}
+			// NHE that the answer we expect from a post (see location header)
+			return Response.created(new URI(relationIDString)).build();
+		} else {
 
-	if (rManager.RelationExist(userIDFromPath, relation.getEmail()) == false) {
-	    try {
-		rManager.createRelation(userIDFromPath, relation, true);
-	    } catch (NoSuchUserException e) {
-		throw new WebApplicationException(Status.NOT_FOUND);
-	    }
-	    // NHE that the answer we expect from a post (see location header)
-	    return Response.created(new URI(relation.getEmail())).build();
-	} else {
-
-	    return Response.status(Status.CONFLICT).build();
+			return Response.status(409).build();
+		}
 	}
-    }
 
-    @PUT
-    @RolesAllowed("other")
-    @Path("{username}")
-    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Response putFriend(@PathParam("userID") String userIDFromPath,
+	/**
+	 * add relation on database of userID from this relation
+	 * 
+	 * @param userIDFromPath
+	 * @param relation
+	 * @return
+	 * @throws URISyntaxException
+	 */
+	@POST
+	@Path("frombox")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response postFriendFromBox(@PathParam("userID") String userIDFromPath, Relation relation) throws URISyntaxException {
+		LOGGER.debug("add a relation from box between {} and {} ",userIDFromPath,relation.getEmail());
 
-    @PathParam("username") String friendEmail, Relation relation) {
+		if (rManager.RelationExist(userIDFromPath, relation.getEmail()) == false) {
+			try {
+				rManager.createRelation(userIDFromPath, relation, true);
+			} catch (NoSuchUserException e) {
+				throw new WebApplicationException(Status.NOT_FOUND);
+			}
+			// NHE that the answer we expect from a post (see location header)
+			return Response.created(new URI(relation.getEmail())).build();
+		} else {
 
-	// TODO: change de groupe et confirme une demande d'ajout
-	// Pour confirme un ami, il faut : regarder la valeur qui existe dans la
-	// data base si on a decide quelle serait sous la forme zero demande
-	// emise, une demande recue et deux demande accepter alors si c'est
-	// l'user local qui fait la demande pour passer a deux la valeur et
-	// quelle etait a un OK sinon refus
-	// need to verify the friend and after this modifies the friend
-	if (relation.getEmail() == null) {
-	    relation.setEmail(friendEmail);
+			return Response.status(Status.CONFLICT).build();
+		}
 	}
-	if (relation.getEmail().equals(friendEmail)) {
-	    if (rManager.RelationExist(userIDFromPath, relation.getEmail())) {
-		rManager.saveRelation(userIDFromPath, relation);
+
+	@PUT
+	@RolesAllowed("other")
+	@Path("{username}")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response putFriend(@PathParam("userID") String userIDFromPath,
+
+			@PathParam("username") String friendEmail, Relation relation) {
+
+
+		//TODO need to verify the friend and after this modifies the friend
+		if (relation.getEmail() == null) {
+			relation.setEmail(friendEmail);
+		}
+		if (relation.getEmail().equals(friendEmail)) {
+			if (rManager.RelationExist(userIDFromPath, relation.getEmail())) {
+				rManager.saveRelation(userIDFromPath, relation);
+				return Response.status(200).build();
+			} else {
+				return Response.status(404).build();
+			}
+
+		} else {
+			return Response.status(Status.NOT_ACCEPTABLE).build();
+		}
+
+	}
+
+	@PUT
+	@RolesAllowed("other")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response updateListFriend(@PathParam("userID") String userIDFromPath) {
+
+		try {
+			rManager.updateRelation(userIDFromPath);
+			return Response.status(200).build();
+		} catch (IOException e) {
+			LOGGER.error("Updating fail can not connect",e);
+			return Response.status(403).build();
+		} catch (NoSuchUserException e) {
+			LOGGER.error("Updating fail no user {}",userIDFromPath,e);
+			return Response.status(403).build();
+		} catch (Exception e) {
+			LOGGER.error("Updating fail",e);
+			return Response.status(403).build();
+
+		}
+
+	}
+
+	/**
+	 * delete a relation on this box and in the over box
+	 * 
+	 * @param userIDFromPath
+	 * @param relationIDFromPath
+	 * @return
+	 */
+	@DELETE
+	@Path("{username}")
+	@RolesAllowed("other")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response deleteFriend(@PathParam("userID") String userIDFromPath, @PathParam("username") String relationIDFromPath) {
+		rManager.deleteRelation(userIDFromPath, relationIDFromPath);
 		return Response.status(200).build();
-	    } else {
-		return Response.status(404).build();
-	    }
-
-	} else {
-	    return Response.status(Status.NOT_ACCEPTABLE).build();
 	}
-
-    }
-
-    @PUT
-    @RolesAllowed("other")
-    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Response updateListFriend(@PathParam("userID") String userIDFromPath) {
-
-	try {
-	    rManager.updateRelation(userIDFromPath);
-	    return Response.status(200).build();
-	} catch (IOException e) {
-	    // TODO Auto-generated catch block
-	    //NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-	    return Response.status(403).build();
-	} catch (NoSuchUserException e) {
-	    // TODO Auto-generated catch block
-	    //NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-	    return Response.status(403).build();
-	} catch (Exception e) {
-	    // TODO Auto-generated catch block
-	    //NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-	    return Response.status(403).build();
-
-	}
-
-    }
-
-    /**
-     * delete a relation on this box and in the over box
-     * 
-     * @param userIDFromPath
-     * @param relationIDFromPath
-     * @return
-     */
-    @DELETE
-    @Path("{username}")
-    @RolesAllowed("other")
-    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Response deleteFriend(@PathParam("userID") String userIDFromPath, @PathParam("username") String relationIDFromPath) {
-
-	// TODO: delete this friends thinks to send a message to the over box
-	// and after this delete the user
-	rManager.deleteRelation(userIDFromPath, relationIDFromPath);
-	return Response.status(200).build();
-    }
 }

@@ -7,6 +7,11 @@ public interface UserRepository extends
 
 	// void findBoxFromBoxID(String boxID);
 
+	/**
+	 * get a box of user
+	 * @param userID the user to get box
+	 * @return the box object
+	 */
 	BoxRepositoryObject findBoxFromUserID(String userID);
 
 }

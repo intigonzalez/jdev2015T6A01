@@ -8,6 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
@@ -16,6 +17,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoTimeoutException;
 
 public class BoxRepositoryMongo implements BoxRepository {
 
@@ -42,12 +44,10 @@ public class BoxRepositoryMongo implements BoxRepository {
 				dbbox.save(objectToSave);
 				mongoClient.close();
 			} catch (UnknownHostException | JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				// NHE: no print stack trace allowed in the project. Please
-				// replace it with appropriate logger and Exception handling.
-				e.printStackTrace();
+				LOGGER.error("Can not save the box : {}",entity.getBoxID(),e);
+
 				//NHE please handle error correctly by rethrowing RuntimeException for example
-				return null;
+//				return null;
 			}
 		}
 	
@@ -88,8 +88,8 @@ public class BoxRepositoryMongo implements BoxRepository {
 			 * while(userIterator.hasNext()) { DBObject userDBObject = new
 			 * BasicDBObject(); try { userDBObject =
 			 * DbInit.createDBObject(userIterator.next()); } catch
-			 * (JsonProcessingException e) { // TODO Auto-generated catch block
-			 * //NHE: no print stack trace allowed in the project. Please
+			 * (JsonProcessingException e) { //  Auto-generated catch block
+			 * //NHE : no print stack trace allowed in the project. Please
 			 * replace it with appropriate logger and Exception handling.
 			 * e.printStackTrace();
 			 * System.out.println("Impossible to create userDBObject"); }
@@ -114,17 +114,14 @@ public class BoxRepositoryMongo implements BoxRepository {
 
 			mongoClient.close();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			// NHE: no print stack trace allowed in the project. Please replace
-			// it with appropriate logger and Exception handling.
-			e.printStackTrace();
+			LOGGER.error("Can not update the box : {}",entity.getBoxID(),e);
+
 		}
 
 		return entity;
 	}
 
 	public <S extends BoxRepositoryObject> Iterable<S> save(Iterable<S> entities) {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
 
@@ -146,22 +143,13 @@ public class BoxRepositoryMongo implements BoxRepository {
 					box = mapper.readValue(temp.toString(),
 							BoxRepositoryObject.class);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					// NHE: no print stack trace allowed in the project. Please
-					// replace it with appropriate logger and Exception
-					// handling.
-					LOGGER.error("Box Mapping failed ! ",e);
-					e.printStackTrace();
-					System.err.println("Box Mapping failed ! ");
+					LOGGER.error("Box Mapping failed ! ",e);	
 				}
 			}
 			return box;
 
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			// NHE: no print stack trace allowed in the project. Please replace
-			// it with appropriate logger and Exception handling.
-			e.printStackTrace();
+			LOGGER.error("Can not connect to the database (mongoDB installed ?)",e);
 			return null;
 		}
 	}
@@ -183,18 +171,15 @@ public class BoxRepositoryMongo implements BoxRepository {
 				return false;
 			}
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			// NHE: no print stack trace allowed in the project. Please replace
-			// it with appropriate logger and Exception handling.
-			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
+			return true;
+		} catch (MongoTimeoutException e) {
+			LOGGER.error("Connection to database failed (mongoDB installed and run ? Central server is runing? ) ",e);
 			return true;
 		}
 	}
 
 	public Iterable<BoxRepositoryObject> findAll() {
-		// TODO Auto-generated method stub
-
 		List<BoxRepositoryObject> listOfAllBox = new ArrayList<BoxRepositoryObject>();
 
 		try {
@@ -211,22 +196,16 @@ public class BoxRepositoryMongo implements BoxRepository {
 					box = mapper.readValue(cursor.next().toString(),
 							BoxRepositoryObject.class);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					// NHE: no print stack trace allowed in the project. Please
-					// replace it with appropriate logger and Exception
-					// handling.
 					e.printStackTrace();
-					System.err.println("User Mapping failed ! ");
+					LOGGER.error("User Mapping failed ! ",e);
 				}
 
 				listOfAllBox.add(box);
 			}
 
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			// NHE: no print stack trace allowed in the project. Please replace
-			// it with appropriate logger and Exception handling.
-			e.printStackTrace();
+		LOGGER.error("error fail to connecte to mongoDB. It's install ?",e);
+		
 			return null;
 		}
 
@@ -240,7 +219,6 @@ public class BoxRepositoryMongo implements BoxRepository {
 	}
 
 	public long count() {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
 
@@ -253,10 +231,8 @@ public class BoxRepositoryMongo implements BoxRepository {
 			BasicDBObject query = new BasicDBObject("boxID", id);
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
-			// NHE: no print stack trace allowed in the project. Please replace
-			// it with appropriate logger and Exception handling.
-			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
+
 		}
 
 	}
@@ -269,21 +245,16 @@ public class BoxRepositoryMongo implements BoxRepository {
 			BasicDBObject query = new BasicDBObject("boxID", entity.getBoxID());
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
-			// NHE: no print stack trace allowed in the project. Please replace
-			// it with appropriate logger and Exception handling.
-			e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 		}
 
 	}
 
 	public void delete(Iterable<? extends BoxRepositoryObject> entities) {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
 
 	public void deleteAll() {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("not yet invented");
 	}
 

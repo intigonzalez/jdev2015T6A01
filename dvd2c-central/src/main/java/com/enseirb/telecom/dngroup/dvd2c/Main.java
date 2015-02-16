@@ -73,7 +73,6 @@ public class Main {
 			ApplicationContext.properties.load(in);
 			in.close();
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			LOGGER.error("File not found Path ={} ",aPPath, e1);
 			return;
 		}

@@ -7,6 +7,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +20,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
 public class UserRepositoryMongo implements UserRepository {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserRepositoryMongo.class);
 	private String dbName;
 
 	public UserRepositoryMongo(String dbName) {
@@ -42,10 +45,7 @@ public class UserRepositoryMongo implements UserRepository {
 				return false;
 			}
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 			return true;
 		}
 	}
@@ -65,9 +65,7 @@ e.printStackTrace();
 				dbUsers.save(DbInit.createDBObject(entity));
 				mongoClient.close();
 			} catch (UnknownHostException | JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+				LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 				return null;
 			}
 		}
@@ -123,9 +121,7 @@ public <S extends UserRepositoryObject> S update (S entity){
 
 			mongoClient.close();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 		}
 
 		return entity;
@@ -149,18 +145,14 @@ e.printStackTrace();
 				try {
 					user = mapper.readValue(cursor.next().toString(), UserRepositoryObject.class);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-					System.err.println("User Mapping failed ! ");
+
+					LOGGER.error("User Mapping failed ! ",e);
 				}
 			}
 			return user;
 
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 			return null;
 		}
 	}
@@ -184,10 +176,7 @@ e.printStackTrace();
 				try {
 					user = mapper.readValue(cursor.next().toString(), UserRepositoryObject.class);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-					System.err.println("User Mapping failed ! ");
+					LOGGER.error("User Mapping failed ! ");
 				}
 				
 				listOfAllUsers.add(user);
@@ -195,9 +184,7 @@ e.printStackTrace();
 			
 		}
 		catch (UnknownHostException e){
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			System.err.println("Connection to database failed ");			
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);		
 		}
 		return listOfAllUsers;
 		
@@ -229,10 +216,7 @@ e.printStackTrace();
 						user = mapper.readValue(cursor.next().toString(),
 								UserRepositoryObject.class);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-						System.err.println("User Mapping failed ! ");
+						LOGGER.error("User Mapping failed ! ");
 					}
 
 					listOfAllUsers.add(user);
@@ -241,9 +225,7 @@ e.printStackTrace();
 			}
 
 		} catch (UnknownHostException e) {
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 		}
 		return listOfAllUsers;
 
@@ -290,9 +272,7 @@ e.printStackTrace();
 			BasicDBObject query = new BasicDBObject("userID", id);
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 		}
 
 	}
@@ -306,9 +286,7 @@ e.printStackTrace();
 			BasicDBObject query = new BasicDBObject("userID", entity.getUserID());
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 		}
 
 	}
@@ -334,9 +312,7 @@ e.printStackTrace();
 			
 			}
 		catch(UnknownHostException e){
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			System.err.println();
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 		}
 	}
 
@@ -360,15 +336,11 @@ e.printStackTrace();
 				try {
 					dbUsers.save(DbInit.createDBObject(iterator.next()));
 				} catch (JsonProcessingException e) {
-					// TODO Auto-generated catch block
-					//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
+					LOGGER.error("can not parse this json" ,e);
 				}
 			}
 			catch(UnknownHostException e){
-				//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-				System.err.println("Connection to database failed ");
+				LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 				
 			}
 		}
@@ -380,8 +352,6 @@ e.printStackTrace();
 
 	@Override
 	public BoxRepositoryObject findBoxFromUserID(String userID) {
-		// TODO Auto-generated method stub
-
 		UserRepositoryMongo userRepositoryMongo = this;
 		BoxRepositoryMongo boxRepositoryMongo = new BoxRepositoryMongo(dbName);
 

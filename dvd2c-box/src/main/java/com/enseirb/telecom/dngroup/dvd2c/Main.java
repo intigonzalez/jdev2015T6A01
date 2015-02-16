@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.UriBuilder;
 
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
@@ -63,8 +65,10 @@ public class Main {
 		try {
 			(new BoxEndPoints()).postBox();
 			LOGGER.info("Sucess ");
+		} catch (ProcessingException e) {
+			LOGGER.error("Error for send information to the server central. Is running ?",e);
 		} catch (Exception e) {
-			LOGGER.error("Error for send information to the server central",e);
+			LOGGER.error("Error for send information to the server central.",e);
 			
 			
 		}
@@ -88,7 +92,6 @@ public class Main {
 			ApplicationContext.properties.load(in);
 			in.close();
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			LOGGER.error("File not found Path ={} ",aPPath, e1);
 			return;
 		}
