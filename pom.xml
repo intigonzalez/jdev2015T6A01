@@ -14,11 +14,6 @@
 		<module>dvd2c-central</module>
 		<module>dvd2c-model</module>
 		<module>dvd2c-services</module>
-		<module>dvd2c-service_communication</module>
-		<module>dvd2c-service_content</module>
-		<module>dvd2c-service_techincal</module>
-		<module>dvd2c-service_user</module>
-    	<module>dvd2c-service_db</module>
   </modules>
 	<dependencyManagement>
 		<dependencies>

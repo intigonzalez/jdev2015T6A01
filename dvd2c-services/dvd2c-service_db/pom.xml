@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>dvd2c-service_user</artifactId>
+  <artifactId>dvd2c-service_db</artifactId>
   <packaging>jar</packaging>
   <parent>
-    <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
-    <artifactId>dvd2c-parent</artifactId>
+    <groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
+    <artifactId>dvd2c-services</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
   <dependencyManagement>
@@ -27,6 +27,7 @@
         <artifactId>jersey-container-grizzly2-http</artifactId>
         <version>2.15</version>
       </dependency>
+
     </dependencies>
   </dependencyManagement>
   <dependencies>
@@ -35,38 +36,11 @@
       <artifactId>dvd2c-model</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
-     <dependency>
-      <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
-      <artifactId>dvd2c-service_communication</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-        <dependency>
-    	<groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
-    	<artifactId>dvd2c-service_db</artifactId>
-    	<version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-    	<groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
-    	<artifactId>dvd2c-service_content</artifactId>
-    	<version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jersey.core</groupId>
-      <artifactId>jersey-client</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.glassfish.jersey.media</groupId>
-      <artifactId>jersey-media-json-jettison</artifactId>
-    </dependency>
-     <dependency>
+           <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-     <dependency>
-      <groupId>com.rabbitmq</groupId>
-      <artifactId>amqp-client</artifactId>
-    </dependency>
+    
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
@@ -75,23 +49,6 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jersey.core</groupId>
-      <artifactId>jersey-client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.thoughtworks.xstream</groupId>
-      <artifactId>xstream</artifactId>
-    </dependency>
-
 
   </dependencies>
   <build>
