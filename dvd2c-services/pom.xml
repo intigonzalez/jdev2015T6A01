@@ -10,10 +10,15 @@
   </properties>
   <modules>
     <module>dvd2c-services-box2box</module>
-    <module>dvd2c-service-videos</module>
-    <module>dvd2c-service_techincal</module>
-    <module>dvd2c-service_user</module>
-    <module>dvd2c-service_db</module>
-<module>dvd2c-services-commons</module>
+	<module>dvd2c-service-videos</module>
+	<module>dvd2c-service-techincal</module>
+	<module>dvd2c-service-db</module>
+	<module>dvd2c-services-commons</module>
+	
+	<module>dvd2c-service-userMgt</module>
+	<module>dvd2c-service-boxMgt</module>
+	
+	
+	<module>dvd2c-service-socialMgt</module>
   </modules>
 </project>

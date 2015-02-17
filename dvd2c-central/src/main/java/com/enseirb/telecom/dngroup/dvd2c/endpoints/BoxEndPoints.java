@@ -15,6 +15,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryMongo;
+import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
+import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
+import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
@@ -26,6 +29,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 public class BoxEndPoints {
 
 	BoxService boxManager = new BoxServiceImpl(new BoxRepositoryMongo("CentralMediaHome"));
+	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo("CentralMediaHome"));
 
 	/**
 	 * Get List of box
@@ -61,7 +65,9 @@ public class BoxEndPoints {
 	@Path("ip/{boxIp}")
 	@Produces(MediaType.APPLICATION_XML)
 	public ListUser getUserFromIP(@PathParam("boxIp") String ip) {
-		return boxManager.getUserFromIP(ip);
+		ListBox listBox = boxManager.getBoxListFromIP(ip);
+		return uManager.getUsersFromListBoxes(listBox);
+		
 	}
 
 	/**

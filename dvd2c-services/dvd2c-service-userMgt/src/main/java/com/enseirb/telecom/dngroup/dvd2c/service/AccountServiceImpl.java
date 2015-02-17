@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
+import com.enseirb.telecom.dngroup.dvd2c.model.ListBox;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
@@ -192,4 +194,37 @@ public class AccountServiceImpl implements AccountService {
 		return this.userDatabase.findBoxFromUserID(userID).toBox();
 	}
 	
+	@Override
+	public ListUser getUsersFromBoxes(ListBox listBox) {
+
+		AccountService uManager = this;
+		ListUser listUsersFinal = new ListUser(), listUsersOfBoxes = new ListUser();
+
+		List<User> u;
+		User user;
+		Box box = new Box();
+		List<Box> boxes = listBox.getBox();
+
+		Iterator<Box> itrBoxes = boxes.iterator();
+		while (itrBoxes.hasNext()) {
+
+			box = itrBoxes.next();
+			listUsersOfBoxes = uManager.getUserFromBoxID(box.getBoxID());
+			u = listUsersOfBoxes.getUser();
+			Iterator<User> itrUsers = u.iterator();
+
+			while (itrUsers.hasNext()) {
+
+				user = itrUsers.next();
+				listUsersFinal.getUser().add(user);
+			}
+		}
+
+		return listUsersFinal;
+	}
+
+	@Override
+	public ListUser getUsersFromListBoxes(ListBox listBox) {
+		return getUsersFromBoxes(listBox);
+	}
 }

@@ -62,12 +62,12 @@ public interface BoxService {
 	public abstract void deleteBoxOnLocal(String boxID);
 
 	/**
-	 * get list of user with ip
+	 * get list of box with ip
 	 * SERVER SERVICE
 	 * @param ip the ip to get user
 	 * @return a user list
 	 */
-	public abstract ListUser getUserFromIP(String ip);
+	public abstract ListBox getBoxListFromIP(String ip);
 
 	/**
 	 * get all box on local db
@@ -82,12 +82,7 @@ public interface BoxService {
 	 */
 	public abstract ListBox getBoxesFromIP(String ip);
 
-	/**
-	 * get all user of boxes
-	 * @param listBox the all box to get users
-	 * @return a list of user
-	 */
-	public abstract ListUser getUsersFromBoxes(ListBox listBox);
+	
 
 	//	public abstract Box getBox(String userID);
 }

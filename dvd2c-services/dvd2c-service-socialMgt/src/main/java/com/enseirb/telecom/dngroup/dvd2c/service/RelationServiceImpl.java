@@ -21,13 +21,10 @@ import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestRelationService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestRelationServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserServiceImpl;
-import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListRelation;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 
 public class RelationServiceImpl implements RelationService {
 	private static final Logger LOGGER = LoggerFactory

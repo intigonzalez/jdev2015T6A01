@@ -1,6 +1,7 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
+import com.enseirb.telecom.dngroup.dvd2c.model.ListBox;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
@@ -95,5 +96,19 @@ public interface AccountService {
 	 * @return a box with lot information
 	 */
 	public abstract Box getBox(String userID);
+
+	/**
+	 * get all user of boxes
+	 * @param listBox the all box to get users
+	 * @return a list of user
+	 */
+	public abstract ListUser getUsersFromBoxes(ListBox listBox);
+
+	/**
+	 * get the list of user from a list of box
+	 * @param listBox the list of box to extract users
+	 * @return the list of user
+	 */
+	public abstract ListUser getUsersFromListBoxes(ListBox listBox);
 
 }

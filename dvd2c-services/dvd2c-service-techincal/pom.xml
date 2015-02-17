@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>dvd2c-service_user</artifactId>
+  <artifactId>dvd2c-service-technical</artifactId>
   <packaging>jar</packaging>
   <parent>
     <groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
@@ -35,21 +35,17 @@
       <artifactId>dvd2c-model</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
-     <dependency>
-      <groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
-      <artifactId>dvd2c-services-box2box</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-        <dependency>
-    	<groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
-    	<artifactId>dvd2c-service_db</artifactId>
-    	<version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-    	<groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
-    	<artifactId>dvd2c-service-videos</artifactId>
-    	<version>1.0-SNAPSHOT</version>
-    </dependency>
+<!--      <dependency> -->
+<!--       <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId> -->
+<!--       <artifactId>dvd2c-boxcomunication</artifactId> -->
+<!--       <version>1.0-SNAPSHOT</version> -->
+<!--     </dependency> -->
+<!--     <dependency> -->
+<!--       <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId> -->
+<!--       <artifactId>dvd2c-service</artifactId> -->
+<!--       <version>1.0-SNAPSHOT</version> -->
+<!--     </dependency> -->
+    
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>
       <artifactId>jersey-client</artifactId>
@@ -87,12 +83,8 @@
       <groupId>org.glassfish.jersey.core</groupId>
       <artifactId>jersey-client</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.thoughtworks.xstream</groupId>
-      <artifactId>xstream</artifactId>
-    </dependency>
 
-
+    
   </dependencies>
   <build>
     <resources>

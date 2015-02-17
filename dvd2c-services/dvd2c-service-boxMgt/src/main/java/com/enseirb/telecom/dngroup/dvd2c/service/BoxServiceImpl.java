@@ -2,23 +2,17 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
-import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.*;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListBox;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
-import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public class BoxServiceImpl implements BoxService {
 	private static final Logger LOGGER = LoggerFactory
@@ -129,9 +123,9 @@ public class BoxServiceImpl implements BoxService {
 	}
 
 	@Override
-	public ListUser getUserFromIP(String ip) {
+	public ListBox getBoxListFromIP(String ip) {
 		ListBox listBox = getBoxesFromIP(ip);
-		return getUsersFromBoxes(listBox);
+		return listBox;
 	}
 
 	@Override
@@ -174,34 +168,7 @@ public class BoxServiceImpl implements BoxService {
 
 	}
 
-	@Override
-	public ListUser getUsersFromBoxes(ListBox listBox) {
 
-		AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo("mediahome"));
-		ListUser listUsersFinal = new ListUser(), listUsersOfBoxes = new ListUser();
-
-		List<User> u;
-		User user;
-		Box box = new Box();
-		List<Box> boxes = listBox.getBox();
-
-		Iterator<Box> itrBoxes = boxes.iterator();
-		while (itrBoxes.hasNext()) {
-
-			box = itrBoxes.next();
-			listUsersOfBoxes = uManager.getUserFromBoxID(box.getBoxID());
-			u = listUsersOfBoxes.getUser();
-			Iterator<User> itrUsers = u.iterator();
-
-			while (itrUsers.hasNext()) {
-
-				user = itrUsers.next();
-				listUsersFinal.getUser().add(user);
-			}
-		}
-
-		return listUsersFinal;
-	}
 	
 
 

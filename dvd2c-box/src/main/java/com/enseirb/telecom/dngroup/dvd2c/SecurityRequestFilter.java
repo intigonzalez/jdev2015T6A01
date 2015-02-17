@@ -42,16 +42,9 @@ package com.enseirb.telecom.dngroup.dvd2c;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Map;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
 
@@ -61,8 +54,6 @@ import org.slf4j.LoggerFactory;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
-
-import sun.security.util.Length;
 
 /**
  * @author Michal Gajdos (michal.gajdos at oracle.com)

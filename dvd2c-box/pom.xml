@@ -43,6 +43,15 @@
 			<artifactId>dvd2c-model</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+
+		<dependency>
+			<groupId>
+				com.enseirb.telecom.dngroup.dvd2c.services
+			</groupId>
+			<artifactId>dvd2c-service-socialMgt</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-server</artifactId>
@@ -99,11 +108,7 @@
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-grizzly2-http</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
-			<artifactId>dvd2c-service_user</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
+
 	</dependencies>
 	<build>
 		<resources>
