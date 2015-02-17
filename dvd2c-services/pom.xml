@@ -11,7 +11,7 @@
   <modules>
     <module>dvd2c-services-box2box</module>
 	<module>dvd2c-service-videos</module>
-	<module>dvd2c-service-techincal</module>
+<!-- 	<module>dvd2c-service-techincal</module> -->
 	<module>dvd2c-service-db</module>
 	<module>dvd2c-services-commons</module>
 	

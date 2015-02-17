@@ -1,6 +1,7 @@
 package com.enseirb.telecom.dngroup.dvd2c.db;
 
 import java.util.List;
+
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

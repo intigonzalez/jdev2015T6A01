@@ -1,8 +1,6 @@
 package com.enseirb.telecom.dngroup.dvd2c.db;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Authorization;
 import com.enseirb.telecom.dngroup.dvd2c.model.Comment;

@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.security.RolesAllowed;
-import javax.management.relation.RelationService;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -19,7 +17,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -31,16 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
-import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryMongo;
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
+import com.enseirb.telecom.dngroup.dvd2c.model.Content;
+import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQServer;
-import com.enseirb.telecom.dngroup.dvd2c.service.RelationServiceImpl;
-import com.enseirb.telecom.dngroup.dvd2c.model.Authorization;
-import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
-import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.google.common.io.Files;
 
 // The Java class will be hosted at the URI path "/app/content"

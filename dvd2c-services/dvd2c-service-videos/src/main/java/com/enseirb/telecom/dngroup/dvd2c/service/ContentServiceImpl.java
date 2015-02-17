@@ -14,19 +14,16 @@ import org.slf4j.LoggerFactory;
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryObject;
-//import com.enseirb.telecom.dngroup.dvd2c.endpoints.ContentEndPoints;
-import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
-import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserServiceImpl;
-import com.enseirb.telecom.dngroup.dvd2c.utils.FileService;
-import com.enseirb.telecom.dngroup.dvd2c.model.Authorization;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.model.Task;
+import com.enseirb.telecom.dngroup.dvd2c.utils.FileService;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.json.JsonWriter;
+//import com.enseirb.telecom.dngroup.dvd2c.endpoints.ContentEndPoints;
 
 public class ContentServiceImpl implements ContentService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContentServiceImpl.class);

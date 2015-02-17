@@ -23,6 +23,9 @@ import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
+import com.enseirb.telecom.dngroup.dvd2c.model.Box;
+import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
+import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
@@ -30,9 +33,6 @@ import com.enseirb.telecom.dngroup.dvd2c.service.ContentServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQServer;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationServiceImpl;
-import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
-import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 
 @Path("box")
 public class BoxEndPoints {

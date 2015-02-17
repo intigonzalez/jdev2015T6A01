@@ -5,14 +5,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
+import com.enseirb.telecom.dngroup.dvd2c.model.ListRelation;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationServiceImpl;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListRelation;
 
 // The Java class will be hosted at the URI path "/myresource"
 @Path("app/{userID}/group")

@@ -15,16 +15,16 @@ import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
+import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
+import com.enseirb.telecom.dngroup.dvd2c.model.ListRelation;
+import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
+import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestContentServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestRelationService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestRelationServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserServiceImpl;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListRelation;
-import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
-import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public class RelationServiceImpl implements RelationService {
 	private static final Logger LOGGER = LoggerFactory
