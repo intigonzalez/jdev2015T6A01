@@ -199,7 +199,7 @@ public class RelationServiceImpl implements RelationService {
 
 					RequestRelationService rss = new RequestRelationServiceImpl();
 					try {
-						rss.postRelation(relation2, relation);
+						rss.updateRelationORH(relation2, relation);
 					} catch (IOException e) {
 						LOGGER.error("Error during create the relation  betewen {} and {}",relation2,relation,e);
 						e.printStackTrace();
@@ -241,7 +241,7 @@ public class RelationServiceImpl implements RelationService {
 			} else {
 				RequestRelationService rss = new RequestRelationServiceImpl();
 				try {
-					rss.setAprouve(userID, relation.getEmail());
+					rss.setAprouveRelationORH(userID, relation.getEmail());
 				} catch (IOException e) {
 					LOGGER.error("Can not set aprouve {} for {} Error IO",userID,relation.getEmail(),e);
 					e.printStackTrace();
@@ -319,7 +319,7 @@ public class RelationServiceImpl implements RelationService {
 		} else {
 			RequestRelationService rss = new RequestRelationServiceImpl();
 			try {
-				rss.delete(userID, email);
+				rss.deleteRelationORH(userID, email);
 			} catch (IOException e) {
 				LOGGER.error("Can not delete a relation betewen {} and {} Error IO",userID,email,e);
 			} catch (NoSuchUserException e) {

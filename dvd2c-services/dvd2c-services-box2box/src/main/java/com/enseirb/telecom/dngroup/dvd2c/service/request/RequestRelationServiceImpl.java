@@ -35,7 +35,7 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 
 	@Override
 	public User get(String UserID, String UserToGet) throws IOException, NoSuchUserException, NoSuchBoxException {
-		Box boxRelation = requestServ.getBox(UserToGet);
+		Box boxRelation = requestServ.getBoxByUserIDORH(UserToGet);
 		User userGet = new User();
 		WebTarget target = client.target(boxRelation.getIp() + "/api/app/" + UserToGet + "/relation/from/" + UserID);
 		userGet = target.request(MediaType.APPLICATION_XML_TYPE).get(User.class);
@@ -44,10 +44,10 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	}
 
 	@Override
-	public void postRelation(Relation relationOfRequest, Relation relationToRequest) throws IOException, NoSuchBoxException {
+	public void updateRelationORH(Relation relationOfRequest, Relation relationToRequest) throws IOException, NoSuchBoxException {
 		Box boxRelation;
 		try {
-			boxRelation = requestServ.getBox(relationToRequest.getEmail());
+			boxRelation = requestServ.getBoxByUserIDORH(relationToRequest.getEmail());
 		} catch (Exception e) {
 			LOGGER.error("Error while fetching Box information for relation {}", relationToRequest.getEmail());
 			throw new IOException("Can not conect to the server : Box information not fetched from CentralServer");
@@ -82,9 +82,9 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	}
 
 	@Override
-	public void delete(String relationOfRequest, String relationToRequest) throws IOException, NoSuchUserException, NoSuchBoxException {
+	public void deleteRelationORH(String relationOfRequest, String relationToRequest) throws IOException, NoSuchUserException, NoSuchBoxException {
 		// Client client = ClientBuilder.newClient();
-		Box boxRelation = requestServ.getBox(relationToRequest);
+		Box boxRelation = requestServ.getBoxByUserIDORH(relationToRequest);
 		WebTarget target = client.target(boxRelation.getIp() + "/api/box/relation/" + relationToRequest + "/" + relationOfRequest);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE).delete();
 		switch (Status.fromStatusCode(response.getStatus())) {
@@ -106,8 +106,8 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	}
 
 	@Override
-	public void setAprouve(String userID, String emailOfRelation) throws IOException, NoSuchBoxException, NoSuchUserException {
-		Box boxRelation = requestServ.getBox(emailOfRelation);
+	public void setAprouveRelationORH(String userID, String emailOfRelation) throws IOException, NoSuchBoxException, NoSuchUserException {
+		Box boxRelation = requestServ.getBoxByUserIDORH(emailOfRelation);
 		WebTarget target = client.target(boxRelation.getIp() + "/api/box/relation/" + emailOfRelation + "/" + userID);
 		Relation relation=new Relation();
 		try{

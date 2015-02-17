@@ -28,7 +28,7 @@ public class RequestContentServiceImpl implements RequestContentService {
 	@Override
 	public ListContent get(String userID, String relationID) throws IOException, NoSuchUserException, NoRelationException, NoSuchBoxException {
 		RequestUserServiceImpl requestServ = new RequestUserServiceImpl();
-		Box boxRelation = requestServ.getBox(relationID);
+		Box boxRelation = requestServ.getBoxByUserIDORH(relationID);
 		
 		client = ClientBuilder.newClient();
 		ListContent listContent = new ListContent();

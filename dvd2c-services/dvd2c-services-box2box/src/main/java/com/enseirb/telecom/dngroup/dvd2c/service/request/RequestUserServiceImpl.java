@@ -77,7 +77,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 
 	@Override
-	public void post(User user) throws IOException, SuchUserException {
+	public void createUserORH(User user) throws IOException, SuchUserException {
 		user.setPassword(null);
 		WebTarget target = client.target(url);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
@@ -105,7 +105,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 
 	@Override
-	public void put(User user) throws IOException, NoSuchUserException {
+	public void updateUserORH(User user) throws IOException, NoSuchUserException {
 		user.setPassword(null);
 		// Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(url + user.getUserID());
@@ -132,7 +132,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 
 	@Override
-	public void delete(String userID) throws IOException, NoSuchUserException {
+	public void deleteUserORH(String userID) throws IOException, NoSuchUserException {
 		// Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(this.url + userID);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
@@ -156,7 +156,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 		}
 	}
 
-	public Box getBox(String email) throws IOException, NoSuchBoxException {
+	public Box getBoxByUserIDORH(String email) throws IOException, NoSuchBoxException {
 
 		Box boxGet = new Box();
 		// Client client = ClientBuilder.newClient();

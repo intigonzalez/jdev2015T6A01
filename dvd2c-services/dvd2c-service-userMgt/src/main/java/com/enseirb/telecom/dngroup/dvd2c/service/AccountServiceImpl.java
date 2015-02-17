@@ -139,7 +139,7 @@ public class AccountServiceImpl implements AccountService {
 		try {
 			user.setBoxID(ApplicationContext.getProperties().getProperty("BoxID"));
 			
-			requetUserService.post(user);
+			requetUserService.createUserORH(user);
 			return createUserOnLocal(user);
 		} catch (IOException e) {
 			LOGGER.debug("error during creating user on server : {} ",user.getUserID(),e);
@@ -159,7 +159,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public void saveUserOnServer(User user) {
 		try {
-			requetUserService.put(user);
+			requetUserService.updateUserORH(user);
 			saveUserOnLocal(user);
 		} catch (IOException e) {
 			LOGGER.error("Error for Update this user on server : {}",user.getBoxID(),e);
@@ -176,7 +176,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public void deleteUserOnServer(String userID) {
 		try {
-			requetUserService.delete(userID);
+			requetUserService.deleteUserORH(userID);
 			deleteUserOnLocal(userID);
 		} catch (IOException e) {
 			LOGGER.error("Error for delete this user on server : {}",userID,e);

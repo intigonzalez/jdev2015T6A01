@@ -25,7 +25,7 @@ public interface RequestBoxService {
 	 * @throws IOException host is not reachable
 	 * @throws SuchBoxException user doesn't exist on remote host 
 	 */
-	public abstract void post(Box box) throws IOException, SuchBoxException;
+	public abstract void createBoxORH(Box box) throws IOException, SuchBoxException;
 
 	/**
 	 * update a box on remote host
@@ -33,11 +33,16 @@ public interface RequestBoxService {
 	 * @throws IOException host is not reachable
 	 * @throws NoSuchBoxException user doesn't exist on remote host 
 	 */
-	public abstract void put(Box box) throws IOException, NoSuchBoxException;
+	public abstract void updateBoxORH(Box box) throws IOException, NoSuchBoxException;
 	
 	
-	
-	public abstract void delete(String boxID) throws IOException, NoSuchBoxException;
+	/**
+	 * delete a box on remote host
+	 * @param boxID the box to delete
+	 * @throws IOException host is not reachable
+	 * @throws NoSuchBoxException box not found on remote host
+	 */
+	public abstract void deleteBoxORH(String boxID) throws IOException, NoSuchBoxException;
 
 	
 }

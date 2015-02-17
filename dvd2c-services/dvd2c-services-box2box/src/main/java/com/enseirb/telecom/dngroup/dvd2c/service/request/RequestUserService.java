@@ -23,6 +23,12 @@ public interface RequestUserService {
 	 */
 	public abstract User get(String string) throws IOException, NoSuchUserException;
 
+	/**
+	 * Get a list of user by name on remote host (server normally)
+	 * @param name the name to request
+	 * @return the list of user with this name
+	 * @throws IOException the host is not reachable
+	 */
 	public abstract ListUser getUserFromName(String name) throws IOException;
 
 	/**
@@ -31,7 +37,7 @@ public interface RequestUserService {
 	 * @throws IOException host is not reachable
 	 * @throws SuchUserException user doesn't exist on remote host 
 	 */
-	public abstract void post(User user) throws IOException, SuchUserException;
+	public abstract void createUserORH(User user) throws IOException, SuchUserException;
 
 	/**
 	 * update a user on remote host
@@ -39,7 +45,7 @@ public interface RequestUserService {
 	 * @throws IOException host is not reachable
 	 * @throws NoSuchUserException user doesn't exist on remote host 
 	 */
-	public abstract void put(User user) throws IOException, NoSuchUserException;
+	public abstract void updateUserORH(User user) throws IOException, NoSuchUserException;
 
 	/**
 	 * delete a user on remote host
@@ -47,8 +53,15 @@ public interface RequestUserService {
 	 * @throws IOException host is not reachable
 	 * @throws NoSuchUserException user doesn't exist on remote host 
 	 */
-	public abstract void delete(String userID) throws IOException, NoSuchUserException;
+	public abstract void deleteUserORH(String userID) throws IOException, NoSuchUserException;
 
-	public abstract Box getBox(String email) throws IOException, NoSuchBoxException;
+	/**
+	 * Get a box with a userID on Remote host (normally server)
+	 * @param userID the userID to found the box
+	 * @return the box with addr of this
+	 * @throws IOException the host is not reachable
+	 * @throws NoSuchBoxException no box found
+	 */
+	public abstract Box getBoxByUserIDORH(String userID) throws IOException, NoSuchBoxException;
 
 }

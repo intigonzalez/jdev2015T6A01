@@ -70,7 +70,7 @@ public class BoxServiceImpl implements BoxService {
 
 		// box.setBoxID(ApplicationContext.getProperties().getProperty("BoxID"));
 		try {
-			requetBoxService.post(box);
+			requetBoxService.createBoxORH(box);
 		} catch (IOException e) {
 			LOGGER.error("Error during creating a box on server : ",
 					box.getBoxID(), e);
@@ -92,7 +92,7 @@ public class BoxServiceImpl implements BoxService {
 
 		try {
 
-			requetBoxService.put(box);
+			requetBoxService.updateBoxORH(box);
 		} catch (IOException e) {
 			LOGGER.error("can't save Box On Server : {}", box.getBoxID(), e);
 		} catch (NoSuchBoxException e) {
@@ -108,7 +108,7 @@ public class BoxServiceImpl implements BoxService {
 	public void deleteBoxOnServer(String boxID) {
 
 		try {
-			requetBoxService.delete(boxID);
+			requetBoxService.deleteBoxORH(boxID);
 		} catch (IOException e) {
 			LOGGER.error("can't delete box : {}", boxID, e);
 		} catch (NoSuchBoxException e) {

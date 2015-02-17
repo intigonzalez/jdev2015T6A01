@@ -44,7 +44,7 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 	}
 
 	@Override
-	public void post(Box box) throws IOException {
+	public void createBoxORH(Box box) throws IOException {
 		
 		WebTarget target = client.target(url);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
@@ -70,7 +70,7 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 	}
 
 	@Override
-	public void put(Box box) throws IOException {
+	public void updateBoxORH(Box box) throws IOException {
 		
 		WebTarget target = client.target(url +box.getBoxID());
 		// try {
@@ -98,7 +98,7 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 	}
 
 	@Override
-	public void delete(String boxID) throws IOException, NoSuchBoxException {
+	public void deleteBoxORH(String boxID) throws IOException, NoSuchBoxException {
 	
 		WebTarget target = client.target(this.url + boxID);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
