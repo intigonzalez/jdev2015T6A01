@@ -40,7 +40,7 @@
 
 		<dependency>
 			<groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
-			<artifactId>dvd2c-service_communication</artifactId>
+			<artifactId>dvd2c-services-box2box</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
