@@ -23,6 +23,7 @@ import javax.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
@@ -117,6 +118,7 @@ public class UserEndPoints extends HttpServlet {
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createUser(User user) throws URISyntaxException {
 		if (uManager.userExistOnLocal(user.getUserID()) == false) {
+			user.setBoxID(ApplicationContext.getProperties().getProperty("BoxID"));
 			User u=uManager.createUserOnServer(user);
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(u.getUserID()))

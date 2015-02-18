@@ -90,6 +90,7 @@ public class UserRepositoryObject {
 		user.setPassword(password);
 		user.setPrivateKey(privateKey);
 		user.setPubKey(pubKey);
+		user.setBoxID(boxID);
 		return user;
 	}
 

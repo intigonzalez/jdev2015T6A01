@@ -151,7 +151,7 @@ public class AccountServiceImpl implements AccountService {
 	}
 	@Override
 	public User createUserOnLocal(User user) {
-		user.setBoxID(ApplicationContext.getProperties().getProperty("BoxID"));
+		
 		User u = userDatabase.save(new UserRepositoryObject(user)).toUser();
 		return u;
 	}

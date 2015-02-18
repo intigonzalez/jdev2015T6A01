@@ -365,6 +365,7 @@ public <S extends UserRepositoryObject> S update (S entity){
 		User user = userRepositoryObject.toUser();
 		String boxID = user.getBoxID();
 		if (boxID == null) {
+			//TODO:Add loger
 			System.err.println("The user box ID is null");
 			return null;
 		}
