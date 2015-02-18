@@ -9,11 +9,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <modules>
-    <module>dvd2c-services-box2box</module>
+    
 	<module>dvd2c-service-videos</module>
 <!-- 	<module>dvd2c-service-techincal</module> -->
+	
 	<module>dvd2c-service-db</module>
-	<module>dvd2c-services-commons</module>
 	
 	<module>dvd2c-service-userMgt</module>
 	<module>dvd2c-service-boxMgt</module>
