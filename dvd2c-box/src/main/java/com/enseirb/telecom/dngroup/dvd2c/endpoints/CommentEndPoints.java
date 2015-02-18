@@ -1,3 +1,6 @@
+/**
+ * NOT USE CURENTLY
+ */
 package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
 import javax.ws.rs.Consumes;
@@ -19,11 +22,9 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Comment;
 @Path("app/{userID}/contents/{contentID}")
 public class CommentEndPoints {
 
-	// TODO: update the class to suit your needs
+	// TODO: This poart is not used
 
-	// The Java method will process HTTP GET requests
-	// The Java method will produce content identified by the MIME Media
-	// type "text/plain"
+	
 	@GET
 	@Path("{commentID}")
 	@Produces(MediaType.APPLICATION_XML)

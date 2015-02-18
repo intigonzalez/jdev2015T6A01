@@ -42,6 +42,11 @@ public class BoxEndPoints {
 	UserRepositoryMongo uRM = new UserRepositoryMongo("mediahome");
 
 
+	/**
+	 *  get box with boxID
+	 * @param boxId the box to get
+	 * @return
+	 */
 	@GET
 	@Path("id/{boxId}")
 	@Produces(MediaType.APPLICATION_XML)
@@ -120,6 +125,11 @@ public class BoxEndPoints {
 		return Response.status(Status.ACCEPTED).build();
 	}
 
+	/** delete box
+	 * 
+	 * @param boxID
+	 * @return
+	 */
 	@DELETE
 	@Path("{boxId}")
 	public Response deleteBox(@PathParam("boxId") String boxID) {

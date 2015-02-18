@@ -91,11 +91,20 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 //	public Response postVideo(Content content) {
 //		return Response.status(Status.SERVICE_UNAVAILABLE).build();
 //	}
-	
 
+	/**
+	 * post a file on the box for the userID
+	 * @param userID the sender of the request
+	 * @param uploadedInputStream
+	 * @param fileDetail
+	 * @param body
+	 * @return
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response postcontent(@PathParam("userID") String email,
+	public Response postcontent(@PathParam("userID") String userID,
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail,
 			@FormDataParam("file") FormDataBodyPart body)
@@ -106,7 +115,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 		String fileTypeTemp = fileMediaType.toString();
 		String [] fileType = fileTypeTemp.split("/");
 		
-		File upload = File.createTempFile(email, "."+extension,Files.createTempDir());
+		File upload = File.createTempFile(userID, "."+extension,Files.createTempDir());
 
 		//NHE: all the rest should be in the Service Layer
 		// save it
@@ -119,22 +128,27 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 		
 		Content content = new Content();
 		content.setName(upload.getName());
-		content.setLogin(email);
+		content.setLogin(userID);
 		content.setStatus("In progress");
 		content.setType(fileType[0]);
 		UUID uuid = UUID.randomUUID();
 		content.setContentsID(uuid.toString().replace("-", ""));
-		String link = "/videos/"+email+"/"+uuid.toString();
+		String link = "/videos/"+userID+"/"+uuid.toString();
 		content.setLink(link);
 		long unixTime = System.currentTimeMillis() / 1000L;
 		content.setUnixTime(unixTime);
 
 		content = uManager.createContent(content,upload.getAbsolutePath(), content.getContentsID());
-		return Response.created(new URI("app/"+email+"/content/"+content.getContentsID())).build();
+		return Response.created(new URI("app/"+userID+"/content/"+content.getContentsID())).build();
 
 	}
 
-
+	/**
+	 * Update information for the video
+	 * @param content the content
+	 * @param contentsID the id of the content
+	 * @return
+	 */
 	@PUT
 	@Path("{contentsID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -148,10 +162,13 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 		} else {
 			return Response.status(409).build();
 		}
-
-
 	}
 	
+	/**
+	 * delete the contents with contentsID 
+	 * @param contentsID the contentsID to delete
+	 * @return
+	 */
 	@DELETE
 	@Path("{contentsID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

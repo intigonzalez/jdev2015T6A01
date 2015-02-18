@@ -23,6 +23,12 @@ public class GroupEndPoints {
 
 	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(),
 			new UserRepositoryMongo("mediahome"));
+	/**
+	 * get all user of on groupe
+	 * @param userID
+	 * @param groupID
+	 * @return
+	 */
 	@GET
 	@Path("{groupID}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

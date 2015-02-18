@@ -59,12 +59,9 @@ public class UserEndPoints extends HttpServlet {
 	@POST()
 	@Path("Connect")
 	@Produces({ "application/json"})// resultat en JSON
-	public Response getConnect(User user){//@FormParam("username") String username, @FormParam("password")String password){ //FormParam ce sont les parametres d'un formulaire. 
+	public Response getConnect(User user){ //FormParam ce sont les parametres d'un formulaire. 
 		String userID = user.getUserID().toLowerCase();
-
-//		System.out.println("TEST"+username);
 		String test = uManager.getUserOnLocal(userID).getUserID();
-//		System.out.println("TEST" + test);
 		if (uManager.userExistOnLocal(userID)) {
 			User userAuth = uManager.getUserOnLocal(userID);
 			if (user.getPassword().equals(userAuth.getPassword() ) ) {
@@ -73,11 +70,9 @@ public class UserEndPoints extends HttpServlet {
 			                       "no comment",      
 			                       1073741823 , // maxAge max int value/2      
 			                       false ))
-			               .build();
-				
+			               .build();			
 			}
-			return Response.status(403).build();
-			
+			return Response.status(403).build();			
 		}
 		else{
 			return Response.status(403).build();
@@ -87,34 +82,40 @@ public class UserEndPoints extends HttpServlet {
 	
 	// TODO: update the class to suit your needs
 
-	// The Java method will process HTTP GET requests
-	// The Java method will produce content identified by the MIME Media
-	// type "text/plain"
+	/**
+	 * Get a user by userID
+	 * @param userID the user to get
+	 * @return a user
+	 */
 	@GET
 	@Path("{userID}")
 	@RolesAllowed("account")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public User getIt(@PathParam("userID") String userID) {
+	public User getUserByID(@PathParam("userID") String userID) {
 		return uManager.getUserOnLocal(userID);
 	}
 	
 	/**
 	 * Find a list of users from their name on server
-	 * @param name
+	 * @param name the name to search
 	 * @return a list of user
 	 */
 	@GET
 	@Path("name/{name}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ListUser getUserFromName(@PathParam("name") String name){
-		
+	public ListUser getUserByName(@PathParam("name") String name){
 		return uManager.getUserFromNameOnServer(name);
-		
 	}
 
+	/**
+	 * Create a user on server and local db
+	 * @param user the user to save
+	 * @return Status web
+	 * @throws URISyntaxException
+	 */
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postUser(User user) throws URISyntaxException {
+	public Response createUser(User user) throws URISyntaxException {
 		if (uManager.userExistOnLocal(user.getUserID()) == false) {
 			User u=uManager.createUserOnServer(user);
 			// NHE that the answer we expect from a post (see location header)
@@ -130,11 +131,17 @@ public class UserEndPoints extends HttpServlet {
 		}
 	}
 
+	/**
+	 * Update User by userID
+	 * @param user the user information 
+	 * @param userIDFromPath the userID to update
+	 * @return webstatus
+	 */
 	@PUT
 	@Path("{userID}")
 	@RolesAllowed("account")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putUser(User user, @PathParam("userID") String userIDFromPath) {
+	public Response updateUser(User user, @PathParam("userID") String userIDFromPath) {
 		// TODO: need to check the authentication of the user
 		// modify the user, check if the user has changed his email address, and check the ability of the new email address
 		if ( user.getUserID().equals(userIDFromPath ) || uManager.userExistOnLocal(user.getUserID()) == false ) {
@@ -146,6 +153,11 @@ public class UserEndPoints extends HttpServlet {
 
 	}
 
+	/**
+	 * Delete the user with userID
+	 * @param userID the userID to delete
+	 * @return web status
+	 */
 	@DELETE
 	@Path("{userID}")
 	@RolesAllowed("account")
