@@ -38,14 +38,14 @@
 			<groupId>
 				com.enseirb.telecom.dngroup.dvd2c.services
 			</groupId>
-			<artifactId>dvd2c-service-videos</artifactId>
+			<artifactId>dvd2c-services-videos</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>
 				com.enseirb.telecom.dngroup.dvd2c.services
 			</groupId>
-			<artifactId>dvd2c-service-social</artifactId>
+			<artifactId>dvd2c-services-social</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
