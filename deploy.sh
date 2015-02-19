@@ -44,8 +44,9 @@ ProxyPreserveHost On
 # vim: syntax=apache ts=4 sw=4 sts=4 sr noet
 '> /etc/apache2/sites-available/mediahome.conf
 
-a2dissite default
+a2dissite 000-default.conf 
 a2ensite mediahome.conf
+service apache2 reload
 service apache2 restart
 
 # create folder video for put videos inside 
