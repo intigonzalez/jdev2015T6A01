@@ -15,11 +15,11 @@
 	
 	
 	
-	<module>dvd2c-service-userMgt</module>
-	<module>dvd2c-service-boxMgt</module>
+	<module>dvd2c-service-user</module>
+	<module>dvd2c-service-box</module>
 	
 	
-	<module>dvd2c-service-socialMgt</module>
+	<module>dvd2c-service-social</module>
 	<module>dvd2c-services-commons</module>
   </modules>
 </project>
