@@ -144,7 +144,7 @@ public class AccountServiceImpl implements AccountService {
 		} catch (IOException e) {
 			LOGGER.debug("error during creating user on server : {} ",user.getUserID(),e);
 		} catch (SuchUserException e) {
-			LOGGER.debug("User already existing {}",user.getUserID(),e);
+			LOGGER.debug("User already existing {}",user.getUserID());
 		}
 
 		return user;

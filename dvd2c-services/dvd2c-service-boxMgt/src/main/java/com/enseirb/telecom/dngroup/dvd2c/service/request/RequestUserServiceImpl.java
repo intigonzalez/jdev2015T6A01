@@ -78,8 +78,11 @@ public class RequestUserServiceImpl implements RequestUserService {
 
 	@Override
 	public void createUserORH(User user) throws IOException, SuchUserException {
-		User user2 = user;
-		user2.setPassword(null);
+		User user2 = new User();
+		user2.setBoxID(user.getBoxID());
+		user2.setName(user.getName());
+		user2.setSurname(user.getSurname());
+		user2.setUserID(user.getUserID());
 		WebTarget target = client.target(url);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
 				.post(Entity.entity(user2, MediaType.APPLICATION_XML),
