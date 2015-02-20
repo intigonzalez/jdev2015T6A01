@@ -11,6 +11,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -23,6 +24,7 @@ import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
@@ -37,10 +39,8 @@ import com.enseirb.telecom.dngroup.dvd2c.service.RelationServiceImpl;
 @Path("box")
 public class BoxEndPoints {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BoxEndPoints.class);
-
 	BoxService boxManager = new BoxServiceImpl(new BoxRepositoryMongo("mediahome"));
 	UserRepositoryMongo uRM = new UserRepositoryMongo("mediahome");
-
 
 	/**
 	 *  get box with boxID
@@ -51,10 +51,12 @@ public class BoxEndPoints {
 	@Path("id/{boxId}")
 	@Produces(MediaType.APPLICATION_XML)
 	public Box getBox(@PathParam("boxId") String boxId) {
-
-		return boxManager.getBoxOnLocal(boxId);
-		// NHE: easy way to return an error for a rest api: throw an WebApplicationException
-		// throw new WebApplicationException(Status.CONFLICT);
+		try {
+			return boxManager.getBoxOnLocal(boxId);
+		} catch (NoSuchBoxException e) {
+			
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
 	}
 
 	/**

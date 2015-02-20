@@ -76,4 +76,7 @@ public interface ContentService {
 	 */
 	public abstract void updateContent(String contentsID, String status);
 
+	public abstract Content createContent(String userID,
+			InputStream uploadedInputStream, String[] fileType, File upload);
+
 }

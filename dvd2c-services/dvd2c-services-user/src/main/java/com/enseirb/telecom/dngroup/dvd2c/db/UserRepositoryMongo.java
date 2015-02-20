@@ -358,15 +358,15 @@ public <S extends UserRepositoryObject> S update (S entity){
 		UserRepositoryObject userRepositoryObject = userRepositoryMongo
 				.findOne(userID);
 		if (userRepositoryObject == null) {
-			System.err.println("userRepositoryObject is null");
+			LOGGER.error("userRepositoryObject is null");
 			return null;
 		}
 
 		User user = userRepositoryObject.toUser();
 		String boxID = user.getBoxID();
 		if (boxID == null) {
-			//TODO:Add loger
-			System.err.println("The user box ID is null");
+
+			LOGGER.error("The user box ID is null");
 			return null;
 		}
 		BoxRepositoryObject boxRepositoryObject = boxRepositoryMongo

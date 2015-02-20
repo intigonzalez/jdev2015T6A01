@@ -1,8 +1,10 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
+import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListRelation;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
@@ -31,7 +33,7 @@ public interface RelationService {
 	 * @param userID to get relation
 	 * @return the list of relation
 	 */
-	public abstract ListRelation getListRelation(String userID);
+	public abstract List<Relation> getListRelation(String userID);
 
 	/**
 	 * get the list of relation of a group from a user
@@ -39,7 +41,7 @@ public interface RelationService {
 	 * @param groupID the group to get
 	 * @return the list of relation
 	 */
-	public abstract ListRelation getListRelation(String userID, int groupID);
+	public abstract List<Relation> getListRelation(String userID, int groupID);
 
 	/**
 	 * get all content of the first user to the seconde user
@@ -47,7 +49,7 @@ public interface RelationService {
 	 * @param userIDForm the second user
 	 * @return a list of content
 	 */
-	public abstract ListContent getAllContent(String userIDToGet, String userIDForm);
+	public abstract List<Content> getAllContent(String userIDToGet, String userIDForm);
 
 	/**
 	 *  create a relation between userID and the relation

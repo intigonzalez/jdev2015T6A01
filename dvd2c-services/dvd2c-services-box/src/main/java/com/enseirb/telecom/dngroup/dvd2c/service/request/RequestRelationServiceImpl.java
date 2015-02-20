@@ -110,9 +110,9 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 		Box boxRelation = requestServ.getBoxByUserIDORH(emailOfRelation);
 		WebTarget target = client.target(boxRelation.getIp() + "/api/box/relation/" + emailOfRelation + "/" + userID);
 		Relation relation=new Relation();
-		try{
+
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE).put(Entity.entity(relation,MediaType.APPLICATION_XML));
-		
+
 		switch (Status.fromStatusCode(response.getStatus())) {
 		case ACCEPTED:
 			// normal statement
@@ -129,9 +129,6 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 		default:
 			throw new IOException("Can not conect to the server :" + response.getStatus());
 		}
-		}catch (RuntimeException  e){
-		    //NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-		}
+
 	}
 }

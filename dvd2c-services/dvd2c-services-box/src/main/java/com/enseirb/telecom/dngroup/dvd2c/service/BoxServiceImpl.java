@@ -3,6 +3,11 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
+
+import jersey.repackaged.com.google.common.base.Throwables;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,13 +59,13 @@ public class BoxServiceImpl implements BoxService {
 		return boxDatabase.exists(boxID);
 	}
 
-	public Box getBoxOnLocal(String boxID) {
+	public Box getBoxOnLocal(String boxID) throws NoSuchBoxException {
 		
 		Box box = null;
 		box = boxDatabase.findOne(boxID).toBox();
 		if (box == null) {
 			LOGGER.debug("No Box Found : {}",boxID);
-			return null;
+			throw new NoSuchBoxException();
 		}
 		LOGGER.debug("Box Found : {}",box.getBoxID());
 		return box;
@@ -93,12 +98,15 @@ public class BoxServiceImpl implements BoxService {
 		try {
 
 			requetBoxService.updateBoxORH(box);
+			saveBoxOnLocal(box);
 		} catch (IOException e) {
 			LOGGER.error("can't save Box On Server : {}", box.getBoxID(), e);
+			throw Throwables.propagate(e);
 		} catch (NoSuchBoxException e) {
 			LOGGER.error("Box not found: {}", box.getBoxID(), e);
+			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		saveBoxOnLocal(box);
+		
 	}
 
 	public void saveBoxOnLocal(Box box) {
@@ -115,7 +123,6 @@ public class BoxServiceImpl implements BoxService {
 			LOGGER.error("box not found : {}", boxID, e);
 		}
 
-		// XXX: Good to delete on local ???
 		deleteBoxOnLocal(boxID);
 	}
 
@@ -140,9 +147,7 @@ public class BoxServiceImpl implements BoxService {
 			Iterator<BoxRepositoryObject> itr = boxIterable.iterator();
 			while (itr.hasNext()) {
 				BoxRepositoryObject box = itr.next();
-//				int temp = box.getUser().size();
 				listBox.getBox().add(box.toBox());
-
 			}
 			return listBox;
 		}

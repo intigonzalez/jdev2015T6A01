@@ -68,7 +68,6 @@ public class UserEndPoints {
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postUser(User user) throws URISyntaxException {
 		if (uManager.userExistOnLocal(user.getUserID()) == false) {
-			
 			uManager.createUserOnLocal(user);
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(user.getUserID())).build();

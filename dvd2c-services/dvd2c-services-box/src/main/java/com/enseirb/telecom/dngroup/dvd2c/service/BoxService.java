@@ -1,5 +1,6 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListBox;
 
@@ -25,8 +26,9 @@ public interface BoxService {
 	 * Get a box by a boxID
 	 * @param boxID the box to get
 	 * @return the box (null if don't exist)
+	 * @throws NoSuchBoxException 
 	 */
-	public abstract Box getBoxOnLocal(String boxID);
+	public abstract Box getBoxOnLocal(String boxID) throws NoSuchBoxException;
 
 	/**
 	 * create a new box on server

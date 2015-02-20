@@ -3,6 +3,7 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
@@ -109,7 +110,7 @@ public class RelationEndPoints {
 	@RolesAllowed("other")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ListRelation getListRelation(@PathParam("userID") String userIDFromPath) {
+	public List<Relation> getListRelation(@PathParam("userID") String userIDFromPath) {
 
 		return rManager.getListRelation(userIDFromPath);
 
@@ -202,12 +203,8 @@ public class RelationEndPoints {
 	@RolesAllowed("other")
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putFriend(@PathParam("userID") String userIDFromPath,
-
-			@PathParam("username") String friendEmail, Relation relation) {
-
-
-		//TODO need to verify the friend and after this modifies the friend
+	public Response putFriend(@PathParam("userID") String userIDFromPath,@PathParam("username") String friendEmail, Relation relation) {
+		// need to verify the friend and after this modifies the friend
 		if (relation.getEmail() == null) {
 			relation.setEmail(friendEmail);
 		}

@@ -80,8 +80,7 @@ public class UserEndPoints extends HttpServlet {
 		}
  
 	}
-	
-	// TODO: update the class to suit your needs
+
 
 	/**
 	 * Get a user by userID

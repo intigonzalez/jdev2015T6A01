@@ -22,35 +22,28 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Comment;
 @Path("app/{userID}/contents/{contentID}")
 public class CommentEndPoints {
 
-	// TODO: This poart is not used
+	// This part is not used
 
 	
 	@GET
 	@Path("{commentID}")
 	@Produces(MediaType.APPLICATION_XML)
-	public Comment getIt() {
-		// need to create
-		// NHE: easy way to return an error for a rest api: throw an
-		// WebApplicationException
-		throw new WebApplicationException(Status.CONFLICT);
+	public Comment getIt() {		
+		throw new WebApplicationException(Status.NOT_IMPLEMENTED);
 	}
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postComment(@PathParam("userID") String userID, Comment comment) {
-		// add a comment
-		return Response.status(Status.SERVICE_UNAVAILABLE).build();
+		return Response.status(Status.NOT_IMPLEMENTED).build();
 
 	}
 
-	//pas obligatory
 	@PUT
 	@Path("{commentID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putComment(Comment comment) {
-		// need to verify user
-		// and after this modifies the comment
-		return Response.status(Status.SERVICE_UNAVAILABLE).build();
+		return Response.status(Status.NOT_IMPLEMENTED).build();
 
 	}
 
@@ -58,9 +51,7 @@ public class CommentEndPoints {
 	@Path("{commentID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteComment(Comment comment) {
-		// need to verify user
-		// and after this delete the comment
-		return Response.status(Status.SERVICE_UNAVAILABLE).build();
+		return Response.status(Status.NOT_IMPLEMENTED).build();
 
 	}
 

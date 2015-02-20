@@ -11,11 +11,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
@@ -52,7 +55,11 @@ public class BoxEndPoints {
 	@Path("id/{boxId}")
 	@Produces(MediaType.APPLICATION_XML)
 	public Box getBox(@PathParam("boxId") String boxId) {
-		return boxManager.getBoxOnLocal(boxId);
+		try {
+			return boxManager.getBoxOnLocal(boxId);
+		} catch (NoSuchBoxException e) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
 	}
 
 	/**

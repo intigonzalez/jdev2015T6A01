@@ -39,17 +39,11 @@ import com.google.common.io.Files;
 @Path("app/{userID}/content")
 @RolesAllowed("other")
 public class ContentEndPoints {
-	
-private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.class);
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.class);
 
 	ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo(), new RabbitMQServer());
 
-	// TODO: update the class to suit your needs
-
-	// The Java method will process HTTP GET requests
-	// The Java method will produce content identified by the MIME Media
-	// type "text/plain"
-	
 	/**
 	 * Get all contents for a user. This request only called by videos owners
 	 * @param userID
@@ -60,7 +54,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 	public ListContent getAllContentsFromUser(@PathParam("userID") String userID) {
 		return uManager.getAllContentsFromUser(userID);
 	}
-	
+
 	/**
 	 * Get a specific content from the owner
 	 * @param userID
@@ -76,21 +70,21 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 		}
 		else {
 			// No URL parameter idLanguage was sent
-		    ResponseBuilder builder = Response.status(Response.Status.FORBIDDEN);
-		    builder.entity("This content doesn't belong to you ! ");
-		    Response response = builder.build();
-		    throw new WebApplicationException(response);	
+			ResponseBuilder builder = Response.status(Response.Status.FORBIDDEN);
+			builder.entity("This content doesn't belong to you ! ");
+			Response response = builder.build();
+			throw new WebApplicationException(response);	
 		}
-		
-	}
-	
 
-	
-//	@POST
-//	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-//	public Response postVideo(Content content) {
-//		return Response.status(Status.SERVICE_UNAVAILABLE).build();
-//	}
+	}
+
+
+
+	//	@POST
+	//	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	//	public Response postVideo(Content content) {
+	//		return Response.status(Status.SERVICE_UNAVAILABLE).build();
+	//	}
 
 	/**
 	 * post a file on the box for the userID
@@ -108,40 +102,22 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail,
 			@FormDataParam("file") FormDataBodyPart body)
-			throws URISyntaxException, IOException {
+					throws URISyntaxException, IOException {
 		String fileName = fileDetail.getFileName();
 		String extension = Files.getFileExtension(fileName);			
 		MediaType fileMediaType = body.getMediaType();
 		String fileTypeTemp = fileMediaType.toString();
 		String [] fileType = fileTypeTemp.split("/");
-		
+
 		File upload = File.createTempFile(userID, "."+extension,Files.createTempDir());
 
-		//NHE: all the rest should be in the Service Layer
-		// save it
-		uManager.writeToFile(uploadedInputStream, upload);
-
-
-	//	System.out.println("File uploaded to : " + upload.getAbsolutePath());
-		LOGGER.debug("New file uploaded with the type {}",fileType[0]);
-
 		
-		Content content = new Content();
-		content.setName(upload.getName());
-		content.setLogin(userID);
-		content.setStatus("In progress");
-		content.setType(fileType[0]);
-		UUID uuid = UUID.randomUUID();
-		content.setContentsID(uuid.toString().replace("-", ""));
-		String link = "/videos/"+userID+"/"+uuid.toString();
-		content.setLink(link);
-		long unixTime = System.currentTimeMillis() / 1000L;
-		content.setUnixTime(unixTime);
-
-		content = uManager.createContent(content,upload.getAbsolutePath(), content.getContentsID());
+		Content content = uManager.createContent(userID, uploadedInputStream, fileType, upload);
 		return Response.created(new URI("app/"+userID+"/content/"+content.getContentsID())).build();
 
 	}
+
+	
 
 	/**
 	 * Update information for the video
@@ -163,7 +139,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 			return Response.status(409).build();
 		}
 	}
-	
+
 	/**
 	 * delete the contents with contentsID 
 	 * @param contentsID the contentsID to delete
@@ -174,7 +150,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ContentEndPoints.cl
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteContent(@PathParam("contentsID") String contentsID) {
 		// TODO: need to check the authentication of the user
-		
+
 		// delete the content
 		uManager.deleteContent(contentsID);
 		return Response.status(200).build();

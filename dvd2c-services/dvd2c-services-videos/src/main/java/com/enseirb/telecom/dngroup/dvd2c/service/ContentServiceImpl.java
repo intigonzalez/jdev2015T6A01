@@ -7,6 +7,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Iterator;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +75,28 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
+	public Content createContent(String userID,
+			InputStream uploadedInputStream, String[] fileType, File upload) {
+	
+			writeToFile(uploadedInputStream, upload);	
+			LOGGER.debug("New file uploaded with the type {}",fileType[0]);	
+			Content content = new Content();
+			content.setName(upload.getName());
+			content.setLogin(userID);
+			content.setStatus("In progress");
+			content.setType(fileType[0]);
+			UUID uuid = UUID.randomUUID();
+			content.setContentsID(uuid.toString().replace("-", ""));
+			String link = "/videos/"+userID+"/"+uuid.toString();
+			content.setLink(link);
+			long unixTime = System.currentTimeMillis() / 1000L;
+			content.setUnixTime(unixTime);
+	
+			content = createContent(content,upload.getAbsolutePath(), content.getContentsID());
+			return content;
+		}
+
+	@Override
 	public Content createContent(Content content, String srcfile, String id) {
 
 		// Only if the file is a video content
@@ -108,8 +131,7 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public void saveContent(Content content) {
-		// TODO(0) : Manage the content update. Check all informations are done
-		// !
+		// Manage the content update. Check all informations are done !
 		contentDatabase.save(new ContentRepositoryObject(content));
 	}
 
@@ -196,5 +218,6 @@ public class ContentServiceImpl implements ContentService {
 		content.setStatus(status);
 		contentDatabase.save(new ContentRepositoryObject(content));
 	}
+	
 
 }

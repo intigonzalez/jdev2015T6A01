@@ -256,9 +256,7 @@ public class ContentRepositoryMongo implements ContentRepository {
 			}
 
 		} catch (UnknownHostException e) {
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			System.err.println("Connection to database failed ");
+			LOGGER.error("Connection to database failed ");
 		}
 		return listOfAllContent;
 
@@ -282,10 +280,8 @@ e.printStackTrace();
 
 			nbOfContents = dbUsers.getCount();
 		} catch (UnknownHostException e) {
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			// System.err.println("Connection to database failed ");
-			LOGGER.error("Connection to database failed");
+	
+LOGGER.error("Connection to database failed ");
 
 		}
 
@@ -350,10 +346,7 @@ e.printStackTrace();
 					.toString());
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
-			//NHE: no print stack trace allowed in the project. Please replace it with appropriate logger and Exception handling. 
-e.printStackTrace();
-			// System.err.println("Connection to database failed ");
-			LOGGER.error("Connnection to database failed");
+			LOGGER.error("Connection to database failed ");
 
 		}
 

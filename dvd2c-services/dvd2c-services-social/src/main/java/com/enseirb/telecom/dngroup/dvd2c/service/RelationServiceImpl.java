@@ -1,6 +1,7 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
+import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListRelation;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
@@ -76,8 +78,7 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public Relation getRelation(String userID, String email) {
-		RelationshipRepositoryObject relation = relationshipDatabase.findOne(
-				userID, email);
+		RelationshipRepositoryObject relation = relationshipDatabase.findOne(userID, email);
 		if (relation == null) {
 			return null;
 		} else {
@@ -103,8 +104,8 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public ListRelation getListRelation(final String userID) {
-		ListRelation listRelation = new ListRelation();
+	public List<Relation> getListRelation(final String userID) {
+		List<Relation> listRelation = new ArrayList<Relation>();
 		Iterable<RelationshipRepositoryObject> relation = relationshipDatabase
 				.findAll();
 		Iterator<RelationshipRepositoryObject> itr = relation.iterator();
@@ -112,9 +113,8 @@ public class RelationServiceImpl implements RelationService {
 			RelationshipRepositoryObject relationshipRepositoryObject = itr
 					.next();
 			if (relationshipRepositoryObject.getUserId().equals(userID)) {
-				// XXX: REWORK#1 won't compile
 
-				listRelation.getRelation().add(
+				listRelation.add(
 						relationshipRepositoryObject.toRelation());
 			}
 		}
@@ -123,19 +123,15 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public ListRelation getListRelation(String userID, int groupID) {
-		// XXX: won't compile since the following line doesn't compile
-		// List<Integer> groupeIDs =
-		// listRelation.getRelation().get(i).getGroupID();
-		ListRelation listRelation = getListRelation(userID);
-		ListRelation listRelation2 = new ListRelation();
-		for (int i = 0; i < listRelation.getRelation().size(); i++) {
-			List<Integer> groupeIDs = listRelation.getRelation().get(i)
-					.getGroupID();
+	public List<Relation> getListRelation(String userID, int groupID) {
+
+		List<Relation> listRelation = getListRelation(userID);
+		List<Relation> listRelation2 = new ArrayList<Relation>();
+		for (int i = 0; i < listRelation.size(); i++) {
+			List<Integer> groupeIDs = listRelation.get(i).getGroupID();
 			for (Integer groupeID : groupeIDs) {
 				if (groupeID == groupID) {
-					listRelation2.getRelation().add(
-							listRelation.getRelation().get(i));
+					listRelation2.add(listRelation.get(i));
 				}
 			}
 
@@ -161,9 +157,9 @@ public class RelationServiceImpl implements RelationService {
 	public Relation createRelation(String userID, Relation relation,
 			Boolean fromBox) throws NoSuchUserException {
 		/*
-		 * TODO(0) : Check the content, add a state 1 to the approuve value
-		 * TODO(1) : Check the user really exists from the central server
-		 * TODO(1) : Send a request to the right box to say it add as a friend
+		 *  Check the content, add a state 1 to the approuve value
+		 *  Check the user really exists from the central server
+		 *  Send a request to the right box to say it add as a friend
 		 */
 		User user = new User();
 		RequestUserService rus = new RequestUserServiceImpl();
@@ -281,12 +277,12 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public ListContent getAllContent(String userID, String relationID) {
+	public List<Content> getAllContent(String userID, String relationID) {
 		try {
 
 			RequestContentService requestContentService = new RequestContentServiceImpl();
 
-			ListContent listContent = requestContentService.get(userID,
+			List<Content> listContent = requestContentService.get(userID,
 					relationID);
 			LOGGER.debug("Content from {} fetched ! ", relationID);
 			return listContent;
