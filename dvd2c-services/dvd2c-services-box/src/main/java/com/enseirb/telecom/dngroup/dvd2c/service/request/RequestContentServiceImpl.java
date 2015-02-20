@@ -12,9 +12,6 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
-
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.ContentEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
@@ -24,7 +21,8 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
 
 public class RequestContentServiceImpl implements RequestContentService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(RequestContentServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(RequestContentServiceImpl.class);
 	private Client client;
 
 	public RequestContentServiceImpl() {
@@ -32,21 +30,23 @@ public class RequestContentServiceImpl implements RequestContentService {
 	}
 
 	@Override
-	public List<Content> get(String userID, String relationID) throws IOException, NoSuchUserException, NoRelationException, NoSuchBoxException {
+	public List<Content> get(String userID, String relationID)
+			throws IOException, NoSuchUserException, NoRelationException,
+			NoSuchBoxException {
 		RequestUserServiceImpl requestServ = new RequestUserServiceImpl();
 		Box boxRelation = requestServ.getBoxByUserIDORH(relationID);
-		
-		client = ClientBuilder.newClient();
-		List<Content> listContent = new ArrayList<Content>();
-		LOGGER.debug("Launch the request to the box");
-		WebTarget target = client.target(boxRelation.getIp() + "/api/box/" + relationID + "/content/" + userID);
 
-		listContent = target.request(MediaType.APPLICATION_XML_TYPE).get(ArrayList<Content>.class);
+		client = ClientBuilder.newClient();
+
+		LOGGER.debug("Launch the request to the box");
+		WebTarget target = client.target(boxRelation.getIp() + "/api/box/"
+				+ relationID + "/content/" + userID);
+
+		List<Content> listContent = target.request(
+				MediaType.APPLICATION_XML_TYPE).get(List.class);
 		client.close();
 		LOGGER.debug("listContent is {}", listContent.toString());
 		return listContent;
 	}
-
-
 
 }
