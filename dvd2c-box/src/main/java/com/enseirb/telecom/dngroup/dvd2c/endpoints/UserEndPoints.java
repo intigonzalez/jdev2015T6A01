@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServlet;
@@ -25,7 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
@@ -103,7 +103,7 @@ public class UserEndPoints extends HttpServlet {
 	@GET
 	@Path("name/{name}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ListUser getUserByName(@PathParam("name") String name){
+	public List<User> getUserByName(@PathParam("name") String name){
 		return uManager.getUserFromNameOnServer(name);
 	}
 

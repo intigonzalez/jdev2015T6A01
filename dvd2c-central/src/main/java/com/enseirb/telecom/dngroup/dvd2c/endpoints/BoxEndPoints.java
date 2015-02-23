@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -24,8 +25,7 @@ import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListBox;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
+import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 // The Java class will be hosted at the URI path "/myresource"
 @Path("app/box")
@@ -41,7 +41,7 @@ public class BoxEndPoints {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_XML)
-	public ListBox getListBox() {
+	public List<Box> getListBox() {
 		return boxManager.getAllBox();
 	}
 
@@ -71,8 +71,8 @@ public class BoxEndPoints {
 	@GET
 	@Path("ip/{boxIp}")
 	@Produces(MediaType.APPLICATION_XML)
-	public ListUser getUserFromIP(@PathParam("boxIp") String ip) {
-		ListBox listBox = boxManager.getBoxListFromIP(ip);
+	public List<User> getUserFromIP(@PathParam("boxIp") String ip) {
+		List<Box> listBox = boxManager.getBoxListFromIP(ip);
 		return uManager.getUsersFromListBoxes(listBox);
 		
 	}

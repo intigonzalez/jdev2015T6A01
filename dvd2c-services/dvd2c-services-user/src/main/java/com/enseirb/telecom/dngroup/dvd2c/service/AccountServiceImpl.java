@@ -1,6 +1,7 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,8 +16,6 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListBox;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public class AccountServiceImpl implements AccountService {
@@ -82,7 +81,7 @@ public class AccountServiceImpl implements AccountService {
 	 * telecom.s9.User)
 	 */
 	@Override
-	public ListUser getUserFromNameOnServer(String name) {
+	public List<User> getUserFromNameOnServer(String name) {
 		try {
 			return requetUserService.getUserFromName(name);
 		} catch (IOException e) {
@@ -92,11 +91,11 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public ListUser getUserFromName(String name) {
+	public List<User> getUserFromName(String name) {
 		//DB: need to change
 		Iterable<UserRepositoryObject> userIterable = userDatabase.findAll();
 		UserRepositoryObject userRepo = null;
-		ListUser listUser = new ListUser();
+		List<User> listUser = new ArrayList<User>();
 	
 		if (userIterable == null)
 			return listUser;
@@ -106,17 +105,17 @@ public class AccountServiceImpl implements AccountService {
 			while (iterator.hasNext()) {
 				userRepo = iterator.next();
 				if (userRepo.getName().equalsIgnoreCase(name))
-					listUser.getUser().add(userRepo.toUser());
+					listUser.add(userRepo.toUser());
 			}
 			return listUser;
 		}
 	}
 
-	public ListUser getUserFromBoxID(String boxID) {
+	public List<User> getUserFromBoxID(String boxID) {
 		//DB: need to change
 		Iterable<UserRepositoryObject> userIterable = userDatabase.findAll();
 		UserRepositoryObject userRepo = null;
-		ListUser listUser = new ListUser();
+		 List<User> listUser = new ArrayList<User>();
 	
 		if (userIterable == null)
 			return listUser;
@@ -126,7 +125,7 @@ public class AccountServiceImpl implements AccountService {
 			while (iterator.hasNext()) {
 				userRepo = iterator.next();
 				if (userRepo.getBoxID().equals(boxID))
-					listUser.getUser().add(userRepo.toUser());
+					listUser.add(userRepo.toUser());
 			}
 			return listUser;
 		}
@@ -195,28 +194,28 @@ public class AccountServiceImpl implements AccountService {
 	}
 	
 	@Override
-	public ListUser getUsersFromBoxes(ListBox listBox) {
+	public List<User> getUsersFromBoxes(List<Box> listBox) {
 
 		AccountService uManager = this;
-		ListUser listUsersFinal = new ListUser(), listUsersOfBoxes = new ListUser();
+		List<User> listUsersFinal = new ArrayList<User>(), listUsersOfBoxes = new ArrayList<User>();
 
 		List<User> u;
 		User user;
 		Box box = new Box();
-		List<Box> boxes = listBox.getBox();
+		List<Box> boxes = listBox;
 
 		Iterator<Box> itrBoxes = boxes.iterator();
 		while (itrBoxes.hasNext()) {
 
 			box = itrBoxes.next();
 			listUsersOfBoxes = uManager.getUserFromBoxID(box.getBoxID());
-			u = listUsersOfBoxes.getUser();
-			Iterator<User> itrUsers = u.iterator();
+			
+			Iterator<User> itrUsers = listUsersOfBoxes.iterator();
 
 			while (itrUsers.hasNext()) {
 
 				user = itrUsers.next();
-				listUsersFinal.getUser().add(user);
+				listUsersFinal.add(user);
 			}
 		}
 
@@ -224,7 +223,7 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public ListUser getUsersFromListBoxes(ListBox listBox) {
+	public List<User> getUsersFromListBoxes(List<Box> listBox) {
 		return getUsersFromBoxes(listBox);
 	}
 }

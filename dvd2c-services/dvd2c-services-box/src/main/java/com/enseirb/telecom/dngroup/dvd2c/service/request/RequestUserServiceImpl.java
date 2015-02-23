@@ -1,12 +1,15 @@
 package com.enseirb.telecom.dngroup.dvd2c.service.request;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -20,7 +23,6 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public class RequestUserServiceImpl implements RequestUserService {
@@ -57,13 +59,12 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 
 	@Override
-	public ListUser getUserFromName(String name) throws IOException {
-		ListUser listUser = new ListUser();
+	public List<User> getUserFromName(String name) throws IOException {
+		List<User> listUser = new ArrayList<User>();
 		// Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(url + "name/" + name);
 		try {
-			listUser = target.request(MediaType.APPLICATION_XML_TYPE).get(
-					ListUser.class);
+			listUser = target.request(MediaType.APPLICATION_XML_TYPE).get(new GenericType<List<User>>(){});
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 500) {
 				LOGGER.error("{}", e);

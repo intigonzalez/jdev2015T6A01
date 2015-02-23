@@ -16,7 +16,6 @@ import ch.qos.logback.core.status.Status;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListRelation;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationServiceImpl;

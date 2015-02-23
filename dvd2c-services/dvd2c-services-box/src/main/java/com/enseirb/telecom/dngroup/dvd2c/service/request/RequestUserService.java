@@ -2,12 +2,12 @@ package com.enseirb.telecom.dngroup.dvd2c.service.request;
 
 
 import java.io.IOException;
+import java.util.List;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public interface RequestUserService {
@@ -29,7 +29,7 @@ public interface RequestUserService {
 	 * @return the list of user with this name
 	 * @throws IOException the host is not reachable
 	 */
-	public abstract ListUser getUserFromName(String name) throws IOException;
+	public abstract List<User> getUserFromName(String name) throws IOException;
 
 	/**
 	 * post a user on remote host

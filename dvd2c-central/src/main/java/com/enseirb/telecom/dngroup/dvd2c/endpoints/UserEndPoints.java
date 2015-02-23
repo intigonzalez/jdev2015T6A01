@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -18,7 +19,6 @@ import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 // The Java class will be hosted at the URI path "/app/account"
@@ -43,7 +43,7 @@ public class UserEndPoints {
 	@GET
 	@Path("name/{name}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ListUser getUserFromName(@PathParam("name") String name) {
+	public List<User> getUserFromName(@PathParam("name") String name) {
 
 		return uManager.getUserFromName(name);
 
@@ -51,7 +51,7 @@ public class UserEndPoints {
 
 	@GET
 	@Path("boxIX/{boxID}")
-	public ListUser getUserFromBoxID(@PathParam("boxID") String boxID) {
+	public List<User> getUserFromBoxID(@PathParam("boxID") String boxID) {
 
 		return uManager.getUserFromBoxID(boxID);
 

@@ -1,8 +1,9 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
+import java.util.List;
+
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListBox;
 
 public interface BoxService {
 
@@ -68,20 +69,20 @@ public interface BoxService {
 	 * @param ip the ip to get user
 	 * @return a user list
 	 */
-	public abstract ListBox getBoxListFromIP(String ip);
+	public abstract List<Box> getBoxListFromIP(String ip);
 
 	/**
 	 * get all box on local db
 	 * @return all box
 	 */
-	public abstract ListBox getAllBox();
+	public abstract List<Box> getAllBox();
 
 	/**
 	 * Get all box with a ip of @param
 	 * @param ip the ip to get the list of box
 	 * @return
 	 */
-	public abstract ListBox getBoxesFromIP(String ip);
+	public abstract List<Box> getBoxesFromIP(String ip);
 
 	
 

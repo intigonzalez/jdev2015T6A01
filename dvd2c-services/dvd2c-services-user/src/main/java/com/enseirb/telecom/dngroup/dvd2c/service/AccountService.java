@@ -1,8 +1,8 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
+import java.util.List;
+
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListBox;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListUser;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public interface AccountService {
@@ -33,7 +33,7 @@ public interface AccountService {
 	 * @param name to get list
 	 * @return
 	 */
-	public abstract ListUser getUserFromNameOnServer(String name);
+	public abstract List<User> getUserFromNameOnServer(String name);
 
 	/**
 	 *  create user on server and after in local
@@ -79,7 +79,7 @@ public interface AccountService {
 	 * @param name the name to search
 	 * @return a list of user
 	 */
-	public abstract ListUser getUserFromName(String name);
+	public abstract List<User> getUserFromName(String name);
 
 	/**
 	 * Get the list of users who have the same box on local
@@ -87,7 +87,7 @@ public interface AccountService {
 	 * @param boxID the name to search
 	 * @return a list of user
 	 */
-	public abstract ListUser getUserFromBoxID(String boxID);
+	public abstract List<User> getUserFromBoxID(String boxID);
 	
 	/**
 	 * Get the box of a user on local
@@ -102,13 +102,13 @@ public interface AccountService {
 	 * @param listBox the all box to get users
 	 * @return a list of user
 	 */
-	public abstract ListUser getUsersFromBoxes(ListBox listBox);
+	public abstract List<User> getUsersFromBoxes(List<Box> listBox);
 
 	/**
 	 * get the list of user from a list of box
 	 * @param listBox the list of box to extract users
 	 * @return the list of user
 	 */
-	public abstract ListUser getUsersFromListBoxes(ListBox listBox);
+	public abstract List<User> getUsersFromListBoxes(List<Box> listBox);
 
 }

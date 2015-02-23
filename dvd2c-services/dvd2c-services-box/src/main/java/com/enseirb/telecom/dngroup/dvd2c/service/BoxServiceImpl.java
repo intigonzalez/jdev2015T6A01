@@ -1,7 +1,9 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
@@ -17,7 +19,6 @@ import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListBox;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestBoxService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestBoxServiceImpl;
 
@@ -132,32 +133,32 @@ public class BoxServiceImpl implements BoxService {
 	}
 
 	@Override
-	public ListBox getBoxListFromIP(String ip) {
-		ListBox listBox = getBoxesFromIP(ip);
+	public List<Box> getBoxListFromIP(String ip) {
+		List<Box> listBox = getBoxesFromIP(ip);
 		return listBox;
 	}
 
 	@Override
-	public ListBox getAllBox() {
+	public List<Box> getAllBox() {
 		Iterable<BoxRepositoryObject> boxIterable = boxDatabase.findAll();
-		ListBox listBox = new ListBox();
+		List<Box> listBox = new ArrayList<Box>();
 		if (boxIterable == null)
 			return listBox;
 		else {
 			Iterator<BoxRepositoryObject> itr = boxIterable.iterator();
 			while (itr.hasNext()) {
 				BoxRepositoryObject box = itr.next();
-				listBox.getBox().add(box.toBox());
+				listBox.add(box.toBox());
 			}
 			return listBox;
 		}
 	}
 
 	@Override
-	public ListBox getBoxesFromIP(String ip) {
+	public List<Box> getBoxesFromIP(String ip) {
 
 		Iterable<BoxRepositoryObject> boxIterable = boxDatabase.findAll();
-		ListBox listBox = new ListBox();
+		List<Box> listBox = new ArrayList<Box>();
 
 		if (boxIterable == null)
 			return listBox;
@@ -167,7 +168,7 @@ public class BoxServiceImpl implements BoxService {
 				BoxRepositoryObject box = itr.next();
 
 				if (box.getIp().equals(ip)) {
-					listBox.getBox().add(box.toBox());
+					listBox.add(box.toBox());
 				}
 			}
 			return listBox;

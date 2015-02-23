@@ -7,10 +7,13 @@ import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
 
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.ContentEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
@@ -37,14 +40,14 @@ public class RequestContentServiceImpl implements RequestContentService {
 
 		client = ClientBuilder.newClient();
 
-		LOGGER.debug("Launch the request to the box");
+		
 		WebTarget target = client.target(boxRelation.getIp() + "/api/box/"
 				+ relationID + "/content/" + userID);
-
-		List<Content> listContent = target.request(
-				MediaType.APPLICATION_XML_TYPE).get(List.class);
+		LOGGER.debug("Launch the request to the box : {}",target.getUri());
+		
+		List<Content> listContent = target.request(MediaType.APPLICATION_XML_TYPE).get(new GenericType<List<Content>>(){});
 		client.close();
-		LOGGER.debug("listContent is {}", listContent.toString());
+		LOGGER.debug("size of list content is {}", listContent.size());
 		return listContent;
 	}
 

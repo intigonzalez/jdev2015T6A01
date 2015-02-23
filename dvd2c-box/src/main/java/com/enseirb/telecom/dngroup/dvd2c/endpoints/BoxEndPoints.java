@@ -187,7 +187,8 @@ public class BoxEndPoints {
 			Relation relation = relationService.getRelation(userID, relationID);
 
 			LOGGER.debug("Check the relation : {}", relation);
-			return uManager.getAllContent(userID, relation);
+			List<Content> listContent = uManager.getAllContent(userID, relation);
+			return listContent;
 		}
 		return null;
 	}
