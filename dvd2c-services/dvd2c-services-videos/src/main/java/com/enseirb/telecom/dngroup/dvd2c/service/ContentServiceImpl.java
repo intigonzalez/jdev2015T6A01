@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -16,7 +18,6 @@ import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.model.Task;
 import com.enseirb.telecom.dngroup.dvd2c.utils.FileService;
@@ -24,7 +25,6 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.json.JsonWriter;
-//import com.enseirb.telecom.dngroup.dvd2c.endpoints.ContentEndPoints;
 
 public class ContentServiceImpl implements ContentService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContentServiceImpl.class);
@@ -48,20 +48,18 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public ListContent getAllContentsFromUser(String userID) {
+	public List<Content> getAllContentsFromUser(String userID) {
 		contentDatabase.findAllFromUser(userID);
-
-		ListContent listContent = new ListContent();
+		List<Content> listContent = new ArrayList<Content>();
 		Iterable<ContentRepositoryObject> contentsDb = contentDatabase.findAllFromUser(userID);
 		Iterator<ContentRepositoryObject> itr = contentsDb.iterator();
 		while (itr.hasNext()) {
 			ContentRepositoryObject contentRepositoryObject = itr.next();
 			if (contentRepositoryObject.getUserId().equals(userID)) {
-				listContent.getContent().add(contentRepositoryObject.toContent());
+				listContent.add(contentRepositoryObject.toContent());
 			}
 		}
 		return listContent;
-
 	}
 
 	@Override
@@ -167,9 +165,9 @@ public class ContentServiceImpl implements ContentService {
 
 	}
 
-	public ListContent getAllContent(String userID, Relation relation) {
+	public List<Content> getAllContent(String userID, Relation relation) {
 		// List that will be return.
-		ListContent listContent = new ListContent();
+		List<Content> listContent = new ArrayList<Content>();
 
 		// Get all the content the UserID stores
 		Iterable<ContentRepositoryObject> content = contentDatabase.findAll();// FromUser(userID);
@@ -195,7 +193,7 @@ public class ContentServiceImpl implements ContentService {
 									contentRepositoryObject.getAuthorization().clear();
 									contentRepositoryObject.setLink(ApplicationContext.getProperties().getProperty("PublicAddr")+contentRepositoryObject.getLink());
 
-									listContent.getContent().add(contentRepositoryObject.toContent());
+									listContent.add(contentRepositoryObject.toContent());
 									break search;
 								} else {
 									//LOGGER.debug("Group is not the same. ");

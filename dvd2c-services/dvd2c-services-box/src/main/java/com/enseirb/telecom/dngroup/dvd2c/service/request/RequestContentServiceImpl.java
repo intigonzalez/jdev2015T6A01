@@ -18,7 +18,6 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
 
 public class RequestContentServiceImpl implements RequestContentService {
 	private static final Logger LOGGER = LoggerFactory

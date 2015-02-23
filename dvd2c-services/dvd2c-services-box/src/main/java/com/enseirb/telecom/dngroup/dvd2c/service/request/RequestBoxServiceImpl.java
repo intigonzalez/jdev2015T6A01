@@ -31,7 +31,7 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 	public Box get(String boxID) throws IOException,NoSuchBoxException {
 		Box boxGet = new Box();
 		WebTarget target = client.target(url +"id/"+ boxID);
-		
+		LOGGER.debug("URL To send the request {}",target.getUri());
 		try{
 		boxGet = target.request(MediaType.APPLICATION_XML_TYPE).get(Box.class);
 		}catch(WebApplicationException e){

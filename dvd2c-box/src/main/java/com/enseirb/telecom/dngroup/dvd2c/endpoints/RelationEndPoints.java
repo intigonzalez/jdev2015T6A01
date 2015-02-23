@@ -25,8 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListRelation;
+import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
@@ -88,7 +87,7 @@ public class RelationEndPoints {
 	@GET
 	@Path("{relationID}/content")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ListContent getRelationContents(@PathParam("relationID") String relationID, @PathParam("userID") String userID) {
+	public List<Content> getRelationContents(@PathParam("relationID") String relationID, @PathParam("userID") String userID) {
 
 		if (rManager.RelationExist(userID, relationID)) {
 			Relation relation = rManager.getRelation(userID, relationID);

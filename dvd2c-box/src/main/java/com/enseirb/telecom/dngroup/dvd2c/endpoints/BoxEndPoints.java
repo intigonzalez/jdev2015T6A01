@@ -2,6 +2,8 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -26,7 +28,7 @@ import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
+import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceImpl;
@@ -176,7 +178,7 @@ public class BoxEndPoints {
 	@GET
 	@Path("{userID}/content/{relationID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ListContent getLocalContentForRelation(@PathParam("relationID") String relationID, @PathParam("userID") String userID) {
+	public List<Content> getLocalContentForRelation(@PathParam("relationID") String relationID, @PathParam("userID") String userID) {
 		RelationServiceImpl relationService = new RelationServiceImpl(new RelationshipRepositoryMongo(), uRM);
 		ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo(), new RabbitMQServer());
 

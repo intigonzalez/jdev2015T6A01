@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.security.RolesAllowed;
@@ -29,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQServer;
@@ -51,7 +51,7 @@ public class ContentEndPoints {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ListContent getAllContentsFromUser(@PathParam("userID") String userID) {
+	public List<Content> getAllContentsFromUser(@PathParam("userID") String userID) {
 		return uManager.getAllContentsFromUser(userID);
 	}
 

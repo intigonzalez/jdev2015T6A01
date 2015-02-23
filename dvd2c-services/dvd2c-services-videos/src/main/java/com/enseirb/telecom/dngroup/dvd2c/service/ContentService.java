@@ -2,9 +2,10 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.model.ListContent;
+
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 
 
@@ -20,9 +21,9 @@ public interface ContentService {
 	/**
 	 * get all contents from userID
 	 * @param userID of get contents
-	 * @return ListContent 
+	 * @return List<Content> 
 	 */
-	public abstract ListContent getAllContentsFromUser(String userID);
+	public abstract List<Content> getAllContentsFromUser(String userID);
 	
 	/**
 	 * get more information from a contentsID
@@ -67,7 +68,7 @@ public interface ContentService {
 	 * @param groupID list of group to get video
 	 * @return a list a content
 	 */
-	public ListContent getAllContent(String userID, Relation relation);
+	public List<Content> getAllContent(String userID, Relation relation);
 
 	/**
 	 * is use just for change status a video
