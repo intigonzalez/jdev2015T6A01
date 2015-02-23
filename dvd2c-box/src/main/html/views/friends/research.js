@@ -16,12 +16,12 @@ angular.module('myApp.friendSearch', ['ngRoute', 'ui.bootstrap'])
         this.getFriendList = function() {
             $http.get(PREFIX_RQ+"/api/app/"+userID+"/relation")
                 .success(function(data, status, headers, config) {
-                    if ( data.listRelation !== "" ) {
-                        if (angular.isArray(data.listRelation.relation) == false) {
-                            search.friends.push(data.listRelation.relation);
+                    if ( data.relations !== "" ) {
+                        if (angular.isArray(data.relations.relation) == false) {
+                            search.friends.push(data.relations.relation);
                         }
                         else {
-                            search.friends = data.listRelation.relation;
+                            search.friends = data.relations.relation;
                         }
                     }
                     //console.log(friends.list);

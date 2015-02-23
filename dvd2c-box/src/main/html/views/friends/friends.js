@@ -104,7 +104,7 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
         this.getGroupList = function() {
             $http.get(PREFIX_RQ+"/api/app/"+userID+"/group")
                 .success(function(data, status, headers, config) {
-                    if ( data.listRelation !== "" ) {
+                    if ( data.relations !== "" ) {
                         if (angular.isArray(data.listGroups.groups) == false) {
                             friends.listGroups.push(data.listGroups.groups);
                         }
@@ -141,12 +141,12 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
         this.getFriendList = function() {
             $http.get(PREFIX_RQ+"/api/app/"+userID+"/relation")
                 .success(function(data, status, headers, config) {
-                    if ( data.listRelation !== "" ) {
-                        if (angular.isArray(data.listRelation.relation) == false) {
-                            friends.list.push(data.listRelation.relation);
+                    if ( data.relations !== "" ) {
+                        if (angular.isArray(data.relations.relation) == false) {
+                            friends.list.push(data.relations.relation);
                         }
                         else {
-                            friends.list = data.listRelation.relation;
+                            friends.list = data.relations.relation;
                         }
                     }
                     //console.log(friends.list);
