@@ -41,12 +41,12 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
         this.getVideos = function() {
             $http.get(PREFIX_RQ + "/api/app/" + userID + "/content")
                 .success(function (data, status, headers, config) {
-                    if ( data.listContent !== "" ) {
-                        if (angular.isArray(data.listContent.content) == false) {
-                            videos.list.push(data.listContent.content);
+                    if ( data.contents !== "" ) {
+                        if (angular.isArray(data.contents.content) == false) {
+                            videos.list.push(data.contents.content);
                         }
                         else {
-                            videos.list = data.listContent.content;
+                            videos.list = data.contents.content;
                         }
                     }
 

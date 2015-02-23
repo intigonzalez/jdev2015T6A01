@@ -30,12 +30,12 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
             $scope.FriendProfileController.videos = []; // object to store videos
             $http.get(PREFIX_RQ+"/api/app/"+userID+"/relation/"+friend.email +"/content")
                 .success(function(data, status, headers, config) {
-                    if ( data.listContent !== "" ) {
-                        if (angular.isArray(data.listContent.content) == false) {
-                            $scope.FriendProfileController.videos.push(data.listContent.content);
+                    if ( data.contents !== "" ) {
+                        if (angular.isArray(data.contents.content) == false) {
+                            $scope.FriendProfileController.videos.push(data.contents.content);
                         }
                         else {
-                            $scope.FriendProfileController.videos = data.listContent.content;
+                            $scope.FriendProfileController.videos = data.contents.content;
                         }
                         //console.log($scope.FriendProfileController.videos);
                     }
