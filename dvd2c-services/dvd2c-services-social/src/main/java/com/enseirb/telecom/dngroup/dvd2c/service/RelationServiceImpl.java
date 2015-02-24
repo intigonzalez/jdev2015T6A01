@@ -39,8 +39,8 @@ public class RelationServiceImpl implements RelationService {
 		this.userDatabase = userDatabase;
 	}
 
-	public boolean RelationExist(String UserID, String email) {
-		return relationshipDatabase.exists(UserID, email);
+	public boolean RelationExist(String UserID, String userIDOfRelation) {
+		return relationshipDatabase.exists(UserID, userIDOfRelation);
 	}
 
 	@Override
@@ -53,12 +53,12 @@ public class RelationServiceImpl implements RelationService {
 
 			if (rro.getUserId().equals(userID)) {
 
-				LOGGER.debug("{}", rro.getEmail());
+				LOGGER.debug("{}", rro.getUserIDOfRelation());
 
 				try {
-					// Box boxRelation = requestServ.getBox(rro.getEmail());
+					// Box boxRelation = requestServ.getBox(rro.getUserIDOfRelation());
 
-					User relationUpdate = rrs.get(userID, rro.getEmail());
+					User relationUpdate = rrs.get(userID, rro.getUserIDOfRelation());
 					Relation relationIntoDb = relationshipDatabase.findOne(
 							userID, relationUpdate.getUserID()).toRelation();
 					relationIntoDb.setFirstname(relationUpdate.getFirstname());
@@ -75,8 +75,8 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public Relation getRelation(String userID, String email) {
-		RelationshipRepositoryObject relation = relationshipDatabase.findOne(userID, email);
+	public Relation getRelation(String userID, String userIDOfRelation) {
+		RelationshipRepositoryObject relation = relationshipDatabase.findOne(userID, userIDOfRelation);
 		if (relation == null) {
 			return null;
 		} else {
@@ -144,7 +144,7 @@ public class RelationServiceImpl implements RelationService {
 			String relationIDString, Boolean fromBox)
 					throws NoSuchUserException {
 		Relation relation = new Relation();
-		relation.setEmail(relationIDString);
+		relation.setUserIDOfRelation(relationIDString);
 		relation.setAprouve(1);
 		relation.getGroupID().add(0);
 		createRelation(userIDFromPath, relation, fromBox);
@@ -162,7 +162,7 @@ public class RelationServiceImpl implements RelationService {
 		User user = new User();
 		RequestUserService rus = new RequestUserServiceImpl();
 		try {
-			user = rus.get(relation.getEmail());
+			user = rus.get(relation.getUserIDOfRelation());
 			if (user == null) {
 				throw new NoSuchUserException();
 			}
@@ -178,7 +178,7 @@ public class RelationServiceImpl implements RelationService {
 		if (uro != null) {
 			User userWhoAsked = userDatabase.findOne(userID).toUser();
 			Relation relation2 = new Relation();
-			relation2.setEmail(userWhoAsked.getUserID());
+			relation2.setUserIDOfRelation(userWhoAsked.getUserID());
 			relation2.setFirstname(userWhoAsked.getFirstname());
 			relation2.setSurname(userWhoAsked.getSurname());
 			relation2.setPubKey(userWhoAsked.getPubKey());
@@ -186,9 +186,9 @@ public class RelationServiceImpl implements RelationService {
 			relation2.setUnixTime(relation.getUnixTime());
 			relation2.getGroupID().add(0);
 			if (!fromBox) {
-				if (userDatabase.exists(relation.getEmail())) {
+				if (userDatabase.exists(relation.getUserIDOfRelation())) {
 					relationshipDatabase.save(new RelationshipRepositoryObject(
-							relation.getEmail(), relation2));
+							relation.getUserIDOfRelation(), relation2));
 				} else {
 
 					RequestRelationService rss = new RequestRelationServiceImpl();
@@ -220,29 +220,29 @@ public class RelationServiceImpl implements RelationService {
 		// Here, the user is only allowed to edit the approve value if the
 		// current value is = 2
 		Relation relationIntoDb = relationshipDatabase.findOne(userID,
-				relation.getEmail()).toRelation();
+				relation.getUserIDOfRelation()).toRelation();
 		if (relationIntoDb.getAprouve() != relation.getAprouve()
 				&& relationIntoDb.getAprouve() == 2
 				&& relation.getAprouve() == 3) {
 			relationIntoDb.setAprouve(3);
 
-			if (userDatabase.exists(relation.getEmail())) {
+			if (userDatabase.exists(relation.getUserIDOfRelation())) {
 				Relation relation2 = relationshipDatabase.findOne(
-						relation.getEmail(), userID).toRelation();
+						relation.getUserIDOfRelation(), userID).toRelation();
 				relation2.setAprouve(3);
 				relationshipDatabase.save(new RelationshipRepositoryObject(
-						relation.getEmail(), relation2));
+						relation.getUserIDOfRelation(), relation2));
 			} else {
 				RequestRelationService rss = new RequestRelationServiceImpl();
 				try {
-					rss.setAprouveRelationORH(userID, relation.getEmail());
+					rss.setAprouveRelationORH(userID, relation.getUserIDOfRelation());
 				} catch (IOException e) {
-					LOGGER.error("Can not set aprouve {} for {} Error IO",userID,relation.getEmail(),e);
+					LOGGER.error("Can not set aprouve {} for {} Error IO",userID,relation.getUserIDOfRelation(),e);
 					e.printStackTrace();
 				} catch (NoSuchBoxException e) {
-					LOGGER.error("Can not set aprouve {} for {} no box found",userID,relation.getEmail(),e);
+					LOGGER.error("Can not set aprouve {} for {} no box found",userID,relation.getUserIDOfRelation(),e);
 				} catch (NoSuchUserException e) {
-					LOGGER.error("Can not set aprouve {} for {} user not found",userID,relation.getEmail(),e);
+					LOGGER.error("Can not set aprouve {} for {} user not found",userID,relation.getUserIDOfRelation(),e);
 				}
 				rss.close();
 				// Send a request to the box to tell it the user accepts the
@@ -306,24 +306,24 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public void deleteRelation(String userID, String email) {
-		if (userDatabase.exists(email)) {
-			relationshipDatabase.delete(email, userID);
+	public void deleteRelation(String userID, String userIDOfRelation) {
+		if (userDatabase.exists(userIDOfRelation)) {
+			relationshipDatabase.delete(userIDOfRelation, userID);
 
 		} else {
 			RequestRelationService rss = new RequestRelationServiceImpl();
 			try {
-				rss.deleteRelationORH(userID, email);
+				rss.deleteRelationORH(userID, userIDOfRelation);
 			} catch (IOException e) {
-				LOGGER.error("Can not delete a relation betewen {} and {} Error IO",userID,email,e);
+				LOGGER.error("Can not delete a relation betewen {} and {} Error IO",userID,userIDOfRelation,e);
 			} catch (NoSuchUserException e) {
-				LOGGER.debug("Can not delete a relation betewen {} and {} Error user not found (already delete ???)",userID,email,e);
+				LOGGER.debug("Can not delete a relation betewen {} and {} Error user not found (already delete ???)",userID,userIDOfRelation,e);
 			} catch (NoSuchBoxException e) {
-				LOGGER.error("Can not delete a relation betewen {} and {} box of the first not found",userID,email,e);
+				LOGGER.error("Can not delete a relation betewen {} and {} box of the first not found",userID,userIDOfRelation,e);
 			}
 			rss.close();
 		}
-		relationshipDatabase.delete(userID, email);
+		relationshipDatabase.delete(userID, userIDOfRelation);
 
 	}
 

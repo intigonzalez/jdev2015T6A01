@@ -125,7 +125,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 	}
 
 	public BoxRepositoryObject findOne(String id) {
-		// The id is the email address
+		// The id is the userIDOfRelation address
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DB db = mongoClient.getDB(dbName);

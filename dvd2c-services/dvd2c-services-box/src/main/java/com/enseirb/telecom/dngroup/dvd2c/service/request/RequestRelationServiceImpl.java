@@ -47,12 +47,12 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	public void updateRelationORH(Relation relationOfRequest, Relation relationToRequest) throws IOException, NoSuchBoxException {
 		Box boxRelation;
 		try {
-			boxRelation = requestServ.getBoxByUserIDORH(relationToRequest.getEmail());
+			boxRelation = requestServ.getBoxByUserIDORH(relationToRequest.getUserIDOfRelation());
 		} catch (Exception e) {
-			LOGGER.error("Error while fetching Box information for relation {}", relationToRequest.getEmail());
+			LOGGER.error("Error while fetching Box information for relation {}", relationToRequest.getUserIDOfRelation());
 			throw new IOException("Can not conect to the server : Box information not fetched from CentralServer");
 		}
-		String requestUrl = boxRelation.getIp() + "/api/app/" + relationToRequest.getEmail() + "/relation/frombox";
+		String requestUrl = boxRelation.getIp() + "/api/app/" + relationToRequest.getUserIDOfRelation() + "/relation/frombox";
 		LOGGER.debug("Request : {}", requestUrl);
 		WebTarget target = client.target(requestUrl);
 		
@@ -106,9 +106,9 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	}
 
 	@Override
-	public void setAprouveRelationORH(String userID, String emailOfRelation) throws IOException, NoSuchBoxException, NoSuchUserException {
-		Box boxRelation = requestServ.getBoxByUserIDORH(emailOfRelation);
-		WebTarget target = client.target(boxRelation.getIp() + "/api/box/relation/" + emailOfRelation + "/" + userID);
+	public void setAprouveRelationORH(String userID, String userIDOfRelationOfRelation) throws IOException, NoSuchBoxException, NoSuchUserException {
+		Box boxRelation = requestServ.getBoxByUserIDORH(userIDOfRelationOfRelation);
+		WebTarget target = client.target(boxRelation.getIp() + "/api/box/relation/" + userIDOfRelationOfRelation + "/" + userID);
 		Relation relation=new Relation();
 
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE).put(Entity.entity(relation,MediaType.APPLICATION_XML));

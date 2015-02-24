@@ -21,8 +21,8 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 
 	@Override
 	public <S extends RelationshipRepositoryObject> S save(S entity) {
-		if (exists(entity.getUserId(), entity.getEmail())) {
-			delete(entity.getUserId(), entity.getEmail());
+		if (exists(entity.getUserId(), entity.getUserIDOfRelation())) {
+			delete(entity.getUserId(), entity.getUserIDOfRelation());
 		}
 		try {
 			MongoClient mongoClient = DbInit.Connect();
@@ -47,12 +47,12 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 		throw new RuntimeException("not yet invented");
 	}
 
-	public RelationshipRepositoryObject findOne(String userId, String relationEmail) {
+	public RelationshipRepositoryObject findOne(String userId, String relationUserIDOfRelation) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DBCollection db = mongoClient.getDB("mediahome").getCollection("relationships");
 
-			BasicDBObject query = new BasicDBObject("userId", userId).append("email", relationEmail);
+			BasicDBObject query = new BasicDBObject("userId", userId).append("userIDOfRelation", relationUserIDOfRelation);
 			DBCursor cursor = db.find(query);
 			ObjectMapper mapper = new ObjectMapper();
 			RelationshipRepositoryObject relation = null;
@@ -77,12 +77,12 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 	}
 	
 	// This function won't be really used... 
-	public boolean exists(String userId, String relationEmail) {
+	public boolean exists(String userId, String relationUserIDOfRelation) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DBCollection db = mongoClient.getDB("mediahome").getCollection("relationships");
 
-			BasicDBObject query = new BasicDBObject("userId", userId).append("email", relationEmail);
+			BasicDBObject query = new BasicDBObject("userId", userId).append("userIDOfRelation", relationUserIDOfRelation);
 			DBCursor cursor = db.find(query);
 			boolean exists = cursor.hasNext();
 			return exists;
@@ -136,12 +136,12 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 	public void delete(String id) {
 		throw new RuntimeException("not yet invented");
 	}
-	public void delete(String userId, String relationEmail) {
+	public void delete(String userId, String relationUserIDOfRelation) {
 		try {
 			MongoClient mongoClient = DbInit.Connect();
 			DBCollection db = mongoClient.getDB("mediahome").getCollection("relationships");
 
-			BasicDBObject query = new BasicDBObject("userId", userId).append("email", relationEmail);
+			BasicDBObject query = new BasicDBObject("userId", userId).append("userIDOfRelation", relationUserIDOfRelation);
 			db.remove(query);
 		} catch (UnknownHostException e) {
 			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);

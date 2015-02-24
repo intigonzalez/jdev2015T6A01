@@ -10,10 +10,10 @@ public class RelationshipRepositoryObject {
 	public RelationshipRepositoryObject(){
 		
 	}
-	public RelationshipRepositoryObject(String userId, String email, String name, String surname, String pubKey, Integer aprouve, Long unixTime, List<Integer> group) {
+	public RelationshipRepositoryObject(String userId, String userIDOfRelation, String name, String surname, String pubKey, Integer aprouve, Long unixTime, List<Integer> group) {
 		super();
 		this.userId = userId;
-		this.email = email;
+		this.userIDOfRelation = userIDOfRelation;
 		this.firstname = firstname;
 		this.surname = surname;
 		this.pubKey = pubKey;
@@ -23,7 +23,7 @@ public class RelationshipRepositoryObject {
 	}
 	public RelationshipRepositoryObject(String userId, Relation relation) {
 		this.userId = userId;
-		this.email = relation.getEmail();
+		this.userIDOfRelation = relation.getUserIDOfRelation();
 		this.firstname = relation.getFirstname();
 		this.surname = relation.getSurname();
 		this.pubKey = relation.getPubKey();
@@ -35,7 +35,7 @@ public class RelationshipRepositoryObject {
 
 	
 	String userId;
-	String email;
+	String userIDOfRelation;
     String firstname;
     String surname;
     String pubKey;
@@ -49,11 +49,11 @@ public class RelationshipRepositoryObject {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	public String getEmail() {
-		return email;
+	public String getUserIDOfRelation() {
+		return userIDOfRelation;
 	}
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUserIDOfRelation(String userIDOfRelation) {
+		this.userIDOfRelation = userIDOfRelation;
 	}
 	public String getFirstname() {
 		return firstname;
@@ -93,7 +93,7 @@ public class RelationshipRepositoryObject {
 	}
 	public Relation toRelation() {
 		Relation relation = new Relation();
-		relation.setEmail(email);
+		relation.setUserIDOfRelation(userIDOfRelation);
 		relation.setFirstname(firstname);
 		relation.setSurname(surname);
 		relation.setPubKey(pubKey);

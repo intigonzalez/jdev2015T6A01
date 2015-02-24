@@ -56,10 +56,10 @@ public interface RequestRelationService {
     /**
      * Set approve a relation on remote host
      * @param userID this user has accept relation
-     * @param emailOfRelation the user to request
+     * @param userIDOfRelationOfRelation the user to request
      * @throws NoSuchBoxException 
      * @throws IOException 
      * @throws NoSuchUserException 
      */
-    public abstract void setAprouveRelationORH(String userID, String emailOfRelation) throws IOException, NoSuchBoxException, NoSuchUserException;
+    public abstract void setAprouveRelationORH(String userID, String userIDOfRelationOfRelation) throws IOException, NoSuchBoxException, NoSuchUserException;
 }
