@@ -65,7 +65,7 @@ public class ContentEndPoints {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Content getSpecificContentInformations(@PathParam("userID") String userID, @PathParam("contentsID") String contentsID) {
 		Content content = uManager.getContent(contentsID);
-		if ( content.getLogin().equals(userID) ) {
+		if ( content.getActorID().equals(userID) ) {
 			return content;
 		}
 		else {

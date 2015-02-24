@@ -9,7 +9,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enseirb.telecom.dngroup.dvd2c.model.Authorization;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBList;
@@ -78,9 +77,9 @@ public class ContentRepositoryMongo implements ContentRepository {
 						entity.getId());
 				dbBox.update(searchQuery, newDocument);
 			}
-			if (entity.getUserId() != null) {// need to verify
+			if (entity.getActorID() != null) {// need to verify
 				newDocument.append("$set", new BasicDBObject().append("userId",
-						entity.getUserId()));
+						entity.getActorID()));
 				BasicDBObject searchQuery = new BasicDBObject().append("id",
 						entity.getId());
 				dbBox.update(searchQuery, newDocument);
@@ -126,29 +125,29 @@ public class ContentRepositoryMongo implements ContentRepository {
 //						entity.getId());
 //				dbBox.update(searchQuery, newDocument);
 //			}
-			if (entity.getAuthorization() != null) {// need to verify
-				
-				List<Authorization> authorizations = entity.getAuthorization();
-				Iterator<Authorization> userIterator = authorizations.iterator();														
-				List<Object> entityDBList = new BasicDBList();
-								
-				while(userIterator.hasNext()) {	
-				    DBObject userDBObject = new BasicDBObject();
-				    try {
-						userDBObject = DbInit.createDBObject(userIterator.next());
-					} catch (JsonProcessingException e) {
-					
-						LOGGER.error("Impossible to create userDBObject",e);
-					}			    
-				    
-					entityDBList.add(userDBObject);
-					
-				}
-				
-				newDocument.append("$set",new BasicDBObject().append("authorization", entityDBList));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
-				dbBox.update(searchQuery, newDocument);
-				}
+//			if (entity.getAuthorization() != null) {// need to verify
+//				
+//				List<Authorization> authorizations = entity.getAuthorization();
+//				Iterator<Authorization> userIterator = authorizations.iterator();														
+//				List<Object> entityDBList = new BasicDBList();
+//								
+//				while(userIterator.hasNext()) {	
+//				    DBObject userDBObject = new BasicDBObject();
+//				    try {
+//						userDBObject = DbInit.createDBObject(userIterator.next());
+//					} catch (JsonProcessingException e) {
+//					
+//						LOGGER.error("Impossible to create userDBObject",e);
+//					}			    
+//				    
+//					entityDBList.add(userDBObject);
+//					
+//				}
+//				
+//				newDocument.append("$set",new BasicDBObject().append("authorization", entityDBList));
+//				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+//				dbBox.update(searchQuery, newDocument);
+//				}
 			if (entity.getComment() != null) {
 				newDocument.append(
 						"$set",

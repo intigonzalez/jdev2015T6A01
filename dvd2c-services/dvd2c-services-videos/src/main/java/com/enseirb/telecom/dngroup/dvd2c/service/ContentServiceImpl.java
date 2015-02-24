@@ -55,7 +55,7 @@ public class ContentServiceImpl implements ContentService {
 		Iterator<ContentRepositoryObject> itr = contentsDb.iterator();
 		while (itr.hasNext()) {
 			ContentRepositoryObject contentRepositoryObject = itr.next();
-			if (contentRepositoryObject.getUserId().equals(userID)) {
+			if (contentRepositoryObject.getActorID().equals(userID)) {
 				listContent.add(contentRepositoryObject.toContent());
 			}
 		}
@@ -80,7 +80,7 @@ public class ContentServiceImpl implements ContentService {
 			LOGGER.debug("New file uploaded with the type {}",fileType[0]);	
 			Content content = new Content();
 			content.setName(upload.getName());
-			content.setLogin(userID);
+			content.setActorID(userID);
 			content.setStatus("In progress");
 			content.setType(fileType[0]);
 			UUID uuid = UUID.randomUUID();
@@ -179,18 +179,18 @@ public class ContentServiceImpl implements ContentService {
 				ContentRepositoryObject contentRepositoryObject = itr.next();
 				search: 
 
-					if ((contentRepositoryObject.getUserId()!=null)&&(contentRepositoryObject.getUserId().equals(userID))) {
-						for (int i = 0; i < relation.getGroupID().size(); i++) { // For each group the relation belongs to
-							if (contentRepositoryObject.getAuthorization() != null) {
-								if (contentRepositoryObject.getAuthorization().size() == 0) {
+					if ((contentRepositoryObject.getActorID()!=null)&&(contentRepositoryObject.getActorID().equals(userID))) {
+						for (int i = 0; i < relation.getRole().size(); i++) { // For each group the relation belongs to
+							if (contentRepositoryObject.getRole() != null) {
+								if (contentRepositoryObject.getRole().size() == 0) {
 
 									break search;
 								}
 							}
-							for (int j = 0; j < contentRepositoryObject.getAuthorization().size(); j++) {
+							for (int j = 0; j < contentRepositoryObject.getRole().size(); j++) {
 
-								if (relation.getGroupID().get(i) == contentRepositoryObject.getAuthorization().get(j).getGroupID()) {
-									contentRepositoryObject.getAuthorization().clear();
+								if (relation.getRole().get(i) == contentRepositoryObject.getRole().get(j)) {
+									contentRepositoryObject.getRole().clear();
 									contentRepositoryObject.setLink(ApplicationContext.getProperties().getProperty("PublicAddr")+contentRepositoryObject.getLink());
 
 									listContent.add(contentRepositoryObject.toContent());
