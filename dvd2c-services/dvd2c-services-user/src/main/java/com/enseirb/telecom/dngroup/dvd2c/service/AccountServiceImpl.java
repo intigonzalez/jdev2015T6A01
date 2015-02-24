@@ -81,17 +81,17 @@ public class AccountServiceImpl implements AccountService {
 	 * telecom.s9.User)
 	 */
 	@Override
-	public List<User> getUserFromNameOnServer(String name) {
+	public List<User> getUserFromNameOnServer(String firstname) {
 		try {
-			return requetUserService.getUserFromName(name);
+			return requetUserService.getUserFromName(firstname);
 		} catch (IOException e) {
-			LOGGER.error("error during geting users on server : {} ",name,e);
+			LOGGER.error("error during geting users on server : {} ",firstname,e);
 			return null;
 		}
 	}
 
 	@Override
-	public List<User> getUserFromName(String name) {
+	public List<User> getUserFromName(String firstname) {
 		//DB: need to change
 		Iterable<UserRepositoryObject> userIterable = userDatabase.findAll();
 		UserRepositoryObject userRepo = null;
@@ -104,7 +104,7 @@ public class AccountServiceImpl implements AccountService {
 	
 			while (iterator.hasNext()) {
 				userRepo = iterator.next();
-				if (userRepo.getName().equalsIgnoreCase(name))
+				if (userRepo.getFirstname().equalsIgnoreCase(firstname))
 					listUser.add(userRepo.toUser());
 			}
 			return listUser;

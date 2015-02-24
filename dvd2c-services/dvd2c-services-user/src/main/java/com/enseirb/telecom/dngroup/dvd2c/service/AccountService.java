@@ -29,11 +29,11 @@ public interface AccountService {
 	public abstract User getUserOnLocal(String userID);
 
 	/**
-	 * get user by name form server
-	 * @param name to get list
+	 * get user by firstname form server
+	 * @param firstname to get list
 	 * @return
 	 */
-	public abstract List<User> getUserFromNameOnServer(String name);
+	public abstract List<User> getUserFromNameOnServer(String firstname);
 
 	/**
 	 *  create user on server and after in local
@@ -74,17 +74,17 @@ public interface AccountService {
 	public abstract void deleteUserOnLocal(String userID);
 	
 	/**
-	 * Get the list of users who have the same name on local
+	 * Get the list of users who have the same firstname on local
 	 * SERVER SERVICES
-	 * @param name the name to search
+	 * @param firstname the firstname to search
 	 * @return a list of user
 	 */
-	public abstract List<User> getUserFromName(String name);
+	public abstract List<User> getUserFromName(String firstname);
 
 	/**
 	 * Get the list of users who have the same box on local
 	 * SERVER SERVICES
-	 * @param boxID the name to search
+	 * @param boxID the firstname to search
 	 * @return a list of user
 	 */
 	public abstract List<User> getUserFromBoxID(String boxID);

@@ -8,8 +8,8 @@ public class MainTest { //extends TestCase
 //    
 //    private WebResource r;
 //
-//    public MainTest(String testName) {
-//        super(testName);
+//    public MainTest(String testFirstname) {
+//        super(testFirstname);
 //    }
 //
 //    @Override

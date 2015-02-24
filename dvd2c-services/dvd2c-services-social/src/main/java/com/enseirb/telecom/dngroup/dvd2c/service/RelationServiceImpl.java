@@ -61,7 +61,7 @@ public class RelationServiceImpl implements RelationService {
 					User relationUpdate = rrs.get(userID, rro.getEmail());
 					Relation relationIntoDb = relationshipDatabase.findOne(
 							userID, relationUpdate.getUserID()).toRelation();
-					relationIntoDb.setName(relationUpdate.getName());
+					relationIntoDb.setFirstname(relationUpdate.getFirstname());
 					relationIntoDb.setSurname(relationUpdate.getSurname());
 					relationshipDatabase.save(new RelationshipRepositoryObject(
 							userID, relationIntoDb));
@@ -93,7 +93,7 @@ public class RelationServiceImpl implements RelationService {
 		} else {
 			User userComplet = user.toUser();
 			User userReturn = new User();
-			userReturn.setName(userComplet.getName());
+			userReturn.setFirstname(userComplet.getFirstname());
 			userReturn.setSurname(userComplet.getSurname());
 			userReturn.setUserID(userComplet.getUserID());
 			return userReturn;
@@ -169,7 +169,7 @@ public class RelationServiceImpl implements RelationService {
 		} catch (IOException e) {
 			LOGGER.error("get user fail",e);
 		}
-		relation.setName(user.getName());
+		relation.setFirstname(user.getFirstname());
 		relation.setSurname(user.getSurname());
 		relation.setAprouve(1);
 
@@ -179,7 +179,7 @@ public class RelationServiceImpl implements RelationService {
 			User userWhoAsked = userDatabase.findOne(userID).toUser();
 			Relation relation2 = new Relation();
 			relation2.setEmail(userWhoAsked.getUserID());
-			relation2.setName(userWhoAsked.getName());
+			relation2.setFirstname(userWhoAsked.getFirstname());
 			relation2.setSurname(userWhoAsked.getSurname());
 			relation2.setPubKey(userWhoAsked.getPubKey());
 			relation2.setAprouve(2);

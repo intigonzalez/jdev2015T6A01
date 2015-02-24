@@ -43,9 +43,9 @@ public class UserEndPoints {
 	@GET
 	@Path("name/{name}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<User> getUserFromName(@PathParam("name") String name) {
+	public List<User> getUserFromName(@PathParam("firstname") String firstname) {
 
-		return uManager.getUserFromName(name);
+		return uManager.getUserFromName(firstname);
 
 	}
 

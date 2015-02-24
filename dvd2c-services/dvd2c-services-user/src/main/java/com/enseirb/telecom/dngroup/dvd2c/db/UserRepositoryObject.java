@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class UserRepositoryObject {
 	protected String userID;
 	protected String boxID;
-	protected String name;
+	protected String firstname;
 	protected String surname;
 	protected String password;
 	protected String pubKey;
@@ -21,7 +21,7 @@ public class UserRepositoryObject {
 		super();
 		this.boxID=boxID;
 		this.userID = userID;
-		this.name = name;
+		this.firstname = name;
 		this.surname = surname;
 		this.password = password;
 		this.pubKey = pubKey;
@@ -31,19 +31,19 @@ public class UserRepositoryObject {
 	public UserRepositoryObject(User user) {
 		this.userID = user.getUserID();
 		this.boxID=user.getBoxID();
-		this.name = user.getName();
+		this.firstname = user.getFirstname();
 		this.surname = user.getSurname();
 		this.password = user.getPassword();
 		this.pubKey = user.getPubKey();
 		this.privateKey = user.getPrivateKey();
 	}
 
-	public String getName() {
-		return name;
+	public String getFirstname() {
+		return firstname;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFirstname(String name) {
+		this.firstname = name;
 	}
 
 	public String getSurname() {
@@ -85,7 +85,7 @@ public class UserRepositoryObject {
 	public User toUser() {
 		User user = new User();
 		user.setUserID(userID);
-		user.setName(name);
+		user.setFirstname(firstname);
 		user.setSurname(surname);
 		user.setPassword(password);
 		user.setPrivateKey(privateKey);

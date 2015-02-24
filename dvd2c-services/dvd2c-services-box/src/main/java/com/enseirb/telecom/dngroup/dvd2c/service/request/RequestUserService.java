@@ -24,12 +24,12 @@ public interface RequestUserService {
 	public abstract User get(String string) throws IOException, NoSuchUserException;
 
 	/**
-	 * Get a list of user by name on remote host (server normally)
-	 * @param name the name to request
+	 * Get a list of user by firstname on remote host (server normally)
+	 * @param firstname the firstname to request
 	 * @return the list of user with this name
 	 * @throws IOException the host is not reachable
 	 */
-	public abstract List<User> getUserFromName(String name) throws IOException;
+	public abstract List<User> getUserFromName(String firstname) throws IOException;
 
 	/**
 	 * post a user on remote host

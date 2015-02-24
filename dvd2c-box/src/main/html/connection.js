@@ -22,7 +22,7 @@ ConnectionForm.controller("mainController", function ($scope, $http) {
             .success(function (data, status, headers, config)
             {
                 console.log("Succeed");
-                //console.log(person.name);
+                //console.log(person.firstname);
                 window.location.replace("/home.html");
                 
             })

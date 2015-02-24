@@ -18,7 +18,7 @@ public class DbInit {
 	String username;
 	String password;
 
-	//NHE bad method name https://google-styleguide.googlecode.com/svn/trunk/javaguide.html#s5.2.3-method-names
+	//NHE bad method firstname https://google-styleguide.googlecode.com/svn/trunk/javaguide.html#s5.2.3-method-names
 	public static MongoClient Connect() throws UnknownHostException {
 		DbInit Database = new DbInit();
 		MongoClient mongoClient = new MongoClient(Database.hostname, Database.port);

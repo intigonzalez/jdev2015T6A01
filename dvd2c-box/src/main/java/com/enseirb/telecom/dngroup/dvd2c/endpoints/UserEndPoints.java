@@ -96,15 +96,15 @@ public class UserEndPoints extends HttpServlet {
 	}
 	
 	/**
-	 * Find a list of users from their name on server
-	 * @param name the name to search
+	 * Find a list of users from their firstname on server
+	 * @param firstname the firstname to search
 	 * @return a list of user
 	 */
 	@GET
 	@Path("name/{name}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<User> getUserByName(@PathParam("name") String name){
-		return uManager.getUserFromNameOnServer(name);
+	public List<User> getUserByName(@PathParam("firstname") String firstname){
+		return uManager.getUserFromNameOnServer(firstname);
 	}
 
 	/**

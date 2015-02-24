@@ -73,7 +73,7 @@ public class ContentRepositoryMongo implements ContentRepository {
 //			}
 			if (entity.getName() != null) {
 				newDocument.append("$set",
-						new BasicDBObject().append("name", entity.getName()));
+						new BasicDBObject().append("firstname", entity.getName()));
 				BasicDBObject searchQuery = new BasicDBObject().append("id",
 						entity.getId());
 				dbBox.update(searchQuery, newDocument);

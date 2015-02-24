@@ -59,10 +59,10 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 
 	@Override
-	public List<User> getUserFromName(String name) throws IOException {
+	public List<User> getUserFromName(String firstname) throws IOException {
 		List<User> listUser = new ArrayList<User>();
 		// Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(url + "name/" + name);
+		WebTarget target = client.target(url + "name/" + firstname);
 		try {
 			listUser = target.request(MediaType.APPLICATION_XML_TYPE).get(new GenericType<List<User>>(){});
 		} catch (WebApplicationException e) {
@@ -81,7 +81,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 	public void createUserORH(User user) throws IOException, SuchUserException {
 		User user2 = new User();
 		user2.setBoxID(user.getBoxID());
-		user2.setName(user.getName());
+		user2.setFirstname(user.getFirstname());
 		user2.setSurname(user.getSurname());
 		user2.setUserID(user.getUserID());
 		WebTarget target = client.target(url);

@@ -14,7 +14,7 @@ public class RelationshipRepositoryObject {
 		super();
 		this.userId = userId;
 		this.email = email;
-		this.name = name;
+		this.firstname = firstname;
 		this.surname = surname;
 		this.pubKey = pubKey;
 		this.aprouve = aprouve;
@@ -24,7 +24,7 @@ public class RelationshipRepositoryObject {
 	public RelationshipRepositoryObject(String userId, Relation relation) {
 		this.userId = userId;
 		this.email = relation.getEmail();
-		this.name = relation.getName();
+		this.firstname = relation.getFirstname();
 		this.surname = relation.getSurname();
 		this.pubKey = relation.getPubKey();
 		this.aprouve = relation.getAprouve();
@@ -36,7 +36,7 @@ public class RelationshipRepositoryObject {
 	
 	String userId;
 	String email;
-    String name;
+    String firstname;
     String surname;
     String pubKey;
     Integer aprouve;
@@ -55,11 +55,11 @@ public class RelationshipRepositoryObject {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getName() {
-		return name;
+	public String getFirstname() {
+		return firstname;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
 	}
 	public String getSurname() {
 		return surname;
@@ -94,7 +94,7 @@ public class RelationshipRepositoryObject {
 	public Relation toRelation() {
 		Relation relation = new Relation();
 		relation.setEmail(email);
-		relation.setName(name);
+		relation.setFirstname(firstname);
 		relation.setSurname(surname);
 		relation.setPubKey(pubKey);
 		relation.setUnixTime(unixTime);
