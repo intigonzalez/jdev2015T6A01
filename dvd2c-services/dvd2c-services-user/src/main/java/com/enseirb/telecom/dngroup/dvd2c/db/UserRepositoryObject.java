@@ -17,11 +17,11 @@ public class UserRepositoryObject {
 		
 	}
 	
-	public UserRepositoryObject(String userID,String boxID, String name, String surname, String password, String pubKey, String privateKey) {
+	public UserRepositoryObject(String userID,String boxID, String firstname, String surname, String password, String pubKey, String privateKey) {
 		super();
 		this.boxID=boxID;
 		this.userID = userID;
-		this.firstname = name;
+		this.firstname = firstname;
 		this.surname = surname;
 		this.password = password;
 		this.pubKey = pubKey;
@@ -43,7 +43,7 @@ public class UserRepositoryObject {
 	}
 
 	public void setFirstname(String name) {
-		this.firstname = name;
+		this.firstname = firstname;
 	}
 
 	public String getSurname() {

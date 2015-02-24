@@ -10,7 +10,7 @@ public class RelationshipRepositoryObject {
 	public RelationshipRepositoryObject(){
 		
 	}
-	public RelationshipRepositoryObject(String userId, String userIDOfRelation, String name, String surname, String pubKey, Integer aprouve, Long unixTime, List<Integer> group) {
+	public RelationshipRepositoryObject(String userId, String userIDOfRelation, String firstname, String surname, String pubKey, Integer aprouve, Long unixTime, List<Integer> group) {
 		super();
 		this.userId = userId;
 		this.userIDOfRelation = userIDOfRelation;
