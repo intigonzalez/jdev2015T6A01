@@ -35,18 +35,19 @@ public class UserEndPoints {
 	}
 
 	/**
-	 * Find a list of users from their name
+	 * Find a list of users from their firstname
 	 * 
-	 * @param name
+	 * @param firstname
 	 * @return a list of user
 	 */
 	@GET
-	@Path("name/{name}")
+	@Path("firstname/{firstname}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<User> getUserFromName(@PathParam("firstname") String firstname) {
 
-		return uManager.getUserFromName(firstname);
+		List<User> users = uManager.getUserFromName(firstname);
 
+		return users;
 	}
 
 	@GET

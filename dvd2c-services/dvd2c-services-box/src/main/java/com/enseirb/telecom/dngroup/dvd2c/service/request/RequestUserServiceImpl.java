@@ -62,14 +62,14 @@ public class RequestUserServiceImpl implements RequestUserService {
 	public List<User> getUserFromName(String firstname) throws IOException {
 		List<User> listUser = new ArrayList<User>();
 		// Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(url + "name/" + firstname);
+		WebTarget target = client.target(url + "firstname/" + firstname);
 		try {
 			listUser = target.request(MediaType.APPLICATION_XML_TYPE).get(new GenericType<List<User>>(){});
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 500) {
-				LOGGER.error("{}", e);
+				LOGGER.error("Error on remote Host : get {}",target.getUri(), e);
 			} else {
-				LOGGER.error("{}", e);
+				LOGGER.error("Error for get {}",target.getUri(), e);
 			}
 
 		}

@@ -101,7 +101,7 @@ public class UserEndPoints extends HttpServlet {
 	 * @return a list of user
 	 */
 	@GET
-	@Path("name/{name}")
+	@Path("name/{firstname}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<User> getUserByName(@PathParam("firstname") String firstname){
 		return uManager.getUserFromNameOnServer(firstname);

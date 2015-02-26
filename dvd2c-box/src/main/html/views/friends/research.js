@@ -33,7 +33,7 @@ angular.module('myApp.friendSearch', ['ngRoute', 'ui.bootstrap'])
         this.getFriendList();
 
         search.list = [];
-        this.searchRelation = function(firstname) {
+        this.searchRelation = function(name) {
             if (name == undefined) { //Disabled if blank !
                 return;
             }
