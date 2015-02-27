@@ -47,16 +47,16 @@ RUN a2enmod proxy proxy_http headers
 RUN touch /etc/apache2/sites-available/mediahome.conf
 
 
-RUN echo '<VirtualHost *:80>'> /etc/apache2/sites-available/mediahome.conf
-RUN echo 'Header always set Access-Control-Allow-Origin "*"' >> /etc/apache2/sites-available/mediahome.conf
-RUN echo 'Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"' >> /etc/apache2/sites-available/mediahome.conf
-RUN echo 'Header always set Access-Control-Max-Age "1000"' >> /etc/apache2/sites-available/mediahome.conf
-RUN echo 'Header always set Access-Control-Allow-Headers "x-requested-with, Content-Type, origin, authorization, accept, client-security-token, range"' >> /etc/apache2/sites-available/mediahome.conf
-RUN echo 'ProxyPass /videos !' >> /etc/apache2/sites-available/mediahome.conf
-RUN echo 'ProxyPass / http://localhost:9998/' >> /etc/apache2/sites-available/mediahome.conf
-RUN echo 'ProxyPassReverse / http://localhost:9998/' >> /etc/apache2/sites-available/mediahome.conf
-RUN echo 'ProxyPreserveHost On' >> /etc/apache2/sites-available/mediahome.conf
-RUN echo '</VirtualHost>' >> /etc/apache2/sites-available/mediahome.conf
+RUN echo '<VirtualHost *:80>'> /etc/apache2/sites-available/mediahome.conf && \
+ echo 'Header always set Access-Control-Allow-Origin "*"' >> /etc/apache2/sites-available/mediahome.conf && \
+ echo 'Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"' >> /etc/apache2/sites-available/mediahome.conf && \
+ echo 'Header always set Access-Control-Max-Age "1000"' >> /etc/apache2/sites-available/mediahome.conf && \
+ echo 'Header always set Access-Control-Allow-Headers "x-requested-with, Content-Type, origin, authorization, accept, client-security-token, range"' >> /etc/apache2/sites-available/mediahome.conf && \
+ echo 'ProxyPass /videos !' >> /etc/apache2/sites-available/mediahome.conf && \
+ echo 'ProxyPass / http://localhost:9998/' >> /etc/apache2/sites-available/mediahome.conf && \
+ echo 'ProxyPassReverse / http://localhost:9998/' >> /etc/apache2/sites-available/mediahome.conf && \
+ echo 'ProxyPreserveHost On' >> /etc/apache2/sites-available/mediahome.conf && \
+ echo '</VirtualHost>' >> /etc/apache2/sites-available/mediahome.conf
 
 
 RUN a2dissite 000-default.conf 
