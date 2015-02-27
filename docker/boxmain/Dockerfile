@@ -25,21 +25,19 @@ RUN touch box.properties
 
 
 
-RUN cat > /etc/mediahome/central.properties <<'EOF' \
-bindIp=0.0.0.0\
-bindPort=9999\
-EOF
-
+RUN echo "bindIp=0.0.0.0" >>  /etc/mediahome/central.properties && \
+    echo "bindPort=9999" >>  /etc/mediahome/central.properties 
+    
 #RUN cat /etc/mediahome/central.properties
 
-RUN cat > /etc/mediahome/box.properties <<'EOF' \
-bindIp=0.0.0.0\
-bindPort=9998\
-contentPath=/var/www/html\
-BoxID=BOX_TEST\
-CentralURL=http://localhost:9999\
-PublicAddr=http://localhost\
-EOF
+RUN echo "bindIp=0.0.0.0" >>  /etc/mediahome/box.properties && \
+ echo "bindPort=9998" >>  /etc/mediahome/box.properties && \
+  echo "contentPath=/var/www/html" >>  /etc/mediahome/box.properties && \
+   echo "BoxID=BOX_TEST" >>  /etc/mediahome/box.properties && \
+    echo "CentralURL=http://localhost:9999" >>  /etc/mediahome/box.properties && \
+    echo "PublicAddr=http://localhost" >>  /etc/mediahome/box.properties 
+
+
 
 # activate module on apache
 RUN a2enmod proxy proxy_http headers
