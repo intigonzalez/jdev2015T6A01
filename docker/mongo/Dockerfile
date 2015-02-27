@@ -1,1 +1,26 @@
-# Media@home web application Docker image## VERSION       1.0# ~~~~ Image base ~~~~FROM ubuntu:trustyMAINTAINER David Bourasseau <dbourasseau@viotech.net># ~~~~ OS Maintenance ~~~~# Keep up-to-date the container OSRUN apt-get update && apt-get upgrade -y# ~~~~ install mongo ~~~~RUN apt-get -y install mongodb mongodb-server# Create the MongoDB data directoryRUN mkdir -p /data/db# Expose port 27017 from the container to the hostEXPOSE 27017# Set /usr/bin/mongod as the dockerized entry-point applicationENTRYPOINT ["/usr/bin/mongod"]
+# Media@home web application Docker image
+#
+# VERSION       1.0
+
+# ~~~~ Image base ~~~~
+FROM ubuntu:trusty
+MAINTAINER David Bourasseau <dbourasseau@viotech.net>
+
+
+# ~~~~ OS Maintenance ~~~~
+# Keep up-to-date the container OS
+RUN apt-get update && apt-get upgrade -y
+
+# ~~~~ install mongo ~~~~
+RUN apt-get -y install mongodb mongodb-server
+
+# Create the MongoDB data directory
+RUN mkdir -p /data/db
+
+# Expose port 27017 from the container to the host
+EXPOSE 27017
+
+# Set /usr/bin/mongod as the dockerized entry-point application
+ENTRYPOINT ["/usr/bin/mongod"]
+
+
