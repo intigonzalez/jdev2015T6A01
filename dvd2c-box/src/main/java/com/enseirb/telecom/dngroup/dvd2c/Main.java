@@ -116,7 +116,12 @@ public class Main {
 			}
 		}).start();
 		
-		Thread.currentThread().join();
+		try {
+			Thread.currentThread().join();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw e;
+		}
 
 		// httpServer.stop();
 	}
