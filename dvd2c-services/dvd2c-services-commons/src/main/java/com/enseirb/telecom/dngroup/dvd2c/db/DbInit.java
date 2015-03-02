@@ -12,14 +12,14 @@ import com.mongodb.util.JSON;
 //NHE a class with only static methods should be final or abstract
 public class DbInit {
 	//NHE no hard coded values allowed in the code
-	String hostname = "localhost";
+	String hostname = "127.0.0.1";
 	//NHE no hard coded values allowed in the code
 	int port = 27017;
 	String username;
 	String password;
 
 	//NHE bad method firstname https://google-styleguide.googlecode.com/svn/trunk/javaguide.html#s5.2.3-method-names
-	public static MongoClient Connect() throws UnknownHostException {
+	public static MongoClient connect() throws UnknownHostException {
 		DbInit Database = new DbInit();
 		MongoClient mongoClient = new MongoClient(Database.hostname, Database.port);
 		//NHE where is it closed ? http://api.mongodb.org/java/2.10.0/com/mongodb/Mongo.html#close%28%29
