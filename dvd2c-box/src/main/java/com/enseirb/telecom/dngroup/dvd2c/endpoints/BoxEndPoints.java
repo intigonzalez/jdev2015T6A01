@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
+import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryMongo;
@@ -72,8 +73,8 @@ public class BoxEndPoints {
 	public Response postBox() throws URISyntaxException {
 		// add a comment
 		Box box = new Box();
-		box.setBoxID(ApplicationContext.getProperties().getProperty("BoxID"));
-		box.setIp(ApplicationContext.getProperties().getProperty("PublicAddr"));
+		box.setBoxID(CliConfSingleton.boxID);
+		box.setIp(CliConfSingleton.publicAddr);
 		if (boxManager.boxExistOnServer(box.getBoxID()) == false) {
 			boxManager.createBoxOnServer(box);
 			return Response.created(new URI(box.getBoxID())).build();
