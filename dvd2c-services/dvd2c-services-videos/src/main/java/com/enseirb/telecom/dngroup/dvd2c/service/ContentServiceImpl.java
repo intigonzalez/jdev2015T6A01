@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
+import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
@@ -152,7 +153,7 @@ public class ContentServiceImpl implements ContentService {
 		FileService fileservice = new FileService();
 		// The content then must be deleted into the folder !
 		Content content = contentDatabase.findOne(contentsID).toContent();
-		String path = ApplicationContext.getProperties().getProperty("contentPath") + content.getLink();
+		String path = CliConfSingleton.contentPath + content.getLink();
 		LOGGER.info("remove content : {}", path);
 		try {
 			fileservice.deleteFolder(path);
@@ -191,7 +192,8 @@ public class ContentServiceImpl implements ContentService {
 
 								if (relation.getGroupID().get(i) == contentRepositoryObject.getAuthorization().get(j).getGroupID()) {
 									contentRepositoryObject.getAuthorization().clear();
-									contentRepositoryObject.setLink(ApplicationContext.getProperties().getProperty("PublicAddr")+contentRepositoryObject.getLink());
+									//DAV: Need to verify publicAddr
+									contentRepositoryObject.setLink(CliConfSingleton.publicAddr+contentRepositoryObject.getLink());
 
 									listContent.add(contentRepositoryObject.toContent());
 									break search;

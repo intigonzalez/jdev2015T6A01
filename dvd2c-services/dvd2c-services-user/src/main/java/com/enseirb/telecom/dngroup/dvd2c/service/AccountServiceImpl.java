@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
+import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
@@ -136,7 +137,7 @@ public class AccountServiceImpl implements AccountService {
 	public User createUserOnServer(User user) {
 
 		try {
-			user.setBoxID(ApplicationContext.getProperties().getProperty("BoxID"));
+			user.setBoxID(CliConfSingleton.boxID);
 			
 			requetUserService.createUserORH(user);
 			return createUserOnLocal(user);
