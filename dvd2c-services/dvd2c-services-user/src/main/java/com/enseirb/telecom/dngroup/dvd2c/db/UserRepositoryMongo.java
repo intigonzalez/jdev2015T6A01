@@ -30,7 +30,7 @@ public class UserRepositoryMongo implements UserRepository {
 	@Override
 	public boolean exists(String id) {
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 	
@@ -58,7 +58,7 @@ public class UserRepositoryMongo implements UserRepository {
 
 			try {
 
-				MongoClient mongoClient = DbInit.Connect();
+				MongoClient mongoClient = DbInit.connect();
 				DB db = mongoClient.getDB(dbName);
 				DBCollection dbUsers = db.getCollection("users");
 
@@ -77,7 +77,7 @@ public <S extends UserRepositoryObject> S update (S entity){
 		
 		MongoClient mongoClient;
 		try {
-			mongoClient = DbInit.Connect();
+			mongoClient = DbInit.connect();
 
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbBox = db.getCollection("users");
@@ -131,7 +131,7 @@ public <S extends UserRepositoryObject> S update (S entity){
 	public UserRepositoryObject findOne(String id) {
 		// The id is the email address
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 
@@ -163,7 +163,7 @@ public <S extends UserRepositoryObject> S update (S entity){
 		List <UserRepositoryObject> listOfAllUsers = new ArrayList<UserRepositoryObject>();
 		
 		try{
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 			
@@ -199,7 +199,7 @@ public <S extends UserRepositoryObject> S update (S entity){
 		Iterator<String> iterator = ids.iterator();
 
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 
@@ -239,7 +239,7 @@ public <S extends UserRepositoryObject> S update (S entity){
 		long numberOfUser = 0;
 
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 
@@ -265,7 +265,7 @@ public <S extends UserRepositoryObject> S update (S entity){
 	@Override
 	public void delete(String id) {
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 
@@ -280,7 +280,7 @@ public <S extends UserRepositoryObject> S update (S entity){
 	@Override
 	public void delete(UserRepositoryObject entity) {
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 			BasicDBObject query = new BasicDBObject("userID", entity.getUserID());
@@ -303,7 +303,7 @@ public <S extends UserRepositoryObject> S update (S entity){
 		//throw new RuntimeException("not yet invented");
 
 		try{
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 			
@@ -329,7 +329,7 @@ public <S extends UserRepositoryObject> S update (S entity){
 			}
 			
 			try{
-				MongoClient mongoClient = DbInit.Connect();
+				MongoClient mongoClient = DbInit.connect();
 				DB db = mongoClient.getDB(dbName);
 				DBCollection dbUsers = db.getCollection("user");
 				

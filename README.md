@@ -12,27 +12,23 @@ First install :
 
     apt-get install openjdk-7-jre openjdk-7-jdk maven apache2 mongodb-server git
     
-add this central.properties in /etc/mediahome
 
-    bindIp=0.0.0.0
-    bindPort=9999
-add this box.properties in /etc/mediahome
-
-    bindIp=0.0.0.0
-    bindPort=9998
-    contentPath=/var/www/html
-    BoxID=BOX_TEST
-    CentralURL=http://localhost:9999
-    PublicAddr=http://localhost
     
-To run the application for development, run :
+To run the application for development and using default value run :
 
     mvn clean package
     java -jar ./dvd2c-box/target/dvd2c-box-1.0-SNAPSHOT-jar-with-dependencies.jar 
 or for the central server
 
-	java -jar ./dvd2c-central/target/dvd2c-box-1.0-SNAPSHOT-jar-with-dependencies.jar 
+	java -jar ./dvd2c-central/target/dvd2c-central-1.0-SNAPSHOT-jar-with-dependencies.jar 
 
+To run the application for real test, run :
+
+    java -jar ./dvd2c-box/target/dvd2c-box-1.0-SNAPSHOT-jar-with-dependencies.jar  --ip 0.0.0.0 -p 9998 --db-hostname localhost --db-port 27017 -b BOX_TEST --content-path /var/www/html -c http://localhost:9999 -a http://localhost:9998
+    
+or for the central server
+
+	java -jar ./dvd2c-central/target/dvd2c-central-1.0-SNAPSHOT-jar-with-dependencies.jar --ip 0.0.0.0 -p 9999 --db-hostname localhost --db-port 27017
 
 
 ## Other Dependencies ##

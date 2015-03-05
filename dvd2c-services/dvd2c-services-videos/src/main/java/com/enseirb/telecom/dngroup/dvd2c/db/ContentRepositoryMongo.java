@@ -31,7 +31,7 @@ public class ContentRepositoryMongo implements ContentRepository {
 
 			try {
 
-				MongoClient mongoClient = DbInit.Connect();
+				MongoClient mongoClient = DbInit.connect();
 				DBCollection db = mongoClient.getDB("mediahome").getCollection(
 						"contents");
 				DBObject objectToSave = DbInit.createDBObject(entity);
@@ -57,7 +57,7 @@ public class ContentRepositoryMongo implements ContentRepository {
 
 		MongoClient mongoClient;
 		try {
-			mongoClient = DbInit.Connect();
+			mongoClient = DbInit.connect();
 
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbBox = db.getCollection("contents");
@@ -175,7 +175,7 @@ public class ContentRepositoryMongo implements ContentRepository {
 	@Override
 	public ContentRepositoryObject findOne(String id) {
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DBCollection db = mongoClient.getDB("mediahome").getCollection(
 					"contents");
 
@@ -207,7 +207,7 @@ public class ContentRepositoryMongo implements ContentRepository {
 	public boolean exists(String id) {
 
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("contents");
 
@@ -233,7 +233,7 @@ public class ContentRepositoryMongo implements ContentRepository {
 		List<ContentRepositoryObject> listOfAllContent = new ArrayList<ContentRepositoryObject>();
 
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("contents");
 
@@ -273,7 +273,7 @@ public class ContentRepositoryMongo implements ContentRepository {
 		long nbOfContents = 0;
 
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("contents");
 
@@ -293,7 +293,7 @@ LOGGER.error("Connection to database failed ");
 		List<ContentRepositoryObject> list = new ArrayList<ContentRepositoryObject>();
 
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbContents = db.getCollection("contents");
 			BasicDBObject query = new BasicDBObject("userId", userID);
@@ -321,7 +321,7 @@ LOGGER.error("Connection to database failed ");
 	@Override
 	public void delete(String id) {
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DBCollection db = mongoClient.getDB("mediahome").getCollection(
 					"contents");
 
@@ -338,7 +338,7 @@ LOGGER.error("Connection to database failed ");
 	public void delete(ContentRepositoryObject entity) {
 
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbUsers = db.getCollection("contents");
 			BasicDBObject query = new BasicDBObject("id", entity.getId()
@@ -360,7 +360,7 @@ LOGGER.error("Connection to database failed ");
 	public void deleteAll() {
 
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbContents = db.getCollection("contents");
 

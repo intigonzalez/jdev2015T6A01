@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
+import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
@@ -27,7 +28,7 @@ public class BoxServiceImpl implements BoxService {
 			.getLogger(BoxServiceImpl.class);
 	CrudRepository<BoxRepositoryObject, String> boxDatabase;
 	RequestBoxService requetBoxService = new RequestBoxServiceImpl(
-			ApplicationContext.getProperties().getProperty("CentralURL")
+			CliConfSingleton.centralURL
 					+ "/api/app/box/");
 
 	public BoxServiceImpl(
@@ -74,7 +75,7 @@ public class BoxServiceImpl implements BoxService {
 
 	public Box createBoxOnServer(Box box) {
 
-		// box.setBoxID(ApplicationContext.getProperties().getProperty("BoxID"));
+		
 		try {
 			requetBoxService.createBoxORH(box);
 		} catch (IOException e) {

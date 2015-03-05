@@ -18,24 +18,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
+import com.lexicalscope.jewel.cli.CliFactory;
+import com.lexicalscope.jewel.cli.HelpRequestedException;
+import com.lexicalscope.jewel.cli.InvalidOptionSpecificationException;
+import com.lexicalscope.jewel.cli.Option;
 
 public class Main {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 	private static int getPort(int defaultPort) {
 		// grab port from environment, otherwise fall back to default port 9999
-		String httpPort = ApplicationContext.getProperties().getProperty(
-				"bindPort");
-		if (null != httpPort) {
-			try {
-				return Integer.parseInt(httpPort);
-			} catch (NumberFormatException e) {
-			}
-		}
-		return defaultPort;
+		
+		return CliConfSingleton.port;
 	}
 
 	private static URI getBaseURI() {
-		String ip = ApplicationContext.getProperties().getProperty("bindIp");
+		String ip = CliConfSingleton.ip;
 		return UriBuilder.fromUri("http://" + ip + "/api/").port(getPort(9999))
 				.build();
 	}
@@ -57,27 +54,32 @@ public class Main {
 	public static void main(String[] args) throws IOException,
 			InterruptedException {
 		// Properties
-		FileInputStream in;
-		ApplicationContext.properties = new Properties();
-		//try to find application.properties
-		String aPPath = new String();
-		if (args.length>0){
-			aPPath = args[0];
-		}
-		else {
-			aPPath = "/etc/mediahome/central.properties";
-		}
-		
-		try {
-			in = new FileInputStream(aPPath);
-			ApplicationContext.properties.load(in);
-			in.close();
-		} catch (FileNotFoundException e1) {
-			LOGGER.error("File not found Path ={} ",aPPath, e1);
-			return;
-		}
-		LOGGER.debug("File Found Path={} ",aPPath);
+		CliConfiguration cliconf = CliFactory.parseArguments(
+				CliConfiguration.class, args);
 
+		CliConfSingleton.ip = cliconf.getIp();
+		CliConfSingleton.port = cliconf.getPort();
+		CliConfSingleton.dbHostname = cliconf.getDbHostname();
+		CliConfSingleton.dbPort = cliconf.getDbPort();
+//		FileInputStream in;
+//		ApplicationContext.properties = new Properties();
+//		//try to find application.properties
+//		
+//		String aPPath = new String();
+//		if (args.length>0)	aPPath = args[0];		
+//		else aPPath = "/etc/mediahome/central.properties";
+
+//		try {
+//			in = new FileInputStream(aPPath);
+//			ApplicationContext.properties.load(in);
+//			in.close();
+//		} catch (FileNotFoundException e1) {
+//			LOGGER.error("File not found Path ={} ",aPPath, e1);
+//			return;
+//		}
+//		LOGGER.debug("File Found Path={} ",aPPath);
+
+		
 		// Grizzly 2 initialization
 		new Thread(new Runnable() {
 
@@ -101,3 +103,24 @@ public class Main {
 		// httpServer.stop();
 	}
 }
+
+interface CliConfiguration {
+	
+	@Option(shortName = "p", longName = "port", defaultValue = "9999", description = "the port on which the frontend will listen for http connections")
+	Integer getPort();
+
+	@Option(shortName = "ip", longName = "ip", defaultValue = "0.0.0.0", description = "the IP on which the frontend will listen for http connections")
+	String getIp();
+	
+
+	@Option(longName = "db-hostname", defaultValue = "localhost", description = "the hostname of database")
+	String getDbHostname();
+
+	@Option(longName = "db-port", defaultValue = "27017", description = "the port of database")
+	Integer getDbPort();
+
+	
+
+	@Option(helpRequest = true)
+	boolean getHelp();
+	}

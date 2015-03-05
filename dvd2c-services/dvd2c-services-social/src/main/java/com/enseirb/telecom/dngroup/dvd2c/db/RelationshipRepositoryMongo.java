@@ -25,7 +25,7 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 			delete(entity.getUserId(), entity.getActorID());
 		}
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DBCollection db = mongoClient.getDB("mediahome").getCollection("relationships");
 
 			db.save(DbInit.createDBObject(entity));
@@ -49,7 +49,7 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 
 	public RelationshipRepositoryObject findOne(String userId, String relationActorID) {
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DBCollection db = mongoClient.getDB("mediahome").getCollection("relationships");
 
 			BasicDBObject query = new BasicDBObject("userId", userId).append("actorID", relationActorID);
@@ -79,7 +79,7 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 	// This function won't be really used... 
 	public boolean exists(String userId, String relationActorID) {
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DBCollection db = mongoClient.getDB("mediahome").getCollection("relationships");
 
 			BasicDBObject query = new BasicDBObject("userId", userId).append("actorID", relationActorID);
@@ -99,7 +99,7 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 		List <RelationshipRepositoryObject> listOfAllRelation = new ArrayList<RelationshipRepositoryObject>();
 		
 		try{
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DBCollection db = mongoClient.getDB("mediahome").getCollection("relationships");
 			
 			ObjectMapper mapper = new ObjectMapper();
@@ -138,7 +138,7 @@ public class RelationshipRepositoryMongo implements RelationshipRepository {
 	}
 	public void delete(String userId, String relationActorID) {
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DBCollection db = mongoClient.getDB("mediahome").getCollection("relationships");
 
 			BasicDBObject query = new BasicDBObject("userId", userId).append("actorID", relationActorID);

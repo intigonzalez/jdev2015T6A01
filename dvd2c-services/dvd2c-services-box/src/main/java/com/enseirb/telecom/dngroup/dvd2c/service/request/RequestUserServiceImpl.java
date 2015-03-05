@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
+import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
@@ -34,7 +35,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 
 	public RequestUserServiceImpl() {
 
-		server = ApplicationContext.getProperties().getProperty("CentralURL");
+		server = CliConfSingleton.centralURL;
 		this.url = server + "/api/app/account/";
 		client = ClientBuilder.newClient();
 	}

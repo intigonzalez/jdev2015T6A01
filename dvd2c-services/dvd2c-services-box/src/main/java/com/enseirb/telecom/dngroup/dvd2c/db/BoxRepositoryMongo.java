@@ -35,7 +35,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 			entity = update(entity);
 		} else {
 			try {
-				MongoClient mongoClient = DbInit.Connect();
+				MongoClient mongoClient = DbInit.connect();
 				DB db = mongoClient.getDB(dbName);
 				DBCollection dbbox = db.getCollection("box");
 				DBObject objectToSave = DbInit.createDBObject(entity);
@@ -56,7 +56,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 	private <S extends BoxRepositoryObject> S update(S entity) {
 		MongoClient mongoClient;
 		try {
-			mongoClient = DbInit.Connect();
+			mongoClient = DbInit.connect();
 
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbBox = db.getCollection("box");
@@ -127,7 +127,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 	public BoxRepositoryObject findOne(String id) {
 		// The id is the actorID address
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("box");
 
@@ -155,7 +155,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 
 	public boolean exists(String id) {
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("box");
 
@@ -182,7 +182,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 		List<BoxRepositoryObject> listOfAllBox = new ArrayList<BoxRepositoryObject>();
 
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbBox = db.getCollection("box");
 
@@ -223,7 +223,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 
 	public void delete(String id) {
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("box");
 
@@ -238,7 +238,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 
 	public void delete(BoxRepositoryObject entity) {
 		try {
-			MongoClient mongoClient = DbInit.Connect();
+			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("box");
 			BasicDBObject query = new BasicDBObject("boxID", entity.getBoxID());
