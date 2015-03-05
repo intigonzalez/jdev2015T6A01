@@ -36,10 +36,10 @@ public interface RelationService {
 	/**
 	 * get the list of relation of a group from a user
 	 * @param userID to get relation
-	 * @param groupID the group to get
+	 * @param roleID the group to get
 	 * @return the list of relation
 	 */
-	public abstract List<Relation> getListRelation(String userID, int groupID);
+	public abstract List<Relation> getListRelation(String userID, int roleID);
 
 	/**
 	 * get all content of the first user to the seconde user

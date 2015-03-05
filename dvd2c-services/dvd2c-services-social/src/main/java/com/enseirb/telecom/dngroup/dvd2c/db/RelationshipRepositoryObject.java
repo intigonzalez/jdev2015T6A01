@@ -39,7 +39,7 @@ public class RelationshipRepositoryObject {
 		this.pubKey = relation.getPubKey();
 		this.aprouve = relation.getAprouve();
 		this.unixTime = relation.getUnixTime();
-		this.role = relation.getRole();
+		this.role = relation.getRoleID();
 		
 	}
 	/**
@@ -105,7 +105,7 @@ public class RelationshipRepositoryObject {
 		relation.setPubKey(pubKey);
 		relation.setUnixTime(unixTime);
 		relation.setAprouve(aprouve);
-		relation.getRole().addAll(role);
+		relation.getRoleID().addAll(role);
 		return relation;
 		
 	}

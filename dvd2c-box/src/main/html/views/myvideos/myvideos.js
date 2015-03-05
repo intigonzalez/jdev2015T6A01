@@ -32,12 +32,12 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
 
 
         videos.list = [];
-        videos.listGroups = [
-            {"groupID":"0" , "groupName":"public", "info":"Seen by all your relations"},
-            {"groupID":"1" , "groupName":"Family", "info":"Seen by all your family only"},
-            {"groupID":"2" , "groupName":"Friends", "info":"Seen by all your friends only"},
-            {"groupID":"3" , "groupName":"Pro", "info":"Seen by all your professional contacts"},
-        ];  //List of groups
+        videos.roles = [
+            {"roleID":"0" , "roleName":"public", "info":"Seen by all your relations"},
+            {"roleID":"1" , "roleName":"Family", "info":"Seen by all your family only"},
+            {"roleID":"2" , "roleName":"Friends", "info":"Seen by all your friends only"},
+            {"roleID":"3" , "roleName":"Pro", "info":"Seen by all your professional contacts"},
+        ];  //List of role
         this.getVideos = function() {
             $http.get(PREFIX_RQ + "/api/app/" + userID + "/content")
                 .success(function (data, status, headers, config) {
@@ -114,8 +114,8 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
                 controller: 'VideosModalInstanceCtrl',
                 size: size,
                 resolve: {
-                    listGroups: function () {
-                        return videos.listGroups;
+                	roles: function () {
+                        return videos.roles;
                     },
                     video: function () {
                         return content;
@@ -133,30 +133,30 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
 
 
     }])
-    .controller('VideosModalInstanceCtrl', ['$scope', '$modalInstance', 'listGroups', 'video', function ($scope, $modalInstance, listGroups, video) {
+    .controller('VideosModalInstanceCtrl', ['$scope', '$modalInstance', 'roles', 'video', function ($scope, $modalInstance, roles, video) {
 
-        $scope.listGroups = angular.copy(listGroups);
+        $scope.roles = angular.copy(roles);
         if (video.authorization === undefined) {
         } else {
             if ( angular.isArray(video.authorization) ) {
                 angular.forEach(video.authorization, function (item) {
-                    var index = searchItemIntoArrayWithAttribute($scope.listGroups, "groupID", item.groupID);
-                    $scope.listGroups[index].value = true;
+                    var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", item.roleID);
+                    $scope.roles[index].value = true;
                 });
             }
             else {
-                var index = searchItemIntoArrayWithAttribute($scope.listGroups, "groupID", video.authorization.groupID);
-                $scope.listGroups[index].value=true;
+                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", video.authorization.roleID);
+                $scope.roles[index].value=true;
             }
         }
-        //console.log(listGroups);
+        //console.log(roles);
 
         $scope.ok = function () {
-            //console.log($scope.listGroups);
+            //console.log($scope.roles);
             video.authorization= [];
-            angular.forEach($scope.listGroups, function(group) {
-                if (group.value == true) {
-                    var newAuthorization = {"groupID": group.groupID, "action": "action"};
+            angular.forEach($scope.roles, function(role) {
+                if (role.value == true) {
+                    var newAuthorization = {"roleID": role.roleID, "action": "action"};
                     video.authorization.push(newAuthorization)
                 }
             });

@@ -12,7 +12,7 @@
                 </div>
                 <div class="top_right_delete">
                     <button class="btn btn-success btn-xs fa fa-file-video-o" ng-click="DisplayFriendProfile(friend)"></button>
-                    <button class="btn btn-primary btn-xs fa fa-pencil" ng-click="friends.showgroups(friend)"></button>
+                    <button class="btn btn-primary btn-xs fa fa-pencil" ng-click="friends.showRoles(friend)"></button>
                     <button class="btn btn-danger btn-xs fa fa-trash-o" ng-click="friends.removeRelation(friend)"></button>
                 </div>
                 <p><img src="assets/img/ui-zac.jpg" class="img-circle" width="80"></p>
@@ -20,8 +20,8 @@
                 <div class="row">
                     <div class="col-md-6 col-xs-6">
                         <p class="small mt">Member of</p>
-                        <p class="small"><span ng-repeat="groupName in friends.generateGroupList(friend)">
-                            {{groupName}}, </span>
+                        <p class="small"><span ng-repeat="roleName in friends.generateRoleList(friend)">
+                            {{roleName}}, </span>
                         </p>
                     </div>
                     <div class="col-md-6 col-xs-6">
@@ -42,16 +42,16 @@
                             <div class="col-md-12">
                                 <div class="white-panel">
                                     <div class="panel-heading">
-                                        <div style="color:black" class="pull-left"><h5><i class="fa fa-tasks"></i> Groups List</h5></div>
+                                        <div style="color:black" class="pull-left"><h5><i class="fa fa-tasks"></i> Roles List</h5></div>
                                         <br>
                                     </div>
                                     <div class="custom-check goleft mt">
                                         <table id="todo" class="table table-hover custom-check">
                                             <tbody>
                                             <tr>
-                                                <td style="color:black" ng-repeat="group in listGroups">
-                                                    <span class="check"><input class="checked" type="checkbox" ng-model="group.value"></span>
-                                                    {{group.groupName}}
+                                                <td style="color:black" ng-repeat="role in listRoles">
+                                                    <span class="check"><input class="checked" type="checkbox" ng-model="role.value"></span>
+                                                    {{role.roleName}}
                                                 </td>
                                             </tr>
                                             </tbody>

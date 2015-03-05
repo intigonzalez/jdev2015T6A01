@@ -6,7 +6,7 @@
 		<xs:sequence>
 
 			<xs:element name="type" type="xs:string" maxOccurs="1"
-				minOccurs="1"></xs:element>
+				minOccurs="0"></xs:element>
 			<xs:element name="actorID" type="xs:string"
 				maxOccurs="1" minOccurs="1" />
 			<xs:element name="firstname" type="xs:string" maxOccurs="1"
@@ -21,7 +21,7 @@
 				and I shoud answer, 3 : Request Accepted -->
 			<xs:element name="unix_time" type="xs:long" maxOccurs="1"
 				minOccurs="0" />
-			<xs:element name="role" type="xs:int" maxOccurs="unbounded"
+			<xs:element name="roleID" type="xs:int" maxOccurs="unbounded"
 				minOccurs="0">
 			</xs:element>
 		</xs:sequence>

@@ -181,7 +181,7 @@ public class ContentServiceImpl implements ContentService {
 				search: 
 
 					if ((contentRepositoryObject.getActorID()!=null)&&(contentRepositoryObject.getActorID().equals(userID))) {
-						for (int i = 0; i < relation.getRole().size(); i++) { // For each group the relation belongs to
+						for (int i = 0; i < relation.getRoleID().size(); i++) { // For each group the relation belongs to
 							if (contentRepositoryObject.getRole() != null) {
 								if (contentRepositoryObject.getRole().size() == 0) {
 
@@ -191,7 +191,7 @@ public class ContentServiceImpl implements ContentService {
 							for (int j = 0; j < contentRepositoryObject.getRole().size(); j++) {
 
 
-								if (relation.getRole().get(i) == contentRepositoryObject.getRole().get(j)) {
+								if (relation.getRoleID().get(i) == contentRepositoryObject.getRole().get(j)) {
 									contentRepositoryObject.getRole().clear();
 									contentRepositoryObject.setLink(ApplicationContext.getProperties().getProperty("PublicAddr")+contentRepositoryObject.getLink());
 

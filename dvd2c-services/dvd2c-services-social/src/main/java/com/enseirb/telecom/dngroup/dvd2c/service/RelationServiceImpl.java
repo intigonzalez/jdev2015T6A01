@@ -121,14 +121,14 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public List<Relation> getListRelation(String userID, int groupID) {
+	public List<Relation> getListRelation(String userID, int roleIDfromUser) {
 
 		List<Relation> listRelation = getListRelation(userID);
 		List<Relation> listRelation2 = new ArrayList<Relation>();
 		for (int i = 0; i < listRelation.size(); i++) {
-			List<Integer> groupeIDs = listRelation.get(i).getRole();
-			for (Integer groupeID : groupeIDs) {
-				if (groupeID == groupID) {
+			List<Integer> roles = listRelation.get(i).getRoleID();
+			for (Integer roleID : roles) {
+				if (roleID == roleIDfromUser) {
 					listRelation2.add(listRelation.get(i));
 				}
 			}
@@ -146,7 +146,7 @@ public class RelationServiceImpl implements RelationService {
 		Relation relation = new Relation();
 		relation.setActorID(relationIDString);
 		relation.setAprouve(1);
-		relation.getRole().add(0);
+		relation.getRoleID().add(0);
 		createRelation(userIDFromPath, relation, fromBox);
 
 	}
@@ -184,7 +184,7 @@ public class RelationServiceImpl implements RelationService {
 			relation2.setPubKey(userWhoAsked.getPubKey());
 			relation2.setAprouve(2);
 			relation2.setUnixTime(relation.getUnixTime());
-			relation2.getRole().add(0);
+			relation2.getRoleID().add(0);
 			if (!fromBox) {
 				if (userDatabase.exists(relation.getActorID())) {
 					relationshipDatabase.save(new RelationshipRepositoryObject(
@@ -251,9 +251,9 @@ public class RelationServiceImpl implements RelationService {
 
 		}
 		// Or, the user can edit the group his/her relationshis is in.
-		if (!relationIntoDb.getRole().equals(relation.getRole())) {
-			relationIntoDb.getRole().clear();
-			relationIntoDb.getRole().addAll(relation.getRole());
+		if (!relationIntoDb.getRoleID().equals(relation.getRoleID())) {
+			relationIntoDb.getRoleID().clear();
+			relationIntoDb.getRoleID().addAll(relation.getRoleID());
 		}
 		relationshipDatabase.save(new RelationshipRepositoryObject(userID,
 				relationIntoDb));
