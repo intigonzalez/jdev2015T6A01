@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Comment;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
+import com.enseirb.telecom.dngroup.dvd2c.model.Metadata;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
@@ -16,7 +17,7 @@ public class ContentRepositoryObject {
 	String previewLink;
 	String status;
 	List<Comment> comment;
-	List<Integer> role;
+	List<Integer> metadata;
 
 
 
@@ -24,7 +25,7 @@ public class ContentRepositoryObject {
 
 	}
 
-	public ContentRepositoryObject(String id, String name, String actorID, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<Integer> role) {
+	public ContentRepositoryObject(String id, String name, String actorID, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<Integer> metadata) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -34,7 +35,7 @@ public class ContentRepositoryObject {
 		this.previewLink = previewLink;
 		this.status = status;
 		this.comment = comment;
-		this.role = role;
+		this.metadata = metadata;
 	}
 
 	public ContentRepositoryObject(Content content) {
@@ -46,22 +47,22 @@ public class ContentRepositoryObject {
 		previewLink = content.getPreviewLink();
 		status = content.getStatus();
 		this.comment = content.getComment();
-		this.role = content.getRole();
+		this.metadata = content.getMetadata();
 	
 	}
 
 	/**
-	 * @return the role
+	 * @return the metadata
 	 */
-	public List<Integer> getRole() {
-		return role;
+	public List<Integer> getMetadata() {
+		return metadata;
 	}
 
 	/**
-	 * @param role the role to set
+	 * @param metadata the metadata to set
 	 */
-	public void setRole(List<Integer> role) {
-		this.role = role;
+	public void setMetadata(List<Integer> metadata) {
+		this.metadata = metadata;
 	}
 
 	/**
@@ -91,9 +92,7 @@ public class ContentRepositoryObject {
 		this.name = name;
 	}
 
-	public void setactorID(String actorID) {
-		this.actorID = actorID;
-	}
+
 
 	public Long getUnixTime() {
 		return unixTime;
@@ -144,6 +143,7 @@ public class ContentRepositoryObject {
 		content.setUnixTime(this.getUnixTime());
 		content.setStatus(this.getStatus());
 		content.getComment().addAll(this.getComment());
+		content.getMetadata().addAll(this.getMetadata());
 		return content;
 	}
 

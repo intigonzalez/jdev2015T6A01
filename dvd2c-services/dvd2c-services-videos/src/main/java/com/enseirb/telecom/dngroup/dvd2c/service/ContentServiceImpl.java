@@ -50,7 +50,7 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public List<Content> getAllContentsFromUser(String userID) {
-		contentDatabase.findAllFromUser(userID);
+		
 		List<Content> listContent = new ArrayList<Content>();
 		Iterable<ContentRepositoryObject> contentsDb = contentDatabase.findAllFromUser(userID);
 		Iterator<ContentRepositoryObject> itr = contentsDb.iterator();
@@ -182,21 +182,18 @@ public class ContentServiceImpl implements ContentService {
 
 					if ((contentRepositoryObject.getActorID()!=null)&&(contentRepositoryObject.getActorID().equals(userID))) {
 						for (int i = 0; i < relation.getRoleID().size(); i++) { // For each group the relation belongs to
-							if (contentRepositoryObject.getRole() != null) {
-								if (contentRepositoryObject.getRole().size() == 0) {
+							if (contentRepositoryObject.getMetadata() != null) {
+								if (contentRepositoryObject.getMetadata().size() == 0) {
 
 									break search;
 								}
 							}
-							for (int j = 0; j < contentRepositoryObject.getRole().size(); j++) {
+							for (int j = 0; j < contentRepositoryObject.getMetadata().size(); j++) {
 
 
-								if (relation.getRoleID().get(i) == contentRepositoryObject.getRole().get(j)) {
-									contentRepositoryObject.getRole().clear();
+								if (relation.getRoleID().get(i) == contentRepositoryObject.getMetadata().get(j)) {
+									contentRepositoryObject.getMetadata().clear();
 									contentRepositoryObject.setLink(ApplicationContext.getProperties().getProperty("PublicAddr")+contentRepositoryObject.getLink());
-
-
-
 									listContent.add(contentRepositoryObject.toContent());
 									break search;
 								} else {

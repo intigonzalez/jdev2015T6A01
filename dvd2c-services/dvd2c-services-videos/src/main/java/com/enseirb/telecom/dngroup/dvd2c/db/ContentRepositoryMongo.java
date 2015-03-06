@@ -9,7 +9,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enseirb.telecom.dngroup.dvd2c.model.Metadata;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -26,8 +28,8 @@ public class ContentRepositoryMongo implements ContentRepository {
 	@Override
 	public <S extends ContentRepositoryObject> S save(S entity) {
 		if (exists(entity.getId())) {
-			entity = update(entity);
-		} else {
+			delete(entity);
+		}
 
 			try {
 
@@ -42,7 +44,7 @@ public class ContentRepositoryMongo implements ContentRepository {
 				LOGGER.error("Connection to database failed (mongoDB installed and run ?) OR error for parsing json",e);
 				return null;
 			}
-		}
+		
 
 		return entity;
 	}
@@ -116,38 +118,34 @@ public class ContentRepositoryMongo implements ContentRepository {
 						entity.getId());
 				dbBox.update(searchQuery, newDocument);
 			}
-//			if (entity.getAuthorization() != null) {
-//				newDocument.append(
-//						"$set",
-//						new BasicDBObject().append("authorization",
-//								entity.getAuthorization()));
-//				BasicDBObject searchQuery = new BasicDBObject().append("id",
-//						entity.getId());
-//				dbBox.update(searchQuery, newDocument);
-//			}
-//			if (entity.getAuthorization() != null) {// need to verify
-//				
-//				List<Authorization> authorizations = entity.getAuthorization();
-//				Iterator<Authorization> userIterator = authorizations.iterator();														
-//				List<Object> entityDBList = new BasicDBList();
-//								
-//				while(userIterator.hasNext()) {	
-//				    DBObject userDBObject = new BasicDBObject();
-//				    try {
-//						userDBObject = DbInit.createDBObject(userIterator.next());
-//					} catch (JsonProcessingException e) {
-//					
-//						LOGGER.error("Impossible to create userDBObject",e);
-//					}			    
-//				    
-//					entityDBList.add(userDBObject);
-//					
-//				}
-//				
-//				newDocument.append("$set",new BasicDBObject().append("authorization", entityDBList));
-//				BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
-//				dbBox.update(searchQuery, newDocument);
-//				}
+
+			if (entity.getMetadata() != null) {try {
+				// need to verify
+					
+					List<Integer> metadatas = entity.getMetadata();
+												
+					List<Object> entityDBList = new BasicDBList();
+					for (Integer metadata : metadatas) {
+					
+					    DBObject userDBObject = new BasicDBObject();
+					    try {
+							userDBObject = DbInit.createDBObject(metadata);
+						} catch (JsonProcessingException e) {
+						
+							LOGGER.error("Impossible to create userDBObject",e);
+						}			    
+					    
+						entityDBList.add(userDBObject);
+						
+					}
+					
+					newDocument.append("$set",new BasicDBObject().append("authorization", entityDBList));
+					BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+					dbBox.update(searchQuery, newDocument);
+			} catch (Exception e) {
+				LOGGER.debug("Can't update metadata",e);
+			}
+				}
 			if (entity.getComment() != null) {
 				newDocument.append(
 						"$set",
@@ -296,7 +294,7 @@ LOGGER.error("Connection to database failed ");
 			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB("mediahome");
 			DBCollection dbContents = db.getCollection("contents");
-			BasicDBObject query = new BasicDBObject("userId", userID);
+			BasicDBObject query = new BasicDBObject("actorID", userID);
 
 			ObjectMapper mapper = new ObjectMapper();
 			ContentRepositoryObject content = null;
@@ -307,7 +305,10 @@ LOGGER.error("Connection to database failed ");
 				try {
 					content = mapper.readValue(cursor.next().toString(),
 							ContentRepositoryObject.class);
-				} catch (IOException e) {
+				} catch (JsonMappingException e) {
+					LOGGER.error("Can not cast json",e);
+				}
+				 catch (IOException e) {
 					LOGGER.error("Connection to database failed to get contents");
 				}
 				list.add(content);

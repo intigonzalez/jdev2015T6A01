@@ -136,16 +136,16 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
     .controller('VideosModalInstanceCtrl', ['$scope', '$modalInstance', 'roles', 'video', function ($scope, $modalInstance, roles, video) {
 
         $scope.roles = angular.copy(roles);
-        if (video.authorization === undefined) {
+        if (video.metadata === undefined) {
         } else {
-            if ( angular.isArray(video.authorization) ) {
-                angular.forEach(video.authorization, function (item) {
-                    var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", item.roleID);
+            if ( angular.isArray(video.metadata.roleID) ) {
+                angular.forEach(video.metadata.roleID, function (id) {
+                    var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", id);
                     $scope.roles[index].value = true;
                 });
             }
             else {
-                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", video.authorization.roleID);
+                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", video.roleID);
                 $scope.roles[index].value=true;
             }
         }
@@ -153,11 +153,10 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
 
         $scope.ok = function () {
             //console.log($scope.roles);
-            video.authorization= [];
+            video.metadata= [];
             angular.forEach($scope.roles, function(role) {
                 if (role.value == true) {
-                    var newAuthorization = {"roleID": role.roleID, "action": "action"};
-                    video.authorization.push(newAuthorization)
+                    video.metadata.push(role.roleID)
                 }
             });
 
