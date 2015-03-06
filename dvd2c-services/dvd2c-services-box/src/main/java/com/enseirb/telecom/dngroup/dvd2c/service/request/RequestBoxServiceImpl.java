@@ -27,6 +27,7 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 		client = ClientBuilder.newClient();
 	}
 
+	
 	@Override
 	public Box get(String boxID) throws IOException,NoSuchBoxException {
 		Box boxGet = new Box();

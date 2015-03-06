@@ -6,9 +6,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.UUID;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -18,6 +18,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -99,7 +100,7 @@ public class ContentEndPoints {
 	 */
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response postcontent(@PathParam("userID") String userID,
+	public Response postContent(@PathParam("userID") String userID,
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail,
 			@FormDataParam("file") FormDataBodyPart body)
@@ -117,8 +118,20 @@ public class ContentEndPoints {
 		return Response.created(new URI("app/"+userID+"/content/"+content.getContentsID())).build();
 
 	}
-
 	
+	@Path("fromlocal")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response postContentFromLocal(@Context HttpServletRequest request,@PathParam("userID") String userID,
+			@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail,
+			@FormDataParam("file") FormDataBodyPart body)
+			throws URISyntaxException, IOException {
+		if (request.getRemoteAddr().equals("127.0.0.1"))
+			return postContent(userID, uploadedInputStream, fileDetail, body);
+		LOGGER.error("Is only from local not from {}", request.getRemoteAddr());
+		return Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN)
+				.build();
+	}
 
 	/**
 	 * Update information for the video
@@ -139,6 +152,16 @@ public class ContentEndPoints {
 		} else {
 			return Response.status(409).build();
 		}
+	}
+	
+	@Path("{contentsID}/fromlocal")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response putContentFromLocal(@Context HttpServletRequest request,Content content,@PathParam("contentsID") String contentsID){
+		if (request.getRemoteAddr().equals("127.0.0.1"))
+			return putContent(content,contentsID) ;
+		LOGGER.error("Is only from local not from {}", request.getRemoteAddr());
+		return Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN)
+				.build();
 	}
 
 	/**
