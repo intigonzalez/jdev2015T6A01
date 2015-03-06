@@ -19,7 +19,7 @@ public class UserRepositoryObject {
 		
 	}
 	
-	public UserRepositoryObject(String userID,String boxID, String firstname, String surname, String password, String pubKey, String privateKey) {
+	public UserRepositoryObject(String userID,String boxID, String firstname, String surname, String password, String pubKey, String privateKey, Properties properties) {
 		super();
 		this.boxID=boxID;
 		this.userID = userID;
@@ -28,6 +28,7 @@ public class UserRepositoryObject {
 		this.password = password;
 		this.pubKey = pubKey;
 		this.privateKey = privateKey;
+		this.properties = properties;
 	}
 	
 	public UserRepositoryObject(User user) {
@@ -38,6 +39,7 @@ public class UserRepositoryObject {
 		this.password = user.getPassword();
 		this.pubKey = user.getPubKey();
 		this.privateKey = user.getPrivateKey();
+		this.properties = user.getProperties();
 	}
 
 	public void setProperties(Properties properties) {
@@ -111,6 +113,10 @@ public class UserRepositoryObject {
 
 	public void setBoxID(String boxID) {
 		this.boxID = boxID;
+	}
+
+	public Properties getProperties() {
+		return properties;
 	}
 
 }
