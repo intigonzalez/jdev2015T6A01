@@ -28,7 +28,7 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
         $scope.FriendProfileController = {}; // use to give all the items to the other controller
         $scope.FriendProfileController.getVideoContent = function(friend) {
             $scope.FriendProfileController.videos = []; // object to store videos
-            $http.get(PREFIX_RQ+"/api/app/"+userID+"/relation/"+friend.email +"/content")
+            $http.get(PREFIX_RQ+"/api/app/"+userID+"/relation/"+friend.actorID +"/content")
                 .success(function(data, status, headers, config) {
                     if ( data.contents !== "" ) {
                         if (angular.isArray(data.contents.content) == false) {
@@ -93,44 +93,44 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
         var friends = this; // This element to get it easily
         friends.list = []; //Friend list into the controller
         friends.addFriendSuccess =null; //boolean to change the color of add Friend button
-        friends.listGroups = [
-            {"groupID":"0" , "groupName":"public", "info":"Seen by all your relations"},
-            {"groupID":"1" , "groupName":"Family", "info":"Seen by all your family only"},
-            {"groupID":"2" , "groupName":"Friends", "info":"Seen by all your friends only"},
-            {"groupID":"3" , "groupName":"Pro", "info":"Seen by all your professional contacts"},
-        ];  //List of groups
+        friends.listRoles = [
+            {"roleID":"0" , "roleName":"public", "info":"Seen by all your relations"},
+            {"roleID":"1" , "roleName":"Family", "info":"Seen by all your family only"},
+            {"roleID":"2" , "roleName":"Friends", "info":"Seen by all your friends only"},
+            {"roleID":"3" , "roleName":"Pro", "info":"Seen by all your professional contacts"},
+        ];  //List of roles
 
-        // *****************  Get GroupList****************
-        this.getGroupList = function() {
-            $http.get(PREFIX_RQ+"/api/app/"+userID+"/group")
+        // *****************  Get RoleList****************
+        this.getRoleList = function() {
+            $http.get(PREFIX_RQ+"/api/app/"+userID+"/role")
                 .success(function(data, status, headers, config) {
                     if ( data.relations !== "" ) {
-                        if (angular.isArray(data.listGroups.groups) == false) {
-                            friends.listGroups.push(data.listGroups.groups);
+                        if (angular.isArray(data.listRoles.roles) == false) {
+                            friends.listRoles.push(data.listRoles.roles);
                         }
                         else {
-                            friends.listGroups = data.listGroups.groups;
+                            friends.listRoles = data.listRoles.roles;
                         }
                     }
                 })
                 .error(function (data, status, headers, config){
-                    console.log("Failed getting Groups list");
+                    console.log("Failed getting Roles list");
                 })
         };
-        //this.getGroupList(); //Disabled because the endpoint doesn't exist yet !
+        //this.getRoleList(); //Disabled because the endpoint doesn't exist yet !
 
-        //This function is called to display the list of groups a relation belongs to.
-        this.generateGroupList = function(friend) {
+        //This function is called to display the list of roles a relation belongs to.
+        this.generateRoleList = function(friend) {
             var result = [];
-            if (friend.groupID !== undefined) {
-                if ( angular.isArray(friend.groupID) ) {
-                    angular.forEach(friend.groupID, function (id) {
-                        var index = searchItemIntoArrayWithAttribute(friends.listGroups, "groupID", id);
-                        result.push(friends.listGroups[index].groupName);
+            if (friend.roleID !== undefined) {
+                if ( angular.isArray(friend.roleID) ) {
+                    angular.forEach(friend.roleID, function (id) {
+                        var index = searchItemIntoArrayWithAttribute(friends.listRoles, "roleID", id);
+                        result.push(friends.listRoles[index].roleName);
                     });
                 }
                 else {
-                    result[0] = friends.listGroups[friend.groupID].groupName
+                    result[0] = friends.listRoles[friend.roleID].roleName
                 }
             }
             return result;
@@ -171,7 +171,7 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
         // **** Function to update a friend with PUT Request
         this.updateRelation = function(friend) {
             var data = {"relation" : friend};
-            $http.put(PREFIX_RQ+"/api/app/"+userID+"/relation/"+friend.email, data)
+            $http.put(PREFIX_RQ+"/api/app/"+userID+"/relation/"+friend.actorID, data)
                 .success(function() {
                     console.log("success");
                 })
@@ -222,7 +222,7 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
 
         // ***** Remove a friend *****
         this.removeRelation = function(friend) {
-            $http.delete(PREFIX_RQ + "/api/app/" + userID + "/relation/"+friend.email)
+            $http.delete(PREFIX_RQ + "/api/app/" + userID + "/relation/"+friend.actorID)
                 .success(function(data,status,headers,config) {
                     var index = friends.getIndex(friend);
                     if (index > -1) {
@@ -235,19 +235,19 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
         }
 
         // ***** Modal *****
-        this.showgroups = function(friend) {
+        this.showRoles = function(friend) {
             $scope.open(friend);
         }
 
-        //Enable Modal to edit groups
+        //Enable Modal to edit roles
         $scope.open = function (friend, size) {
             var modalInstance = $modal.open({
                 templateUrl: 'myModalContent.html',
                 controller: 'ModalInstanceCtrl',
                 size: size,
                 resolve: {
-                    listGroups: function () {
-                        return friends.listGroups;
+                    listRoles: function () {
+                        return friends.listRoles;
                     },
                     friend: function() {
                         return friend;
@@ -265,7 +265,7 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
         // ***** Collapse *****
         //friends.collapse = null;
         //friends.isCollapsed = function(friend) {
-        //    if (friends.collapse == friend.email ) {
+        //    if (friends.collapse == friend.actorID ) {
         //        return false;
         //    }
         //    else {
@@ -277,7 +277,7 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
         //        friends.collapse = null;
         //    }
         //    else {
-        //        friends.collapse = friend.email;
+        //        friends.collapse = friend.actorID;
         //    }
         //}
 
@@ -285,32 +285,32 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
     }])
 
 
-    .controller('ModalInstanceCtrl', ['$scope', '$modalInstance', 'listGroups', 'friend', function ($scope, $modalInstance, listGroups, friend) {
+    .controller('ModalInstanceCtrl', ['$scope', '$modalInstance', 'listRoles', 'friend', function ($scope, $modalInstance, listRoles, friend) {
 
 
         //console.log(friend);
-        $scope.listGroups = angular.copy(listGroups);
-        if (friend.groupID === undefined) {
+        $scope.listRoles = angular.copy(listRoles);
+        if (friend.roleID === undefined) {
         } else {
-            if ( angular.isArray(friend.groupID) ) {
-                angular.forEach(friend.groupID, function (id) {
-                    var index = searchItemIntoArrayWithAttribute($scope.listGroups, "groupID", id);
-                    $scope.listGroups[index].value = true;
+            if ( angular.isArray(friend.roleID) ) {
+                angular.forEach(friend.roleID, function (id) {
+                    var index = searchItemIntoArrayWithAttribute($scope.listRoles, "roleID", id);
+                    $scope.listRoles[index].value = true;
                 });
             }
             else {
-                var index = searchItemIntoArrayWithAttribute($scope.listGroups, "groupID", friend.groupID);
-                $scope.listGroups[index].value=true;
+                var index = searchItemIntoArrayWithAttribute($scope.listRoles, "roleID", friend.roleID);
+                $scope.listRoles[index].value=true;
             }
         }
-        //console.log(listGroups);
+        //console.log(listRoles);
 
         $scope.ok = function () {
-            //console.log($scope.listGroups);
-            friend.groupID = [];
-            angular.forEach($scope.listGroups, function(group) {
-                if (group.value == true) {
-                    friend.groupID.push(group.groupID);
+            //console.log($scope.listRoles);
+            friend.roleID = [];
+            angular.forEach($scope.listRoles, function(role) {
+                if (role.value == true) {
+                    friend.roleID.push(role.roleID);
                 }
             });
 
@@ -322,3 +322,4 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
             $modalInstance.dismiss('cancel');
         };
     }]);
+

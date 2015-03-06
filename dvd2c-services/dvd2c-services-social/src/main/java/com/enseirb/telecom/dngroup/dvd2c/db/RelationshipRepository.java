@@ -5,23 +5,23 @@ public interface RelationshipRepository extends CrudRepository<RelationshipRepos
 	/**
 	 * Create a relation object for database with to parameter
 	 * @param userId the main user
-	 * @param relationUserIDOfRelation the relation
+	 * @param relationActorID the relation
 	 * @return Object for db
 	 */
-	public RelationshipRepositoryObject findOne(String userId, String relationUserIDOfRelation);
+	public RelationshipRepositoryObject findOne(String userId, String relationActorID);
 	
 	/**
 	 * verify if the relation exist in db
 	 * @param userId the main user
-	 * @param relationUserIDOfRelation the relation user
+	 * @param relationActorID the relation user
 	 * @return
 	 */
-	public boolean exists(String userId, String relationUserIDOfRelation);
+	public boolean exists(String userId, String relationActorID);
 	
 	/**
 	 * delete a relation between this users
 	 * @param userId the main user
-	 * @param relationUserIDOfRelation the relation user
+	 * @param relationActorID the relation user
 	 */
-	public void delete(String userId, String relationUserIDOfRelation);
+	public void delete(String userId, String relationActorID);
 }

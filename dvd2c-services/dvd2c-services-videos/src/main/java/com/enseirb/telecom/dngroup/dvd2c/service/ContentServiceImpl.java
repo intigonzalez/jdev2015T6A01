@@ -50,13 +50,13 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public List<Content> getAllContentsFromUser(String userID) {
-		contentDatabase.findAllFromUser(userID);
+		
 		List<Content> listContent = new ArrayList<Content>();
 		Iterable<ContentRepositoryObject> contentsDb = contentDatabase.findAllFromUser(userID);
 		Iterator<ContentRepositoryObject> itr = contentsDb.iterator();
 		while (itr.hasNext()) {
 			ContentRepositoryObject contentRepositoryObject = itr.next();
-			if (contentRepositoryObject.getUserId().equals(userID)) {
+			if (contentRepositoryObject.getActorID().equals(userID)) {
 				listContent.add(contentRepositoryObject.toContent());
 			}
 		}
@@ -81,7 +81,7 @@ public class ContentServiceImpl implements ContentService {
 			LOGGER.debug("New file uploaded with the type {}",fileType[0]);	
 			Content content = new Content();
 			content.setName(upload.getName());
-			content.setLogin(userID);
+			content.setActorID(userID);
 			content.setStatus("In progress");
 			content.setType(fileType[0]);
 			UUID uuid = UUID.randomUUID();
@@ -180,21 +180,20 @@ public class ContentServiceImpl implements ContentService {
 				ContentRepositoryObject contentRepositoryObject = itr.next();
 				search: 
 
-					if ((contentRepositoryObject.getUserId()!=null)&&(contentRepositoryObject.getUserId().equals(userID))) {
-						for (int i = 0; i < relation.getGroupID().size(); i++) { // For each group the relation belongs to
-							if (contentRepositoryObject.getAuthorization() != null) {
-								if (contentRepositoryObject.getAuthorization().size() == 0) {
+					if ((contentRepositoryObject.getActorID()!=null)&&(contentRepositoryObject.getActorID().equals(userID))) {
+						for (int i = 0; i < relation.getRoleID().size(); i++) { // For each group the relation belongs to
+							if (contentRepositoryObject.getMetadata() != null) {
+								if (contentRepositoryObject.getMetadata().size() == 0) {
 
 									break search;
 								}
 							}
-							for (int j = 0; j < contentRepositoryObject.getAuthorization().size(); j++) {
+							for (int j = 0; j < contentRepositoryObject.getMetadata().size(); j++) {
 
-								if (relation.getGroupID().get(i) == contentRepositoryObject.getAuthorization().get(j).getGroupID()) {
-									contentRepositoryObject.getAuthorization().clear();
-									//DAV: Need to verify publicAddr
-									contentRepositoryObject.setLink(CliConfSingleton.publicAddr+contentRepositoryObject.getLink());
 
+								if (relation.getRoleID().get(i) == contentRepositoryObject.getMetadata().get(j)) {
+									contentRepositoryObject.getMetadata().clear();
+									contentRepositoryObject.setLink(ApplicationContext.getProperties().getProperty("PublicAddr")+contentRepositoryObject.getLink());
 									listContent.add(contentRepositoryObject.toContent());
 									break search;
 								} else {

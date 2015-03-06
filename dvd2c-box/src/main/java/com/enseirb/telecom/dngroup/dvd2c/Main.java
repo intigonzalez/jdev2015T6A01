@@ -83,6 +83,7 @@ public class Main {
 		CliConfSingleton.dbHostname = cliconf.getDbHostname();
 		CliConfSingleton.dbPort = cliconf.getDbPort();
 		CliConfSingleton.port = cliconf.getPort();
+		LOGGER.info("the box ID is : {}",CliConfSingleton.boxID);
 
 		
 //		FileInputStream in;

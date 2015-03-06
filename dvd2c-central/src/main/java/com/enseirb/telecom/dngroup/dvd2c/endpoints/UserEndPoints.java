@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
@@ -35,18 +36,19 @@ public class UserEndPoints {
 	}
 
 	/**
-	 * Find a list of users from their name
+	 * Find a list of users from their firstname
 	 * 
-	 * @param name
+	 * @param firstname
 	 * @return a list of user
 	 */
 	@GET
-	@Path("name/{name}")
+	@Path("firstname/{firstname}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<User> getUserFromName(@PathParam("firstname") String firstname) {
 
-		return uManager.getUserFromName(firstname);
+		List<User> users = uManager.getUserFromName(firstname);
 
+		return users;
 	}
 
 	@GET
@@ -72,7 +74,7 @@ public class UserEndPoints {
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(user.getUserID())).build();
 		} else {
-			return Response.status(409).build();
+			return Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND).build();
 		}
 
 	}
