@@ -1,5 +1,6 @@
 package com.enseirb.telecom.dngroup.dvd2c.db;
 
+import com.enseirb.telecom.dngroup.dvd2c.model.Properties;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -13,6 +14,7 @@ public class UserRepositoryObject {
 	protected String password;
 	protected String pubKey;
 	protected String privateKey;
+	protected Properties properties;
 	public UserRepositoryObject(){
 		
 	}
@@ -36,6 +38,10 @@ public class UserRepositoryObject {
 		this.password = user.getPassword();
 		this.pubKey = user.getPubKey();
 		this.privateKey = user.getPrivateKey();
+	}
+
+	public void setProperties(Properties properties) {
+		this.properties = properties;
 	}
 
 	public String getFirstname() {
@@ -91,6 +97,7 @@ public class UserRepositoryObject {
 		user.setPrivateKey(privateKey);
 		user.setPubKey(pubKey);
 		user.setBoxID(boxID);
+		user.setProperties(properties);
 		return user;
 	}
 

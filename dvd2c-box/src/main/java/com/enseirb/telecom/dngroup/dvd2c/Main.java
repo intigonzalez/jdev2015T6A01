@@ -152,7 +152,7 @@ interface CliConfiguration {
 	@Option( longName = "content-path", defaultValue = "/var/www/html", description = "path of content")
 	String getContentPath();
 
-	@Option(shortName = "c",longName = "central-addr", defaultValue = "http://central:9999", description = "the http addr of central server")
+	@Option(shortName = "c",longName = "central-addr", defaultValue = "http://localhost:9999", description = "the http addr of central server")
 	String getCentralURL();
 
 	@Option(shortName = "a",longName = "public-addr", defaultValue = "http://db:9998", description = "the http addr of curent box")
