@@ -63,9 +63,11 @@ public interface ContentService {
 			File dest);
 
 	/**
-	 * get all content for a list group (use from a author box)
+	 * //TODO : explain this method
+	 * get all content for a userID
 	 * is use to get video for a specific user
-	 * @param groupID list of group to get video
+	 * @param userID
+	 * @param relation
 	 * @return a list a content
 	 */
 	public List<Content> getAllContent(String userID, Relation relation);

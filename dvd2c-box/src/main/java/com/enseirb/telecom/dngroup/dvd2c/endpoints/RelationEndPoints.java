@@ -126,14 +126,14 @@ public class RelationEndPoints {
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postFriend(@PathParam("userID") String userIDFromPath, Relation relationID) throws URISyntaxException {
-		if (rManager.RelationExist(userIDFromPath, relationID.getUserIDOfRelation()) == false) {
+		if (rManager.RelationExist(userIDFromPath, relationID.getActorID()) == false) {
 			try {
 				rManager.createRelation(userIDFromPath, relationID, false);
 			} catch (NoSuchUserException e) {
 				throw new WebApplicationException(404);
 			}
 			// NHE that the answer we expect from a post (see location header)
-			return Response.created(new URI(relationID.getUserIDOfRelation())).build();
+			return Response.created(new URI(relationID.getActorID())).build();
 		} else {
 
 			return Response.status(409).build();
@@ -182,16 +182,16 @@ public class RelationEndPoints {
 	@Path("frombox")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postFriendFromBox(@PathParam("userID") String userIDFromPath, Relation relation) throws URISyntaxException {
-		LOGGER.debug("add a relation from box between {} and {} ",userIDFromPath,relation.getUserIDOfRelation());
+		LOGGER.debug("add a relation from box between {} and {} ",userIDFromPath,relation.getActorID());
 
-		if (rManager.RelationExist(userIDFromPath, relation.getUserIDOfRelation()) == false) {
+		if (rManager.RelationExist(userIDFromPath, relation.getActorID()) == false) {
 			try {
 				rManager.createRelation(userIDFromPath, relation, true);
 			} catch (NoSuchUserException e) {
 				throw new WebApplicationException(Status.NOT_FOUND);
 			}
 			// NHE that the answer we expect from a post (see location header)
-			return Response.created(new URI(relation.getUserIDOfRelation())).build();
+			return Response.created(new URI(relation.getActorID())).build();
 		} else {
 
 			return Response.status(Status.CONFLICT).build();
@@ -202,13 +202,13 @@ public class RelationEndPoints {
 	@RolesAllowed("other")
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putFriend(@PathParam("userID") String userIDFromPath,@PathParam("username") String friendUserIDOfRelation, Relation relation) {
+	public Response putFriend(@PathParam("userID") String userIDFromPath,@PathParam("username") String friendActorID, Relation relation) {
 		// need to verify the friend and after this modifies the friend
-		if (relation.getUserIDOfRelation() == null) {
-			relation.setUserIDOfRelation(friendUserIDOfRelation);
+		if (relation.getActorID() == null) {
+			relation.setActorID(friendActorID);
 		}
-		if (relation.getUserIDOfRelation().equals(friendUserIDOfRelation)) {
-			if (rManager.RelationExist(userIDFromPath, relation.getUserIDOfRelation())) {
+		if (relation.getActorID().equals(friendActorID)) {
+			if (rManager.RelationExist(userIDFromPath, relation.getActorID())) {
 				rManager.saveRelation(userIDFromPath, relation);
 				return Response.status(200).build();
 			} else {

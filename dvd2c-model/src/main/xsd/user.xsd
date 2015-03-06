@@ -4,8 +4,8 @@
 
 	<xs:include schemaLocation="relation.xsd"></xs:include>
 	<xs:include schemaLocation="content.xsd"></xs:include>
-	<xs:include schemaLocation="group.xsd"></xs:include>
 	<xs:include schemaLocation="properties.xsd"></xs:include>
+
 	<xs:element name="user">
 
 		<xs:complexType>
@@ -33,11 +33,7 @@
 					minOccurs="0">
 				</xs:element>
 
-				<xs:element ref="group" maxOccurs="unbounded" minOccurs="0">
-				</xs:element>
-
-				<xs:element ref="content" maxOccurs="unbounded"
-					minOccurs="0"></xs:element>
+				<xs:element ref="content" maxOccurs="unbounded" minOccurs="0"></xs:element>
 				
 				<xs:element ref="properties" maxOccurs="1" minOccurs="1">
 				</xs:element>	

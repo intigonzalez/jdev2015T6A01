@@ -107,7 +107,7 @@ Relationships have an Approuve Value :
 	  <pubKey>pubKey</pubKey>
 	  <aprouve>1</aprouve>
 	  <unix_time>0</unix_time>
-	  <groupID>0</groupID>
+	  <roleID>0</roleID>
 	</relation>
 
 #### Create a box ####
@@ -132,11 +132,11 @@ with
 	<?xml version="1.0" encoding="UTF-8"?>
 	<content>
 	   <authorization>
-	    <groupID>0</groupID>
+	    <roleID>0</roleID>
 	    <action>action</action>
 	  </authorization>
 	  <authorization>
-	    <groupID>4</groupID>
+	    <roleID>4</roleID>
 	    <action>action</action>
 	  </authorization>
 	</content>

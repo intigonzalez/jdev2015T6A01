@@ -39,8 +39,8 @@ public class RelationServiceImpl implements RelationService {
 		this.userDatabase = userDatabase;
 	}
 
-	public boolean RelationExist(String UserID, String userIDOfRelation) {
-		return relationshipDatabase.exists(UserID, userIDOfRelation);
+	public boolean RelationExist(String UserID, String actorID) {
+		return relationshipDatabase.exists(UserID, actorID);
 	}
 
 	@Override
@@ -53,12 +53,12 @@ public class RelationServiceImpl implements RelationService {
 
 			if (rro.getUserId().equals(userID)) {
 
-				LOGGER.debug("{}", rro.getUserIDOfRelation());
+				LOGGER.debug("{}", rro.getActorID());
 
 				try {
-					// Box boxRelation = requestServ.getBox(rro.getUserIDOfRelation());
+					// Box boxRelation = requestServ.getBox(rro.getActorID());
 
-					User relationUpdate = rrs.get(userID, rro.getUserIDOfRelation());
+					User relationUpdate = rrs.get(userID, rro.getActorID());
 					Relation relationIntoDb = relationshipDatabase.findOne(
 							userID, relationUpdate.getUserID()).toRelation();
 					relationIntoDb.setFirstname(relationUpdate.getFirstname());
@@ -75,8 +75,8 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public Relation getRelation(String userID, String userIDOfRelation) {
-		RelationshipRepositoryObject relation = relationshipDatabase.findOne(userID, userIDOfRelation);
+	public Relation getRelation(String userID, String actorID) {
+		RelationshipRepositoryObject relation = relationshipDatabase.findOne(userID, actorID);
 		if (relation == null) {
 			return null;
 		} else {
@@ -121,14 +121,14 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public List<Relation> getListRelation(String userID, int groupID) {
+	public List<Relation> getListRelation(String userID, int roleIDfromUser) {
 
 		List<Relation> listRelation = getListRelation(userID);
 		List<Relation> listRelation2 = new ArrayList<Relation>();
 		for (int i = 0; i < listRelation.size(); i++) {
-			List<Integer> groupeIDs = listRelation.get(i).getGroupID();
-			for (Integer groupeID : groupeIDs) {
-				if (groupeID == groupID) {
+			List<Integer> roles = listRelation.get(i).getRoleID();
+			for (Integer roleID : roles) {
+				if (roleID == roleIDfromUser) {
 					listRelation2.add(listRelation.get(i));
 				}
 			}
@@ -144,9 +144,9 @@ public class RelationServiceImpl implements RelationService {
 			String relationIDString, Boolean fromBox)
 					throws NoSuchUserException {
 		Relation relation = new Relation();
-		relation.setUserIDOfRelation(relationIDString);
+		relation.setActorID(relationIDString);
 		relation.setAprouve(1);
-		relation.getGroupID().add(0);
+		relation.getRoleID().add(0);
 		createRelation(userIDFromPath, relation, fromBox);
 
 	}
@@ -162,7 +162,7 @@ public class RelationServiceImpl implements RelationService {
 		User user = new User();
 		RequestUserService rus = new RequestUserServiceImpl();
 		try {
-			user = rus.get(relation.getUserIDOfRelation());
+			user = rus.get(relation.getActorID());
 			if (user == null) {
 				throw new NoSuchUserException();
 			}
@@ -178,17 +178,17 @@ public class RelationServiceImpl implements RelationService {
 		if (uro != null) {
 			User userWhoAsked = userDatabase.findOne(userID).toUser();
 			Relation relation2 = new Relation();
-			relation2.setUserIDOfRelation(userWhoAsked.getUserID());
+			relation2.setActorID(userWhoAsked.getUserID());
 			relation2.setFirstname(userWhoAsked.getFirstname());
 			relation2.setSurname(userWhoAsked.getSurname());
 			relation2.setPubKey(userWhoAsked.getPubKey());
 			relation2.setAprouve(2);
 			relation2.setUnixTime(relation.getUnixTime());
-			relation2.getGroupID().add(0);
+			relation2.getRoleID().add(0);
 			if (!fromBox) {
-				if (userDatabase.exists(relation.getUserIDOfRelation())) {
+				if (userDatabase.exists(relation.getActorID())) {
 					relationshipDatabase.save(new RelationshipRepositoryObject(
-							relation.getUserIDOfRelation(), relation2));
+							relation.getActorID(), relation2));
 				} else {
 
 					RequestRelationService rss = new RequestRelationServiceImpl();
@@ -220,29 +220,29 @@ public class RelationServiceImpl implements RelationService {
 		// Here, the user is only allowed to edit the approve value if the
 		// current value is = 2
 		Relation relationIntoDb = relationshipDatabase.findOne(userID,
-				relation.getUserIDOfRelation()).toRelation();
+				relation.getActorID()).toRelation();
 		if (relationIntoDb.getAprouve() != relation.getAprouve()
 				&& relationIntoDb.getAprouve() == 2
 				&& relation.getAprouve() == 3) {
 			relationIntoDb.setAprouve(3);
 
-			if (userDatabase.exists(relation.getUserIDOfRelation())) {
+			if (userDatabase.exists(relation.getActorID())) {
 				Relation relation2 = relationshipDatabase.findOne(
-						relation.getUserIDOfRelation(), userID).toRelation();
+						relation.getActorID(), userID).toRelation();
 				relation2.setAprouve(3);
 				relationshipDatabase.save(new RelationshipRepositoryObject(
-						relation.getUserIDOfRelation(), relation2));
+						relation.getActorID(), relation2));
 			} else {
 				RequestRelationService rss = new RequestRelationServiceImpl();
 				try {
-					rss.setAprouveRelationORH(userID, relation.getUserIDOfRelation());
+					rss.setAprouveRelationORH(userID, relation.getActorID());
 				} catch (IOException e) {
-					LOGGER.error("Can not set aprouve {} for {} Error IO",userID,relation.getUserIDOfRelation(),e);
+					LOGGER.error("Can not set aprouve {} for {} Error IO",userID,relation.getActorID(),e);
 					e.printStackTrace();
 				} catch (NoSuchBoxException e) {
-					LOGGER.error("Can not set aprouve {} for {} no box found",userID,relation.getUserIDOfRelation(),e);
+					LOGGER.error("Can not set aprouve {} for {} no box found",userID,relation.getActorID(),e);
 				} catch (NoSuchUserException e) {
-					LOGGER.error("Can not set aprouve {} for {} user not found",userID,relation.getUserIDOfRelation(),e);
+					LOGGER.error("Can not set aprouve {} for {} user not found",userID,relation.getActorID(),e);
 				}
 				rss.close();
 				// Send a request to the box to tell it the user accepts the
@@ -251,9 +251,9 @@ public class RelationServiceImpl implements RelationService {
 
 		}
 		// Or, the user can edit the group his/her relationshis is in.
-		if (!relationIntoDb.getGroupID().equals(relation.getGroupID())) {
-			relationIntoDb.getGroupID().clear();
-			relationIntoDb.getGroupID().addAll(relation.getGroupID());
+		if (!relationIntoDb.getRoleID().equals(relation.getRoleID())) {
+			relationIntoDb.getRoleID().clear();
+			relationIntoDb.getRoleID().addAll(relation.getRoleID());
 		}
 		relationshipDatabase.save(new RelationshipRepositoryObject(userID,
 				relationIntoDb));
@@ -306,24 +306,24 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public void deleteRelation(String userID, String userIDOfRelation) {
-		if (userDatabase.exists(userIDOfRelation)) {
-			relationshipDatabase.delete(userIDOfRelation, userID);
+	public void deleteRelation(String userID, String actorID) {
+		if (userDatabase.exists(actorID)) {
+			relationshipDatabase.delete(actorID, userID);
 
 		} else {
 			RequestRelationService rss = new RequestRelationServiceImpl();
 			try {
-				rss.deleteRelationORH(userID, userIDOfRelation);
+				rss.deleteRelationORH(userID, actorID);
 			} catch (IOException e) {
-				LOGGER.error("Can not delete a relation betewen {} and {} Error IO",userID,userIDOfRelation,e);
+				LOGGER.error("Can not delete a relation betewen {} and {} Error IO",userID,actorID,e);
 			} catch (NoSuchUserException e) {
-				LOGGER.debug("Can not delete a relation betewen {} and {} Error user not found (already delete ???)",userID,userIDOfRelation,e);
+				LOGGER.debug("Can not delete a relation betewen {} and {} Error user not found (already delete ???)",userID,actorID,e);
 			} catch (NoSuchBoxException e) {
-				LOGGER.error("Can not delete a relation betewen {} and {} box of the first not found",userID,userIDOfRelation,e);
+				LOGGER.error("Can not delete a relation betewen {} and {} box of the first not found",userID,actorID,e);
 			}
 			rss.close();
 		}
-		relationshipDatabase.delete(userID, userIDOfRelation);
+		relationshipDatabase.delete(userID, actorID);
 
 	}
 

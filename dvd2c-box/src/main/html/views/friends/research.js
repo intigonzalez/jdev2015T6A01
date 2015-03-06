@@ -33,21 +33,21 @@ angular.module('myApp.friendSearch', ['ngRoute', 'ui.bootstrap'])
         this.getFriendList();
 
         search.list = [];
-        this.searchRelation = function(firstname) {
+        this.searchRelation = function(name) {
             if (name == undefined) { //Disabled if blank !
                 return;
             }
             //console.log("name to search : "+name);
             search.list = [];
-            //$http.get("http://localhost:9999" + "/api/app/account/name/"+name)
-            $http.get(PREFIX_RQ + "/api/app/account/name/"+name)
+            //$http.get("http://localhost:9999" + "/api/app/account/firstname/"+name)
+            $http.get(PREFIX_RQ + "/api/app/account/firstname/"+name)
                 .success(function (data, status, headers, config) {
-                    if (data.listUser !== "") {
-                        if (angular.isArray(data.listUser.user)) {
-                            search.list = data.listUser.user;
+                    if (data.users !== "") {
+                        if (angular.isArray(data.users.user)) {
+                            search.list = data.users.user;
                         }
                         else {
-                            search.list.push(data.listUser.user);
+                            search.list.push(data.users.user);
                         }
                         //console.log(search.list);
                         angular.forEach(search.friends, function(relation) {

@@ -46,12 +46,12 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	public void updateRelationORH(Relation relationOfRequest, Relation relationToRequest) throws IOException, NoSuchBoxException {
 		Box boxRelation;
 		try {
-			boxRelation = requestServ.getBoxByUserIDORH(relationToRequest.getUserIDOfRelation());
+			boxRelation = requestServ.getBoxByUserIDORH(relationToRequest.getActorID());
 		} catch (Exception e) {
-			LOGGER.error("Error while fetching Box information for relation {}", relationToRequest.getUserIDOfRelation());
+			LOGGER.error("Error while fetching Box information for relation {}", relationToRequest.getActorID());
 			throw new IOException("Can not conect to the server : Box information not fetched from CentralServer");
 		}
-		String requestUrl = boxRelation.getIp() + "/api/app/" + relationToRequest.getUserIDOfRelation() + "/relation/frombox";
+		String requestUrl = boxRelation.getIp() + "/api/app/" + relationToRequest.getActorID() + "/relation/frombox";
 		LOGGER.debug("Request : {}", requestUrl);
 		WebTarget target = client.target(requestUrl);
 		
@@ -105,9 +105,9 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	}
 
 	@Override
-	public void setAprouveRelationORH(String userID, String userIDOfRelationOfRelation) throws IOException, NoSuchBoxException, NoSuchUserException {
-		Box boxRelation = requestServ.getBoxByUserIDORH(userIDOfRelationOfRelation);
-		WebTarget target = client.target(boxRelation.getIp() + "/api/box/relation/" + userIDOfRelationOfRelation + "/" + userID);
+	public void setAprouveRelationORH(String userID, String actorIDOfRelation) throws IOException, NoSuchBoxException, NoSuchUserException {
+		Box boxRelation = requestServ.getBoxByUserIDORH(actorIDOfRelation);
+		WebTarget target = client.target(boxRelation.getIp() + "/api/box/relation/" + actorIDOfRelation + "/" + userID);
 		Relation relation=new Relation();
 
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE).put(Entity.entity(relation,MediaType.APPLICATION_XML));

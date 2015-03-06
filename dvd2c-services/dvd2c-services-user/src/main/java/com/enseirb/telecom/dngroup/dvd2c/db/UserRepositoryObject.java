@@ -48,7 +48,7 @@ public class UserRepositoryObject {
 		return firstname;
 	}
 
-	public void setFirstname(String name) {
+	public void setFirstname(String firstname) {
 		this.firstname = firstname;
 	}
 

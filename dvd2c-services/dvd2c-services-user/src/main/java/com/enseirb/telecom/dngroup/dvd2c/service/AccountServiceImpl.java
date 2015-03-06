@@ -105,8 +105,13 @@ public class AccountServiceImpl implements AccountService {
 	
 			while (iterator.hasNext()) {
 				userRepo = iterator.next();
-				if (userRepo.getFirstname().equalsIgnoreCase(firstname))
-					listUser.add(userRepo.toUser());
+				
+				try {
+					if (userRepo.getFirstname().equalsIgnoreCase(firstname))
+						listUser.add(userRepo.toUser());
+				} catch (NullPointerException e) {
+					LOGGER.error("this user have not firstname {}",userRepo.getUserID());
+				}
 			}
 			return listUser;
 		}

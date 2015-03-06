@@ -125,7 +125,7 @@ public class BoxRepositoryMongo implements BoxRepository {
 	}
 
 	public BoxRepositoryObject findOne(String id) {
-		// The id is the userIDOfRelation address
+		// The id is the actorID address
 		try {
 			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);

@@ -24,7 +24,6 @@ import javax.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
@@ -102,7 +101,7 @@ public class UserEndPoints extends HttpServlet {
 	 * @return a list of user
 	 */
 	@GET
-	@Path("name/{name}")
+	@Path("firstname/{firstname}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<User> getUserByName(@PathParam("firstname") String firstname){
 		return uManager.getUserFromNameOnServer(firstname);

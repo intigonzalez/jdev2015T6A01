@@ -7,53 +7,64 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class RelationshipRepositoryObject {
+	String userId;
+	String actorID;
+	String firstname;
+	String surname;
+	String pubKey;
+	Integer aprouve;
+	Long unixTime;
+	List<Integer> role;
+
 	public RelationshipRepositoryObject(){
 		
 	}
-	public RelationshipRepositoryObject(String userId, String userIDOfRelation, String firstname, String surname, String pubKey, Integer aprouve, Long unixTime, List<Integer> group) {
+	public RelationshipRepositoryObject(String userId, String actorID, String firstname, String surname, String pubKey, Integer aprouve, Long unixTime, List<Integer> role) {
 		super();
 		this.userId = userId;
-		this.userIDOfRelation = userIDOfRelation;
+		this.actorID = actorID;
 		this.firstname = firstname;
 		this.surname = surname;
 		this.pubKey = pubKey;
 		this.aprouve = aprouve;
 		this.unixTime = unixTime;
-		this.group = group;
+		this.role = role;
+		
 	}
 	public RelationshipRepositoryObject(String userId, Relation relation) {
 		this.userId = userId;
-		this.userIDOfRelation = relation.getUserIDOfRelation();
+		this.actorID = relation.getActorID();
 		this.firstname = relation.getFirstname();
 		this.surname = relation.getSurname();
 		this.pubKey = relation.getPubKey();
 		this.aprouve = relation.getAprouve();
 		this.unixTime = relation.getUnixTime();
-		this.group = relation.getGroupID();
+		this.role = relation.getRoleID();
 		
 	}
-
-	
-	String userId;
-	String userIDOfRelation;
-    String firstname;
-    String surname;
-    String pubKey;
-    Integer aprouve;
-    Long unixTime;
-    List<Integer> group;
-    
+	/**
+	 * @return the role
+	 */
+	public List<Integer> getRole() {
+		return role;
+	}
+	/**
+	 * @param role the role to set
+	 */
+	public void setRole(List<Integer> role) {
+		this.role = role;
+	}
 	public String getUserId() {
 		return userId;
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	public String getUserIDOfRelation() {
-		return userIDOfRelation;
+	public String getActorID() {
+		return actorID;
 	}
-	public void setUserIDOfRelation(String userIDOfRelation) {
-		this.userIDOfRelation = userIDOfRelation;
+	public void setActorID(String actorID) {
+		this.actorID = actorID;
 	}
 	public String getFirstname() {
 		return firstname;
@@ -85,21 +96,16 @@ public class RelationshipRepositoryObject {
 	public void setUnixTime(Long unixTime) {
 		this.unixTime = unixTime;
 	}
-	public List<Integer> getGroup() {
-		return group;
-	}
-	public void setGroup(List<Integer> group) {
-		this.group = group;
-	}
+	
 	public Relation toRelation() {
 		Relation relation = new Relation();
-		relation.setUserIDOfRelation(userIDOfRelation);
+		relation.setActorID(actorID);
 		relation.setFirstname(firstname);
 		relation.setSurname(surname);
 		relation.setPubKey(pubKey);
 		relation.setUnixTime(unixTime);
 		relation.setAprouve(aprouve);
-		relation.getGroupID().addAll(group);
+		relation.getRoleID().addAll(role);
 		return relation;
 		
 	}
