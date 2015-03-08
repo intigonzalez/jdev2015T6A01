@@ -2,8 +2,12 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import jersey.repackaged.com.google.common.base.Predicate;
+import jersey.repackaged.com.google.common.collect.Collections2;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +21,8 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
+import com.enseirb.telecom.dngroup.dvd2c.model.Properties;
+import com.enseirb.telecom.dngroup.dvd2c.model.Property;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public class AccountServiceImpl implements AccountService {
@@ -231,5 +237,49 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public List<User> getUsersFromListBoxes(List<Box> listBox) {
 		return getUsersFromBoxes(listBox);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T extends Property> Collection<T> getList(List<Property> property, final Class<T> type) {
+		return (Collection<T>) Collections2.filter(property, new Predicate<Property>() {
+			@Override
+			public boolean apply(Property input) {
+				return type.isInstance(input);
+			}
+		});
+	}
+	
+	@Override
+	public <T extends Property> Collection<T> getUserProperty(String actorId, final Class<T> type) {
+		
+		UserRepositoryObject user = userDatabase.findOne(actorId);
+		
+		if (user == null)
+			return null;
+		else
+			return getList(user.getProperties().getProperty(), type);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T extends Property> void saveUserProperty(String actorId, T property) {
+		
+		UserRepositoryObject user = userDatabase.findOne(actorId);
+		
+		if (user == null)
+			return;
+		else {
+			List<Property> propertyList = user.getProperties().getProperty();
+			
+			/* Get the collection of type T property to remove it from the list of properties */
+			Collection<T> c = (Collection<T>) getList(propertyList, property.getClass());
+			propertyList.removeAll(c);
+			
+			/* Add the property */
+			propertyList.add(property);
+			
+			/* Save the changes */
+			userDatabase.save(user);
+		}
 	}
 }

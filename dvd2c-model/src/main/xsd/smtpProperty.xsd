@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:include schemaLocation="properties.xsd"></xs:include>
+
+	<xs:complexType name="smtpProperty">
+		<xs:complexContent>
+			<xs:extension base="property">
+				<xs:attribute name="host" type="xs:string"></xs:attribute>
+				<xs:attribute name="port" type="xs:string"></xs:attribute>
+				<xs:attribute name="username" type="xs:string"></xs:attribute>
+				<xs:attribute name="password" type="xs:string"></xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>
