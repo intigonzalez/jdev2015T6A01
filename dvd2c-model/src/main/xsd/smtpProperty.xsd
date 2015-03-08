@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-	<xs:include schemaLocation="properties.xsd"></xs:include>
-
+ 	<xs:include schemaLocation="properties.xsd"></xs:include>
+<!-- 
 	<xs:complexType name="smtpProperty">
 		<xs:complexContent>
 			<xs:extension base="property">
@@ -13,5 +13,24 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
+-->
 
+	<xs:element name="smtpProperty">
+
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="property">
+					<xs:sequence>
+			
+				<xs:element name="host"		type="xs:string"	maxOccurs="1"	minOccurs="0" />
+				<xs:element name="port"		type="xs:string"	maxOccurs="1"	minOccurs="0" />
+				<xs:element name="username"	type="xs:string"	maxOccurs="1"	minOccurs="0" />
+				<xs:element name="password"	type="xs:string"	maxOccurs="1"	minOccurs="0" />
+				
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+		
 </xs:schema>

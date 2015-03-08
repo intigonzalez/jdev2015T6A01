@@ -86,33 +86,7 @@ public class UserEndPoints extends HttpServlet {
  
 	}
 
-	/**
-	 * Get the smtp properties from a user by actorID
-	 * @param actorIDFromPath - the user
-	 * @return a collection of smtp property
-	 */
-	@GET
-	@Path("{actorID}/smtp")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Collection<SmtpProperty> getUserSmtpProperty(@PathParam("actorID") String actorIDFromPath){
-		return uManager.getUserProperty(actorIDFromPath, SmtpProperty.class);
-	}
 	
-	/**
-	 * Update User smtp property by actorID
-	 * @param smtpProperty - the smtp property
-	 * @param actorIDFromPath the userID to update
-	 * @return webstatus
-	 */
-	@PUT
-	@Path("{actorID}/smtp")
-	//@RolesAllowed("account")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response updateUserSmtpProperty(SmtpProperty smtpProperty, @PathParam("actorID") String actorIDFromPath) {
-		// TODO: need to check the authentication of the user
-		uManager.saveUserProperty(actorIDFromPath, smtpProperty);
-		return Response.status(200).build();
-	}
 
 	/**
 	 * Get a user by userID
@@ -178,11 +152,7 @@ public class UserEndPoints extends HttpServlet {
 		// TODO: need to check the authentication of the user
 		// modify the user, check if the user has changed his email address, and check the ability of the new email address
 		if ( user.getUserID().equals(userIDFromPath ) || uManager.userExistOnLocal(user.getUserID()) == false ) {
-			
-			
-			
 			uManager.saveUserOnServer(user);
-			//uManager.saveUserOnLocal(user);
 			return Response.status(200).build();
 		} else {
 			return Response.status(409).build();
@@ -206,5 +176,74 @@ public class UserEndPoints extends HttpServlet {
 		uManager.deleteUserOnServer(userID);
 		return Response.status(200).build();
 
+	}
+	
+	/**
+	 * Get the smtp properties from a user by actorID
+	 * @param actorIDFromPath - the user
+	 * @return a collection of smtp property
+	 */
+	@GET
+	@Path("{actorID}/smtp")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public SmtpProperty getUserSmtpProperty(@PathParam("actorID") String actorIDFromPath){
+		SmtpProperty smtpProperty = new SmtpProperty();
+		User user = uManager.getUserOnLocal(actorIDFromPath);
+		
+		smtpProperty.setHost(user.getSmtpHost());
+		smtpProperty.setPort(user.getSmtpPort());
+		smtpProperty.setUsername(user.getSmtpUsername());
+		smtpProperty.setPassword(user.getSmtpPassword());
+		return smtpProperty;
+	}
+	
+	/**
+	 * Update User smtp property by actorID
+	 * @param smtpProperty - the smtp property
+	 * @param actorIDFromPath the userID to update
+	 * @return webstatus
+	 */
+	@PUT
+	@Path("{actorID}/smtp")
+	//@RolesAllowed("account")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response updateUserSmtpProperty(SmtpProperty smtpProperty, @PathParam("actorID") String actorIDFromPath) {
+		User user = uManager.getUserOnLocal(actorIDFromPath);
+		
+		user.setSmtpHost(smtpProperty.getHost());
+		user.setSmtpPort(smtpProperty.getPort());
+		user.setSmtpUsername(smtpProperty.getUsername());
+		user.setSmtpPassword(smtpProperty.getPassword());
+		
+		uManager.saveUserOnServer(user);
+		return Response.status(200).build();
+	}
+	
+	/**
+	 * Get the smtp properties from a user by actorID
+	 * @param actorIDFromPath - the user
+	 * @return a collection of smtp property
+	 */
+	@GET
+	@Path("{actorID}/smtpDev")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Collection<SmtpProperty> getUserSmtpPropertyDev(@PathParam("actorID") String actorIDFromPath){
+		return uManager.getUserProperty(actorIDFromPath, SmtpProperty.class);
+	}
+	
+	/**
+	 * Update User smtp property by actorID
+	 * @param smtpProperty - the smtp property
+	 * @param actorIDFromPath the userID to update
+	 * @return webstatus
+	 */
+	@PUT
+	@Path("{actorID}/smtpDev")
+	//@RolesAllowed("account")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response updateUserSmtpPropertyDev(SmtpProperty smtpProperty, @PathParam("actorID") String actorIDFromPath) {
+		// TODO: need to check the authentication of the user
+		uManager.saveUserProperty(actorIDFromPath, smtpProperty);
+		return Response.status(200).build();
 	}
 }

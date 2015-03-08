@@ -15,6 +15,10 @@ public class UserRepositoryObject {
 	protected String pubKey;
 	protected String privateKey;
 	protected Properties properties;
+	protected String smtpHost;
+	protected String smtpPort;
+	protected String smtpUsername;
+	protected String smtpPassword;
 	public UserRepositoryObject(){
 		
 	}
@@ -40,6 +44,10 @@ public class UserRepositoryObject {
 		this.pubKey = user.getPubKey();
 		this.privateKey = user.getPrivateKey();
 		this.properties = user.getProperties();
+		this.smtpHost = user.getSmtpHost();
+		this.smtpPort = user.getSmtpPort();
+		this.smtpUsername = user.getSmtpUsername();
+		this.smtpPassword = user.getSmtpPassword();
 	}
 
 	public void setProperties(Properties properties) {
@@ -100,6 +108,10 @@ public class UserRepositoryObject {
 		user.setPubKey(pubKey);
 		user.setBoxID(boxID);
 		user.setProperties(properties);
+		user.setSmtpHost(smtpHost);
+		user.setSmtpPort(smtpPort);
+		user.setSmtpUsername(smtpUsername);
+		user.setSmtpPassword(smtpPassword);
 		return user;
 	}
 
@@ -117,6 +129,38 @@ public class UserRepositoryObject {
 
 	public Properties getProperties() {
 		return properties;
+	}
+
+	public String getSmtpHost() {
+		return smtpHost;
+	}
+
+	public void setSmtpHost(String smtpHost) {
+		this.smtpHost = smtpHost;
+	}
+
+	public String getSmtpPort() {
+		return smtpPort;
+	}
+
+	public void setSmtpPort(String smtpPort) {
+		this.smtpPort = smtpPort;
+	}
+
+	public String getSmtpUsername() {
+		return smtpUsername;
+	}
+
+	public void setSmtpUsername(String smtpUsername) {
+		this.smtpUsername = smtpUsername;
+	}
+
+	public String getSmtpPassword() {
+		return smtpPassword;
+	}
+
+	public void setSmtpPassword(String smtpPassword) {
+		this.smtpPassword = smtpPassword;
 	}
 
 }
