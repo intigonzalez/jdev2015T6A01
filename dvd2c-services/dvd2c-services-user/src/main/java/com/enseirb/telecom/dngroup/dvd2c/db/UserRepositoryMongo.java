@@ -118,12 +118,8 @@ public <S extends UserRepositoryObject> S update (S entity){
 				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
-			if (entity.getProperties() != null) {
-				newDocument.append("$set",new BasicDBObject().append("properties", entity.getProperties()));
-				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
-				dbBox.update(searchQuery, newDocument);
-			}
-			
+
+			/* SnapMail add-on */
 			if (entity.getSmtpHost() != null) {
 				newDocument.append("$set",new BasicDBObject().append("smtpHost", entity.getSmtpHost()));
 				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());

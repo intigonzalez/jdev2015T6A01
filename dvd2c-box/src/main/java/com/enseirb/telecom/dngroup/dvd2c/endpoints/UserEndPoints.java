@@ -2,8 +2,6 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
@@ -28,8 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
-import com.enseirb.telecom.dngroup.dvd2c.model.Properties;
-import com.enseirb.telecom.dngroup.dvd2c.model.Property;
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
@@ -216,34 +212,6 @@ public class UserEndPoints extends HttpServlet {
 		user.setSmtpPassword(smtpProperty.getPassword());
 		
 		uManager.saveUserOnServer(user);
-		return Response.status(200).build();
-	}
-	
-	/**
-	 * Get the smtp properties from a user by actorID
-	 * @param actorIDFromPath - the user
-	 * @return a collection of smtp property
-	 */
-	@GET
-	@Path("{actorID}/smtpDev")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Collection<SmtpProperty> getUserSmtpPropertyDev(@PathParam("actorID") String actorIDFromPath){
-		return uManager.getUserProperty(actorIDFromPath, SmtpProperty.class);
-	}
-	
-	/**
-	 * Update User smtp property by actorID
-	 * @param smtpProperty - the smtp property
-	 * @param actorIDFromPath the userID to update
-	 * @return webstatus
-	 */
-	@PUT
-	@Path("{actorID}/smtpDev")
-	//@RolesAllowed("account")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response updateUserSmtpPropertyDev(SmtpProperty smtpProperty, @PathParam("actorID") String actorIDFromPath) {
-		// TODO: need to check the authentication of the user
-		uManager.saveUserProperty(actorIDFromPath, smtpProperty);
 		return Response.status(200).build();
 	}
 }

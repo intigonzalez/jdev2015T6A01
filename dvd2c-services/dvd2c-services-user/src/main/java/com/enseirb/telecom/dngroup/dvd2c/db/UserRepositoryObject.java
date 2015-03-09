@@ -1,6 +1,5 @@
 package com.enseirb.telecom.dngroup.dvd2c.db;
 
-import com.enseirb.telecom.dngroup.dvd2c.model.Properties;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -14,7 +13,7 @@ public class UserRepositoryObject {
 	protected String password;
 	protected String pubKey;
 	protected String privateKey;
-	protected Properties properties;
+	/* SnapMail add-on */
 	protected String smtpHost;
 	protected String smtpPort;
 	protected String smtpUsername;
@@ -23,7 +22,7 @@ public class UserRepositoryObject {
 		
 	}
 	
-	public UserRepositoryObject(String userID,String boxID, String firstname, String surname, String password, String pubKey, String privateKey, Properties properties) {
+	public UserRepositoryObject(String userID,String boxID, String firstname, String surname, String password, String pubKey, String privateKey, String smtpHost, String smtpPort, String smtpUsername, String smtpPassword) {
 		super();
 		this.boxID=boxID;
 		this.userID = userID;
@@ -32,7 +31,11 @@ public class UserRepositoryObject {
 		this.password = password;
 		this.pubKey = pubKey;
 		this.privateKey = privateKey;
-		this.properties = properties;
+		/* SnapMail add-on */
+		this.smtpHost = smtpHost;
+		this.smtpPort = smtpPort;
+		this.smtpUsername = smtpUsername;
+		this.smtpPassword = smtpPassword;
 	}
 	
 	public UserRepositoryObject(User user) {
@@ -43,15 +46,11 @@ public class UserRepositoryObject {
 		this.password = user.getPassword();
 		this.pubKey = user.getPubKey();
 		this.privateKey = user.getPrivateKey();
-		this.properties = user.getProperties();
+		/* SnapMail add-on */
 		this.smtpHost = user.getSmtpHost();
 		this.smtpPort = user.getSmtpPort();
 		this.smtpUsername = user.getSmtpUsername();
 		this.smtpPassword = user.getSmtpPassword();
-	}
-
-	public void setProperties(Properties properties) {
-		this.properties = properties;
 	}
 
 	public String getFirstname() {
@@ -107,7 +106,7 @@ public class UserRepositoryObject {
 		user.setPrivateKey(privateKey);
 		user.setPubKey(pubKey);
 		user.setBoxID(boxID);
-		user.setProperties(properties);
+		/* SnapMail add-on */
 		user.setSmtpHost(smtpHost);
 		user.setSmtpPort(smtpPort);
 		user.setSmtpUsername(smtpUsername);
@@ -127,10 +126,7 @@ public class UserRepositoryObject {
 		this.boxID = boxID;
 	}
 
-	public Properties getProperties() {
-		return properties;
-	}
-
+	/* SnapMail add-on */
 	public String getSmtpHost() {
 		return smtpHost;
 	}
@@ -162,5 +158,4 @@ public class UserRepositoryObject {
 	public void setSmtpPassword(String smtpPassword) {
 		this.smtpPassword = smtpPassword;
 	}
-
 }

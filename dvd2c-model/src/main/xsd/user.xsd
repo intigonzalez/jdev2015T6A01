@@ -4,7 +4,6 @@
 
 	<xs:include schemaLocation="relation.xsd"></xs:include>
 	<xs:include schemaLocation="content.xsd"></xs:include>
-	<xs:include schemaLocation="properties.xsd"></xs:include>
 	
 	<xs:element name="user">
 
@@ -26,10 +25,6 @@
 				<xs:element name="smtpPort"		type="xs:string"	maxOccurs="1"	minOccurs="0" />
 				<xs:element name="smtpUsername"	type="xs:string"	maxOccurs="1"	minOccurs="0" />
 				<xs:element name="smtpPassword"	type="xs:string"	maxOccurs="1"	minOccurs="0" />
-
-				
-				<xs:element name="properties" type="properties" maxOccurs="1" minOccurs="0"></xs:element>
-				
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

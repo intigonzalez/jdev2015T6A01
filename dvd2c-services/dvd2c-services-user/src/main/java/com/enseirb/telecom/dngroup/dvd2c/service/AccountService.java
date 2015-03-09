@@ -1,10 +1,8 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.Property;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public interface AccountService {
@@ -112,18 +110,4 @@ public interface AccountService {
 	 * @return the list of user
 	 */
 	public abstract List<User> getUsersFromListBoxes(List<Box> listBox);
-	
-	/**
-	 * get the collection of all properties type of a user
-	 * @param actorId - the user from whom we want the properties, type - the type of properties
-	 * @return the collection of properties
-	 */
-	public abstract <T extends Property> Collection<T> getUserProperty(String actorId, final Class<T> type);
-
-	/**
-	 * Save the type properties of a user
-	 * @param actorId - the user from whom we want to save the properties, type - the type of properties
-	 */
-	public abstract <T extends Property> void saveUserProperty(String actorId, T property);
-	
 }
