@@ -110,4 +110,15 @@ public interface AccountService {
 	 * @return the list of user
 	 */
 	public abstract List<User> getUsersFromListBoxes(List<Box> listBox);
+
+
+	/**
+	 * Verification if the password is equal 
+	 * @param userID to get a true password
+	 * @param password the password to test
+	 * @return true if is equal
+	 */
+	public abstract boolean getUserVerification(String userID, String password);
+
+
 }

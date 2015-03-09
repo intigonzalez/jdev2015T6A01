@@ -19,12 +19,13 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public class AccountServiceImpl implements AccountService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(AccountServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(AccountServiceImpl.class);
 
 	UserRepository userDatabase;
 	RequestUserService requetUserService = new RequestUserServiceImpl();
 
-	public AccountServiceImpl(UserRepository userDatabase ) {
+	public AccountServiceImpl(UserRepository userDatabase) {
 		this.userDatabase = userDatabase;
 	}
 
@@ -38,9 +39,9 @@ public class AccountServiceImpl implements AccountService {
 			else if (userGet.getUserID().equals(userID))
 				exist = true;
 		} catch (IOException e) {
-			LOGGER.error("Can not connect on the server : {}",userID,e);
+			LOGGER.error("Can not connect on the server : {}", userID, e);
 		} catch (NoSuchUserException e) {
-			LOGGER.debug("User not found : {}",userID);
+			LOGGER.debug("User not found : {}", userID);
 		}
 		return exist;
 	}
@@ -61,7 +62,8 @@ public class AccountServiceImpl implements AccountService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * com.enseirb.telecom.s9.service.AccountService#getUserOnLocal(java.lang.String)
+	 * com.enseirb.telecom.s9.service.AccountService#getUserOnLocal(java.lang
+	 * .String)
 	 */
 	@Override
 	public User getUserOnLocal(String email) {
@@ -85,31 +87,33 @@ public class AccountServiceImpl implements AccountService {
 		try {
 			return requetUserService.getUserFromName(firstname);
 		} catch (IOException e) {
-			LOGGER.error("error during geting users on server : {} ",firstname,e);
+			LOGGER.error("error during geting users on server : {} ",
+					firstname, e);
 			return null;
 		}
 	}
 
 	@Override
 	public List<User> getUserFromName(String firstname) {
-		//DB: need to change
+		// DB: need to change
 		Iterable<UserRepositoryObject> userIterable = userDatabase.findAll();
 		UserRepositoryObject userRepo = null;
 		List<User> listUser = new ArrayList<User>();
-	
+
 		if (userIterable == null)
 			return listUser;
 		else {
 			Iterator<UserRepositoryObject> iterator = userIterable.iterator();
-	
+
 			while (iterator.hasNext()) {
 				userRepo = iterator.next();
-				
+
 				try {
 					if (userRepo.getFirstname().equalsIgnoreCase(firstname))
 						listUser.add(userRepo.toUser());
 				} catch (NullPointerException e) {
-					LOGGER.error("this user have not firstname {}",userRepo.getUserID());
+					LOGGER.error("this user have not firstname {}",
+							userRepo.getUserID());
 				}
 			}
 			return listUser;
@@ -117,16 +121,16 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	public List<User> getUserFromBoxID(String boxID) {
-		//DB: need to change
+		// DB: need to change
 		Iterable<UserRepositoryObject> userIterable = userDatabase.findAll();
 		UserRepositoryObject userRepo = null;
-		 List<User> listUser = new ArrayList<User>();
-	
+		List<User> listUser = new ArrayList<User>();
+
 		if (userIterable == null)
 			return listUser;
 		else {
 			Iterator<UserRepositoryObject> iterator = userIterable.iterator();
-	
+
 			while (iterator.hasNext()) {
 				userRepo = iterator.next();
 				if (userRepo.getBoxID().equals(boxID))
@@ -134,7 +138,7 @@ public class AccountServiceImpl implements AccountService {
 			}
 			return listUser;
 		}
-	
+
 	}
 
 	@Override
@@ -142,20 +146,22 @@ public class AccountServiceImpl implements AccountService {
 
 		try {
 			user.setBoxID(CliConfSingleton.boxID);
-			
+
 			requetUserService.createUserORH(user);
 			return createUserOnLocal(user);
 		} catch (IOException e) {
-			LOGGER.debug("error during creating user on server : {} ",user.getUserID(),e);
+			LOGGER.debug("error during creating user on server : {} ",
+					user.getUserID(), e);
 		} catch (SuchUserException e) {
-			LOGGER.debug("User already existing {}",user.getUserID());
+			LOGGER.debug("User already existing {}", user.getUserID());
 		}
 
 		return user;
 	}
+
 	@Override
 	public User createUserOnLocal(User user) {
-		
+
 		User u = userDatabase.save(new UserRepositoryObject(user)).toUser();
 		return u;
 	}
@@ -166,9 +172,11 @@ public class AccountServiceImpl implements AccountService {
 			requetUserService.updateUserORH(user);
 			saveUserOnLocal(user);
 		} catch (IOException e) {
-			LOGGER.error("Error for Update this user on server : {}",user.getBoxID(),e);
+			LOGGER.error("Error for Update this user on server : {}",
+					user.getBoxID(), e);
 		} catch (NoSuchUserException e) {
-			LOGGER.error("Error for Update this user (no found user) : {}",user.getBoxID(),e);
+			LOGGER.error("Error for Update this user (no found user) : {}",
+					user.getBoxID(), e);
 		}
 	}
 
@@ -183,21 +191,22 @@ public class AccountServiceImpl implements AccountService {
 			requetUserService.deleteUserORH(userID);
 			deleteUserOnLocal(userID);
 		} catch (IOException e) {
-			LOGGER.error("Error for delete this user on server : {}",userID,e);
+			LOGGER.error("Error for delete this user on server : {}", userID, e);
 		} catch (NoSuchUserException e) {
-			LOGGER.error("Error for delete this user (no found user) : {}",userID,e);
+			LOGGER.error("Error for delete this user (no found user) : {}",
+					userID, e);
 		}
 	}
 
-	public void deleteUserOnLocal(String userID) {	
+	public void deleteUserOnLocal(String userID) {
 		this.userDatabase.delete(userID);
 	}
-	
+
 	@Override
 	public Box getBox(String userID) {
 		return this.userDatabase.findBoxFromUserID(userID).toBox();
 	}
-	
+
 	@Override
 	public List<User> getUsersFromBoxes(List<Box> listBox) {
 
@@ -213,7 +222,7 @@ public class AccountServiceImpl implements AccountService {
 
 			box = itrBoxes.next();
 			listUsersOfBoxes = uManager.getUserFromBoxID(box.getBoxID());
-			
+
 			Iterator<User> itrUsers = listUsersOfBoxes.iterator();
 
 			while (itrUsers.hasNext()) {
@@ -229,5 +238,13 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public List<User> getUsersFromListBoxes(List<Box> listBox) {
 		return getUsersFromBoxes(listBox);
+	}
+
+	@Override
+	public boolean getUserVerification(String userID, String password) {
+		if (password.equals(getUserOnLocal(userID).getPassword())) {
+			return true;
+		}
+		return false;
 	}
 }

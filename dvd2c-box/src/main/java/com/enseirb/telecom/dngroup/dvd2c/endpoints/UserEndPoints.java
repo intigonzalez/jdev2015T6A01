@@ -64,7 +64,7 @@ public class UserEndPoints extends HttpServlet {
 	@Produces({ "application/json"})// resultat en JSON
 	public Response getConnect(User user){ //FormParam ce sont les parametres d'un formulaire. 
 		String userID = user.getUserID().toLowerCase();
-		String test = uManager.getUserOnLocal(userID).getUserID();
+		
 		if (uManager.userExistOnLocal(userID)) {
 			User userAuth = uManager.getUserOnLocal(userID);
 			if (user.getPassword().equals(userAuth.getPassword() ) ) {
