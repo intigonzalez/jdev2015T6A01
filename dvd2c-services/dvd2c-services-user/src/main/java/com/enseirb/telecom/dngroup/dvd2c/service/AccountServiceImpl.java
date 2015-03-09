@@ -213,7 +213,6 @@ public class AccountServiceImpl implements AccountService {
 		AccountService uManager = this;
 		List<User> listUsersFinal = new ArrayList<User>(), listUsersOfBoxes = new ArrayList<User>();
 
-		List<User> u;
 		User user;
 		Box box = new Box();
 		List<Box> boxes = listBox;

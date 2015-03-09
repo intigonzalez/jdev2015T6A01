@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
+import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
@@ -84,6 +85,7 @@ public class UserEndPoints extends HttpServlet {
 	
 	
 
+	
 
 	/**
 	 * Get a user by userID
@@ -174,5 +176,45 @@ public class UserEndPoints extends HttpServlet {
 		return Response.status(200).build();
 
 	}
-
+	
+	/**
+	 * Get the smtp properties from a user by actorID
+	 * @param actorIDFromPath - the user
+	 * @return a collection of smtp property
+	 */
+	@GET
+	@Path("{actorID}/smtp")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public SmtpProperty getUserSmtpProperty(@PathParam("actorID") String actorIDFromPath){
+		SmtpProperty smtpProperty = new SmtpProperty();
+		User user = uManager.getUserOnLocal(actorIDFromPath);
+		
+		smtpProperty.setHost(user.getSmtpHost());
+		smtpProperty.setPort(user.getSmtpPort());
+		smtpProperty.setUsername(user.getSmtpUsername());
+		smtpProperty.setPassword(user.getSmtpPassword());
+		return smtpProperty;
+	}
+	
+	/**
+	 * Update User smtp property by actorID
+	 * @param smtpProperty - the smtp property
+	 * @param actorIDFromPath the userID to update
+	 * @return webstatus
+	 */
+	@PUT
+	@Path("{actorID}/smtp")
+	//@RolesAllowed("account")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response updateUserSmtpProperty(SmtpProperty smtpProperty, @PathParam("actorID") String actorIDFromPath) {
+		User user = uManager.getUserOnLocal(actorIDFromPath);
+		
+		user.setSmtpHost(smtpProperty.getHost());
+		user.setSmtpPort(smtpProperty.getPort());
+		user.setSmtpUsername(smtpProperty.getUsername());
+		user.setSmtpPassword(smtpProperty.getPassword());
+		
+		uManager.saveUserOnServer(user);
+		return Response.status(200).build();
+	}
 }

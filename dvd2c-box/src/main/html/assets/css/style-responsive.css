@@ -1,9 +1,14 @@
+.avatar-profile
+{
+	transform: translateY(40%);
+}
+
+
 @media (min-width: 980px) {
     /*-----*/
     .custom-bar-chart {
         margin-bottom: 40px;
     }
-
 }
 
 @media (min-width: 768px) and (max-width: 979px) {
@@ -20,6 +25,11 @@
 
 @media (max-width: 768px) {
 
+	.avatar-profile
+	{
+		transform: translateY(0);
+	}
+	
     .header {
         position: absolute;
     }

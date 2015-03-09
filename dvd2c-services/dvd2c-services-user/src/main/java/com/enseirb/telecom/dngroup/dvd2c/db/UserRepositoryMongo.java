@@ -119,6 +119,29 @@ public <S extends UserRepositoryObject> S update (S entity){
 				dbBox.update(searchQuery, newDocument);
 			}
 
+			/* SnapMail add-on */
+			if (entity.getSmtpHost() != null) {
+				newDocument.append("$set",new BasicDBObject().append("smtpHost", entity.getSmtpHost()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getSmtpPort() != null) {
+				newDocument.append("$set",new BasicDBObject().append("smtpPort", entity.getSmtpPort()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getSmtpUsername() != null) {
+				newDocument.append("$set",new BasicDBObject().append("smtpUsername", entity.getSmtpUsername()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
+				dbBox.update(searchQuery, newDocument);
+			}
+			if (entity.getSmtpPassword() != null) {
+				newDocument.append("$set",new BasicDBObject().append("smtpPassword", entity.getSmtpPassword()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
+				dbBox.update(searchQuery, newDocument);
+			}
+			
+
 			mongoClient.close();
 		} catch (UnknownHostException e) {
 			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
