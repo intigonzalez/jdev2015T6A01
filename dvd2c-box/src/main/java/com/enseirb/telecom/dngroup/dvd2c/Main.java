@@ -8,6 +8,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jettison.JettisonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -45,6 +46,7 @@ public class Main {
 		 * this two follow line is for security
 		 */
 		resources.register(SecurityEntityFilteringFeature.class);
+		
 		resources.register(SecurityRequestFilter.class);
 
 		//System.out.println("Starting grizzly2...");
