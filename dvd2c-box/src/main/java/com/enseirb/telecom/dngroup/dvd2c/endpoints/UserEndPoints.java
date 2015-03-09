@@ -32,6 +32,7 @@ import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
 
 // The Java class will be hosted at the URI path "/app/account"
+
 @Path("app/account")
 public class UserEndPoints extends HttpServlet {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserEndPoints.class);
@@ -81,6 +82,8 @@ public class UserEndPoints extends HttpServlet {
 		}
  
 	}
+	
+	
 
 	
 
