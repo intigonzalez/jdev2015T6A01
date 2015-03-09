@@ -30,6 +30,8 @@ touch /etc/apache2/sites-available/mediahome.conf
 
 echo '
 <VirtualHost *:80>
+DocumentRoot /var/www/html
+
 Header always set Access-Control-Allow-Origin "*"
 Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
 Header always set Access-Control-Max-Age "1000"

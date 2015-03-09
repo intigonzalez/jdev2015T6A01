@@ -3,15 +3,11 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.Principal;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -26,9 +22,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -37,14 +30,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
-import com.enseirb.telecom.dngroup.dvd2c.SecurityRequestFilter;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQServer;
 import com.google.common.io.Files;
-import com.google.common.net.HttpHeaders;
 
 // The Java class will be hosted at the URI path "/app/content"
 @Path("app/{userID}/content")
@@ -78,14 +69,15 @@ public class ContentEndPoints {
 	 * @return Content list
 	 */
 	@GET
-	@RolesAllowed("other")
 	@Path("{contentsID}")
+	@RolesAllowed({  "authenticated","other" })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Content getSpecificContentInformations(
 			@PathParam("userID") String userID,
 			@PathParam("contentsID") String contentsID) {
 		Content content = uManager.getContent(contentsID);
 		if (content.getActorID().equals(userID)) {
+			content.setLink(CliConfSingleton.publicAddr + content.getLink());
 			return content;
 		} else {
 			// No URL parameter idLanguage was sent
@@ -117,9 +109,9 @@ public class ContentEndPoints {
 	 * @throws IOException
 	 */
 	@POST
-	@RolesAllowed("other")
+	@RolesAllowed({ "other", "authenticated" })
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Content postContent(@PathParam("userID") String userID,
+	public Response postContent(@PathParam("userID") String userID,
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail,
 			@FormDataParam("file") FormDataBodyPart body)
@@ -135,37 +127,19 @@ public class ContentEndPoints {
 		Content content = uManager.createContent(userID, uploadedInputStream,
 				fileType, upload);
 		content.setLink(CliConfSingleton.publicAddr + content.getLink());
-		return content;
+//		return content;
+		return Response.created(new URI(CliConfSingleton.publicAddr+"/api/app/"+userID+"/content/"+content.getContentsID())).build();
 
 	}
 
-	@POST
-	@Path("fromlocal")
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Content postContentFromLocal(@Context HttpServletRequest request,
-			@PathParam("userID") String userID,
-			@FormDataParam("file") InputStream uploadedInputStream,
-			@FormDataParam("file") FormDataContentDisposition fileDetail,
-			@FormDataParam("file") FormDataBodyPart body)
-			throws URISyntaxException, IOException {
-		if (request.getRemoteAddr().equals("127.0.0.1"))
-			return postContent(userID, uploadedInputStream, fileDetail, body);
-		LOGGER.error("Is only from local not from {}", request.getRemoteAddr());
-		return null;
-	}
-
-	@Inject
-	private Provider<org.glassfish.grizzly.http.server.Request> grizzlyRequest;
-
-		@GET
-		@Path("get")
-		@RolesAllowed("authenticated")
-		public Response getTest() {
-			// LOGGER.error("Is only from local not from {}", request);
-			
-			return Response.status(javax.ws.rs.core.Response.Status.OK)
-					.build();
-		}
+//	@GET
+//	@Path("get")
+//	@RolesAllowed({ "other", "authenticated" })
+//	public Response getTest() {
+//		// LOGGER.error("Is only from local not from {}", request);
+//
+//		return Response.status(javax.ws.rs.core.Response.Status.OK).build();
+//	}
 
 	/**
 	 * Update information for the video
@@ -177,7 +151,7 @@ public class ContentEndPoints {
 	 * @return
 	 */
 	@PUT
-	@RolesAllowed("other")
+	@RolesAllowed({  "authenticated","other" })
 	@Path("{contentsID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putContent(Content content,
@@ -193,17 +167,7 @@ public class ContentEndPoints {
 		}
 	}
 
-	@PUT
-	@Path("{contentsID}/fromlocal")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putContentFromLocal(@Context HttpServletRequest request,
-			Content content, @PathParam("contentsID") String contentsID) {
-		if (request.getRemoteAddr().equals("127.0.0.1"))
-			return putContent(content, contentsID);
-		LOGGER.error("Is only from local not from {}", request.getRemoteAddr());
-		return Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN)
-				.build();
-	}
+
 
 	/**
 	 * delete the contents with contentsID

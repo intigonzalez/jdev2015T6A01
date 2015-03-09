@@ -88,7 +88,7 @@ public class RelationEndPoints {
 	@Path("{relationID}/content")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<Content> getRelationContents(@PathParam("relationID") String relationID, @PathParam("userID") String userID) {
-
+		//TODO: need to change beacause the content of one user doit etre recupre directement aupré de la ressource utilisateur
 		if (rManager.RelationExist(userID, relationID)) {
 			Relation relation = rManager.getRelation(userID, relationID);
 			if (relation.getAprouve() == 3)

@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -178,6 +179,7 @@ public class BoxEndPoints {
 	 */
 	@GET
 	@Path("{userID}/content/{relationID}")
+	
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<Content> getLocalContentForRelation(@PathParam("relationID") String relationID, @PathParam("userID") String userID) {
 		RelationServiceImpl relationService = new RelationServiceImpl(new RelationshipRepositoryMongo(), uRM);

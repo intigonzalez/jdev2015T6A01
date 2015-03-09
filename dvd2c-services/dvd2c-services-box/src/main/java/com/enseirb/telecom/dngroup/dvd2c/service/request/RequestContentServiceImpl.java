@@ -26,6 +26,7 @@ public class RequestContentServiceImpl implements RequestContentService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RequestContentServiceImpl.class);
 	private Client client;
+	//TODO client should be created only once
 
 	public RequestContentServiceImpl() {
 

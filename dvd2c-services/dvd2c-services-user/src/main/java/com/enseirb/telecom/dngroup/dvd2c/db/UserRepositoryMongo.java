@@ -135,12 +135,13 @@ public <S extends UserRepositoryObject> S update (S entity){
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
 
-//			BasicDBObject query = new BasicDBObject("userID", id);
-			BasicDBObject query = new BasicDBObject();
-			query.put("userID",  Pattern.compile(id , Pattern.CASE_INSENSITIVE));
+			BasicDBObject query = new BasicDBObject("userID", id);
+//			BasicDBObject query = new BasicDBObject();
+//			query.put("userID",  Pattern.compile(id , Pattern.CASE_INSENSITIVE));
 			DBCursor cursor = dbUsers.find(query);
 			UserRepositoryObject user = null;
 			ObjectMapper mapper = new ObjectMapper();
+			
 			if (cursor.hasNext()) {
 				try {
 					user = mapper.readValue(cursor.next().toString(), UserRepositoryObject.class);

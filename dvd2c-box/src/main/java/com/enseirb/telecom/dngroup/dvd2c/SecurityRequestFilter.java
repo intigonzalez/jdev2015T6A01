@@ -72,45 +72,60 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
 	@Override
 	public void filter(final ContainerRequestContext requestContext)
 			throws IOException {
-		String auth = requestContext.getHeaders().getFirst("authorization");
-	
-		if (auth != null && auth.startsWith("Basic ")) {
-			String authData[] = (new String(BaseEncoding.base64().decode(
-					auth.substring(6)))).split(":");
-			final String userName = authData[0];
-			final String password = authData[1];
 
-			requestContext.setSecurityContext(new SecurityContext() {
-				@Override
-				public Principal getUserPrincipal() {
-					if ("toto".equals(password)){
-					 return new GrizzlyPrincipal(userName);
+		requestContext.setSecurityContext(new SecurityContext() {
+			AccountService uManager = new AccountServiceImpl(
+					new UserRepositoryMongo("mediahome"));
+
+			@Override
+			public Principal getUserPrincipal() {
+				String auth = requestContext.getHeaders().getFirst(
+						"authorization");
+
+				if (auth != null && auth.startsWith("Basic ")) {
+					String authData[] = (new String(BaseEncoding.base64()
+							.decode(auth.substring(6)))).split(":");
+					final String userName = authData[0];
+					final String password = authData[1];
+					if (uManager.getUserVerification(userName, password)) {
+						return new GrizzlyPrincipal(userName);
 					}
 					return null;
 				}
+				return new Principal() {
+					@Override
+					public String getName() {
+						return "Jersey";
+					}
+				};
+			}
 
-				@Override
-				public boolean isUserInRole(final String role) {
-					String auth = "denied";
-					AccountService uManager = new AccountServiceImpl(
-							new UserRepositoryMongo("mediahome"));
-					String userConnected = "false";// requestContext.getCookies().get("authentication").getValue();
-													// // get the cookie
-					// System.out.println(requestContext.getCookies().get("test").getValue());
-					String[] test = requestContext.getUriInfo().getPath()
-							.split("/");
-					LOGGER.debug("Get Path from Request: {}", requestContext
-							.getUriInfo().getPath());
-					System.out.println(requestContext.getSecurityContext()
-							.getAuthenticationScheme());
-					if (role.equals("account")) {
-						LOGGER.debug("{}", test[test.length - 1]);
-						// User is authenticated and access to his own page
-						if (uManager.getUserOnLocal(userConnected) != null
-								&& userConnected.equals(test[test.length - 1])) {
-							auth = "account";
-						}
-					} else if (role.equals("other")) {
+			@Override
+			public boolean isUserInRole(final String role) {
+				String auth = "denied";
+
+				
+				
+				String[] test = requestContext.getUriInfo().getPath()
+						.split("/");
+				LOGGER.debug("Get Path from Request: {}", requestContext
+						.getUriInfo().getPath());
+				System.out.println(requestContext.getSecurityContext()
+						.getAuthenticationScheme());
+				if (role.equals("account")) {
+					// get the cookie
+					String userConnected =  requestContext.getCookies().get("authentication").getValue();
+					LOGGER.debug("{}", test[test.length - 1]);
+					// User is authenticated and access to his own page
+					if (uManager.getUserOnLocal(userConnected) != null
+							&& userConnected.equals(test[test.length - 1])) {
+						auth = "account";
+					}
+				} else if (role.equals("other")) {
+					// get the cookie
+					
+					try {
+						String userConnected =  requestContext.getCookies().get("authentication").getValue();
 						LOGGER.debug("{}", test[1]);
 						// User is authenticated and access to his own page of
 						// contents
@@ -118,24 +133,29 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
 								&& userConnected.equals(test[1])) {
 							auth = "other";
 						}
-					}else if (role.equals("authenticated")){
-						return getUserPrincipal()!=null;
-						
+					} catch (Exception e) {
+						LOGGER.debug("no cookies ?");
 					}
+				} else if (role.equals("authenticated")) {
+					Principal user = getUserPrincipal();
+					
+					return ((user != null)&&(!user.getName().equals("Jersey")));
 
-					return auth.equals(role);
 				}
 
-				@Override
-				public boolean isSecure() {
-					return false;
-				}
+				return auth.equals(role);
+			}
 
-				@Override
-				public String getAuthenticationScheme() {
-					return null;
-				}
-			});
-		}
+			@Override
+			public boolean isSecure() {
+				return false;
+			}
+
+			@Override
+			public String getAuthenticationScheme() {
+				return null;
+			}
+		});
+
 	}
 }
