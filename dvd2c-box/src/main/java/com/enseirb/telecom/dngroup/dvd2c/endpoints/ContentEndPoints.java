@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
+import java.nio.file.Paths;
+import java.nio.file.spi.FileTypeDetector;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
@@ -23,6 +26,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.tika.Tika;
+import org.apache.tika.mime.MimeTypes;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -70,7 +75,7 @@ public class ContentEndPoints {
 	 */
 	@GET
 	@Path("{contentsID}")
-	@RolesAllowed({  "authenticated","other" })
+	@RolesAllowed({ "authenticated", "other" })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Content getSpecificContentInformations(
 			@PathParam("userID") String userID,
@@ -126,20 +131,59 @@ public class ContentEndPoints {
 				Files.createTempDir());
 		Content content = uManager.createContent(userID, uploadedInputStream,
 				fileType, upload);
-		content.setLink(CliConfSingleton.publicAddr + content.getLink());
-//		return content;
-		return Response.created(new URI(CliConfSingleton.publicAddr+"/api/app/"+userID+"/content/"+content.getContentsID())).build();
+		// content.setLink(CliConfSingleton.publicAddr + content.getLink());
+		// return content;
+		// return Response.created(new
+		// URI("app/"+userID+"/content/"+content.getContentsID())).build();
+		return Response.created(
+				new URI(CliConfSingleton.publicAddr + "/api/app/" + userID
+						+ "/content/" + content.getContentsID())).build();
 
 	}
 
-//	@GET
-//	@Path("get")
-//	@RolesAllowed({ "other", "authenticated" })
-//	public Response getTest() {
-//		// LOGGER.error("Is only from local not from {}", request);
-//
-//		return Response.status(javax.ws.rs.core.Response.Status.OK).build();
-//	}
+	/**
+	 * post a file on the box for the userID
+	 * 
+	 * @param userID
+	 *            the sender of the request
+	 * @param uploadedInputStream
+	 * @param fileDetail
+	 * @param body
+	 * @return
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+	@POST
+	@Path("{fromlocal}")
+	@RolesAllowed({ "other", "authenticated" })
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response postContent2(@PathParam("userID") String userID,
+			@FormDataParam("file") InputStream uploadedInputStream)
+			throws URISyntaxException, IOException {
+		
+		Tika tika = new Tika();
+		String mimeType = tika.detect(uploadedInputStream);
+		String[] fileType = mimeType.split("/");
+		File upload = File.createTempFile(userID, "."
+				+ fileType[fileType.length - 1], Files.createTempDir());
+
+		Content content = uManager.createContent(userID, uploadedInputStream,
+				fileType, upload);
+		content.setLink(CliConfSingleton.publicAddr + content.getLink());
+		// return content;
+		return Response.created(
+				new URI(CliConfSingleton.publicAddr + "/api/app/" + userID
+						+ "/content/" + content.getContentsID())).build();
+	}
+
+	// @GET
+	// @Path("get")
+	// @RolesAllowed({ "other", "authenticated" })
+	// public Response getTest() {
+	// // LOGGER.error("Is only from local not from {}", request);
+	//
+	// return Response.status(javax.ws.rs.core.Response.Status.OK).build();
+	// }
 
 	/**
 	 * Update information for the video
@@ -151,7 +195,7 @@ public class ContentEndPoints {
 	 * @return
 	 */
 	@PUT
-	@RolesAllowed({  "authenticated","other" })
+	@RolesAllowed({ "authenticated", "other" })
 	@Path("{contentsID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putContent(Content content,
@@ -166,8 +210,6 @@ public class ContentEndPoints {
 			return Response.status(409).build();
 		}
 	}
-
-
 
 	/**
 	 * delete the contents with contentsID
