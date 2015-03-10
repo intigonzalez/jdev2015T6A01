@@ -17,7 +17,10 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.endpoints.BoxEndPoints;
+import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
+import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceImpl;
 import com.google.common.base.Throwables;
 import com.lexicalscope.jewel.cli.CliFactory;
 import com.lexicalscope.jewel.cli.Option;
@@ -58,7 +61,9 @@ public class Main {
 		// resourceConfig);
 		LOGGER.info("Send information to the server central ...");
 		try {
-			(new BoxEndPoints()).postBox();
+			BoxService boxManager = new BoxServiceImpl(new BoxRepositoryMongo("mediahome"));
+			boxManager.updateBox();
+			
 			LOGGER.info("Sucess ");
 		} catch (ProcessingException e) {
 			LOGGER.error("Error for send information to the server central. Is running ?",e);
@@ -158,7 +163,7 @@ interface CliConfiguration {
 	@Option(shortName = "c",longName = "central-addr", defaultValue = "http://localhost:9999", description = "the http addr of central server")
 	String getCentralURL();
 
-	@Option(shortName = "a",longName = "public-addr", defaultValue = "http://db:9998", description = "the http addr of curent box")
+	@Option(shortName = "a",longName = "public-addr", defaultValue = "http://localhost:9998", description = "the http addr of curent box")
 	String getPublicAddr();
 
 	@Option(longName = "db-hostname", defaultValue = "localhost", description = "the hostname of database")

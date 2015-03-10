@@ -2,10 +2,8 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -22,13 +20,13 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
@@ -68,10 +66,11 @@ public class BoxEndPoints {
 	 * 
 	 * @return
 	 * @throws URISyntaxException
+	 * @throws SuchBoxException 
 	 */
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postBox() throws URISyntaxException {
+	public Response postBox() throws URISyntaxException, SuchBoxException {
 		// add a comment
 		Box box = new Box();
 		box.setBoxID(CliConfSingleton.boxID);
@@ -86,6 +85,9 @@ public class BoxEndPoints {
 
 		// return Response.status(Status.SERVICE_UNAVAILABLE).build();
 	}
+	
+	
+
 
 	// @POST
 	// @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -120,6 +122,8 @@ public class BoxEndPoints {
 		// return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}
+	
+	
 
 	@PUT
 	@Path("relation/{userId}/{relationId}")

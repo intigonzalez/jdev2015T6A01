@@ -31,8 +31,10 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 @Path("app/box")
 public class BoxEndPoints {
 
-	BoxService boxManager = new BoxServiceImpl(new BoxRepositoryMongo("CentralMediaHome"));
-	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo("CentralMediaHome"));
+	BoxService boxManager = new BoxServiceImpl(new BoxRepositoryMongo(
+			"CentralMediaHome"));
+	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo(
+			"CentralMediaHome"));
 
 	/**
 	 * Get List of box
@@ -74,7 +76,7 @@ public class BoxEndPoints {
 	public List<User> getUserFromIP(@PathParam("boxIp") String ip) {
 		List<Box> listBox = boxManager.getBoxListFromIP(ip);
 		return uManager.getUsersFromListBoxes(listBox);
-		
+
 	}
 
 	/**
@@ -88,10 +90,11 @@ public class BoxEndPoints {
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postBox(Box box) throws URISyntaxException {
 		if (boxManager.boxExistOnLocal(box.getBoxID()) == false) {
-			boxManager.saveBoxOnLocal(box);
+			boxManager.createBoxOnLocal(box);
 			return Response.created(new URI(box.getBoxID())).build();
 		} else {
-			return Response.status(409).build();
+			boxManager.saveBoxOnLocal(box);
+			return Response.created(new URI(box.getBoxID())).build();
 		}
 	}
 

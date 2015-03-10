@@ -23,9 +23,8 @@ public interface RequestBoxService {
 	 * post a box on remote host
 	 * @param user the user to post
 	 * @throws IOException host is not reachable
-	 * @throws SuchBoxException user doesn't exist on remote host 
 	 */
-	public abstract void createBoxORH(Box box) throws IOException, SuchBoxException;
+	public abstract void createBoxORH(Box box) throws IOException;
 
 	/**
 	 * update a box on remote host
