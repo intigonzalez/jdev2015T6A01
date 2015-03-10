@@ -73,7 +73,7 @@ public class BoxServiceImpl implements BoxService {
 		return box;
 	}
 
-	public Box createBoxOnServer(Box box) {
+	public Box createBoxOnServer(Box box){
 
 		
 		try {
@@ -81,14 +81,20 @@ public class BoxServiceImpl implements BoxService {
 		} catch (IOException e) {
 			LOGGER.error("Error during creating a box on server : ",
 					box.getBoxID(), e);
-		} catch (SuchBoxException e) {
-			LOGGER.debug("Box already existing : ", box.getBoxID());
 		}
 		return createBoxOnLocal(box);
 
 	}
 
-	private Box createBoxOnLocal(Box box) {
+	@Override
+	public void updateBox() {
+		Box box = new Box();
+		box.setBoxID(CliConfSingleton.boxID);
+		box.setIp(CliConfSingleton.publicAddr);
+		createBoxOnServer(box);
+	}
+
+	public Box createBoxOnLocal(Box box) {
 
 		Box b = boxDatabase.save(new BoxRepositoryObject(box)).toBox();
 		return b;

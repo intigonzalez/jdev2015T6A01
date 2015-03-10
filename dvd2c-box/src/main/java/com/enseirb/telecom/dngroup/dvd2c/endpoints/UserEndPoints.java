@@ -94,7 +94,7 @@ public class UserEndPoints extends HttpServlet {
 	 */
 	@GET
 	@Path("{userID}")
-	@RolesAllowed("account")
+	@RolesAllowed({ "account", "authenticated" })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public User getUserByID(@PathParam("userID") String userID) {
 		return uManager.getUserOnLocal(userID);
@@ -184,11 +184,11 @@ public class UserEndPoints extends HttpServlet {
 	 */
 	@GET
 	@Path("{actorID}/smtp")
+	@RolesAllowed({ "account", "authenticated" })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public SmtpProperty getUserSmtpProperty(@PathParam("actorID") String actorIDFromPath){
 		SmtpProperty smtpProperty = new SmtpProperty();
-		User user = uManager.getUserOnLocal(actorIDFromPath);
-		
+		User user = uManager.getUserOnLocal(actorIDFromPath);		
 		smtpProperty.setHost(user.getSmtpHost());
 		smtpProperty.setPort(user.getSmtpPort());
 		smtpProperty.setUsername(user.getSmtpUsername());

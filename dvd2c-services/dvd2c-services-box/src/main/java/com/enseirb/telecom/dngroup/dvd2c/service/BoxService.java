@@ -3,6 +3,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 import java.util.List;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 
 public interface BoxService {
@@ -35,8 +36,16 @@ public interface BoxService {
 	 * create a new box on server
 	 * @param box the box to create
 	 * @return the box
+	 * @throws SuchBoxException 
 	 */
-	public abstract Box createBoxOnServer(Box box);
+	public abstract Box createBoxOnServer(Box box) throws SuchBoxException;
+
+	/**
+	 * create a new box on local
+	 * @param box the box to create
+	 * @return the box
+	 */
+	public abstract Box createBoxOnLocal(Box box);
 
 	//	public abstract Box createBoxOnLocal(Box box);
 	/**
@@ -83,6 +92,11 @@ public interface BoxService {
 	 * @return
 	 */
 	public abstract List<Box> getBoxesFromIP(String ip);
+
+	/**
+	 * update box with value on parameter
+	 */
+	public abstract void updateBox();
 
 	
 
