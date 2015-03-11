@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <xs:include schemaLocation="group.xsd"></xs:include>
     <xs:element name="role">
   <xs:complexType>
     <xs:sequence>
