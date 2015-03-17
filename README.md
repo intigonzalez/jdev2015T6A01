@@ -10,10 +10,16 @@ Projet S9 : Enseirb : Réseaux social décentralisé avec partage de videos
 
 First install :
 
-    apt-get install openjdk-7-jre openjdk-7-jdk maven apache2 mongodb-server git
+	sudo add-apt-repository ppa:webupd8team/java
+	sudo apt-get update
+	sudo apt-get install oracle-java8-installer maven apache2 mongodb-server git
     
-
-    
+if you have a bug WebService Client Generation Error with JDK8
+ - http://stackoverflow.com/questions/23011547/webservice-client-generation-error-with-jdk8
+ - OR :
+ 
+	echo javax.xml.accessExternalSchema = all | sudo tee  /usr/lib/jvm/java-8-oracle/jre/lib/jaxp.properties2 > /dev/null
+ 
 To run the application for development and using default value run :
 
     mvn clean package
@@ -24,7 +30,7 @@ or for the central server
 
 To run the application for real test, run :
 
-    java -jar ./dvd2c-box/target/dvd2c-box-1.0-SNAPSHOT-jar-with-dependencies.jar  --ip 0.0.0.0 -p 9998 --db-hostname localhost --db-port 27017 -b BOX_TEST --content-path /var/www/html -c http://localhost:9999 -a http://localhost:9998
+    java -jar ./dvd2c-box/target/dvd2c-box-1.0-SNAPSHOT-jar-with-dependencies.jar  --ip 0.0.0.0 -p 9998 --db-hostname localhost --db-port 27017 -b BOX_TEST --content-path /var/www/html -c http://localhost:9999 -a http://localhost:9998  --rabbit-host localhost --rabbit-port 5672
     
 or for the central server
 

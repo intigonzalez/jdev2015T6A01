@@ -2,7 +2,9 @@
 #Script for Ubuntu 14.04
 
 #Install Java maven apache mongodb and Git
-apt-get install openjdk-7-jre openjdk-7-jdk maven apache2 mongodb-server git
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer maven apache2 mongodb-server git
  
  #create dir /etc/mediahome
 mkdir /etc/mediahome

@@ -107,45 +107,45 @@ public class ContentEndPoints {
 	// return Response.status(Status.SERVICE_UNAVAILABLE).build();
 	// }
 
-//	/**
-//	 * post a file on the box for the userID
-//	 * 
-//	 * @param userID
-//	 *            the sender of the request
-//	 * @param uploadedInputStream
-//	 * @param fileDetail
-//	 * @param body
-//	 * @return
-//	 * @throws URISyntaxException
-//	 * @throws IOException
-//	 */
-//	@POST
-//	@RolesAllowed({ "other", "authenticated" })
-//	@Consumes(MediaType.MULTIPART_FORM_DATA)
-//	public Response postContent(@PathParam("userID") String userID,
-//			@FormDataParam("file") InputStream uploadedInputStream,
-//			@FormDataParam("file") FormDataContentDisposition fileDetail,
-//			@FormDataParam("file") FormDataBodyPart body)
-//			throws URISyntaxException, IOException {
-//		String fileName = fileDetail.getFileName();
-//		String extension = Files.getFileExtension(fileName);
-//		MediaType fileMediaType = body.getMediaType();
-//		String fileTypeTemp = fileMediaType.toString();
-//		String[] fileType = fileTypeTemp.split("/");
-//
-//		File upload = File.createTempFile(userID, "." + extension,
-//				Files.createTempDir());
-//		Content content = uManager.createContent(userID, uploadedInputStream,
-//				fileType, upload);
-//		// content.setLink(CliConfSingleton.publicAddr + content.getLink());
-//		// return content;
-//		// return Response.created(new
-//		// URI("app/"+userID+"/content/"+content.getContentsID())).build();
-//		return Response.created(
-//				new URI(CliConfSingleton.publicAddr + "/api/app/" + userID
-//						+ "/content/" + content.getContentsID())).build();
-//
-//	}
+	/**
+	 * post a file on the box for the userID
+	 * 
+	 * @param userID
+	 *            the sender of the request
+	 * @param uploadedInputStream
+	 * @param fileDetail
+	 * @param body
+	 * @return
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+	@POST
+	@RolesAllowed({ "other", "authenticated" })
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response postContent(@PathParam("userID") String userID,
+			@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail,
+			@FormDataParam("file") FormDataBodyPart body)
+			throws URISyntaxException, IOException {
+		String fileName = fileDetail.getFileName();
+		String extension = Files.getFileExtension(fileName);
+		MediaType fileMediaType = body.getMediaType();
+		String fileTypeTemp = fileMediaType.toString();
+		String[] fileType = fileTypeTemp.split("/");
+
+		File upload = File.createTempFile(userID, "." + extension,
+				Files.createTempDir());
+		Content content = uManager.createContent(userID, uploadedInputStream,
+				fileType, upload);
+		// content.setLink(CliConfSingleton.publicAddr + content.getLink());
+		// return content;
+		// return Response.created(new
+		// URI("app/"+userID+"/content/"+content.getContentsID())).build();
+		return Response.created(
+				new URI(CliConfSingleton.publicAddr + "/api/app/" + userID
+						+ "/content/" + content.getContentsID())).build();
+
+	}
 
 	/**
 	 * post a file on the box for the userID
@@ -202,29 +202,29 @@ public class ContentEndPoints {
 						+ "/content/" + content.getContentsID())).build();
 	}
 	
-	@POST
-	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
-	@Produces(MediaType.TEXT_PLAIN)
-	public String postIf(InputStream is) throws IOException{
-		java.nio.file.Path path = java.nio.file.Files.createTempFile(null, null);
-		FileOutputStream fos = new FileOutputStream(path.toFile());
-		ByteStreams.copy(is, fos);
-		fos.close();
-		is.close();
- 
-		TikaConfig config = TikaConfig.getDefaultConfig();
-		Detector detector = config.getDetector();
-		
-		TikaInputStream stream = TikaInputStream.get(path.toFile());
- 
-		Metadata metadata = new Metadata();
-		metadata.add(Metadata.RESOURCE_NAME_KEY, path.toString());
-		org.apache.tika.mime.MediaType mediaType = detector.detect(stream,
-				metadata);
- 
-		return mediaType.toString() + "   --   " + path.toString();
- 
-	}
+//	@POST
+//	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
+//	@Produces(MediaType.TEXT_PLAIN)
+//	public String postIf(InputStream is) throws IOException{
+//		java.nio.file.Path path = java.nio.file.Files.createTempFile(null, null);
+//		FileOutputStream fos = new FileOutputStream(path.toFile());
+//		ByteStreams.copy(is, fos);
+//		fos.close();
+//		is.close();
+// 
+//		TikaConfig config = TikaConfig.getDefaultConfig();
+//		Detector detector = config.getDetector();
+//		
+//		TikaInputStream stream = TikaInputStream.get(path.toFile());
+// 
+//		Metadata metadata = new Metadata();
+//		metadata.add(Metadata.RESOURCE_NAME_KEY, path.toString());
+//		org.apache.tika.mime.MediaType mediaType = detector.detect(stream,
+//				metadata);
+// 
+//		return mediaType.toString() + "   --   " + path.toString();
+// 
+//	}
 
 
 	// @GET
