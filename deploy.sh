@@ -2,27 +2,12 @@
 #Script for Ubuntu 14.04
 
 #Install Java maven apache mongodb and Git
-sudo add-apt-repository ppa:webupd8team/java
+sudo add-apt-repository -y ppa:webupd8team/java
 sudo apt-get update
+echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
 sudo apt-get -y install oracle-java8-installer maven apache2 mongodb-server git
  
- #create dir /etc/mediahome
-mkdir /etc/mediahome
  
-# creat file box and server configuration
-touch central.properties
-touch box.properties
-
-echo "bindIp=0.0.0.0
-bindPort=9999" > /etc/mediahome/central.properties
-
-echo "bindIp=0.0.0.0
-bindPort=9998
-contentPath=/var/www/html
-BoxID=BOX_TEST
-CentralURL=http://localhost:9999
-PublicAddr=http://localhost" > /etc/mediahome/box.properties
-
 # activate module on apache
 a2enmod proxy proxy_http headers
 
@@ -44,8 +29,6 @@ ProxyPass / http://localhost:9998/
 ProxyPassReverse / http://localhost:9998/
 ProxyPreserveHost On
 </VirtualHost>
-
-# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
 '> /etc/apache2/sites-available/mediahome.conf
 
 a2dissite 000-default.conf 

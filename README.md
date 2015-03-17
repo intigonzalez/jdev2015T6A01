@@ -12,13 +12,9 @@ First install :
 
 	sudo add-apt-repository ppa:webupd8team/java
 	sudo apt-get update
+	echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
 	sudo apt-get install oracle-java8-installer maven apache2 mongodb-server git
-    
-if you have a bug WebService Client Generation Error with JDK8
- - http://stackoverflow.com/questions/23011547/webservice-client-generation-error-with-jdk8
- - OR :
- 
-	echo javax.xml.accessExternalSchema = all | sudo tee  /usr/lib/jvm/java-8-oracle/jre/lib/jaxp.properties2 > /dev/null
+	echo javax.xml.accessExternalSchema = all | sudo tee  /usr/lib/jvm/java-8-oracle/jre/lib/jaxp.properties > /dev/null
  
 To run the application for development and using default value run :
 
