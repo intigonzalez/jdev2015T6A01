@@ -6,7 +6,7 @@ sudo add-apt-repository -y ppa:webupd8team/java
 sudo apt-get update
 echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
 sudo apt-get -y install oracle-java8-installer maven apache2 mongodb-server git
- 
+echo javax.xml.accessExternalSchema = all | sudo tee  /usr/lib/jvm/java-8-oracle/jre/lib/jaxp.properties > /dev/null
  
 # activate module on apache
 a2enmod proxy proxy_http headers

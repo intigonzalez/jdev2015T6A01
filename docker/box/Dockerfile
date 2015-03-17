@@ -14,7 +14,10 @@ RUN apt-get update && apt-get upgrade -y
 # ~~~~  ~~~~
 
 #Install Java maven apache mongodb and Git
-RUN apt-get -y install openjdk-7-jre openjdk-7-jdk apache2 # mongodb-server git maven
+RUN add-apt-repository -y ppa:webupd8team/java
+RUN apt-get update
+RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+RUN apt-get -y install oracle-java8-installer apache2 # mongodb-server git maven
 
 #create dir /etc/mediahome
 RUN mkdir /etc/mediahome
