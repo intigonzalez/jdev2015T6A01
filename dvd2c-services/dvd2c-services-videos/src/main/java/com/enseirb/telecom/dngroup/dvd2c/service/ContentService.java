@@ -1,11 +1,11 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 
 
@@ -81,5 +81,8 @@ public interface ContentService {
 
 	public abstract Content createContent(String userID,
 			InputStream uploadedInputStream, String[] fileType, File upload);
+
+	public abstract Content createContent(String userID,
+			InputStream uploadedInputStream, File upload) throws IOException;
 
 }

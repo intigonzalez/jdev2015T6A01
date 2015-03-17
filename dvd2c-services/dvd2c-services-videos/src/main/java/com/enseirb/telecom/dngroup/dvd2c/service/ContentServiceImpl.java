@@ -29,7 +29,7 @@ import com.thoughtworks.xstream.io.json.JsonWriter;
 
 public class ContentServiceImpl implements ContentService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContentServiceImpl.class);
-	static ContentRepository contentDatabase;
+	ContentRepository contentDatabase;
 	RabbitMQServer rabbitMq;
 	//    private RequestUserService requetUserService = new RequestUserServiceImpl();
 
@@ -94,6 +94,31 @@ public class ContentServiceImpl implements ContentService {
 			content = createContent(content,upload.getAbsolutePath(), content.getContentsID());
 			return content;
 		}
+
+	@Override
+	public Content createContent(String userID,
+			InputStream uploadedInputStream, File upload) throws IOException {
+		
+		writeToFile(uploadedInputStream, upload);
+		String type= Files.probeContentType(upload.toPath());
+		String[] fileType = type.split("/");
+		LOGGER.debug(upload.getAbsolutePath() + "\tDetected Type:"+ type);
+		LOGGER.debug("New file uploaded with the type {}",fileType[0]);	
+		Content content = new Content();
+		content.setName(upload.getName());
+		content.setActorID(userID);
+		content.setStatus("In progress");
+		content.setType(fileType[0]);
+		UUID uuid = UUID.randomUUID();
+		content.setContentsID(uuid.toString().replace("-", ""));
+		String link = "/videos/"+userID+"/"+uuid.toString();
+		content.setLink(link);
+		long unixTime = System.currentTimeMillis() / 1000L;
+		content.setUnixTime(unixTime);
+
+		content = createContent(content,upload.getAbsolutePath(), content.getContentsID());
+		return content;
+	}
 
 	@Override
 	public Content createContent(Content content, String srcfile, String id) {

@@ -4,7 +4,7 @@
 #Install Java maven apache mongodb and Git
 sudo add-apt-repository ppa:webupd8team/java
 sudo apt-get update
-sudo apt-get install oracle-java8-installer maven apache2 mongodb-server git
+sudo apt-get -y install oracle-java8-installer maven apache2 mongodb-server git
  
  #create dir /etc/mediahome
 mkdir /etc/mediahome
