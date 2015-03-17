@@ -1,14 +1,13 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
     <artifactId>dvd2c-services</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
- <artifactId>dvd2c-services-box</artifactId>
-   <dependencyManagement>
+  <artifactId>dvd2c-services-box</artifactId>
+  <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
@@ -30,19 +29,15 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
-     <dependency>
-    	<groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
-    	<artifactId>dvd2c-services-commons</artifactId>
-    	<version>1.0-SNAPSHOT</version>
+    <dependency>
+      <groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
+      <artifactId>dvd2c-services-commons</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
-    
     <dependency>
       <groupId>org.glassfish.jersey.media</groupId>
       <artifactId>jersey-media-json-jettison</artifactId>
     </dependency>
-
-
-   
   </dependencies>
   <build>
     <resources>
@@ -99,5 +94,4 @@
       </plugin>
     </plugins>
   </build>
- 
 </project>
