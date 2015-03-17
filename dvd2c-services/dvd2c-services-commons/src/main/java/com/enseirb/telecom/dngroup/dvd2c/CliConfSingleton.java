@@ -15,5 +15,7 @@ public class CliConfSingleton {
 	public static String publicAddr;
 	public static String dbHostname;
 	public static Integer dbPort;
+	public static String rabbitHostname;
+	public static Integer rabbitPort;
 
 }

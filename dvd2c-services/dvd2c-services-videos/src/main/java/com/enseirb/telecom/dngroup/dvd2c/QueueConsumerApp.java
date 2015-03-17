@@ -29,7 +29,10 @@ public class QueueConsumerApp {
 		final String QUEUE_NAME = queue;
 
 		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("localhost");
+		
+		factory.setHost(CliConfSingleton.rabbitHostname);
+		factory.setPort(CliConfSingleton.rabbitPort );
+		LOGGER.debug("Rabbit conection : host : {} , port : {} ",factory.getHost(),factory.getPort());
 		com.rabbitmq.client.Connection connection = factory.newConnection();
 		Channel channel = connection.createChannel();
 		Map<String, Object> map = new HashMap<String, Object>();

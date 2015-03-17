@@ -34,7 +34,7 @@ public class Main {
 
 	private static URI getBaseURI() {
 		String ip = CliConfSingleton.ip;
-		return UriBuilder.fromUri("http://"+ip+"/api/").port(getPort(9998))
+		return UriBuilder.fromUri("http://"+ip+"/api/").port(getPort(CliConfSingleton.port))
 				.build();
 	}
 
@@ -89,6 +89,8 @@ public class Main {
 		CliConfSingleton.publicAddr = cliconf.getPublicAddr();
 		CliConfSingleton.dbHostname = cliconf.getDbHostname();
 		CliConfSingleton.dbPort = cliconf.getDbPort();
+		CliConfSingleton.rabbitHostname = cliconf.getRabbitHost();
+		CliConfSingleton.rabbitPort = cliconf.getRabbitPort();
 		CliConfSingleton.port = cliconf.getPort();
 		LOGGER.info("the box ID is : {}",CliConfSingleton.boxID);
 
@@ -171,6 +173,12 @@ interface CliConfiguration {
 
 	@Option(longName = "db-port", defaultValue = "27017", description = "the port of database")
 	Integer getDbPort();
+	
+	@Option(longName = "rabbit-host", defaultValue = "localhost", description = "the host of rabbitMQ")
+	String getRabbitHost();
+	
+	@Option(longName = "rabbit-port", defaultValue = "5672", description = "the port of rabbitMQ")
+	Integer getRabbitPort();
 
 	@Option(helpRequest = true)
 	boolean getHelp();
