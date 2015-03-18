@@ -1,3 +1,4 @@
+package com.enseirb.telecom.dngroup.snapmail;
 import org.subethamail.smtp.server.SMTPServer;
 import org.subethamail.smtp.auth.*;
 import org.subethamail.smtp.helper.*;

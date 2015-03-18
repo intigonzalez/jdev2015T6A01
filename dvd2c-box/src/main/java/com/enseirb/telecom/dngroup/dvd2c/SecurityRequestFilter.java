@@ -102,6 +102,7 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
 
 			@Override
 			public boolean isUserInRole(final String role) {
+
 				String auth = "denied";
 
 				
@@ -112,7 +113,8 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
 						.getUriInfo().getPath());
 				System.out.println(requestContext.getSecurityContext()
 						.getAuthenticationScheme());
-				if (role.equals("account")) {
+				if (role.equals("account") && !requestContext.getCookies().isEmpty()) {
+					System.out.println(requestContext.getCookies().isEmpty());
 					// get the cookie
 					String userConnected =  requestContext.getCookies().get("authentication").getValue();
 					LOGGER.debug("{}", test[2]);

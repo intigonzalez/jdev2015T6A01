@@ -1,3 +1,4 @@
+package com.enseirb.telecom.dngroup.snapmail;
 import java.util.logging.Logger;
 import java.net.*;
 
