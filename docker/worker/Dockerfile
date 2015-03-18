@@ -84,5 +84,7 @@ RUN apt-get -y install
 WORKDIR ~/
 RUN git clone https://github.com/dngroup/vhg-adaptation-worker
 WORKDIR vhg-adaptation-worker
-ENTRYPOINT ./start.sh 
+RUN service rabbitmq-server restart
+RUN apt-get install lsof
+#ENTRYPOINT celery -A adaptation.commons worker --loglevel=info --concurrency=1
 
