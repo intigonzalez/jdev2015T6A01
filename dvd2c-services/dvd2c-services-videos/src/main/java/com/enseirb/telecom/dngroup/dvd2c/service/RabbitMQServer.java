@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.QueueConsumerApp;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -22,7 +23,9 @@ public class RabbitMQServer {
 	public RabbitMQServer() {
 		QUEUE_NAME = "celery";
 		factory = new ConnectionFactory();
-		factory.setHost("localhost"); // To be changed???
+		factory.setHost(CliConfSingleton.rabbitHostname);
+		factory.setPort(CliConfSingleton.rabbitPort );
+		LOGGER.debug("Rabbit conection : host : {} , port : {} ",factory.getHost(),factory.getPort());
 		try {
 			connection = factory.newConnection();
 			channel = connection.createChannel();
