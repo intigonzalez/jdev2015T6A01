@@ -32,14 +32,6 @@ RUN apt-get update && apt-get -y install rabbitmq-server python-pip \
 RUN pip install celery pymediainfo
 
 
-# ~~~~ Compile Manually MP4Box from GPAC project ~~~~
-RUN svn co svn://svn.code.sf.net/p/gpac/code/trunk/gpac gpac
-
-WORKDIR gpac
-RUN ./configure /
- && make /
- && make install
-WORKDIR ~/
 
 # ~~~~ Compile FFmpeg ~~~~
 RUN mkdir -p /usr/local/
@@ -72,6 +64,16 @@ RUN ./configure \
 RUN make \
 && make install \
 && make distclean
+WORKDIR /
+
+# ~~~~ Compile Manually MP4Box from GPAC project ~~~~
+RUN svn co svn://svn.code.sf.net/p/gpac/code/trunk/gpac gpac
+WORKDIR gpac
+RUN ./configure --use-ffmpeg=no
+RUN make 
+RUN make install
+WORKDIR /
+
 
 # Test version
 RUN ffmpeg -version
