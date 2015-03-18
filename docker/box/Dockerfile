@@ -20,28 +20,6 @@ RUN apt-get update
 RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
 RUN apt-get -y install oracle-java8-installer apache2 # mongodb-server git maven
 
-#create dir /etc/mediahome
-RUN mkdir /etc/mediahome
-
-# create file box and server configuration
-RUN touch central.properties
-RUN touch box.properties
-
-
-
-RUN echo "bindIp=0.0.0.0" >>  /etc/mediahome/central.properties && \
-    echo "bindPort=9999" >>  /etc/mediahome/central.properties
-
-#RUN cat /etc/mediahome/central.properties
-
-RUN echo "bindIp=0.0.0.0" >>  /etc/mediahome/box.properties && \
- echo "bindPort=9998" >>  /etc/mediahome/box.properties && \
-  echo "contentPath=/var/www/html" >>  /etc/mediahome/box.properties && \
-   echo "BoxID=BOX_TEST" >>  /etc/mediahome/box.properties && \
-    echo "CentralURL=http://localhost:9999" >>  /etc/mediahome/box.properties && \
-    echo "PublicAddr=http://localhost" >>  /etc/mediahome/box.properties
-
-
 
 # activate module on apache
 RUN a2enmod proxy proxy_http headers
