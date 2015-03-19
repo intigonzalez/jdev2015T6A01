@@ -1,4 +1,4 @@
-# Media@home web application Docker image
+# Media@home box application Docker image
 #
 # VERSION       1.0
 
@@ -30,6 +30,7 @@ RUN touch /etc/apache2/sites-available/mediahome.conf
 
 
 RUN echo '<VirtualHost *:80>'> /etc/apache2/sites-available/mediahome.conf && \
+ echo 'DocumentRoot /var/www/html' >> /etc/apache2/sites-available/mediahome.conf && \
  echo 'Header always set Access-Control-Allow-Origin "*"' >> /etc/apache2/sites-available/mediahome.conf && \
  echo 'Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"' >> /etc/apache2/sites-available/mediahome.conf && \
  echo 'Header always set Access-Control-Max-Age "1000"' >> /etc/apache2/sites-available/mediahome.conf && \
@@ -43,7 +44,7 @@ RUN echo '<VirtualHost *:80>'> /etc/apache2/sites-available/mediahome.conf && \
 
 RUN a2dissite 000-default.conf
 RUN a2ensite mediahome.conf
-RUN service apache2 restart
+
 
 # create folder video for put videos inside
 RUN mkdir /var/www/html/videos
@@ -52,4 +53,7 @@ RUN chmod 777 /var/www/html/videos
 # get the lasted version of dvd2c-box
 RUN apt-get -y install curl
 RUN curl -L "http://nexus.homeb.tv:8080/nexus/service/local/artifact/maven/redirect?r=snapshots&g=com/enseirb/telecom/dngroup/dvd2c&a=dvd2c-box&v=LATEST&c=jar-with-dependencies" -o dvd2c-box.jar
-# ENTRYPOINT java -jar dvd2c-box.jar
+# ENTRYPOINT [ "bash","service","apache2","restart","&&","java","-version"]
+
+# CMD java -jar dvd2c-box.jar --ip 0.0.0.0 -p 9998 --db-hostname db -b BOX_DOCKER  -c http://central:9999 -a http://box:9998 --rabbit-host worker
+
