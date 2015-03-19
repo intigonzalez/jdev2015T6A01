@@ -5,18 +5,15 @@ import java.net.*;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.HttpClients;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.subethamail.smtp.auth.UsernamePasswordValidator;
 import org.subethamail.smtp.helper.*;
 
@@ -205,7 +202,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 						{
 							processAttachment(mimemultipart.getBodyPart(k).getFileName(), mimemultipart.getBodyPart(k).getInputStream());
 							attachment = true;
-							System.out.println(mimemultipart.getBodyPart(k).getContent());
+							System.out.println("check1: "+mimemultipart.getBodyPart(k).getContent());
 						}
 					}
 				}
@@ -215,7 +212,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 			// If the current part is explicitly an attachment...
 			processAttachment(bodyPart.getFileName(), bodyPart.getInputStream());
 			attachment = true;
-			System.out.println(bodyPart.getContentType());
+			System.out.println("check2: "+bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";"))+ "check : end");
 		}
 		
 		if(attachment)
@@ -296,31 +293,32 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 	}
 	
 	public String postFile(File file) throws IOException
-	{
-		HttpClient client = HttpClients.createDefault();
-		HttpPost post = new HttpPost("http://localhost/api/app/" + this.username + "/content");
-		// username = userID
-		FileBody fileBody = new FileBody(file);
-		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-		builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-		builder.addPart("file", fileBody);
-		HttpEntity entity = builder.build();
-		post.setEntity(entity);
-		HttpResponse response = client.execute(post);
-
-		// Get request to get the link
+	{	
 		try {
 			HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(this.username, this.password);
+		    MultiPart form = new MultiPart();
+		    form.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+		    form.bodyPart(new FileDataBodyPart("file", file, MediaType.APPLICATION_OCTET_STREAM_TYPE));
+		    Client client=ClientBuilder.newClient();
+		    client.register(feature).register(MultiPartFeature.class);
+		    WebTarget target = client.target("http://localhost/api/app/" + this.username + "/content/local");
+		    System.out.println("Filename got : "+file.getName());
+		    Response response = target.request().header("Content-Disposition", "attachment; filename="+ file.getName()).post(Entity.entity(form,form.getMediaType()), Response.class);
+
+			// Get request to get the link
 			Client client2 = ClientBuilder.newClient();
 			client2.register(feature);
 
-			WebTarget target = client2.target(response.getFirstHeader("Location").getValue());
-			System.out.println(response.getFirstHeader("Location").getValue());
-        
-			Content content = target.request(MediaType.APPLICATION_XML_TYPE).get(Content.class);
-			System.out.println(content);
-        
-			return content.getLink();
+			if(response.getLocation() != null) {
+				WebTarget target2 = client2.target(response.getLocation());
+				Content content = target2.request(MediaType.APPLICATION_XML_TYPE).get(Content.class);
+				return content.getLink();
+			}
+			else {
+				logger.warning("Error during the upload : Media@Home did not return a location");
+				return "Error during the upload";
+			}
+			
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 403) {
 				System.out.println("Error 403 (get content)");
@@ -330,6 +328,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 		}
 		return "Error";
 	}
+	
 	@SuppressWarnings("finally")
 	private String localAddress(){
 		String add="";
