@@ -9,7 +9,10 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
+import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentServiceImpl;
+import com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQServer;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConnectionFactory;
@@ -58,15 +61,17 @@ public class QueueConsumerApp {
 					LOGGER.error("error for pars element",e);
 				}
 				
-				
-				ContentServiceImpl contentServiceImpl = new ContentServiceImpl();
+				ContentService contentService = new ContentServiceImpl(
+						new ContentRepositoryMongo(), null);
+
+			
 				if (status.equals("SUCCESS")) {
 					// change the status in DataBase
 					LOGGER.info("Response from Celery : Success for task ", QUEUE_NAME);
-					contentServiceImpl.updateContent(QUEUE_NAME, "success");
+					contentService.updateContent(QUEUE_NAME, "success");
 				}
 				else {
-					contentServiceImpl.updateContent(QUEUE_NAME, "failure");
+					contentService.updateContent(QUEUE_NAME, "failure");
 					LOGGER.info("Response from Celery : Failure for task ", QUEUE_NAME);
 				}
 			}
