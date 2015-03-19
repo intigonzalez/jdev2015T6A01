@@ -7,7 +7,9 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.UriBuilder;
 
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
+import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jettison.JettisonFeature;
@@ -95,26 +97,6 @@ public class Main {
 		LOGGER.info("the box ID is : {}",CliConfSingleton.boxID);
 
 		
-//		FileInputStream in;
-//		String aPPath;
-//		if (args.length>0){
-//			aPPath = args[0];
-//		}
-//		else {
-//			aPPath = "/etc/mediahome/box.properties";
-//		}
-//		
-//		try {
-//			in = new FileInputStream(aPPath);
-//			ApplicationContext.properties.load(in);
-//			in.close();
-//		} catch (FileNotFoundException e1) {
-//			LOGGER.error("File not found Path ={} ",aPPath, e1);
-//			return;
-//		}
-//		LOGGER.debug("File Found Path={} ",aPPath);
-
-		
 		// Grizzly 2 initialization
 		new Thread(new Runnable() {
 
@@ -122,10 +104,22 @@ public class Main {
 			public void run() {
 				
 				try {
+					
+					
+					
+					
+					
+					
 					HttpServer httpServer = startServer();
-					httpServer.getServerConfiguration().addHttpHandler(
-							new CLStaticHttpHandler(
-									Main.class.getClassLoader(), "/"));
+//					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www"), "/content");
+					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/videos"), "/videos");
+					
+					httpServer.getServerConfiguration().addHttpHandler(new CLStaticHttpHandler(Main.class.getClassLoader(), "/"));
+					
+					
+					
+							
+									
 					
 				} catch (IOException e) {
 					throw Throwables.propagate(e);

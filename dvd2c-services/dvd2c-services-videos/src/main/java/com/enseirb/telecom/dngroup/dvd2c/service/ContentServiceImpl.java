@@ -39,9 +39,9 @@ public class ContentServiceImpl implements ContentService {
 		this.rabbitMq = rabbitMq;
 	}
 
-	public ContentServiceImpl() {
-
-	}
+//	public ContentServiceImpl() {
+//
+//	}
 
 	@Override
 	public boolean contentExist(String contentsID) {
@@ -291,7 +291,8 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public void updateContent(String contentsID, String status) {
-		Content content = contentDatabase.findOne(contentsID).toContent();
+		ContentRepositoryObject c = contentDatabase.findOne(contentsID);
+		Content content = c.toContent();
 		content.setContentsID(contentsID);
 		content.setStatus(status);
 		contentDatabase.save(new ContentRepositoryObject(content));
