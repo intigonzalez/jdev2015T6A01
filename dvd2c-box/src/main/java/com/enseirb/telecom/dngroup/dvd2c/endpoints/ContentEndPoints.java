@@ -162,6 +162,8 @@ public class ContentEndPoints {
 			Content content = uManager.createContent(userID, uploadedInputStream, contentDisposition);
 			content.setLink(CliConfSingleton.publicAddr + content.getLink());
 
+			LOGGER.debug("Content created :"+ CliConfSingleton.publicAddr + "/api/app/" + userID
+							+ "/content/" + content.getContentsID());
 			return Response.created(
 					new URI(CliConfSingleton.publicAddr + "/api/app/" + userID
 							+ "/content/" + content.getContentsID())).build();

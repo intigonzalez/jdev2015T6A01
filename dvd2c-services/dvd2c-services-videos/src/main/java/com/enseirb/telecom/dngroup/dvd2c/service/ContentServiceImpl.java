@@ -112,6 +112,7 @@ public class ContentServiceImpl implements ContentService {
 		else
 			filename = userID;
 		
+		filename=filename.replace(" ", "_");
 		Path tempFile = Files.createTempFile(null, null);
 		LOGGER.debug("Temporary file is here {}",tempFile.toAbsolutePath());
 		
@@ -125,7 +126,7 @@ public class ContentServiceImpl implements ContentService {
 		if(filename.matches("(.*).MOV"))
 			fileType = "video";
 		
-		LOGGER.debug("File type: {}", fileType);
+		LOGGER.debug("File type: "+fileType+", filename: "+filename);
 		
 		String link;
 		UUID uuid = UUID.randomUUID();
@@ -158,11 +159,11 @@ public class ContentServiceImpl implements ContentService {
 			file.mkdirs();
 		
 		// Moving the file
-		LOGGER.info("Moving temporary file to /var/www/html"+link+"/"+filename);
+		LOGGER.debug("Moving temporary file to /var/www/html"+link+"/"+filename);
 		File newFile = new File("/var/www/html"+link+"/"+filename);
 		Files.move(tempFile, newFile.toPath());
-
-		content = createContent(content, newFile.toPath().toAbsolutePath().toString(), content.getContentsID());
+		LOGGER.debug("File moved");
+		content = createContent(content, newFile.getAbsolutePath(), content.getContentsID());
 		return content;
 	}
 
@@ -184,7 +185,6 @@ public class ContentServiceImpl implements ContentService {
 						return new JsonWriter(writer, JsonWriter.DROP_ROOT_MODE);
 					}
 				});
-
 				rabbitMq.addTask(xstream.toXML(task), task.getId());
 
 			} catch (IOException e) {

@@ -303,7 +303,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 		    client.register(feature).register(MultiPartFeature.class);
 		    WebTarget target = client.target("http://localhost/api/app/" + this.username + "/content/local");
 		    logger.info("Filename : "+file.getName());
-		    Response response = target.request().header("Content-Disposition", "attachment; filename="+ file.getName()).post(Entity.entity(form,form.getMediaType()), Response.class);
+		    Response response = target.request().header("Content-Disposition", "attachment; filename="+ file.getName()).post(Entity.entity(file,MediaType.WILDCARD), Response.class);
 
 			// Get request to get the link
 			Client client2 = ClientBuilder.newClient();
@@ -312,7 +312,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 			if(response.getLocation() != null) {
 				WebTarget target2 = client2.target(response.getLocation());
 				Content content = target2.request(MediaType.APPLICATION_XML_TYPE).get(Content.class);
-				return content.getLink();
+				return content.getLink()+"/"+file.getName().replace(" ", "_");
 			}
 			else {
 				logger.warning("Error during the upload : Media@Home did not return a location");
