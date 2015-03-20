@@ -34,6 +34,7 @@ if we want a central server on local
 	 
 	
 ### without composer
+_no support for this part_ 
 
 #### get docker on local 
 
@@ -75,7 +76,8 @@ https://docs.docker.com/compose/install/
 	cd docker/composer
 	sudo docker-compose up
 
-### use commande line
+### without composer 
+_no support for this part_ 
 
 	sudo docker build -t worker docker/worker
 	sudo docker build -t box docker/box
@@ -96,7 +98,6 @@ https://docs.docker.com/compose/install/
 	-v /var/www/html:/var/www/html \
 	-v /tmp:/tmp \
 	worker
-	
 	
 #### box docker
 
