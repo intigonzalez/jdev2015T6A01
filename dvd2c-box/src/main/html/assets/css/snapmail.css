@@ -106,3 +106,73 @@ body
 {
 	margin-right: 10px;
 }
+
+@media only screen and (max-width: 720px)
+{
+
+	#logo
+	{
+		padding-left: 3%;
+		color: #474747;
+	}
+    #logo img
+	{
+		padding:5px 10px 15px 0;
+	}
+	
+	#logo span, #menu
+	{
+		width: auto;
+		text-align: left;
+		font-size: 1em;
+		line-height: 0px;
+		vertical-align: top;
+		
+	}
+	
+	#menu
+	{
+		line-height: 30px;
+		font-size: 1em;
+		color: #b3b3b3;
+		text-align: center;
+	}
+	
+	#menu > nav
+	{
+		width: 100%;
+	}
+	
+	#header button
+	{
+		display: block;
+		background: #78b03b;
+		color: #fff;
+		font-size: .9em;
+		border: 0;
+		border-radius: 7px;
+		padding: 7px 24px;	
+		width: 90px;
+	}
+	
+	#buttons
+	{
+		vertical-align: middle;
+	}
+	
+	#buttons > :first-child
+	{
+		margin-bottom: 5px;
+	}
+	
+	#buttons > :last-child
+	{
+		margin-right: 20px;
+	}
+	
+	#menu > nav > div
+	{
+		display: block;
+		width: auto;
+	}
+}
