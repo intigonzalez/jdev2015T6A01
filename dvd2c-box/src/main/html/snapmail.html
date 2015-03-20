@@ -1,0 +1,47 @@
+<!doctype html>
+
+<!--[if lt IE 7]>	<html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7">	<![endif]-->
+<!--[if IE 7]>		<html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8">			<![endif]-->
+<!--[if IE 8]>		<html lang="en" ng-app="myApp" class="no-js lt-ie9">				<![endif]-->
+
+<html ng-app="myApp" class="no-js">
+<head>
+		<meta charset="utf-8">
+		<title>Snapmail</title>
+		<link href="assets/css/snapmail.css" rel="stylesheet">
+	</head>
+	<body>
+
+		<!-- Header -->
+
+		<header id="header" class="tb">
+			<div id="logo">
+				<img src="assets/img/logo.svg" width="60px" height="58px">
+				<span>snap</span><span class="md">mail</span>
+			</div>
+			<div id="menu">
+				<nav class="tb">
+					<div>Media@Home</div>
+					<div>Features</div>
+					<div>Contact</div>
+				</nav>
+			</div>
+			<div id="buttons">
+				<button>Login</button>
+				<button>Register</button>
+			</div>
+		</header>
+		
+		<!-- Content -->
+		
+		<section id="content">
+		
+			<!--[if lt IE 7]>
+			<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+			<![endif]-->
+
+            <div ng-view>
+            </div>
+		</section>
+	</body>
+</html>
