@@ -127,7 +127,6 @@ public class ContentServiceImpl implements ContentService {
 		
 		LOGGER.debug("File type: {}", fileType);
 		
-		System.out.println("check1");
 		String link;
 		UUID uuid = UUID.randomUUID();
 		Content content = new Content();
@@ -136,7 +135,7 @@ public class ContentServiceImpl implements ContentService {
 		content.setType(fileType);
 		content.setContentsID(uuid.toString().replace("-", ""));
 		content.setStatus("In progress");
-		System.out.println("check2");
+
 		switch (fileType) {
 		case "video":
 			link = "/videos/"+userID+"/"+uuid.toString();	
@@ -149,21 +148,21 @@ public class ContentServiceImpl implements ContentService {
 			content.setStatus("SUCCESS");
 			break;
 		}
-		System.out.println("check3 : "+link);
 		content.setLink(link);
 		long unixTime = System.currentTimeMillis() / 1000L;
 		content.setUnixTime(unixTime);
-		System.out.println("check4");
+
 		// Create new folders if they don't exist
 		File file = new File("/var/www/html"+link);
 		if(!file.exists())
 			file.mkdirs();
 		
-		System.out.println("check5: "+"/var/www/html"+link+"/"+filename);
 		// Moving the file
-		Files.move(tempFile, new File("/var/www/html"+link+"/"+filename).toPath());
-		System.out.println("check6");
-		content = createContent(content, tempFile.toAbsolutePath().toString(), content.getContentsID());
+		LOGGER.info("Moving temporary file to /var/www/html"+link+"/"+filename);
+		File newFile = new File("/var/www/html"+link+"/"+filename);
+		Files.move(tempFile, newFile.toPath());
+
+		content = createContent(content, newFile.toPath().toAbsolutePath().toString(), content.getContentsID());
 		return content;
 	}
 

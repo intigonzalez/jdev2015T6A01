@@ -202,7 +202,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 						{
 							processAttachment(mimemultipart.getBodyPart(k).getFileName(), mimemultipart.getBodyPart(k).getInputStream());
 							attachment = true;
-							System.out.println("check1: "+mimemultipart.getBodyPart(k).getContent());
+							logger.info(mimemultipart.getBodyPart(k).getContent().toString());
 						}
 					}
 				}
@@ -212,7 +212,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 			// If the current part is explicitly an attachment...
 			processAttachment(bodyPart.getFileName(), bodyPart.getInputStream());
 			attachment = true;
-			System.out.println("check2: "+bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";"))+ "check : end");
+			logger.info("Content type : "+bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
 		}
 		
 		if(attachment)
@@ -302,7 +302,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 		    Client client=ClientBuilder.newClient();
 		    client.register(feature).register(MultiPartFeature.class);
 		    WebTarget target = client.target("http://localhost/api/app/" + this.username + "/content/local");
-		    System.out.println("Filename got : "+file.getName());
+		    logger.info("Filename : "+file.getName());
 		    Response response = target.request().header("Content-Disposition", "attachment; filename="+ file.getName()).post(Entity.entity(form,form.getMediaType()), Response.class);
 
 			// Get request to get the link
@@ -321,7 +321,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 			
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 403) {
-				System.out.println("Error 403 (get content)");
+				logger.warning("Error 403 (get content)");
 			} else {
 				throw e;
 			}
@@ -345,18 +345,12 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 	private Properties setSMTPProperties(Properties properties) {
 
 		try {
-			System.out.println("Basic Auth : u="+this.username+" p="+this.password);
 			HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(this.username, this.password);
 			Client client = ClientBuilder.newClient();
 			client.register(feature);
 
 			WebTarget target = client.target("http://localhost/api/app/account/"+this.username+"/smtp");
-
-        
 			SmtpProperty smtpProperty = target.request(MediaType.APPLICATION_XML_TYPE).get(SmtpProperty.class);
-	        
-	        
-	        System.out.println("Output from Server .... \n");
 			
 			properties.setProperty("mail.smtp.auth", "true");
 			properties.setProperty("mail.smtp.starttls.enable", "true");	// TLS Connection
@@ -372,7 +366,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 			if (e.getResponse().getStatus() == 403) {
 				//TODO
 				// PAS DE COMPTE ou MAUVAIS ADRESSE/MDP
-				System.out.println("Error 403 (get smtp property)");
+				logger.warning("Error 403 (get smtp property)");
 			} else {
 				throw e;
 			}
