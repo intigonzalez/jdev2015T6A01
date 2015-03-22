@@ -76,13 +76,15 @@
             <!-- sidebar menu start-->
             <ul class="sidebar-menu" id="nav-accordion">
 
+                <!-- Home button -->
                 <li class="mt home">
                     <a class="active" href="#/home">
                         <i class="fa fa-home"></i>
                         <span>Home</span>
                     </a>
                 </li>
-
+                
+                <!-- Friends menu -->
                 <li class="sub-menu">
                     <a href="javascript:;">
                         <i class="fa fa-users"></i>
@@ -94,17 +96,41 @@
                         <!-- <li><a href="#/roles">My Roles</a></li> -->
                     </ul>
                 </li>
-                <li class="sub-menu">
-                    <a href="javascript:;">
+                
+				<!-- Videos button -->
+                <li>
+                    <a class="" href="#/myvideos">
                         <i class="fa fa-video-camera"></i>
                         <span>Videos</span>
                     </a>
-                    <ul class="sub">
-                        <li><a href="#/myvideos">My Videos</a></li>
-                        <li><a href="#/newvideo">Add a Video</a></li>
-                    </ul>
                 </li>
-                <li class="sub-menu">
+                
+				<!-- Pictures button -->
+                <li>
+                    <a class="" href="#/mypictures">
+                        <i class="fa fa-photo"></i>
+                        <span>Pictures</span>
+                    </a>
+                </li>
+                
+				<!-- Cloud button -->
+                <li>
+                    <a class="" href="#/mycloud">
+                        <i class="fa fa-cloud"></i>
+                        <span>Cloud</span>
+                    </a>
+                </li>
+                
+				<!-- Upload button -->
+                <li>
+                    <a class="" href="#/newvideo">
+                        <i class="fa fa-upload"></i>
+                        <span>New upload</span>
+                    </a>
+                </li>
+				
+				<!-- Profile menu -->				
+				<li class="sub-menu">
                     <a href="javascript:;">
                         <i class="fa fa-user"></i>
                         <span>Profile</span>
@@ -113,6 +139,7 @@
                         <li><a href="#/myprofile">My Profile</a></li>
                     </ul>
                 </li>
+                
             </ul>
             <!-- sidebar menu end-->
         </div>
@@ -175,6 +202,7 @@
     <script src="home.js"></script>
     <script src="views/home/home.js"></script>
     <script src="views/myvideos/myvideos.js"></script>
+    <script src="views/mypictures/mypictures.js"></script>
     <script src="views/newvideo/newvideo.js"></script>
     <script src="views/myprofile/myprofile.js"></script>
     <script src="views/friends/friends.js"></script>

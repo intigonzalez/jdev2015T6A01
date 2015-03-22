@@ -146,7 +146,7 @@ public class ContentServiceImpl implements ContentService {
 			break;
 		default:
 			link = "/cloud/"+userID+"/"+uuid.toString();
-			content.setStatus("SUCCESS");
+			content.setStatus("success");
 			break;
 		}
 		content.setLink(link);
