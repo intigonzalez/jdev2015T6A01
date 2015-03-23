@@ -4,7 +4,9 @@
 ## Install docker 
 
 	curl -sSL https://get.docker.com/ubuntu/ | sudo sh
-	
+or
+
+	wget -qO- https://get.docker.com/ | sh
 
 ## docker from docker hub
 

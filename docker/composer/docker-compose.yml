@@ -1,8 +1,11 @@
 box:
   build: ../box
-  command: java -jar dvd2c-box.jar --ip 0.0.0.0 -p 9998 --db-hostname db -b BOX_DOCKER  -c http://central:9999 -a http://box:9998 --rabbit-host worker
+  command: java -jar dvd2c-box.jar --ip 0.0.0.0 -p 9998 --db-hostname db -b BOX_DOCKER  -c http://localhost:9999 -a http://box:9998 --rabbit-host worker
   ports:
    - "9998:9998"
+  environment:
+   - CENTRAL 
+  
   volumes:
    - /var/www/html:/var/www/html
    - /tmp:/tmp
