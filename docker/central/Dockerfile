@@ -6,7 +6,6 @@
 FROM dockerfile/java:oracle-java8
 MAINTAINER David Bourasseau <dbourasseau@viotech.net>
 
-
 # get the lasted version of dvd2c-central
 RUN apt-get update
 
