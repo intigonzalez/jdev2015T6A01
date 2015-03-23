@@ -1,5 +1,5 @@
 box:
-  image: dngroup/media-home-box
+  image: dngroup/media-home-central
   ports:
    - "9999:9999"
   links:
