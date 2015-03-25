@@ -18,9 +18,10 @@ app.config(function($routeProvider) {
 });
 
 //Controllers
-app.controller('snapmailCtrl', ['$scope', '$http', '$routeParams', '$location', function ($scope, $http, $routeParams, $location) {
+app.controller('snapmailCtrl', ['$scope', '$window', '$http', '$routeParams', '$location', function ($scope, $window, $http, $routeParams, $location) {
 	$http.get(PREFIX_RQ + "/api/app/" + $routeParams.sender + "/content/" + $routeParams.id)
 	.success(function (data, status, headers, config) {
+		$scope.content = data.content;
 		$scope.contentID = data.content.contentsID;
 		$scope.sender = data.content.actorID;
 		$scope.type = data.content.type;
@@ -31,7 +32,32 @@ app.controller('snapmailCtrl', ['$scope', '$http', '$routeParams', '$location', 
 	
 	$scope.getType = function () {
 		if ($scope.type == 'video')
+		{
+			var prefix;
+			var suffix
+			var userAgent = $window.navigator.userAgent;
+			
+			if (userAgent.indexOf("Chrome") >= 0 || userAgent.indexOf("Windows") >=0 || userAgent.indexOf("Chromium") >=0)
+			{
+	            prefix = 'dash';
+	            suffix = 'dash/playlist.mpd';
+	        }
+	        else
+	        {
+	            prefix = 'hls';
+	            suffix = 'hls/playlist.m3u8';
+	        }
+			
+	        $scope.generateLink = function(content) {
+	             if (content.status == "success") {
+	                return prefix + ".html?url=" + content.link + "/" + suffix;
+	            }
+	            else {
+	                return "";
+	            }
+	        };
 			return 'views/snapmail/video.html';
+		}
 		else if ($scope.type == 'image')
 			return 'views/snapmail/image.html';
 		else if ($scope.type == null)
