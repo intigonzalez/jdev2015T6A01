@@ -53,6 +53,11 @@ body
 	display: table;
 }
 
+.tbr
+{
+	display: table-row !important;
+}
+
 .tbc, .tb > div
 {
 	display: table-cell;

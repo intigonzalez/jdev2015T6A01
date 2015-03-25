@@ -17,13 +17,13 @@ app.config(function($routeProvider) {
 	.otherwise({redirectTo: '/'});
 });
 
-//Controller
+//Controllers
 app.controller('snapmailCtrl', ['$scope', '$http', '$routeParams', '$location', function ($scope, $http, $routeParams, $location) {
 	$http.get(PREFIX_RQ + "/api/app/" + $routeParams.sender + "/content/" + $routeParams.id)
 	.success(function (data, status, headers, config) {
 		$scope.contentID = data.content.contentsID;
 		$scope.sender = data.content.actorID;
-		$scope.type = 'videos';
+		$scope.type = data.content.type;
 	})
 	.error(function (data, status, headers, config) {
 		$scope.type = null;
