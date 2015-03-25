@@ -3,7 +3,7 @@
 # VERSION       1.0
 
 # ~~~~ Image base ~~~~
-FROM mazzolino/armhf-ubuntu:14.04
+FROM ubuntu:trusty
 MAINTAINER David Bourasseau <dbourasseau@viotech.net>
 
 
@@ -82,7 +82,9 @@ RUN MP4Box -version
 # ~~~~ Clone repo ~~~~
 RUN apt-get -y install 
 WORKDIR ~/
-RUN git clone https://github.com/dngroup/vhg-adaptation-worker
-WORKDIR vhg-adaptation-worker
+
+RUN wget http://jenkins.homeb.tv:8080/job/vhg-adaptation-worker/lastSuccessfulBuild/artifact/dist/vhg_adaptation_worker-0.1-py2.7.egg
+RUN easy_install vhg_adaptation_worker-0.1-py2.7.egg
 EXPOSE 5672
 ENTRYPOINT service rabbitmq-server restart && celery -A adaptation.commons worker --loglevel=info --concurrency=1
+
