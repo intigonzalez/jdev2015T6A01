@@ -83,6 +83,6 @@ public interface ContentService {
 			InputStream uploadedInputStream, String[] fileType, File upload);
 
 	public abstract Content createContent(String userID,
-			InputStream uploadedInputStream, File upload) throws IOException;
+			InputStream uploadedInputStream, String contentDisposition) throws IOException;
 
 }

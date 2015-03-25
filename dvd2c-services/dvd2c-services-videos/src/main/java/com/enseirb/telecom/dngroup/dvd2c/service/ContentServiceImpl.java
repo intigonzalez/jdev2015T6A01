@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -96,27 +97,73 @@ public class ContentServiceImpl implements ContentService {
 		}
 
 	@Override
-	public Content createContent(String userID,
-			InputStream uploadedInputStream, File upload) throws IOException {
+	public Content createContent(	String userID,
+									InputStream uploadedInputStream,
+									String contentDisposition	) throws IOException, SecurityException {
 		
-		writeToFile(uploadedInputStream, upload);
-		String type= Files.probeContentType(upload.toPath());
-		String[] fileType = type.split("/");
-		LOGGER.debug(upload.getAbsolutePath() + "\tDetected Type:"+ type);
-		LOGGER.debug("New file uploaded with the type {}",fileType[0]);	
-		Content content = new Content();
-		content.setName(upload.getName());
-		content.setActorID(userID);
-		content.setStatus("In progress");
-		content.setType(fileType[0]);
+		
+		String filename;
+		String[] tmp = null;
+		if(contentDisposition != null)
+			tmp = contentDisposition.split("filename=");
+		
+		if(tmp != null && tmp.length >= 2)
+			filename = tmp[1];
+		else
+			filename = userID;
+		
+		filename=filename.replace(" ", "_");
+		Path tempFile = Files.createTempFile(null, null);
+		LOGGER.debug("Temporary file is here {}",tempFile.toAbsolutePath());
+		
+		writeToFile(uploadedInputStream, tempFile.toFile());
+		String fileType = Files.probeContentType(tempFile);
+		LOGGER.debug("MIME : {}", fileType);
+		
+		tmp = fileType.split("/");
+		fileType = tmp[0];
+		
+		if(filename.matches("(.*).MOV"))
+			fileType = "video";
+		
+		LOGGER.debug("File type: "+fileType+", filename: "+filename);
+		
+		String link;
 		UUID uuid = UUID.randomUUID();
+		Content content = new Content();
+		content.setName(filename);
+		content.setActorID(userID);
+		content.setType(fileType);
 		content.setContentsID(uuid.toString().replace("-", ""));
-		String link = "/videos/"+userID+"/"+uuid.toString();
+		content.setStatus("In progress");
+
+		switch (fileType) {
+		case "video":
+			link = "/videos/"+userID+"/"+uuid.toString();	
+			break;
+		case "image":
+			link = "/pictures/"+userID+"/"+uuid.toString();
+			break;
+		default:
+			link = "/cloud/"+userID+"/"+uuid.toString();
+			content.setStatus("SUCCESS");
+			break;
+		}
 		content.setLink(link);
 		long unixTime = System.currentTimeMillis() / 1000L;
 		content.setUnixTime(unixTime);
 
-		content = createContent(content,upload.getAbsolutePath(), content.getContentsID());
+		// Create new folders if they don't exist
+		File file = new File("/var/www/html"+link);
+		if(!file.exists())
+			file.mkdirs();
+		
+		// Moving the file
+		LOGGER.debug("Moving temporary file to /var/www/html"+link+"/"+filename);
+		File newFile = new File("/var/www/html"+link+"/"+filename);
+		Files.move(tempFile, newFile.toPath());
+		LOGGER.debug("File moved");
+		content = createContent(content, newFile.getAbsolutePath(), content.getContentsID());
 		return content;
 	}
 
@@ -124,9 +171,9 @@ public class ContentServiceImpl implements ContentService {
 	public Content createContent(Content content, String srcfile, String id) {
 
 		// Only if the file is a video content
-		if (content.getType().equals("video")) {
+		switch (content.getType()) {
+		case "video":
 			try {
-
 				Task task = new Task();
 				task.setTask("adaptation.commons.ddo");
 				task.setId(id);
@@ -138,12 +185,18 @@ public class ContentServiceImpl implements ContentService {
 						return new JsonWriter(writer, JsonWriter.DROP_ROOT_MODE);
 					}
 				});
-
 				rabbitMq.addTask(xstream.toXML(task), task.getId());
 
 			} catch (IOException e) {
 				LOGGER.error("can't connect to rabitMQ",e);
 			}
+			break;
+		case "image":
+			// TODO : image processing
+			break;
+
+		default:
+			break;
 		}
 		//Initialise with public authorization by default ! 
 		//	Authorization authorization = new Authorization();
@@ -222,7 +275,7 @@ public class ContentServiceImpl implements ContentService {
 									listContent.add(contentRepositoryObject.toContent());
 									break search;
 								} else {
-									//LOGGER.debug("Group is not the same. ");
+									LOGGER.debug("Group is not the same. ");
 								}
 							}
 						}
