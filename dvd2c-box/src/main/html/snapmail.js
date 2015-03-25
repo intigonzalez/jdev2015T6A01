@@ -30,10 +30,10 @@ app.controller('snapmailCtrl', ['$scope', '$http', '$routeParams', '$location', 
 	});
 	
 	$scope.getType = function () {
-		if ($scope.type == 'videos')
-			return 'views/snapmail/videos.html';
-		else if ($scope.type == 'images')
-			return 'views/snapmail/images.html';
+		if ($scope.type == 'video')
+			return 'views/snapmail/video.html';
+		else if ($scope.type == 'image')
+			return 'views/snapmail/image.html';
 		else if ($scope.type == null)
 			return 'views/snapmail/404.html';
 		else
