@@ -192,9 +192,24 @@ public class ContentServiceImpl implements ContentService {
 			}
 			break;
 		case "image":
-			// TODO : image processing
-			break;
+			try {
+				Task task = new Task();
+				task.setTask("adaptation.images.ddo");
+				task.setId(id);
+				task.getArgs().add(srcfile);
+				task.getArgs().add(content.getLink());
 
+				XStream xstream = new XStream(new JsonHierarchicalStreamDriver() {
+					public HierarchicalStreamWriter createWriter(Writer writer) {
+						return new JsonWriter(writer, JsonWriter.DROP_ROOT_MODE);
+					}
+				});
+				rabbitMq.addTask(xstream.toXML(task), task.getId());
+
+			} catch (IOException e) {
+				LOGGER.error("can't connect to rabitMQ",e);
+			}
+			break;
 		default:
 			break;
 		}
