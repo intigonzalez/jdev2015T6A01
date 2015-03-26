@@ -139,12 +139,13 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 		 Properties properties = System.getProperties();
 		 
 			properties = setSMTPProperties(properties);
-//			properties.setProperty("mail.smtp.auth", "true");
-//			properties.setProperty("mail.smtp.starttls.enable", "true");	// TLS Connection
-//			properties.setProperty("mail.smtp.host", host);					// Remote SMTP server address
-//			properties.setProperty("mail.user", this.username);				// Username used to log into the remote SMTP server
-//			properties.setProperty("mail.password", this.password);			// Password used to log into the remote SMTP server
-//			properties.setProperty("mail.smtp.port", "587");
+			// properties.setProperty("mail.smtp.auth", "true");
+			// properties.setProperty("mail.smtp.starttls.enable", "true");	// TLS Connection
+			// properties.setProperty("mail.smtp.host", host);					// Remote SMTP server address
+			// properties.setProperty("mail.user", this.username);				// Username used to log into the remote SMTP server
+			// properties.setProperty("mail.password", this.password);			// Password used to log into the remote SMTP server
+			// properties.setProperty("mail.smtp.port", "587");
+			// properties.setProperty("mail.smtp.ssl.trust", "smtp.gmail.com");
 			final String pwd= properties.getProperty("mail.password");
 			final String usr=properties.getProperty("mail.user");
 		// These properties will change based on the remote smtp server used
