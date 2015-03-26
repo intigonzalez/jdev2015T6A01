@@ -3,7 +3,7 @@
 # VERSION       1.0
 
 # ~~~~ Image base ~~~~
-FROM mazzolino/armhf-ubuntu:14.04
+FROM ubuntu:trusty
 MAINTAINER David Bourasseau <dbourasseau@viotech.net>
 
 

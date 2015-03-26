@@ -94,6 +94,10 @@ public class Main {
 		CliConfSingleton.rabbitHostname = cliconf.getRabbitHost();
 		CliConfSingleton.rabbitPort = cliconf.getRabbitPort();
 		CliConfSingleton.port = cliconf.getPort();
+		
+		
+		
+		
 		LOGGER.info("the box ID is : {}",CliConfSingleton.boxID);
 
 		

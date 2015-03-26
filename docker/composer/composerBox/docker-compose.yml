@@ -14,7 +14,7 @@ db:
   volumes: 
    - /data/db:/data/db
 worker:
-  build: ../worker
+  build: ../../worker
   volumes:
    - /var/www/html:/var/www/html
    - /tmp:/tmp
