@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ContentRepositoryObject {
 	String id;
 	String name;
+	String type;
 	String actorID;
 	Long unixTime;
 	String link;
@@ -25,10 +26,11 @@ public class ContentRepositoryObject {
 
 	}
 
-	public ContentRepositoryObject(String id, String name, String actorID, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<Integer> metadata) {
+	public ContentRepositoryObject(String id, String name, String type, String actorID, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<Integer> metadata) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.type = type;
 		this.actorID = actorID;
 		this.unixTime = unixTime;
 		this.link = link;
@@ -41,6 +43,7 @@ public class ContentRepositoryObject {
 	public ContentRepositoryObject(Content content) {
 		id = content.getContentsID();
 		name = content.getName();
+		type = content.getType();
 		actorID = content.getActorID();
 		unixTime = content.getUnixTime();
 		link = content.getLink();
@@ -92,7 +95,13 @@ public class ContentRepositoryObject {
 		this.name = name;
 	}
 
+	public String getType() {
+		return type;
+	}
 
+	public void setType(String type) {
+		this.type = type;
+	}
 
 	public Long getUnixTime() {
 		return unixTime;
@@ -137,6 +146,7 @@ public class ContentRepositoryObject {
 		Content content = new Content();
 		content.setContentsID(this.getId().toString());
 		content.setName(this.getName());
+		content.setType(this.getType());
 		content.setActorID(this.getActorID());
 		content.setLink(this.getLink());
 		content.setPreviewLink(this.getPreviewLink());

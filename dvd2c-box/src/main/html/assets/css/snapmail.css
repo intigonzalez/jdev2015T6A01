@@ -32,7 +32,9 @@ body
 {
 	background: #f3f3f3;
 	padding: 0;
-	margin: 0;	
+	margin: 0;
+	color: #505050;
+	line-height: 1.5em;
 }
 
 #header
@@ -53,10 +55,16 @@ body
 	display: table;
 }
 
+.tbr
+{
+	display: table-row !important;
+}
+
 .tbc, .tb > div
 {
 	display: table-cell;
 	width: 1%;
+	vertical-align: middle;
 }
 
 .md
@@ -97,6 +105,13 @@ body
 	padding: 10px 24px;
 }
 
+video
+{
+	width: 80%;
+	margin: 0 auto;
+	display: block;
+}
+
 #buttons
 {
 	vertical-align: middle;
@@ -105,6 +120,21 @@ body
 #buttons > :first-child
 {
 	margin-right: 10px;
+}
+
+#content
+{
+	padding: 10px 0;
+}
+
+.break
+{
+	word-break: break-all;
+}
+
+.mid
+{
+	text-align: center;
 }
 
 @media only screen and (max-width: 720px)
