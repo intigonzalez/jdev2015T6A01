@@ -20,7 +20,7 @@ worker:
    - /tmp:/tmp
 snapmail:
   build: ../snapmail
-  command: java -jar target/snapmail.jar
+  command: java -jar snapmail.jar
   ports:
    - "25004:25004"
   links:
