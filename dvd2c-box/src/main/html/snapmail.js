@@ -33,47 +33,60 @@ app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$rout
 	$scope.getType = function () {
 		if ($scope.type == 'video')
 		{
+			var player = 'raw';
 			var prefix;
 			var suffix
 			var userAgent = $window.navigator.userAgent;
-
-			if (userAgent.indexOf("Chrome") >= 0 || userAgent.indexOf("Windows") >=0 || userAgent.indexOf("Chromium") >=0)
+			
+			if ($scope.content.status == "success")
 			{
-				prefix = 'dash';
-				suffix = 'dash/playlist.mpd';
-
-				$scope.startVideo = function() {
-					var video, context, player;
-					var url = $scope.content.link + '/' + suffix;
-
-					console.log(url);
-
-					video = document.querySelector(".dash-video-player video");
-					context = new Dash.di.DashContext();
-					player = new MediaPlayer(context);
-
-					player.startup();
-
-					player.attachView(video);
-					player.setAutoPlay(false);
-
-					player.attachSource(url);
+				if (userAgent.indexOf("Chrome") >= 0 || userAgent.indexOf("Windows") >=0 || userAgent.indexOf("Chromium") >=0)
+				{
+					prefix = 'dash';
+					suffix = 'dash/playlist.mpd';
+	
+					$scope.startVideo = function() {
+						var video, context, player;
+						var url = $scope.content.link + '/' + suffix;
+	
+						video = document.querySelector(".dash-video-player video");
+						context = new Dash.di.DashContext();
+						player = new MediaPlayer(context);
+	
+						player.startup();
+	
+						player.attachView(video);
+						player.setAutoPlay(false);
+	
+						player.attachSource(url);
+					}
 				}
+				else
+				{
+					prefix = 'hls';
+					suffix = 'hls/playlist.m3u8';
+	
+					$scope.startVideo = function() {
+						var url = $scope.content.link + '/' + suffix;
+						var video;
+	
+						video = document.querySelector(".hls-video-player video");
+						video.src = url;
+						video.load();
+						video.play();
+					}
+				}
+
+				player = prefix;
 			}
-			else
+			
+			$scope.getPlayer = function()
 			{
-				prefix = 'hls';
-				suffix = 'hls/playlist.m3u8';
+				return 'views/snapmail/video/' + player + '.html';
 			}
+			
+			console.log($scope);
 
-			$scope.generateLink = function(content) {
-				if (content.status == "success") {
-					return prefix + ".html?url=" + content.link + "/" + suffix;
-				}
-				else {
-					return "";
-				}
-			};
 			return 'views/snapmail/video.html';
 		}
 		else if ($scope.type == 'image')
