@@ -14,4 +14,4 @@ RUN curl -L "http://nexus.homeb.tv:8080/nexus/service/local/artifact/maven/redir
 
 EXPOSE 25004
 
-CMD java -jar snapmail.jar
+CMD java -jar target/snapmail.jar
