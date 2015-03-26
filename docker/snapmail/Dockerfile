@@ -10,7 +10,7 @@ MAINTAINER Maxime Peterlin <mpeterlin@enseirb-matmeca.fr>
 RUN apt-get update
 
 RUN apt-get -y install curl
-RUN curl -L "http://nexus.homeb.tv:8080/nexus/service/local/artifact/maven/redirect?r=snapshots&g=fr/enseirb-matmeca/telecom/t2/s8&a=snapmail&v=LATEST&c=jar-with-dependencies" -o snapmail.jar
+RUN curl -L "http://nexus.homeb.tv:8080/nexus/service/local/artifact/maven/redirect?r=snapmaildev&g=fr/enseirb-matmeca/telecom/t2/s8&a=snapmail&v=LATEST&c=jar-with-dependencies" -o snapmail.jar
 
 EXPOSE 25004
 
