@@ -1,0 +1,10 @@
+central:
+  build: ../central
+  ports:
+   - "9999:9999"
+  links:
+   - db
+db:
+  image: mongo
+  volumes:
+   - /data/db:/data/db
