@@ -18,7 +18,7 @@ app.config(function($routeProvider) {
 });
 
 //Controllers
-app.controller('snapmailCtrl', ['$scope', '$window', '$http', '$routeParams', '$location', function ($scope, $window, $http, $routeParams, $location) {
+app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$routeParams', '$location', function ($scope, $timeout, $window, $http, $routeParams, $location) {
 	$http.get(PREFIX_RQ + "/api/app/" + $routeParams.sender + "/content/" + $routeParams.id)
 	.success(function (data, status, headers, config) {
 		$scope.content = data.content;
@@ -29,33 +29,51 @@ app.controller('snapmailCtrl', ['$scope', '$window', '$http', '$routeParams', '$
 	.error(function (data, status, headers, config) {
 		$scope.type = null;
 	});
-	
+
 	$scope.getType = function () {
 		if ($scope.type == 'video')
 		{
 			var prefix;
 			var suffix
 			var userAgent = $window.navigator.userAgent;
-			
+
 			if (userAgent.indexOf("Chrome") >= 0 || userAgent.indexOf("Windows") >=0 || userAgent.indexOf("Chromium") >=0)
 			{
-	            prefix = 'dash';
-	            suffix = 'dash/playlist.mpd';
-	        }
-	        else
-	        {
-	            prefix = 'hls';
-	            suffix = 'hls/playlist.m3u8';
-	        }
-			
-	        $scope.generateLink = function(content) {
-	             if (content.status == "success") {
-	                return prefix + ".html?url=" + content.link + "/" + suffix;
-	            }
-	            else {
-	                return "";
-	            }
-	        };
+				prefix = 'dash';
+				suffix = 'dash/playlist.mpd';
+
+				$scope.startVideo = function() {
+					var video, context, player;
+					var url = $scope.content.link + '/' + suffix;
+
+					console.log(url);
+
+					video = document.querySelector(".dash-video-player video");
+					context = new Dash.di.DashContext();
+					player = new MediaPlayer(context);
+
+					player.startup();
+
+					player.attachView(video);
+					player.setAutoPlay(false);
+
+					player.attachSource(url);
+				}
+			}
+			else
+			{
+				prefix = 'hls';
+				suffix = 'hls/playlist.m3u8';
+			}
+
+			$scope.generateLink = function(content) {
+				if (content.status == "success") {
+					return prefix + ".html?url=" + content.link + "/" + suffix;
+				}
+				else {
+					return "";
+				}
+			};
 			return 'views/snapmail/video.html';
 		}
 		else if ($scope.type == 'image')
