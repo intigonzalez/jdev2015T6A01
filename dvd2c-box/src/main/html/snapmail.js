@@ -72,6 +72,8 @@ app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$rout
 	
 						video = document.querySelector(".hls-video-player video");
 						video.src = url;
+						
+						console.log($scope.content.link);
 						video.load();
 						video.play();
 					}
@@ -84,8 +86,6 @@ app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$rout
 			{
 				return 'views/snapmail/video/' + player + '.html';
 			}
-			
-			console.log($scope);
 
 			return 'views/snapmail/video.html';
 		}

@@ -127,6 +127,16 @@ video
 	padding: 10px 0;
 }
 
+.break
+{
+	word-break: break-all;
+}
+
+.mid
+{
+	text-align: center;
+}
+
 @media only screen and (max-width: 720px)
 {
 
