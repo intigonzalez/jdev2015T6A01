@@ -86,9 +86,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <addClasspath>true</addClasspath>
-              <classpathPrefix>.</classpathPrefix>
-              <mainClass>Main</mainClass>
+              <mainClass>com.enseirb.telecom.dngroup.snapmail.Main</mainClass>
             </manifest>
           </archive>
         </configuration>
