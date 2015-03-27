@@ -14,7 +14,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
+
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryObject;
@@ -76,7 +76,7 @@ public class ContentServiceImpl implements ContentService {
 	@Override
 	public Content createContent(String userID,
 			InputStream uploadedInputStream, String[] fileType, File upload) {
-	
+			LOGGER.debug("New file write on system {}",upload.getAbsolutePath());
 			writeToFile(uploadedInputStream, upload);	
 			LOGGER.debug("New file uploaded with the type {}",fileType[0]);	
 			Content content = new Content();
