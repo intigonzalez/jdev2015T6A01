@@ -1,5 +1,5 @@
 box:
-  build: ../box
+  build: ../../box
   command: java -jar dvd2c-box.jar --ip 0.0.0.0 -p 9998 --db-hostname db -b BOX_DOCKER  -c http://central.homeb.tv:8080/ -a http://box:9998 --rabbit-host worker
   ports:
    - "9998:9998"
@@ -14,7 +14,7 @@ db:
   volumes: 
    - /data/db:/data/db
 worker:
-  build: ../worker
+  build: ../../worker
   volumes:
    - /var/www/html:/var/www/html
    - /tmp:/tmp
@@ -25,3 +25,4 @@ snapmail:
    - "25004:25004"
   links:
    - box
+

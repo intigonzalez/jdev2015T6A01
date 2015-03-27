@@ -287,7 +287,7 @@ public class ContentServiceImpl implements ContentService {
 
 								if (relation.getRoleID().get(i) == contentRepositoryObject.getMetadata().get(j)) {
 									contentRepositoryObject.getMetadata().clear();
-									contentRepositoryObject.setLink(ApplicationContext.getProperties().getProperty("PublicAddr")+contentRepositoryObject.getLink());
+									contentRepositoryObject.setLink(CliConfSingleton.publicAddr+contentRepositoryObject.getLink());
 									listContent.add(contentRepositoryObject.toContent());
 									break search;
 								} else {

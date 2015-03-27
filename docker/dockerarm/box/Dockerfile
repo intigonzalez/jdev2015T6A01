@@ -3,7 +3,7 @@
 # VERSION       1.0
 
 # ~~~~ Image base ~~~~
-FROM dockerfile/java:oracle-java8
+FROM dbourasseau/java8arm
 MAINTAINER David Bourasseau <dbourasseau@viotech.net>
 
 
