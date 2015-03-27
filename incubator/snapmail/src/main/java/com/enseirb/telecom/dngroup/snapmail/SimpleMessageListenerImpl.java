@@ -335,7 +335,8 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 		    form.bodyPart(new FileDataBodyPart("file", file, MediaType.APPLICATION_OCTET_STREAM_TYPE));
 		    Client client=ClientBuilder.newClient();
 		    client.register(feature).register(MultiPartFeature.class);
-		    WebTarget target = client.target("http://localhost/api/app/" + this.username + "/content/local");
+		    
+		    WebTarget target = client.target("http://localhost:9998/api/app/" + this.username + "/content/local");
 		    logger.info("Filename : "+file.getName());
 		    Response response = target.request().header("Content-Disposition", "attachment; filename="+ file.getName()).post(Entity.entity(file,MediaType.WILDCARD), Response.class);
 
@@ -346,7 +347,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 			if(response.getLocation() != null) {
 				WebTarget target2 = client2.target(response.getLocation());
 				Content content = target2.request(MediaType.APPLICATION_XML_TYPE).get(Content.class);
-				return content.getLink()+"/"+file.getName().replace(" ", "_");
+				return "http://" + localAddress() + "/" + "snapmail.html#/" + this.username + "/" + content.getContentsID();
 			}
 			else {
 				logger.warning("Error during the upload : Media@Home did not return a location");

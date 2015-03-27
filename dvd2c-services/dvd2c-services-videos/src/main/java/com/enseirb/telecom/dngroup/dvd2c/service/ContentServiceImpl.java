@@ -143,6 +143,7 @@ public class ContentServiceImpl implements ContentService {
 			break;
 		case "image":
 			link = "/pictures/"+userID+"/"+uuid.toString();
+			content.setStatus("success");
 			break;
 		default:
 			link = "/cloud/"+userID+"/"+uuid.toString();
@@ -194,7 +195,7 @@ public class ContentServiceImpl implements ContentService {
 		case "image":
 			try {
 				Task task = new Task();
-				task.setTask("adaptation.images.ddo");
+				task.setTask("adaptation.commons.image_processing");
 				task.setId(id);
 				task.getArgs().add(srcfile);
 				task.getArgs().add(content.getLink());
