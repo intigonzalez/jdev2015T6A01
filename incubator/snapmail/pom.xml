@@ -3,13 +3,31 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fr.enseirb-matmeca.telecom.t2.s8</groupId>
   <artifactId>snapmail</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.2.0-SNAPSHOT</version>
+  <parent>
+    <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
+    <artifactId>dvd2c-parent</artifactId>
+    <version>0.2.0-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
+  </parent>
+  <distributionManagement>
+    <repository>
+      <id>releases</id>
+      <name>releases</name>
+      <url>http://nexus.homeb.tv:8080/nexus/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <name>snapshots</name>
+      <url>http://nexus.homeb.tv:8080/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
         <artifactId>dvd2c-bom</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.2.0-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -53,7 +71,7 @@
     <dependency>
       <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
       <artifactId>dvd2c-model</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.2.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>
@@ -92,4 +110,8 @@
       </plugin>
     </plugins>
   </build>
+  <scm>
+    <connection>scm:git:ssh://git@github.com/dngroup/Media-home.git</connection>
+    <tag>HEAD</tag>
+  </scm>
 </project>

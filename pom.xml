@@ -3,27 +3,19 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
   <artifactId>dvd2c-parent</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <distributionManagement>
-    <site>
-      <id>site</id>
-      <name>MediaHome Generated Documentation</name>
-      <url>http://github.com/dngroup/Media-Home</url>
-    </site>
-
-                <repository>
-                        <id>releases</id>
-                        <name>releases</name>
-                        <url>http://nexus.homeb.tv:8080/nexus/content/repositories/releases/</url>
-                </repository>
-                <snapshotRepository>
-                        <id>snapshots</id>
-                        <name>snapshots</name>
-                        <url>http://nexus.homeb.tv:8080/nexus/content/repositories/snapshots/</url>
-                </snapshotRepository>
-
-
+    <repository>
+      <id>releases</id>
+      <name>releases</name>
+      <url>http://nexus.homeb.tv:8080/nexus/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <name>snapshots</name>
+      <url>http://nexus.homeb.tv:8080/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
   </distributionManagement>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,7 +33,7 @@
       <dependency>
         <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
         <artifactId>dvd2c-bom</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.2.0-SNAPSHOT</version>
         <type>pom</type>
       </dependency>
     </dependencies>
@@ -150,5 +142,6 @@
   </reporting>
   <scm>
     <connection>scm:git:ssh://git@github.com/dngroup/Media-home.git</connection>
+    <tag>HEAD</tag>
   </scm>
 </project>
