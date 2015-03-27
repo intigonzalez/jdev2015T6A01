@@ -71,11 +71,6 @@
           </execution>
         </executions>
       </plugin>
-      <dependency>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-scm-plugin</artifactId>
-        <version>1.8.1</version>
-      </dependency>
     </plugins>
   </build>
   <reporting>
@@ -154,6 +149,6 @@
     </plugins>
   </reporting>
   <scm>
-    <connection>scm:git:ssh://git@github.com:dngroup/Media-home.git</connection>
+    <connection>scm:git:ssh://git@github.com/dngroup/Media-home.git</connection>
   </scm>
 </project>
