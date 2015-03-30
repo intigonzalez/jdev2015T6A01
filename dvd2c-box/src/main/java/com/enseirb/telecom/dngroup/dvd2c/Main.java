@@ -90,52 +90,8 @@ public class Main {
 	public static void main(String[] args) throws IOException,
 			InterruptedException {
 		// Properties
-		String aPPath = "/etc/mediahome/box.properties";
-		try {
-			FileInputStream in = new FileInputStream(aPPath);
-			ApplicationContext.properties.load(in);
-			CliConfSingleton.boxID = 		ApplicationContext.getProperties().getProperty("boxID");
-			CliConfSingleton.centralURL =	ApplicationContext.getProperties().getProperty("centralURL");
-			CliConfSingleton.contentPath = 	ApplicationContext.getProperties().getProperty("contentPath");
-			CliConfSingleton.ip = 			ApplicationContext.getProperties().getProperty("ip");
-			CliConfSingleton.publicAddr = 	ApplicationContext.getProperties().getProperty("publicAddr");
-			CliConfSingleton.dbHostname = 	ApplicationContext.getProperties().getProperty("dbHostname");
-			CliConfSingleton.dbPort = 		Integer.valueOf(ApplicationContext.getProperties().getProperty("dbPort"));
-			CliConfSingleton.rabbitHostname =ApplicationContext.getProperties().getProperty("rabbitHostname");
-			CliConfSingleton.rabbitPort = 	Integer.valueOf(ApplicationContext.getProperties().getProperty("rabbitPort"));
-			CliConfSingleton.port = 		Integer.valueOf(ApplicationContext.getProperties().getProperty("port"));
-			LOGGER.info("File not found use default value or arg Path ={} ", aPPath);
-			in.close();
-		} catch (FileNotFoundException e1) {
-			LOGGER.info("File not found use default value or arg Path ={} ", aPPath);
-			CliConfSingleton.defaultValue();
-		}
-		catch (Exception e1) {
-			LOGGER.info("File error not complete ", aPPath);
-			CliConfSingleton.defaultValue();
-		}
-		
-		try {
-			CliConfiguration cliconf = CliFactory.parseArguments(
-					CliConfiguration.class, args);
 
-			CliConfSingleton.boxID = cliconf.getBoxID();
-			CliConfSingleton.centralURL = cliconf.getCentralURL();
-			CliConfSingleton.contentPath = cliconf.getContentPath();
-			CliConfSingleton.ip = cliconf.getIp();
-			CliConfSingleton.publicAddr = cliconf.getPublicAddr();
-			CliConfSingleton.dbHostname = cliconf.getDbHostname();
-			CliConfSingleton.dbPort = cliconf.getDbPort();
-			CliConfSingleton.rabbitHostname = cliconf.getRabbitHost();
-			CliConfSingleton.rabbitPort = cliconf.getRabbitPort();
-			CliConfSingleton.port = cliconf.getPort();
-		} catch (ArgumentValidationException e1) {
-			LOGGER.info("No arg detected use default or file value ");
-			
-		} catch (InvalidOptionSpecificationException e1) {
-			LOGGER.info("False arg detected use default or file value ");
-			CliConfSingleton.defaultValue();
-		}
+		getParametreFromArgs(args);
 
 		LOGGER.info("the box ID is : {}", CliConfSingleton.boxID);
 
@@ -173,6 +129,87 @@ public class Main {
 
 		// httpServer.stop();
 	}
+
+	/**
+	 * @param args
+	 */
+	private static void getParametreFromArgs(String[] args) {
+		try {
+			CliConfiguration cliconf = CliFactory.parseArguments(
+					CliConfiguration.class, args);
+
+			CliConfSingleton.boxID = cliconf.getBoxID();
+			CliConfSingleton.centralURL = cliconf.getCentralURL();
+			CliConfSingleton.contentPath = cliconf.getContentPath();
+			CliConfSingleton.ip = cliconf.getIp();
+			CliConfSingleton.publicAddr = cliconf.getPublicAddr();
+			CliConfSingleton.dbHostname = cliconf.getDbHostname();
+			CliConfSingleton.dbPort = cliconf.getDbPort();
+			CliConfSingleton.rabbitHostname = cliconf.getRabbitHost();
+			CliConfSingleton.rabbitPort = cliconf.getRabbitPort();
+			CliConfSingleton.port = cliconf.getPort();
+		} catch (ArgumentValidationException e1) {
+
+			LOGGER.info("No arg detected use default or file value ");
+			getParametreFromFile();
+
+		} catch (InvalidOptionSpecificationException e1) {
+			LOGGER.info("False arg detected use default or file value ");
+			getParametreFromFile();
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private static void getParametreFromFile() {
+		String aPPath = "/etc/mediahome/box.properties";
+		try {
+			FileInputStream in = new FileInputStream(aPPath);
+			ApplicationContext.properties.load(in);
+			if (CliConfSingleton.boxID == null)
+				CliConfSingleton.boxID = ApplicationContext.getProperties()
+						.getProperty("boxID");
+			if (CliConfSingleton.centralURL == null)
+				CliConfSingleton.centralURL = ApplicationContext
+						.getProperties().getProperty("centralURL");
+			if (CliConfSingleton.contentPath == null)
+				CliConfSingleton.contentPath = ApplicationContext
+						.getProperties().getProperty("contentPath");
+			if (CliConfSingleton.ip == null)
+				CliConfSingleton.ip = ApplicationContext.getProperties()
+						.getProperty("ip");
+			if (CliConfSingleton.publicAddr == null)
+				CliConfSingleton.publicAddr = ApplicationContext
+						.getProperties().getProperty("publicAddr");
+			if (CliConfSingleton.dbHostname == null)
+				CliConfSingleton.dbHostname = ApplicationContext
+						.getProperties().getProperty("dbHostname");
+			if (CliConfSingleton.dbPort == null)
+				CliConfSingleton.dbPort = Integer.valueOf(ApplicationContext
+						.getProperties().getProperty("dbPort"));
+			if (CliConfSingleton.rabbitHostname == null)
+				CliConfSingleton.rabbitHostname = ApplicationContext
+						.getProperties().getProperty("rabbitHostname");
+			if (CliConfSingleton.rabbitPort == null)
+				CliConfSingleton.rabbitPort = Integer
+						.valueOf(ApplicationContext.getProperties()
+								.getProperty("rabbitPort"));
+			if (CliConfSingleton.port == null)
+				CliConfSingleton.port = Integer.valueOf(ApplicationContext
+						.getProperties().getProperty("port"));
+			LOGGER.info("File not found use default value or arg Path ={} ",
+					aPPath);
+			in.close();
+		} catch (FileNotFoundException e1) {
+			LOGGER.info("File not found use default value or arg Path ={} ",
+					aPPath);
+			CliConfSingleton.defaultValue();
+		} catch (Exception e1) {
+			LOGGER.info("File error not complete ", aPPath);
+			CliConfSingleton.defaultValue();
+		}
+	}
 }
 
 interface CliConfiguration {
@@ -195,16 +232,16 @@ interface CliConfiguration {
 	@Option(shortName = "a", longName = "public-addr", description = "the http addr of curent box")
 	String getPublicAddr();
 
-	@Option(longName = "db-hostname",  description = "the hostname of database")
+	@Option(longName = "db-hostname", description = "the hostname of database")
 	String getDbHostname();
 
-	@Option(longName = "db-port",  description = "the port of database")
+	@Option(longName = "db-port", description = "the port of database")
 	Integer getDbPort();
 
-	@Option(longName = "rabbit-host",  description = "the host of rabbitMQ")
+	@Option(longName = "rabbit-host", description = "the host of rabbitMQ")
 	String getRabbitHost();
 
-	@Option(longName = "rabbit-port",  description = "the port of rabbitMQ")
+	@Option(longName = "rabbit-port", description = "the port of rabbitMQ")
 	Integer getRabbitPort();
 
 	@Option(helpRequest = true)
