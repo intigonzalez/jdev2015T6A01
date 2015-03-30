@@ -162,34 +162,34 @@ public class Main {
 
 interface CliConfiguration {
 
-	@Option(shortName = "b", longName = "boxID", defaultValue = "BOX_TEST")
+	@Option(shortName = "b", longName = "boxID")
 	String getBoxID();
 
-	@Option(shortName = "p", longName = "port", defaultValue = "9998", description = "the port on which the frontend will listen for http connections")
+	@Option(shortName = "p", longName = "port", description = "the port on which the frontend will listen for http connections")
 	Integer getPort();
 
-	@Option(shortName = "i", longName = "ip", defaultValue = "0.0.0.0", description = "the IP on which the frontend will listen for http connections")
+	@Option(shortName = "i", longName = "ip", description = "the IP on which the frontend will listen for http connections")
 	String getIp();
 
-	@Option(longName = "content-path", defaultValue = "/var/www/html", description = "path of content")
+	@Option(longName = "content-path", description = "path of content")
 	String getContentPath();
 
-	@Option(shortName = "c", longName = "central-addr", defaultValue = "http://central.homeb.tv:8080", description = "the http addr of central server")
+	@Option(shortName = "c", longName = "central-addr", description = "the http addr of central server")
 	String getCentralURL();
 
-	@Option(shortName = "a", longName = "public-addr", defaultValue = "http://localhost:9998", description = "the http addr of curent box")
+	@Option(shortName = "a", longName = "public-addr", description = "the http addr of curent box")
 	String getPublicAddr();
 
-	@Option(longName = "db-hostname", defaultValue = "localhost", description = "the hostname of database")
+	@Option(longName = "db-hostname",  description = "the hostname of database")
 	String getDbHostname();
 
-	@Option(longName = "db-port", defaultValue = "27017", description = "the port of database")
+	@Option(longName = "db-port",  description = "the port of database")
 	Integer getDbPort();
 
-	@Option(longName = "rabbit-host", defaultValue = "localhost", description = "the host of rabbitMQ")
+	@Option(longName = "rabbit-host",  description = "the host of rabbitMQ")
 	String getRabbitHost();
 
-	@Option(longName = "rabbit-port", defaultValue = "5672", description = "the port of rabbitMQ")
+	@Option(longName = "rabbit-port",  description = "the port of rabbitMQ")
 	Integer getRabbitPort();
 
 	@Option(helpRequest = true)
