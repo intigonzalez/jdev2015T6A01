@@ -48,6 +48,7 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 	public void createBoxORH(Box box) throws IOException {
 		
 		WebTarget target = client.target(url);
+		LOGGER.debug("Send request to server {}",target.getUri());
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
 				.post(Entity.entity(box, MediaType.APPLICATION_XML),Response.class);
 

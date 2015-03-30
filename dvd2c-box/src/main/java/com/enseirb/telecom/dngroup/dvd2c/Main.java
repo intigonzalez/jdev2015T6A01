@@ -26,7 +26,9 @@ import com.enseirb.telecom.dngroup.dvd2c.endpoints.BoxEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceImpl;
 import com.google.common.base.Throwables;
+import com.lexicalscope.jewel.cli.ArgumentValidationException;
 import com.lexicalscope.jewel.cli.CliFactory;
+import com.lexicalscope.jewel.cli.InvalidOptionSpecificationException;
 import com.lexicalscope.jewel.cli.Option;
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 
@@ -106,21 +108,34 @@ public class Main {
 			in.close();
 		} catch (FileNotFoundException e1) {
 			LOGGER.info("File not found use default value or arg Path ={} ", aPPath);
-			return;
+			CliConfSingleton.defaultValue();
 		}
-		CliConfiguration cliconf = CliFactory.parseArguments(
-				CliConfiguration.class, args);
+		catch (Exception e1) {
+			LOGGER.info("File error not complete ", aPPath);
+			CliConfSingleton.defaultValue();
+		}
+		
+		try {
+			CliConfiguration cliconf = CliFactory.parseArguments(
+					CliConfiguration.class, args);
 
-		CliConfSingleton.boxID = cliconf.getBoxID();
-		CliConfSingleton.centralURL = cliconf.getCentralURL();
-		CliConfSingleton.contentPath = cliconf.getContentPath();
-		CliConfSingleton.ip = cliconf.getIp();
-		CliConfSingleton.publicAddr = cliconf.getPublicAddr();
-		CliConfSingleton.dbHostname = cliconf.getDbHostname();
-		CliConfSingleton.dbPort = cliconf.getDbPort();
-		CliConfSingleton.rabbitHostname = cliconf.getRabbitHost();
-		CliConfSingleton.rabbitPort = cliconf.getRabbitPort();
-		CliConfSingleton.port = cliconf.getPort();
+			CliConfSingleton.boxID = cliconf.getBoxID();
+			CliConfSingleton.centralURL = cliconf.getCentralURL();
+			CliConfSingleton.contentPath = cliconf.getContentPath();
+			CliConfSingleton.ip = cliconf.getIp();
+			CliConfSingleton.publicAddr = cliconf.getPublicAddr();
+			CliConfSingleton.dbHostname = cliconf.getDbHostname();
+			CliConfSingleton.dbPort = cliconf.getDbPort();
+			CliConfSingleton.rabbitHostname = cliconf.getRabbitHost();
+			CliConfSingleton.rabbitPort = cliconf.getRabbitPort();
+			CliConfSingleton.port = cliconf.getPort();
+		} catch (ArgumentValidationException e1) {
+			LOGGER.info("No arg detected use default or file value ");
+			
+		} catch (InvalidOptionSpecificationException e1) {
+			LOGGER.info("False arg detected use default or file value ");
+			CliConfSingleton.defaultValue();
+		}
 
 		LOGGER.info("the box ID is : {}", CliConfSingleton.boxID);
 
