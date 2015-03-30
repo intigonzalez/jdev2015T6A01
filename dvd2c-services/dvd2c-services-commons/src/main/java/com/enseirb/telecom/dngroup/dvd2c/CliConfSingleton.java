@@ -1,5 +1,15 @@
 package com.enseirb.telecom.dngroup.dvd2c;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.lexicalscope.jewel.cli.ArgumentValidationException;
+import com.lexicalscope.jewel.cli.CliFactory;
+import com.lexicalscope.jewel.cli.InvalidOptionSpecificationException;
+
 /**
  * a singleton that contains input from CLI
  * 
@@ -7,6 +17,7 @@ package com.enseirb.telecom.dngroup.dvd2c;
  *
  */
 public class CliConfSingleton {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CliConfSingleton.class);
 	public static String boxID;
 	public static Integer port;
 	public static String ip;
@@ -40,5 +51,8 @@ public class CliConfSingleton {
 		if (rabbitPort == null)
 			rabbitPort = 5672;
 	}
+	
+
+
 
 }

@@ -129,11 +129,10 @@ public class Main {
 
 		// httpServer.stop();
 	}
-
 	/**
 	 * @param args
 	 */
-	private static void getParametreFromArgs(String[] args) {
+	static void getParametreFromArgs(String[] args) {
 		try {
 			CliConfiguration cliconf = CliFactory.parseArguments(
 					CliConfiguration.class, args);
@@ -162,7 +161,7 @@ public class Main {
 	/**
 	 * 
 	 */
-	private static void getParametreFromFile() {
+	static void getParametreFromFile() {
 		String aPPath = "/etc/mediahome/box.properties";
 		try {
 			FileInputStream in = new FileInputStream(aPPath);
