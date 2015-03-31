@@ -6,6 +6,7 @@ box:
   volumes:
    - /var/www/html:/var/www/html
    - /tmp:/tmp
+   - /etc/mediahome:/etc/mediahome
   links:
    - db
    - worker
