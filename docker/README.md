@@ -20,7 +20,7 @@ https://docs.docker.com/compose/install/
 	chmod +x /usr/local/bin/docker-compose
 
 #### use composer
-
+ 
 	cd docker/composerHub
 	sudo docker-compose up
 	
@@ -138,13 +138,14 @@ creat and edit this file
 copy this
 
 	#!/bin/bash
+
 	cd /home/user/Media-home
 	git pull
 	cd docker/composer/composerBoxHub
-	docker stop sudo docker stop composerboxhub_box_1 composerboxhub_worker_1 composerboxhub_db_1
-	docker-compose rm --force
-	docker-compose pull
-	docker-compose up
+	sudo docker stop composerboxhub_box_1 composerboxhub_worker_1 composerboxhub_db_1
+	sudo docker-compose rm --force
+	sudo docker-compose pull
+	sudo docker-compose up
 
 run
 
