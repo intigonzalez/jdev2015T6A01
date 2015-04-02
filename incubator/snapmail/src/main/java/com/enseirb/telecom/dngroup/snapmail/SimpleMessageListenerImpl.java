@@ -240,7 +240,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 							}
 							else{
 							
-								//processAttachment(mimemultipart.getBodyPart(k).getFileName(),mimemultipart.getBodyPart(k).getInputStream());
+								processAttachment(mimemultipart.getBodyPart(k).getFileName(),mimemultipart.getBodyPart(k).getInputStream(),mimemultipart.getBodyPart(k).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
 								attachment = true;
 								System.out.println(mimemultipart.getBodyPart(k).getContent());
 							}
