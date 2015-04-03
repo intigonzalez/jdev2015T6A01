@@ -76,7 +76,7 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public Content createContent(String userID,
-			InputStream uploadedInputStream, String[] fileType, File upload) {
+			InputStream uploadedInputStream, String[] fileType, File upload) throws IOException {
 	
 			writeToFile(uploadedInputStream, upload);	
 			LOGGER.debug("New file uploaded with the type {}",fileType[0]);	
@@ -99,7 +99,7 @@ public class ContentServiceImpl implements ContentService {
 	@Override
 	public Content createContent(	String userID,
 									InputStream uploadedInputStream,
-									String contentDisposition	) throws IOException, SecurityException {
+									String contentDisposition	) throws IOException {
 		
 		
 		String filename;
@@ -112,7 +112,9 @@ public class ContentServiceImpl implements ContentService {
 		else
 			filename = userID;
 		
+		// Temporary until we find a better way to deal with filenames
 		filename=filename.replace(" ", "_");
+		
 		Path tempFile = Files.createTempFile(null, null);
 		LOGGER.debug("Temporary file is here {}",tempFile.toAbsolutePath());
 		
@@ -169,9 +171,9 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public Content createContent(Content content, String srcfile, String id) {
+	public Content createContent(Content content, String srcfile, String id) throws IOException {
 
-		// Only if the file is a video content
+		
 		switch (content.getType()) {
 		case "video":
 			try {
@@ -190,6 +192,7 @@ public class ContentServiceImpl implements ContentService {
 
 			} catch (IOException e) {
 				LOGGER.error("can't connect to rabitMQ",e);
+				throw e;
 			}
 			break;
 		case "image":
@@ -209,9 +212,11 @@ public class ContentServiceImpl implements ContentService {
 
 			} catch (IOException e) {
 				LOGGER.error("can't connect to rabitMQ",e);
+				throw e;
 			}
 			break;
 		default:
+			LOGGER.info("");
 			break;
 		}
 		//Initialise with public authorization by default ! 

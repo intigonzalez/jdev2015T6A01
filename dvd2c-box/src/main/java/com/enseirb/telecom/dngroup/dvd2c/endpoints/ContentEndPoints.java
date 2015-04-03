@@ -23,6 +23,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.UriBuilder;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -71,7 +72,6 @@ public class ContentEndPoints {
 	 */
 	@GET
 	@Path("{contentsID}")
-	@RolesAllowed({ "authenticated", "other" })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Content getSpecificContentInformations(
 			@PathParam("userID") String userID,
@@ -110,7 +110,7 @@ public class ContentEndPoints {
 	 * @throws IOException
 	 */
 	@POST
-	//@RolesAllowed({ "other", "authenticated" })
+	@RolesAllowed({ "other", "authenticated" })
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response postContent(@PathParam("userID") String userID,
 			@FormDataParam("file") InputStream uploadedInputStream,
@@ -150,8 +150,7 @@ public class ContentEndPoints {
 	 * @throws IOException
 	 */
 	@POST
-	//@RolesAllowed({ "other", "authenticated" })
-	@Path("local")
+	@RolesAllowed({ "other", "authenticated" })
 	@Consumes(MediaType.WILDCARD)
 	public Response postContent2(	@PathParam("userID") String userID,
 									InputStream uploadedInputStream,
@@ -165,9 +164,9 @@ public class ContentEndPoints {
 			LOGGER.debug("Content created :"+ CliConfSingleton.publicAddr + "/api/app/" + userID
 							+ "/content/" + content.getContentsID());
 			return Response.created(
-					new URI(CliConfSingleton.publicAddr + "/api/app/" + userID
-							+ "/content/" + content.getContentsID())).build();
-		} catch(IOException | SecurityException e) {
+					UriBuilder.fromPath(CliConfSingleton.publicAddr).path("api").path("app").path(userID).path("content").path(content.getContentsID()).build()).build();
+			
+		} catch(IOException e) {
 			throw e;
 		}
 	}
