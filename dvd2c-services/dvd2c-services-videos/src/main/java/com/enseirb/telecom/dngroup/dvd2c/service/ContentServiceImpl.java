@@ -15,7 +15,8 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
+
+
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryObject;
@@ -23,6 +24,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.model.Task;
 import com.enseirb.telecom.dngroup.dvd2c.utils.FileService;
+import com.google.common.base.Throwables;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
@@ -76,8 +78,10 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public Content createContent(String userID,
+
 			InputStream uploadedInputStream, String[] fileType, File upload) throws IOException {
-	
+			LOGGER.debug("New file write on system {}",upload.getAbsolutePath());
+
 			writeToFile(uploadedInputStream, upload);	
 			LOGGER.debug("New file uploaded with the type {}",fileType[0]);	
 			Content content = new Content();
@@ -192,7 +196,7 @@ public class ContentServiceImpl implements ContentService {
 
 			} catch (IOException e) {
 				LOGGER.error("can't connect to rabitMQ",e);
-				throw e;
+				throw Throwables.propagate(e);
 			}
 			break;
 		case "image":
@@ -212,7 +216,7 @@ public class ContentServiceImpl implements ContentService {
 
 			} catch (IOException e) {
 				LOGGER.error("can't connect to rabitMQ",e);
-				throw e;
+				throw Throwables.propagate(e);
 			}
 			break;
 		default:

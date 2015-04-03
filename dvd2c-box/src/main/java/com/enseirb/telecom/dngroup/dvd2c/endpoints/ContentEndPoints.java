@@ -117,7 +117,9 @@ public class ContentEndPoints {
 			@FormDataParam("file") FormDataContentDisposition fileDetail,
 			@FormDataParam("file") FormDataBodyPart body)
 			throws URISyntaxException, IOException {
+		
 		String fileName = fileDetail.getFileName();
+		LOGGER.info("New file {}",fileDetail);
 		String extension = Files.getFileExtension(fileName);
 		MediaType fileMediaType = body.getMediaType();
 		String fileTypeTemp = fileMediaType.toString();
