@@ -220,7 +220,7 @@ public class ContentServiceImpl implements ContentService {
 			}
 			break;
 		default:
-			LOGGER.info("");
+			LOGGER.info("Content without processing");
 			break;
 		}
 		//Initialise with public authorization by default ! 
