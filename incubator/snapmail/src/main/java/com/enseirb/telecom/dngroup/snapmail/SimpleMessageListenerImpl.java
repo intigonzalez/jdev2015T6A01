@@ -245,7 +245,6 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 							
 								processAttachment(mimemultipart.getBodyPart(k).getFileName(),mimemultipart.getBodyPart(k).getInputStream(),mimemultipart.getBodyPart(k).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
 								attachment = true;
-								System.out.println(mimemultipart.getBodyPart(k).getContent());
 							}
 						}
 					}
@@ -254,10 +253,10 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 			}
 			
 			// If the current part is explicitly an attachment...
-
-			processAttachment(bodyPart.getFileName(), bodyPart.getInputStream(),bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
+			String contentType = bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";"));
+			processAttachment(bodyPart.getFileName(), bodyPart.getInputStream(), contentType);
 			attachment = true;
-			LOGGER.info("Content type : "+bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
+			LOGGER.info("Content type : "+ contentType);
 		}
 		
 		if(attachment)
@@ -350,27 +349,14 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 		    Client client=ClientBuilder.newClient(cc);
 		    client.register(feature).register(MultiPartFeature.class);
 		
-		    WebTarget target = client.target("http://localhost:9998/api/app/" + this.username + "/content/local");
+		    WebTarget target = client.target("http://localhost:9998/api/app/" + this.username + "/content");
 
 		    LOGGER.info("Filename : "+filename);
-		    Response response = target.request(Type).header("Content-Disposition", "attachment; filename="+ filename).post(Entity.entity(is,MediaType.WILDCARD), Response.class);
+		    Response response = target.request().header("Content-Disposition", "attachment; filename="+ filename).post(Entity.entity(is, Type), Response.class);
 
-			// Get request to get the link
-			Client client2 = ClientBuilder.newClient();
-			client2.register(feature);
-
-			if(response.getLocation() != null) {
-				WebTarget target2 = client2.target(response.getLocation());
-				String link;
-				Content content = target2.request(MediaType.APPLICATION_XML_TYPE).get(Content.class);
-				if(Type.contains("video")){
-				link="http://"+localAddress()+":9998/snapmail.html#/"+ username +content.getLink().substring(content.getLink().lastIndexOf("/")).replace("-", "");
-				}
-				else{
-				link=content.getLink().replace("localhost", localAddress())+"/"+filename.replace(" ", "_");
-				}
-				return link;
-			}
+			if(response.getLocation() != null)
+				return "http://" + localAddress() + "/" + "snapmail.html#/" + this.username + "/" + response.getLocation().toString().split("/content/")[1];
+				
 			else {
 				LOGGER.error("Error during the upload : Media@Home did not return a location");
 				return "Error during the upload";

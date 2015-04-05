@@ -158,7 +158,7 @@ public class ContentEndPoints {
 									InputStream uploadedInputStream,
 									@HeaderParam("Content-Disposition") String contentDisposition ) throws URISyntaxException, IOException {
 		
-		LOGGER.debug("New local upload, Content-Disposition : "+contentDisposition);
+		LOGGER.debug("New upload, Content-Disposition : "+contentDisposition);
 		try {
 			Content content = uManager.createContent(userID, uploadedInputStream, contentDisposition);
 			content.setLink(CliConfSingleton.publicAddr + content.getLink());
