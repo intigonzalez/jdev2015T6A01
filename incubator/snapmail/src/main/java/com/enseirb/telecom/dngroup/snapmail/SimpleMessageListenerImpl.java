@@ -1,6 +1,8 @@
 package com.enseirb.telecom.dngroup.snapmail;
 
 import java.util.logging.Logger;
+import java.lang.String;
+import javax.mail.internet.InternetHeaders;
 import java.net.*;
 
 import javax.ws.rs.WebApplicationException;
@@ -196,62 +198,72 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 	
 	private void parseMessage(Message message, Multipart multiPart) throws MessagingException, IOException {
 		boolean attachment = false;
-		
 		// Since the message is multipart, it can be casted as such
 		Multipart multipart = (Multipart)message.getContent();
 
 		// Iteration through the different parts of the message
 		for (int j = 0; j < multipart.getCount(); j++) {
 			BodyPart bodyPart = multipart.getBodyPart(j);
-			
 			// A signed email will put the attachments into a MIME multipart,
 			// thus if a part is a MIME multipart it is likely to contain attachments
 			if(!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition())) {
-				
 				// If the part is not an attachment, but a MimeMultipart...
 				if (bodyPart.getContent().getClass().equals(MimeMultipart.class)) {
 					MimeMultipart mimemultipart = (MimeMultipart)bodyPart.getContent();
-					
 					// Iteration through the different parts of the MIME multipart
 					for (int k=0;k<mimemultipart.getCount();k++) {
-						if (mimemultipart.getBodyPart(k).getFileName() != null)
+						if (mimemultipart.getBodyPart(k).getContentType().indexOf("text") == -1 && mimemultipart.getBodyPart(k).getContentType().indexOf("multipart") == -1)
 						{
-							if ( Part.INLINE != null ){	
+							if ( Part.INLINE != null | mimemultipart.getBodyPart(k).getHeader("Content-ID")[0] != null){//if attachment + embedded picture then the inline disposition is not writen
 								logger.info("embedded picture");
 								//add picture inline hmtl part
-								// HTML version
-						        
 								DataSource ds = new ByteArrayDataSource(mimemultipart.getBodyPart(k).getInputStream(), mimemultipart.getBodyPart(k).getContentType());
-						        
-								//first part  (the html)
-						        BodyPart messageBodyPart = new MimeBodyPart();
-						        String htmlText = "<img src=\"cid:image\">";
-						        messageBodyPart.setContent(htmlText, "text/html");
-						        
-						        multiPart.addBodyPart(messageBodyPart);
-								
 								MimeBodyPart imagePart = new MimeBodyPart();
 						        imagePart.setDataHandler(new DataHandler(ds));
+						        if (mimemultipart.getBodyPart(k).getFileName() != null)
 						        imagePart.setFileName(mimemultipart.getBodyPart(k).getFileName());
+						        if (mimemultipart.getBodyPart(k).getFileName() != null)
 						        imagePart.setDisposition(MimeBodyPart.INLINE);
-						        imagePart.setHeader("Content-ID", "<image>");
-						        
+						        imagePart.setHeader("Content-ID", mimemultipart.getBodyPart(k).getHeader("Content-ID")[0]);
 						        multiPart.addBodyPart(imagePart);
 							}
-							else{
-							
+							else if (Part.ATTACHMENT != null){
 								processAttachment(mimemultipart.getBodyPart(k).getFileName(),mimemultipart.getBodyPart(k).getInputStream(),mimemultipart.getBodyPart(k).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
 								attachment = true;
-								System.out.println(mimemultipart.getBodyPart(k).getContent());
 							}
 						}
+						//if there is another mimemultipart
+						if (mimemultipart.getBodyPart(k).getContentType().indexOf("multipart") != -1){
+							MimeMultipart mimemultipart_bis = (MimeMultipart) mimemultipart.getBodyPart(k).getContent();
+							// Iteration through the different parts of the MIME multipart
+							for (int l=0;l<mimemultipart_bis.getCount();l++) {
+								if (mimemultipart_bis.getBodyPart(l).getContentType().indexOf("text") == -1)
+								{
+									if ( Part.INLINE != null | mimemultipart_bis.getBodyPart(l).getHeader("Content-ID")[0] != null){//if attachment + embedded picture then the inline disposition is not wrote
+										logger.info("embedded picture");
+										//add picture inline hmtl part
+										DataSource ds = new ByteArrayDataSource(mimemultipart_bis.getBodyPart(l).getInputStream(), mimemultipart_bis.getBodyPart(l).getContentType());
+										MimeBodyPart imagePart = new MimeBodyPart();
+								        imagePart.setDataHandler(new DataHandler(ds));
+								        if (mimemultipart_bis.getBodyPart(l).getFileName() != null)
+								        imagePart.setFileName(mimemultipart_bis.getBodyPart(l).getFileName());
+								        if (mimemultipart_bis.getBodyPart(l).getFileName() != null)
+								        imagePart.setDisposition(MimeBodyPart.INLINE);
+								        imagePart.setHeader("Content-ID", mimemultipart_bis.getBodyPart(l).getHeader("Content-ID")[0]);
+								        multiPart.addBodyPart(imagePart);
+									}
+									else if (Part.ATTACHMENT != null){
+										processAttachment(mimemultipart_bis.getBodyPart(l).getFileName(),mimemultipart_bis.getBodyPart(l).getInputStream(),mimemultipart_bis.getBodyPart(l).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
+										attachment = true;
+									}
+								}
+							}
+						}	
 					}
 				}
 				continue;
 			}
-			
 			// If the current part is explicitly an attachment...
-
 			processAttachment(bodyPart.getFileName(), bodyPart.getInputStream(),bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
 			attachment = true;
 			logger.info("Content type : "+bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
