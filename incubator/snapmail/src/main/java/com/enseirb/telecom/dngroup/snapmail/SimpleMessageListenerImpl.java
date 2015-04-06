@@ -14,18 +14,23 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.subethamail.smtp.auth.UsernamePasswordValidator;
 import org.subethamail.smtp.helper.*;
 
+import java.awt.Desktop;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -50,6 +55,17 @@ import org.subethamail.smtp.TooMuchDataException;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.Base64;
+import com.google.api.services.gmail.Gmail;
 
 public class SimpleMessageListenerImpl implements SimpleMessageListener, UsernamePasswordValidator{
 	private final static Logger LOGGER = LoggerFactory.getLogger(SimpleMessageListener.class);
@@ -136,7 +152,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		sendMail("smtp.gmail.com", recipient, multiPart);
+		sendMail2("smtp.gmail.com", recipient, multiPart);
 		recipientArray.clear();
 		}
 	}
@@ -158,7 +174,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 		// These properties will change based on the remote smtp server used
 			   
 		// Get the default Session object.
-		Session session = Session.getDefaultInstance(properties,
+		Session session = Session.getInstance(properties,
 		new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 			// Remote SMTP credentials
@@ -429,5 +445,122 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 		}
 		return properties;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// Method to get the token thanks to our json secret. The user need to agree and copy-paste a link into the terminal.
+	private Gmail getService() throws IOException{
+		
+		// Link to give us rights to send mails
+		  final String SCOPE = "https://www.googleapis.com/auth/gmail.compose";
+		  final String APP_NAME = "Gmail API Quickstart";
+		  // Path to the client_secret.json file downloaded from the Developer Console
+		  final String CLIENT_SECRET_PATH = "cloud/client_secret.json";
 
+                  // Initialization
+		  HttpTransport httpTransport = new NetHttpTransport();
+		    JsonFactory jsonFactory = new JacksonFactory();
+		    GoogleClientSecrets clientSecrets;
+
+                    // Load our json file
+		    clientSecrets = GoogleClientSecrets.load(jsonFactory,  new FileReader(CLIENT_SECRET_PATH));
+
+		    // Allow user to authorize via url, thanks to our secret
+		    GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+		        httpTransport, jsonFactory, clientSecrets, Arrays.asList(SCOPE))
+		        .setAccessType("online")
+		        .setApprovalPrompt("auto").build();
+
+		    String url = flow.newAuthorizationUrl().setRedirectUri(GoogleOAuthConstants.OOB_REDIRECT_URI)
+		        .build();
+		    LOGGER.info("Please open the following URL in your browser then type"
+		                       + " the authorization code:\n" + url);
+
+		    // Open the url in the default browser.
+		    URI myUri = null;
+			try {
+				myUri = new URI(url);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+		    Desktop.getDesktop().browse(myUri);
+		    
+		    
+		    // Read code entered by user. The user has to copy-paste the code in the terminal (will be changed in M@H)
+		    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		    String code = br.readLine();
+
+		    // Generate Credential and token using retrieved code.
+		    GoogleTokenResponse response = flow.newTokenRequest(code)
+		        .setRedirectUri(GoogleOAuthConstants.OOB_REDIRECT_URI).execute();
+		    GoogleCredential credential = new GoogleCredential()
+		        .setFromTokenResponse(response);
+
+		    // Create a new authorized Gmail API client and return it.
+		    Gmail service = new Gmail.Builder(httpTransport, jsonFactory, credential)
+		        .setApplicationName(APP_NAME).build();
+		    return service;
+	}
+
+	// Method to send the mail thanks to the Gmail API, without using any password.
+	private void sendMail2(String host, String recipient, Multipart multiPart) throws IOException
+	{
+		// Default properties
+		Properties properties = System.getProperties();
+	    Session session = Session.getInstance(properties);
+		
+		try {
+			// Creation of the message that will be send in place of the received mail
+			// The attachments are removed and replaced by links which redirect to the file stored in the cloud
+			//
+			MimeMessage message = new MimeMessage(session);
+			// Set From: header field of the header.
+	        message.setFrom(new InternetAddress(username));
+	        //message.setHeader("Content-Type", this.type);
+	        LOGGER.info("CONTENT-TYPE : "+this.type);
+	        // Set To: header field of the header.
+	        message.addRecipients(Message.RecipientType.TO,allrecipients);
+	        // Set Subject: header field
+	        message.setSubject(this.subject);
+	        // Now set the actual message
+	        //message.setContent(this.text, this.type);
+	        MimeBodyPart textPart = new MimeBodyPart();
+	        textPart.setContent(this.text, this.type);
+		    multiPart.addBodyPart(textPart);
+	        message.setContent(multiPart);
+	        LOGGER.info("Mail rebuilt and ready to be sent");
+			
+	        // Get Gmail service thanks to the token, build the Message and send it.
+	        Gmail service=getService();
+	        com.google.api.services.gmail.model.Message message2= createMessageWithEmail(message);
+	        message2 = service.users().messages().send("me", message2).execute();
+	        
+			LOGGER.info("Mail sent successfully !");
+			LOGGER.info("--------------------------------------------------\n\n");
+		}catch (MessagingException mex) {
+			mex.printStackTrace();
+		}
+	}
+	
+	// Method to convert the MimeMessage to a "Google" Message wich can be sent via Gmail API
+	private static com.google.api.services.gmail.model.Message createMessageWithEmail(MimeMessage email)
+		      throws MessagingException, IOException {
+		    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		    email.writeTo(bytes);
+		    // Encode the mail in base64 for the Gmail API
+		    String encodedEmail = Base64.encodeBase64URLSafeString(bytes.toByteArray());
+		    com.google.api.services.gmail.model.Message message = new com.google.api.services.gmail.model.Message();
+		    message.setRaw(encodedEmail);
+		    return message;
+		  }
 }
