@@ -18,11 +18,12 @@ public class UserRepositoryObject {
 	protected String smtpPort;
 	protected String smtpUsername;
 	protected String smtpPassword;
+	protected String smtpToken;
 	public UserRepositoryObject(){
 		
 	}
 	
-	public UserRepositoryObject(String userID,String boxID, String firstname, String surname, String password, String pubKey, String privateKey, String smtpHost, String smtpPort, String smtpUsername, String smtpPassword) {
+	public UserRepositoryObject(String userID,String boxID, String firstname, String surname, String password, String pubKey, String privateKey, String smtpHost, String smtpPort, String smtpUsername, String smtpPassword, String smtpToken) {
 		super();
 		this.boxID=boxID;
 		this.userID = userID;
@@ -36,6 +37,7 @@ public class UserRepositoryObject {
 		this.smtpPort = smtpPort;
 		this.smtpUsername = smtpUsername;
 		this.smtpPassword = smtpPassword;
+		this.smtpToken = smtpToken;
 	}
 	
 	public UserRepositoryObject(User user) {
@@ -51,6 +53,7 @@ public class UserRepositoryObject {
 		this.smtpPort = user.getSmtpPort();
 		this.smtpUsername = user.getSmtpUsername();
 		this.smtpPassword = user.getSmtpPassword();
+		this.smtpToken = user.getSmtpToken();
 	}
 
 	public String getFirstname() {
@@ -111,6 +114,7 @@ public class UserRepositoryObject {
 		user.setSmtpPort(smtpPort);
 		user.setSmtpUsername(smtpUsername);
 		user.setSmtpPassword(smtpPassword);
+		user.setSmtpToken(smtpToken);
 		return user;
 	}
 
@@ -157,5 +161,13 @@ public class UserRepositoryObject {
 
 	public void setSmtpPassword(String smtpPassword) {
 		this.smtpPassword = smtpPassword;
+	}
+
+	public String getSmtpToken() {
+		return smtpToken;
+	}
+
+	public void setSmtpToken(String smtpToken) {
+		this.smtpToken = smtpToken;
 	}
 }

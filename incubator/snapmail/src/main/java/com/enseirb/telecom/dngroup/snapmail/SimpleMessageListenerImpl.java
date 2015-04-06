@@ -1,6 +1,8 @@
 package com.enseirb.telecom.dngroup.snapmail;
 
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
@@ -14,15 +16,13 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.subethamail.smtp.auth.UsernamePasswordValidator;
 import org.subethamail.smtp.helper.*;
 
 import java.io.File;
-import java.io.FileOutputStream;
+
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +48,6 @@ import javax.mail.util.SharedFileInputStream;
 import org.subethamail.smtp.MessageContext;
 import org.subethamail.smtp.TooMuchDataException;
 
-import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 
 public class SimpleMessageListenerImpl implements SimpleMessageListener, UsernamePasswordValidator{
@@ -109,7 +108,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 			
 			try {
 				// The mail received as a stream of data by the app is stored into the MIME message
-				File mimeFile=saveFile("temp_mime", data);
+				File mimeFile=saveFile("snapmail", data);
 		        SharedFileInputStream fis = new SharedFileInputStream(mimeFile);
 				newMessage = new MimeMessage(session, fis);
 		        mimeFile.delete();
@@ -336,15 +335,15 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 		return null;
 	}
 	
-	private File saveFile(String FileName, InputStream inputStream) throws IOException {
-		new File("cloud").mkdir();
-		File f = new File("cloud/" + FileName);
-		FileOutputStream fos = new FileOutputStream(f);
-		byte[] buf = new byte[4096];
-		int bytesRead;
-		while((bytesRead = inputStream.read(buf))!=-1)
-			fos.write(buf, 0, bytesRead);
-		fos.close();
+	private File saveFile(String filename, InputStream inputStream) throws IOException {
+		File f = new File("/tmp/" + filename);
+		try {
+			// Temporary until we find a better way to do it
+			Files.copy(inputStream, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		}
+		catch (IOException e) {
+			LOGGER.error("Cannot create temporary file", e);
+		}
 		return f;
 	}
 	
@@ -376,7 +375,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 			
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 403) {
-				LOGGER.error("Error 403 (get content)");
+				LOGGER.error("Error 403 (post content)");
 			} else {
 				throw e;
 			}
