@@ -3,7 +3,9 @@ package com.enseirb.telecom.dngroup.snapmail;
 import org.subethamail.smtp.server.SMTPServer;
 import org.subethamail.smtp.auth.*;
 import org.subethamail.smtp.helper.*;
+
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -19,7 +21,7 @@ import java.security.cert.CertificateException;
 
 public class Main {
     public static void main(String[] args) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException, KeyManagementException {
-
+    	
 		// TLS
 		// Creating our own SSLContext
 		// Create and initialize the SSLContext with key material
