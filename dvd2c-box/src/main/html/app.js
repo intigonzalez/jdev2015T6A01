@@ -34,7 +34,9 @@ angular.module('myApp', [
     'myApp.index',
     'myApp.home',
     'myApp.myvideos',
+    'myApp.mypictures',
     'myApp.myprofile',
+    'myApp.mycloud',
     'myApp.friends',
     'myApp.friendSearch',
     'myApp.newvideo'

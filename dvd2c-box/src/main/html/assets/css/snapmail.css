@@ -1,0 +1,182 @@
+@font-face {
+	font-family: 'MavenPro';
+	src: url('../fonts/Medium/maven_pro_medium-webfont.eot');
+	src: url('../fonts/Medium/maven_pro_medium-webfont.eot?#iefix')
+		format('eot'), url('../fonts/Medium/maven_pro_medium-webfont.woff')
+		format('woff'), url('../fonts/Medium/maven_pro_medium-webfont.ttf')
+		format('truetype'),
+		url('../fonts/Medium/maven_pro_medium-webfont.svg#webfontNj5iy4Dl')
+		format('svg');
+	font-weight: 500;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'MavenPro';
+	src: url('../fonts/Regular/maven_pro_regular-webfont.eot');
+	src: url('../fonts/Regular/maven_pro_regular-webfont.eot?#iefix')
+		format('eot'), url('../fonts/Regular/maven_pro_regular-webfont.woff')
+		format('woff'), url('../fonts/Regular/maven_pro_regular-webfont.ttf')
+		format('truetype'),
+		url('../fonts/Regular/maven_pro_regular-webfont.svg#webfontOM8fITNz')
+		format('svg');
+	font-weight: 400;
+	font-style: normal;
+}
+
+body, html, button, p {
+	font-family: 'MavenPro', sans-serif;
+}
+
+body {
+	background: #f3f3f3;
+	padding: 0;
+	margin: 0;
+	color: #505050;
+	line-height: 1.5em;
+}
+
+#header {
+	height: 90px;
+	background: #fff;
+	border-bottom: 3px solid #e7e7e7;
+	width: 100%;
+}
+
+#header>* {
+	text-align: center;
+}
+
+.tb {
+	display: table;
+}
+
+.tbr {
+	display: table-row !important;
+}
+
+.tbc, .tb>div {
+	display: table-cell;
+	width: 1%;
+	vertical-align: middle;
+}
+
+.download {
+	text-align: center;
+	padding: .75em;
+	background: #737373;
+	color: #fff;
+	display: block;
+	width: 85px;
+	margin: 0 auto;
+	border-radius: 6px;
+	margin-top: 2em;
+	text-decoration: none;
+}
+
+.md {
+	font-weight: 500;
+}
+
+#logo {
+	color: #474747;
+}
+
+#logo img {
+	padding: 15px 10px 15px 0;
+}
+
+#logo span, #menu {
+	font-size: 1.8em;
+	line-height: 90px;
+	vertical-align: top;
+}
+
+#menu {
+	font-size: 1.2em;
+	color: #b3b3b3;
+}
+
+#header button {
+	background: #78b03b;
+	color: #fff;
+	font-size: .9em;
+	border: 0;
+	border-radius: 7px;
+	padding: 10px 24px;
+}
+
+video {
+	width: 80%;
+	margin: 0 auto;
+	display: block;
+}
+
+#buttons {
+	vertical-align: middle;
+}
+
+#buttons>:first-child {
+	margin-right: 10px;
+}
+
+#content {
+	padding: 10px 0;
+}
+
+.break {
+	word-break: break-all;
+}
+
+.mid {
+	text-align: center;
+}
+
+@media only screen and (max-width: 720px) {
+	#logo {
+		padding-left: 3%;
+		color: #474747;
+	}
+	#logo img {
+		padding: 5px 10px 15px 0;
+	}
+	#logo span, #menu {
+		width: auto;
+		text-align: left;
+		font-size: 1em;
+		line-height: 0px;
+		vertical-align: top;
+	}
+	#menu {
+		line-height: 30px;
+		font-size: 1em;
+		color: #b3b3b3;
+		text-align: center;
+	}
+	#menu>nav {
+		width: 100%;
+	}
+	#header button {
+		display: block;
+		background: #78b03b;
+		color: #fff;
+		font-size: .9em;
+		border: 0;
+		border-radius: 7px;
+		padding: 7px 24px;
+		width: 90px;
+	}
+	#buttons {
+		vertical-align: middle;
+	}
+	#buttons>:first-child {
+		margin-bottom: 5px;
+	}
+	#buttons>:last-child {
+		margin-right: 20px;
+	}
+	#menu>nav>div {
+		display: block;
+		width: auto;
+	}
+}

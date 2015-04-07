@@ -1,22 +1,20 @@
 package com.enseirb.telecom.dngroup.snapmail;
+
 import java.util.logging.Logger;
 import java.net.*;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.HttpClients;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.subethamail.smtp.auth.UsernamePasswordValidator;
 import org.subethamail.smtp.helper.*;
 
@@ -27,6 +25,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -36,8 +36,10 @@ import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 
 import org.subethamail.smtp.MessageContext;
 import org.subethamail.smtp.TooMuchDataException;
@@ -58,7 +60,6 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 	
 	//to certify that recipients are real adresses
 	private int position = 0;
-	private String smtptoforward;
 	
 	MessageContext context;
 	private String subject;
@@ -100,6 +101,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 	
 			// Creation of a new MIME Message
 			MimeMessage newMessage;
+			Multipart multiPart = new MimeMultipart();//mixed, related
 			
 			try {
 				// The mail received as a stream of data by the app is stored into the MIME message
@@ -117,7 +119,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 				// If the message contains an attachment it is parsed to upload the file on the cloud
 				if(isMultipart) {
 					logger.info("This mail is multipart");
-					parseMessage(newMessage);
+					parseMessage(newMessage,multiPart);
 				}
 			} catch (MessagingException e1) {
 				// TODO Auto-generated catch block
@@ -126,23 +128,24 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		sendMail("smtp.gmail.com", recipient);
+		sendMail("smtp.gmail.com", recipient, multiPart);
 		recipientArray.clear();
 		}
 	}
 	
-	private void sendMail(String host, String recipient)
+	private void sendMail(String host, String recipient, Multipart multiPart)
 	{
 		// Get system properties
 		 Properties properties = System.getProperties();
 		 
 			properties = setSMTPProperties(properties);
-//			properties.setProperty("mail.smtp.auth", "true");
-//			properties.setProperty("mail.smtp.starttls.enable", "true");	// TLS Connection
-//			properties.setProperty("mail.smtp.host", host);					// Remote SMTP server address
-//			properties.setProperty("mail.user", this.username);				// Username used to log into the remote SMTP server
-//			properties.setProperty("mail.password", this.password);			// Password used to log into the remote SMTP server
-//			properties.setProperty("mail.smtp.port", "587");
+			// properties.setProperty("mail.smtp.auth", "true");
+			// properties.setProperty("mail.smtp.starttls.enable", "true");	// TLS Connection
+			// properties.setProperty("mail.smtp.host", host);					// Remote SMTP server address
+			// properties.setProperty("mail.user", this.username);				// Username used to log into the remote SMTP server
+			// properties.setProperty("mail.password", this.password);			// Password used to log into the remote SMTP server
+			// properties.setProperty("mail.smtp.port", "587");
+			// properties.setProperty("mail.smtp.ssl.trust", "smtp.gmail.com");
 			final String pwd= properties.getProperty("mail.password");
 			final String usr=properties.getProperty("mail.user");
 		// These properties will change based on the remote smtp server used
@@ -171,7 +174,11 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 	        // Set Subject: header field
 	        message.setSubject(this.subject);
 	        // Now set the actual message
-	        message.setContent(this.text, this.type);
+	        //message.setContent(this.text, this.type);
+	        MimeBodyPart textPart = new MimeBodyPart();
+	        textPart.setContent(this.text, this.type);
+		    multiPart.addBodyPart(textPart);
+	        message.setContent(multiPart);
 	        logger.info("Mail rebuilt and ready to be sent");
 			Transport.send(message);
 			logger.info("Mail sent successfully !");
@@ -181,7 +188,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 		}
 	}
 	
-	private void parseMessage(Message message) throws MessagingException, IOException {
+	private void parseMessage(Message message, Multipart multiPart) throws MessagingException, IOException {
 		boolean attachment = false;
 		
 		// Since the message is multipart, it can be casted as such
@@ -201,11 +208,35 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 					
 					// Iteration through the different parts of the MIME multipart
 					for (int k=0;k<mimemultipart.getCount();k++) {
-						//if (mimemultipart.getBodyPart(k).getFileName() != null)
+						if (mimemultipart.getBodyPart(k).getFileName() != null)
 						{
-							processAttachment(mimemultipart.getBodyPart(k).getFileName(), mimemultipart.getBodyPart(k).getInputStream());
-							attachment = true;
-							System.out.println(mimemultipart.getBodyPart(k).getContent());
+							if ( Part.INLINE != null ){	
+								logger.info("embedded picture");
+								//add picture inline hmtl part
+								// HTML version
+						        
+								DataSource ds = new ByteArrayDataSource(mimemultipart.getBodyPart(k).getInputStream(), mimemultipart.getBodyPart(k).getContentType());
+						        
+								//first part  (the html)
+						        BodyPart messageBodyPart = new MimeBodyPart();
+						        String htmlText = "<img src=\"cid:image\">";
+						        messageBodyPart.setContent(htmlText, "text/html");
+						        
+						        multiPart.addBodyPart(messageBodyPart);
+								
+								MimeBodyPart imagePart = new MimeBodyPart();
+						        imagePart.setDataHandler(new DataHandler(ds));
+						        imagePart.setFileName(mimemultipart.getBodyPart(k).getFileName());
+						        imagePart.setDisposition(MimeBodyPart.INLINE);
+						        imagePart.setHeader("Content-ID", "<image>");
+						        
+						        multiPart.addBodyPart(imagePart);
+							}
+							else{
+								processAttachment(mimemultipart.getBodyPart(k).getFileName(), mimemultipart.getBodyPart(k).getInputStream());
+								attachment = true;
+								System.out.println(mimemultipart.getBodyPart(k).getContent());
+							}
 						}
 					}
 				}
@@ -215,7 +246,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 			// If the current part is explicitly an attachment...
 			processAttachment(bodyPart.getFileName(), bodyPart.getInputStream());
 			attachment = true;
-			System.out.println(bodyPart.getContentType());
+			logger.info("Content type : "+bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
 		}
 		
 		if(attachment)
@@ -296,40 +327,43 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 	}
 	
 	public String postFile(File file) throws IOException
-	{
-		HttpClient client = HttpClients.createDefault();
-		HttpPost post = new HttpPost("http://localhost/api/app/" + this.username + "/content");
-		// username = userID
-		FileBody fileBody = new FileBody(file);
-		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-		builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-		builder.addPart("file", fileBody);
-		HttpEntity entity = builder.build();
-		post.setEntity(entity);
-		HttpResponse response = client.execute(post);
-
-		// Get request to get the link
+	{	
 		try {
 			HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(this.username, this.password);
+		    MultiPart form = new MultiPart();
+		    form.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+		    form.bodyPart(new FileDataBodyPart("file", file, MediaType.APPLICATION_OCTET_STREAM_TYPE));
+		    Client client=ClientBuilder.newClient();
+		    client.register(feature).register(MultiPartFeature.class);
+		    
+		    WebTarget target = client.target("http://localhost:9998/api/app/" + this.username + "/content/local");
+		    logger.info("Filename : "+file.getName());
+		    Response response = target.request().header("Content-Disposition", "attachment; filename="+ file.getName()).post(Entity.entity(file,MediaType.WILDCARD), Response.class);
+
+			// Get request to get the link
 			Client client2 = ClientBuilder.newClient();
 			client2.register(feature);
 
-			WebTarget target = client2.target(response.getFirstHeader("Location").getValue());
-			System.out.println(response.getFirstHeader("Location").getValue());
-        
-			Content content = target.request(MediaType.APPLICATION_XML_TYPE).get(Content.class);
-			System.out.println(content);
-        
-			return content.getLink();
+			if(response.getLocation() != null) {
+				WebTarget target2 = client2.target(response.getLocation());
+				Content content = target2.request(MediaType.APPLICATION_XML_TYPE).get(Content.class);
+				return "http://" + localAddress() + "/" + "snapmail.html#/" + this.username + "/" + content.getContentsID();
+			}
+			else {
+				logger.warning("Error during the upload : Media@Home did not return a location");
+				return "Error during the upload";
+			}
+			
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 403) {
-				System.out.println("Error 403 (get content)");
+				logger.warning("Error 403 (get content)");
 			} else {
 				throw e;
 			}
 		}
 		return "Error";
 	}
+	
 	@SuppressWarnings("finally")
 	private String localAddress(){
 		String add="";
@@ -346,18 +380,12 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 	private Properties setSMTPProperties(Properties properties) {
 
 		try {
-			System.out.println("Basic Auth : u="+this.username+" p="+this.password);
 			HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(this.username, this.password);
 			Client client = ClientBuilder.newClient();
 			client.register(feature);
 
 			WebTarget target = client.target("http://localhost/api/app/account/"+this.username+"/smtp");
-
-        
 			SmtpProperty smtpProperty = target.request(MediaType.APPLICATION_XML_TYPE).get(SmtpProperty.class);
-	        
-	        
-	        System.out.println("Output from Server .... \n");
 			
 			properties.setProperty("mail.smtp.auth", "true");
 			properties.setProperty("mail.smtp.starttls.enable", "true");	// TLS Connection
@@ -373,7 +401,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 			if (e.getResponse().getStatus() == 403) {
 				//TODO
 				// PAS DE COMPTE ou MAUVAIS ADRESSE/MDP
-				System.out.println("Error 403 (get smtp property)");
+				logger.warning("Error 403 (get smtp property)");
 			} else {
 				throw e;
 			}

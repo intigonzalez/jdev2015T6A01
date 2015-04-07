@@ -11,12 +11,15 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -107,7 +110,7 @@ public class ContentEndPoints {
 	 * @throws IOException
 	 */
 	@POST
-	@RolesAllowed({ "other", "authenticated" })
+	//@RolesAllowed({ "other", "authenticated" })
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response postContent(@PathParam("userID") String userID,
 			@FormDataParam("file") InputStream uploadedInputStream,
@@ -149,21 +152,26 @@ public class ContentEndPoints {
 	 * @throws IOException
 	 */
 	@POST
-	@RolesAllowed({ "other", "authenticated" })
+	//@RolesAllowed({ "other", "authenticated" })
 	@Path("local")
 	@Consumes(MediaType.WILDCARD)
-	public Response postContent2(@PathParam("userID") String userID,
-			InputStream uploadedInputStream) throws URISyntaxException,
-			IOException {
+	public Response postContent2(	@PathParam("userID") String userID,
+									InputStream uploadedInputStream,
+									@HeaderParam("Content-Disposition") String contentDisposition ) throws URISyntaxException, IOException {
 		
-		File upload = File.createTempFile(userID, ".org", Files.createTempDir());
-		LOGGER.debug("File is here {}",upload.getAbsolutePath());
-		Content content = uManager.createContent(userID, uploadedInputStream, upload);
-		content.setLink(CliConfSingleton.publicAddr + content.getLink());
-		// return content;
-		return Response.created(
-				new URI(CliConfSingleton.publicAddr + "/api/app/" + userID
-						+ "/content/" + content.getContentsID())).build();
+		LOGGER.debug("New local upload, Content-Disposition : "+contentDisposition);
+		try {
+			Content content = uManager.createContent(userID, uploadedInputStream, contentDisposition);
+			content.setLink(CliConfSingleton.publicAddr + content.getLink());
+
+			LOGGER.debug("Content created :"+ CliConfSingleton.publicAddr + "/api/app/" + userID
+							+ "/content/" + content.getContentsID());
+			return Response.created(
+					new URI(CliConfSingleton.publicAddr + "/api/app/" + userID
+							+ "/content/" + content.getContentsID())).build();
+		} catch(IOException | SecurityException e) {
+			throw e;
+		}
 	}
 
 	// @POST

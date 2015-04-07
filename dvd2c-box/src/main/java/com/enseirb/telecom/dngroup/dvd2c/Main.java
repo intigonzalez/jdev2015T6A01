@@ -104,16 +104,13 @@ public class Main {
 				try {
 
 					HttpServer httpServer = startServer();
-					// httpServer.getServerConfiguration().addHttpHandler(new
-					// StaticHttpHandler("/var/www"), "/content");
-					httpServer.getServerConfiguration().addHttpHandler(
-							new StaticHttpHandler("/var/www/html/videos"),
-							"/videos");
-
-					httpServer.getServerConfiguration().addHttpHandler(
-							new CLStaticHttpHandler(
-									Main.class.getClassLoader(), "/"));
-
+//					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www"), "/content");
+					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/videos"), "/videos");
+					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/pictures"), "/pictures");
+					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/cloud"), "/cloud");
+					
+					httpServer.getServerConfiguration().addHttpHandler(new CLStaticHttpHandler(Main.class.getClassLoader(), "/"));
+		
 				} catch (IOException e) {
 					throw Throwables.propagate(e);
 				}
