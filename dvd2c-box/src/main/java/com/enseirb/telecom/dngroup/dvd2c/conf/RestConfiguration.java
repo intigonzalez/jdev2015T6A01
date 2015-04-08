@@ -20,7 +20,7 @@ public class RestConfiguration extends ResourceConfig {
 	public RestConfiguration() {
 		super(MyApplicationEventListener.class);
 		// endpoints
-		register(RequestContextFilter.class);
+		
 		register(ContentEndPoints.class);
 		register(BoxEndPoints.class);
 		register(RelationEndPoints.class);
@@ -28,6 +28,7 @@ public class RestConfiguration extends ResourceConfig {
 
 		// features
 		register(MultiPartFeature.class);
+		register(RequestContextFilter.class);
 
 	}
 }

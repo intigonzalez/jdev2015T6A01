@@ -9,6 +9,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
+import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.grizzly.servlet.ServletRegistration;
 import org.glassfish.grizzly.servlet.WebappContext;
 import org.glassfish.jersey.servlet.ServletContainer;
@@ -92,6 +93,8 @@ public class Main {
 			// finally, map it to the path
 			jerseyServlet.addMapping("/" + BASE_PATH + "/*");
 
+			// add mapping for static resources
+
 			// start a vanilla server
 			HttpServer server = new HttpServer();
 
@@ -99,6 +102,15 @@ public class Main {
 			NetworkListener listener = new NetworkListener("grizzly2",
 					baseHost, pasePort);
 			server.addListener(listener);
+
+			server.getServerConfiguration().addHttpHandler(
+					new StaticHttpHandler("/var/www/html/videos"), "/videos");
+
+			server.getServerConfiguration().addHttpHandler(
+					new StaticHttpHandler("/var/www/html/pictures"),
+					"/pictures");
+			server.getServerConfiguration().addHttpHandler(
+					new StaticHttpHandler("/var/www/html/cloud"), "/cloud");
 
 			// finally, deploy the webapp
 			webappContext.deploy(server);
@@ -180,8 +192,7 @@ public class Main {
 	// HttpServer httpServer =
 	// GrizzlyHttpServerFactory.createHttpServer(getBaseURI(),
 	// resources);
-	// // httpServer.getServerConfiguration().addHttpHandler(new
-	// // StaticHttpHandler("/var/www"), "/content");
+	//
 	// httpServer.getServerConfiguration().addHttpHandler(
 	// new StaticHttpHandler("/var/www/html/videos"),
 	// "/videos");
