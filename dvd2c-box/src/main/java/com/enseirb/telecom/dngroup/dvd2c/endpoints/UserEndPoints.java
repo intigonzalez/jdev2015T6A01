@@ -194,6 +194,7 @@ public class UserEndPoints extends HttpServlet {
 		smtpProperty.setPort(user.getSmtpPort());
 		smtpProperty.setUsername(user.getSmtpUsername());
 		smtpProperty.setPassword(user.getSmtpPassword());
+		smtpProperty.setToken(user.getSmtpToken());
 		return smtpProperty;
 	}
 	
@@ -214,6 +215,7 @@ public class UserEndPoints extends HttpServlet {
 		user.setSmtpPort(smtpProperty.getPort());
 		user.setSmtpUsername(smtpProperty.getUsername());
 		user.setSmtpPassword(smtpProperty.getPassword());
+		user.setSmtpToken(smtpProperty.getToken());
 		
 		uManager.saveUserOnServer(user);
 		return Response.status(200).build();

@@ -5,12 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 
+import javax.servlet.ServletRegistration;
 import javax.ws.rs.core.UriBuilder;
 
+import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
-import org.glassfish.grizzly.servlet.ServletRegistration;
 import org.glassfish.grizzly.servlet.WebappContext;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
@@ -19,7 +20,6 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-import com.enseirb.telecom.dngroup.dvd2c.conf.SpringConfiguration;
 import com.lexicalscope.jewel.cli.ArgumentValidationException;
 import com.lexicalscope.jewel.cli.CliFactory;
 import com.lexicalscope.jewel.cli.HelpRequestedException;
@@ -111,6 +111,8 @@ public class Main {
 					"/pictures");
 			server.getServerConfiguration().addHttpHandler(
 					new StaticHttpHandler("/var/www/html/cloud"), "/cloud");
+			server.getServerConfiguration().addHttpHandler(
+					new CLStaticHttpHandler(Main.class.getClassLoader(), "/"));
 
 			// finally, deploy the webapp
 			webappContext.deploy(server);
@@ -321,7 +323,8 @@ public class Main {
 			if (CliConfSingleton.appPort == null)
 				CliConfSingleton.appPort = Integer.valueOf(ApplicationContext
 						.getProperties().getProperty("port"));
-			LOGGER.info("File found = {} ", aPPath);
+			LOGGER.info("File not found use default value or arg Path ={} ",
+					aPPath);
 			in.close();
 		} catch (FileNotFoundException e1) {
 			LOGGER.info("File not found use default value or arg Path ={} ",

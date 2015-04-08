@@ -23,6 +23,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.UriBuilder;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -142,7 +143,7 @@ public class ContentEndPoints {
 	 * @throws IOException
 	 */
 	@POST
-	// @RolesAllowed({ "other", "authenticated" })
+	@RolesAllowed({ "other", "authenticated" })
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response postContent(@PathParam("userID") String userID,
 			@FormDataParam("file") InputStream uploadedInputStream,
@@ -184,8 +185,7 @@ public class ContentEndPoints {
 	 * @throws IOException
 	 */
 	@POST
-	// @RolesAllowed({ "other", "authenticated" })
-	@Path("local")
+	@RolesAllowed({ "other", "authenticated" })
 	@Consumes(MediaType.WILDCARD)
 	public Response postContent2(@PathParam("userID") String userID,
 			InputStream uploadedInputStream,
