@@ -19,6 +19,8 @@ angular.module('myApp.myprofile', ['ngRoute'])
         user.smtp = {};
         user.class= "";
         this.tab = 0;
+        this.smtpTab = 0;
+        
         this.setTab = function (value) {
             user.class="";
             if (this.tab == value) {
@@ -92,7 +94,10 @@ angular.module('myApp.myprofile', ['ngRoute'])
             .success(function (data, status, headers, config)
             {
                 user.smtp = data.smtpProperty;
-                console.log(user);
+                if (user.smtp.hasOwnProperty("token"))
+                	this.smtpTab = 1;
+                else if (user.smtp.hasOwnProperty("username") && user.smtp.hasOwnProperty("host") && user.smtp.hasOwnProperty("port") && user.smtp.hasOwnProperty("password"))
+                	this.smtpTab = 2;
             })
             .error(function (data, status, headers, config) {
                 console.log("Failed while getting User Informations");
@@ -117,6 +122,16 @@ angular.module('myApp.myprofile', ['ngRoute'])
 
         this.getUser();
         this.getSmtp();
+        
+        this.setSMTPTab = function(value)
+        {
+        	this.smtpTab = value;
+        }
+        
+        this.isSMTPTab = function(value)
+        {
+        	return (this.smtpTab == value);
+        }
         
     
     }]);
