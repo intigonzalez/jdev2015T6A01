@@ -50,11 +50,10 @@ angular.module('myApp.myprofile', ['ngRoute'])
              $http(req)  
              .success(function (data, status, headers, config) {
                  console.log("Succeed");
-                 user.smtp.username="";
-                 user.smtp.password="";
-                 user.smtp.host="";
-                 user.smtp.port="";
-                 user.smtp.token=data;
+                 var data_json = angular.toJson(data);
+                 user.smtp.token=data_json;
+                 user.code="";
+                 user.smtp.username="Bernard";
                  user.putSmtp(user.smtp);
                  user.class = "btn-success";
              })
@@ -104,6 +103,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
         {
             var data = {};
             data.smtpProperty = smtp;
+            console.log(smtp);
             $http.put(PREFIX_RQ + "/api/app/account/" + this.person.userID + "/smtp", data)
                 .success(function (data, status, headers, config) {
                     console.log("Succeed");
