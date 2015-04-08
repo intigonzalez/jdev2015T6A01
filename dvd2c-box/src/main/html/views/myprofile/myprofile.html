@@ -55,9 +55,19 @@
     		<div class="panel-body" ng-show="user.isSMTPTab(0)">
     			<a ng-click="user.openOauth()">Connect with OAuth</a>
     			<a ng-click="user.setSMTPTab(3)">Edit SMTP settings manually</a>
+    			 <div class="form-group">
+		                        <div class="input-group">
+		                            <span class="input-group-addon">
+		                                <i class="glyphicon glyphicon-flag"></i>
+		                            </span>
+		                            <input class="form-control" placeholder="Port" ng-model="user.code"
+		                                   type="text" autofocus>
+		                        </div>
+		                    </div>
+		                    <button ng-click="user.auth2token(user.code); user.setSMTPTab(1)">Send</button>
     		</div>
     		<div class="panel-body" ng-show="user.isSMTPTab(1)">
-    			<a>Unlink OAuth</a>
+    			<button ng-click="user.smtp.token='';user.putSmtp(user.smtp);user.setSMTPTab(0)">Unlink OAuth</button>
     		</div>
     		<div class="panel-body" ng-show="user.isSMTPTab(2)">
     			<div class="col-xs-18">
@@ -130,7 +140,7 @@
 		                    </div>
 		                    
 		                    <div class="form-group">
-		                        <button ng-click="user.putSmtp(user.smtp);user.setTab(0)" class="btn btn-lg btn-primary btn-block"
+		                        <button ng-click="user.putSmtp(user.smtp);user.setSMTPTab(0)" class="btn btn-lg btn-primary btn-block"
 		                                ng-class="user.class"> Update information
 		                        </button>
 		                    </div>

@@ -35,7 +35,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
         };
         
         this.openOauth = function () {
-     	   var url="https://accounts.google.com/o/oauth2/auth?access_type=online&approval_prompt=auto&client_id=547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=https://www.googleapis.com/auth/gmail.compose";
+     	   var url="https://accounts.google.com/o/oauth2/auth?access_type=offline&approval_prompt=force&client_id=547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=https://www.googleapis.com/auth/gmail.compose";
          	window.open(url);
          };
          
@@ -46,7 +46,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
         			 headers: {
         			   'Content-Type': 'application/x-www-form-urlencoded'
         			 },
-        			 data : "client_id=547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com&client_secret=JG3LiwiX2gA362mTSGEJ5eC8&code="+value+"&redirect_uri=urn:ietf:wg:oauth:2.0:oob&grant_type=authorization_code"
+        			 data : "client_id=547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com&client_secret=JG3LiwiX2gA362mTSGEJ5eC8&code="+value+"&redirect_uri=urn:ietf:wg:oauth:2.0:oob&grant_type=authorization_code&approval_promt=force&access_type=offline"
         			};
  
         
@@ -54,9 +54,9 @@ angular.module('myApp.myprofile', ['ngRoute'])
              .success(function (data, status, headers, config) {
                  console.log("Succeed");
                  var data_json = angular.toJson(data);
-                 user.smtp.token=data_json;
+                 var jsonobj=JSON.parse(data_json);
+                 user.smtp.token=jsonobj.refresh_token;
                  user.code="";
-                 user.smtp.username="Bernard";
                  user.putSmtp(user.smtp);
                  user.class = "btn-success";
              })

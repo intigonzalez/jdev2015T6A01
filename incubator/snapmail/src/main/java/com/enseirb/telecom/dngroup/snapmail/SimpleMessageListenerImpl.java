@@ -49,8 +49,10 @@ import org.subethamail.smtp.MessageContext;
 import org.subethamail.smtp.TooMuchDataException;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
+import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-
+import com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -603,20 +605,19 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		// final String SCOPE = "https://www.googleapis.com/auth/gmail.compose";
 		// Path to the client_secret.json file downloaded from the Developer
 		// Console
-		// final String CLIENT_SECRET_PATH = "cloud/client_secret.json";
+		 final String CLIENT_SECRET_PATH = "cloud/client_secret.json";
 		final String APP_NAME = "Snapmail";
 
 		// Initialization
 		HttpTransport httpTransport = new NetHttpTransport();
 		JsonFactory jsonFactory = new JacksonFactory();
+		
+        GoogleCredential credential = createCredentialWithRefreshToken(
+                httpTransport, jsonFactory, new TokenResponse().setRefreshToken(token));
+            credential.getAccessToken();
 
-		GoogleCredential credential = new GoogleCredential()
-				.setAccessToken(token.substring(
-						token.lastIndexOf("access_token\":\"") + 15,
-						token.lastIndexOf("\",\"token_type")));
-		LOGGER.info(token.substring(
-				token.lastIndexOf("access_token\":\"") + 15,
-				token.lastIndexOf("\",\"token_type")));
+
+		
 		// Create a new authorized Gmail API client and return it.
 		Gmail service = new Gmail.Builder(httpTransport, jsonFactory,
 				credential).setApplicationName(APP_NAME).build();
@@ -636,4 +637,12 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		message.setRaw(encodedEmail);
 		return message;
 	}
+	public static GoogleCredential createCredentialWithRefreshToken(HttpTransport transport,
+            JsonFactory jsonFactory, TokenResponse tokenResponse) {
+       return new GoogleCredential.Builder().setTransport(transport)
+              .setJsonFactory(jsonFactory)
+              .setClientSecrets("547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com", "JG3LiwiX2gA362mTSGEJ5eC8")
+              .build()
+              .setFromTokenResponse(tokenResponse);
+        }
 }
