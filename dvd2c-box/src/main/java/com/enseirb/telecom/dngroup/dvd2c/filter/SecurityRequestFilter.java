@@ -38,11 +38,12 @@
  * holder.
  */
 
-package com.enseirb.telecom.dngroup.dvd2c;
+package com.enseirb.telecom.dngroup.dvd2c.filter;
 
 import java.io.IOException;
 import java.security.Principal;
 
+import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
@@ -53,7 +54,8 @@ import org.glassfish.grizzly.http.server.GrizzlyPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
+import com.enseirb.telecom.dngroup.dvd2c.db.UserRepository;
+import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryImplMongo;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
 import com.google.common.io.BaseEncoding;
@@ -69,13 +71,14 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(SecurityRequestFilter.class);
 
+	@Inject
+	AccountService uManager;
+
 	@Override
 	public void filter(final ContainerRequestContext requestContext)
 			throws IOException {
 
 		requestContext.setSecurityContext(new SecurityContext() {
-			AccountService uManager = new AccountServiceImpl(
-					new UserRepositoryMongo("mediahome"));
 
 			@Override
 			public Principal getUserPrincipal() {
@@ -105,18 +108,18 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
 
 				String auth = "denied";
 
-				
-				
 				String[] test = requestContext.getUriInfo().getPath()
 						.split("/");
 				LOGGER.debug("Get Path from Request: {}", requestContext
 						.getUriInfo().getPath());
 				System.out.println(requestContext.getSecurityContext()
 						.getAuthenticationScheme());
-				if (role.equals("account") && !requestContext.getCookies().isEmpty()) {
+				if (role.equals("account")
+						&& !requestContext.getCookies().isEmpty()) {
 					System.out.println(requestContext.getCookies().isEmpty());
 					// get the cookie
-					String userConnected =  requestContext.getCookies().get("authentication").getValue();
+					String userConnected = requestContext.getCookies()
+							.get("authentication").getValue();
 					LOGGER.debug("{}", test[2]);
 					// User is authenticated and access to his own page
 					if (uManager.getUserOnLocal(userConnected) != null
@@ -125,9 +128,10 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
 					}
 				} else if (role.equals("other")) {
 					// get the cookie
-					
+
 					try {
-						String userConnected =  requestContext.getCookies().get("authentication").getValue();
+						String userConnected = requestContext.getCookies()
+								.get("authentication").getValue();
 						LOGGER.debug("{}", test[1]);
 						// User is authenticated and access to his own page of
 						// contents
@@ -140,8 +144,8 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
 					}
 				} else if (role.equals("authenticated")) {
 					Principal user = getUserPrincipal();
-					
-					return ((user != null)&&(!user.getName().equals("Jersey")));
+
+					return ((user != null) && (!user.getName().equals("Jersey")));
 
 				}
 

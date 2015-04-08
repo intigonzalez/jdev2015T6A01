@@ -13,14 +13,15 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-public class RabbitMQServer {
-	private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQServer.class);
+@Deprecated
+public class RabbitMQServiceImpl implements MessageBrokerService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQServiceImpl.class);
 	String QUEUE_NAME;
 	ConnectionFactory factory;
 	Connection connection;
 	Channel channel;
 
-	public RabbitMQServer() {
+	public RabbitMQServiceImpl() {
 		QUEUE_NAME = "celery";
 		factory = new ConnectionFactory();
 		factory.setHost(CliConfSingleton.rabbitHostname);
@@ -36,13 +37,10 @@ public class RabbitMQServer {
 
 	}
 
-/**
- * Add the task and ask for the end message
- * @param task
- * @param id
- * @throws UnsupportedEncodingException
- * @throws IOException
+/* (non-Javadoc)
+ * @see com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQService#addTask(java.lang.String, java.lang.String)
  */
+	@Override
 	public void addTask(String task, String id)
 			throws UnsupportedEncodingException, IOException {
 		channel.basicPublish("", QUEUE_NAME, new AMQP.BasicProperties.Builder()

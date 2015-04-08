@@ -36,7 +36,7 @@ import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentServiceImpl;
-import com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQServer;
+import com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQServiceImpl;
 import com.google.common.io.Files;
 
 // The Java class will be hosted at the URI path "/app/content"
@@ -44,7 +44,7 @@ import com.google.common.io.Files;
 public class ContentEndPoints {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ContentEndPoints.class);
-	
+
 	@Autowired
 	protected ContentService uManager = null;
 
@@ -73,16 +73,45 @@ public class ContentEndPoints {
 	 * @return Content list
 	 */
 	@GET
-	@Path("{contentsID}")
+	@Path("{contentsID}/metadata")
 	@RolesAllowed({ "authenticated", "other" })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Content getSpecificContentInformations(
-			@PathParam("userID") String userID,
+	public Content getContentMetadata(@PathParam("userID") String userID,
 			@PathParam("contentsID") String contentsID) {
 		Content content = uManager.getContent(contentsID);
 		if (content.getActorID().equals(userID)) {
 			content.setLink(CliConfSingleton.publicAddr + content.getLink());
 			return content;
+		} else {
+			// No URL parameter idLanguage was sent
+			ResponseBuilder builder = Response
+					.status(Response.Status.FORBIDDEN);
+			builder.entity("This content doesn't belong to you ! ");
+			Response response = builder.build();
+			throw new WebApplicationException(response);
+		}
+
+	}
+
+	/**
+	 * Get a specific content from the owner
+	 * 
+	 * @param userID
+	 * @return Content list
+	 * @throws URISyntaxException
+	 */
+	@GET
+	@Path("{contentsID}")
+	@RolesAllowed({ "authenticated", "other" })
+	@Produces({ MediaType.WILDCARD })
+	public Response getContent(@PathParam("userID") String userID,
+			@PathParam("contentsID") String contentsID)
+			throws URISyntaxException {
+		Content content = uManager.getContent(contentsID);
+		if (content.getActorID().equals(userID)) {
+			URI uri = new URI(CliConfSingleton.publicAddr + content.getLink()
+					+ "/" + content.getName());
+			return Response.seeOther(uri).build();
 		} else {
 			// No URL parameter idLanguage was sent
 			ResponseBuilder builder = Response

@@ -15,8 +15,8 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
-public class RelationshipRepositoryMongo implements RelationshipRepository {
-	private static final Logger LOGGER = LoggerFactory.getLogger(RelationshipRepositoryMongo.class);
+public class RelationshipRepositoryImplMongo implements RelationshipRepository {
+	private static final Logger LOGGER = LoggerFactory.getLogger(RelationshipRepositoryImplMongo.class);
 
 
 	@Override

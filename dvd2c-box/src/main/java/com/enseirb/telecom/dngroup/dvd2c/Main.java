@@ -39,7 +39,7 @@ public class Main {
 	private static URI getBaseApiURI() {
 
 		return UriBuilder.fromUri(
-				"http://"+CliConfSingleton.appHostName + ":"
+				"http://" + CliConfSingleton.appHostName + ":"
 						+ getPort(CliConfSingleton.appPort)).build();
 	}
 
@@ -73,9 +73,11 @@ public class Main {
 					AnnotationConfigWebApplicationContext.class.getName());
 
 			// and where spring should find its configuration
-			webappContext.addContextInitParameter(
-					ContextLoader.CONFIG_LOCATION_PARAM,
-					SpringConfiguration.class.getName());
+			webappContext
+					.addContextInitParameter(
+							ContextLoader.CONFIG_LOCATION_PARAM,
+							com.enseirb.telecom.dngroup.dvd2c.conf.SpringConfiguration.class
+									.getName());
 			// attache the jersey servlet to this context
 			ServletRegistration jerseyServlet = webappContext.addServlet(
 					"jersey-servlet", ServletContainer.class);

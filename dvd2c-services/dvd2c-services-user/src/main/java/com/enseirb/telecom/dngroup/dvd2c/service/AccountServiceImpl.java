@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepository;
@@ -14,20 +17,19 @@ import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
-import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
+@Service
 public class AccountServiceImpl implements AccountService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(AccountServiceImpl.class);
 
-	UserRepository userDatabase;
-	RequestUserService requetUserService = new RequestUserServiceImpl();
+	@Inject
+	protected UserRepository userDatabase;
 
-	public AccountServiceImpl(UserRepository userDatabase) {
-		this.userDatabase = userDatabase;
-	}
+	@Inject
+	protected RequestUserService requetUserService;
 
 	@Override
 	public boolean userExistOnServer(String userID) {

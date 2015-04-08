@@ -16,8 +16,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
-import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
@@ -26,6 +26,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
+@Service
 public class RequestUserServiceImpl implements RequestUserService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RequestUserService.class);
@@ -65,12 +66,15 @@ public class RequestUserServiceImpl implements RequestUserService {
 		// Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(url + "firstname/" + firstname);
 		try {
-			listUser = target.request(MediaType.APPLICATION_XML_TYPE).get(new GenericType<List<User>>(){});
+			listUser = target.request(MediaType.APPLICATION_XML_TYPE).get(
+					new GenericType<List<User>>() {
+					});
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 500) {
-				LOGGER.error("Error on remote Host : get {}",target.getUri(), e);
+				LOGGER.error("Error on remote Host : get {}", target.getUri(),
+						e);
 			} else {
-				LOGGER.error("Error for get {}",target.getUri(), e);
+				LOGGER.error("Error for get {}", target.getUri(), e);
 			}
 
 		}
@@ -111,7 +115,8 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 
 	@Override
-	public void updateUserORH(User user) throws IOException, NoSuchUserException {
+	public void updateUserORH(User user) throws IOException,
+			NoSuchUserException {
 		user.setPassword(null);
 		// Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(url + user.getUserID());
@@ -138,7 +143,8 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 
 	@Override
-	public void deleteUserORH(String userID) throws IOException, NoSuchUserException {
+	public void deleteUserORH(String userID) throws IOException,
+			NoSuchUserException {
 		// Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(this.url + userID);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
@@ -162,7 +168,8 @@ public class RequestUserServiceImpl implements RequestUserService {
 		}
 	}
 
-	public Box getBoxByUserIDORH(String email) throws IOException, NoSuchBoxException {
+	public Box getBoxByUserIDORH(String email) throws IOException,
+			NoSuchBoxException {
 
 		Box boxGet = new Box();
 		// Client client = ClientBuilder.newClient();

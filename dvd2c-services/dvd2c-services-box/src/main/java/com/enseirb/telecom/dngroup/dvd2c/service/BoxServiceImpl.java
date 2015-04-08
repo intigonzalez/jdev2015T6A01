@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
@@ -12,30 +13,26 @@ import jersey.repackaged.com.google.common.base.Throwables;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
-import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
-import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestBoxService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestBoxServiceImpl;
-
+@Service
 public class BoxServiceImpl implements BoxService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(BoxServiceImpl.class);
+	@Inject
 	CrudRepository<BoxRepositoryObject, String> boxDatabase;
 	RequestBoxService requetBoxService = new RequestBoxServiceImpl(
 			CliConfSingleton.centralURL
 					+ "/api/app/box/");
 
-	public BoxServiceImpl(
-			CrudRepository<BoxRepositoryObject, String> boxDatabase) {
 
-		this.boxDatabase = boxDatabase;
-	}
 
 	@Override
 	public boolean boxExistOnServer(String boxID) {

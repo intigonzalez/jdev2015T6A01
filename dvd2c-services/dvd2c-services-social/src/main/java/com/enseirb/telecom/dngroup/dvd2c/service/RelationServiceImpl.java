@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepository;
@@ -26,18 +29,16 @@ import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestRelationServiceI
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserServiceImpl;
 
+@Service
 public class RelationServiceImpl implements RelationService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RelationServiceImpl.class);
 
+	@Inject
 	RelationshipRepository relationshipDatabase;
+	
+	@Inject
 	CrudRepository<UserRepositoryObject, String> userDatabase;
-
-	public RelationServiceImpl(RelationshipRepository RelationshipDatabase,
-			CrudRepository<UserRepositoryObject, String> userDatabase) {
-		this.relationshipDatabase = RelationshipDatabase;
-		this.userDatabase = userDatabase;
-	}
 
 	public boolean RelationExist(String UserID, String actorID) {
 		return relationshipDatabase.exists(UserID, actorID);
@@ -45,7 +46,7 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public void updateRelation(String userID) throws IOException,
-	NoSuchUserException {
+			NoSuchUserException {
 
 		RequestRelationService rrs = new RequestRelationServiceImpl();
 
@@ -76,7 +77,8 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public Relation getRelation(String userID, String actorID) {
-		RelationshipRepositoryObject relation = relationshipDatabase.findOne(userID, actorID);
+		RelationshipRepositoryObject relation = relationshipDatabase.findOne(
+				userID, actorID);
 		if (relation == null) {
 			return null;
 		} else {
@@ -112,8 +114,7 @@ public class RelationServiceImpl implements RelationService {
 					.next();
 			if (relationshipRepositoryObject.getUserId().equals(userID)) {
 
-				listRelation.add(
-						relationshipRepositoryObject.toRelation());
+				listRelation.add(relationshipRepositoryObject.toRelation());
 			}
 		}
 
@@ -142,7 +143,7 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public void createDefaultRelation(String userIDFromPath,
 			String relationIDString, Boolean fromBox)
-					throws NoSuchUserException {
+			throws NoSuchUserException {
 		Relation relation = new Relation();
 		relation.setActorID(relationIDString);
 		relation.setAprouve(1);
@@ -155,9 +156,9 @@ public class RelationServiceImpl implements RelationService {
 	public Relation createRelation(String userID, Relation relation,
 			Boolean fromBox) throws NoSuchUserException {
 		/*
-		 *  Check the content, add a state 1 to the approuve value
-		 *  Check the user really exists from the central server
-		 *  Send a request to the right box to say it add as a friend
+		 * Check the content, add a state 1 to the approuve value Check the user
+		 * really exists from the central server Send a request to the right box
+		 * to say it add as a friend
 		 */
 		User user = new User();
 		RequestUserService rus = new RequestUserServiceImpl();
@@ -167,7 +168,7 @@ public class RelationServiceImpl implements RelationService {
 				throw new NoSuchUserException();
 			}
 		} catch (IOException e) {
-			LOGGER.error("get user fail",e);
+			LOGGER.error("get user fail", e);
 		}
 		relation.setFirstname(user.getFirstname());
 		relation.setSurname(user.getSurname());
@@ -195,12 +196,17 @@ public class RelationServiceImpl implements RelationService {
 					try {
 						rss.updateRelationORH(relation2, relation);
 					} catch (IOException e) {
-						LOGGER.error("Error during create the relation  betewen {} and {}",relation2,relation,e);
+						LOGGER.error(
+								"Error during create the relation  betewen {} and {}",
+								relation2, relation, e);
 						e.printStackTrace();
 					} catch (NoSuchBoxException e) {
-						LOGGER.error("Error during create the relation  betewen {} and {} box not found",relation2,relation,e);
+						LOGGER.error(
+								"Error during create the relation  betewen {} and {} box not found",
+								relation2, relation, e);
 					}
-					// Send a request to the right box with the profile of userID
+					// Send a request to the right box with the profile of
+					// userID
 					rss.close();
 				}
 			} else {
@@ -237,12 +243,16 @@ public class RelationServiceImpl implements RelationService {
 				try {
 					rss.setAprouveRelationORH(userID, relation.getActorID());
 				} catch (IOException e) {
-					LOGGER.error("Can not set aprouve {} for {} Error IO",userID,relation.getActorID(),e);
+					LOGGER.error("Can not set aprouve {} for {} Error IO",
+							userID, relation.getActorID(), e);
 					e.printStackTrace();
 				} catch (NoSuchBoxException e) {
-					LOGGER.error("Can not set aprouve {} for {} no box found",userID,relation.getActorID(),e);
+					LOGGER.error("Can not set aprouve {} for {} no box found",
+							userID, relation.getActorID(), e);
 				} catch (NoSuchUserException e) {
-					LOGGER.error("Can not set aprouve {} for {} user not found",userID,relation.getActorID(),e);
+					LOGGER.error(
+							"Can not set aprouve {} for {} user not found",
+							userID, relation.getActorID(), e);
 				}
 				rss.close();
 				// Send a request to the box to tell it the user accepts the
@@ -285,13 +295,17 @@ public class RelationServiceImpl implements RelationService {
 			LOGGER.debug("Content from {} fetched ! ", relationID);
 			return listContent;
 		} catch (IOException e) {
-			LOGGER.error("Error for get all content of {}",userID,e);
+			LOGGER.error("Error for get all content of {}", userID, e);
 		} catch (NoSuchUserException e) {
-			LOGGER.error("Error for get all content of {} user not found",userID,e);
+			LOGGER.error("Error for get all content of {} user not found",
+					userID, e);
 		} catch (NoSuchBoxException e) {
-			LOGGER.error("Error for get all content of {} box not found",userID,e);
+			LOGGER.error("Error for get all content of {} box not found",
+					userID, e);
 		} catch (NoRelationException e) {
-			LOGGER.debug("Error for get all content of {} relation not found with {}",userID,relationID,e);
+			LOGGER.debug(
+					"Error for get all content of {} relation not found with {}",
+					userID, relationID, e);
 		}
 		return null;
 
@@ -315,11 +329,17 @@ public class RelationServiceImpl implements RelationService {
 			try {
 				rss.deleteRelationORH(userID, actorID);
 			} catch (IOException e) {
-				LOGGER.error("Can not delete a relation betewen {} and {} Error IO",userID,actorID,e);
+				LOGGER.error(
+						"Can not delete a relation betewen {} and {} Error IO",
+						userID, actorID, e);
 			} catch (NoSuchUserException e) {
-				LOGGER.debug("Can not delete a relation betewen {} and {} Error user not found (already delete ???)",userID,actorID,e);
+				LOGGER.debug(
+						"Can not delete a relation betewen {} and {} Error user not found (already delete ???)",
+						userID, actorID, e);
 			} catch (NoSuchBoxException e) {
-				LOGGER.error("Can not delete a relation betewen {} and {} box of the first not found",userID,actorID,e);
+				LOGGER.error(
+						"Can not delete a relation betewen {} and {} box of the first not found",
+						userID, actorID, e);
 			}
 			rss.close();
 		}

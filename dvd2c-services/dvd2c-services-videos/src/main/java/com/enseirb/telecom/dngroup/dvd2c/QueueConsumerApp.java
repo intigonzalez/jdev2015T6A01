@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentServiceImpl;
-import com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQServer;
+import com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQServiceImpl;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConnectionFactory;
@@ -60,9 +60,8 @@ public class QueueConsumerApp {
 				} catch (JSONException e) {
 					LOGGER.error("error for pars element",e);
 				}
-				
-				ContentService contentService = new ContentServiceImpl(
-						new ContentRepositoryMongo(), null);
+				//spring: fixme
+				ContentService contentService = new ContentServiceImpl();
 
 			
 				if (status.equals("SUCCESS")) {
