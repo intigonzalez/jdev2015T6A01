@@ -104,13 +104,16 @@ public class Main {
 				try {
 
 					HttpServer httpServer = startServer();
-//					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www"), "/content");
+
+
 					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/videos"), "/videos");
 					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/pictures"), "/pictures");
 					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/cloud"), "/cloud");
-					
-					httpServer.getServerConfiguration().addHttpHandler(new CLStaticHttpHandler(Main.class.getClassLoader(), "/"));
-		
+
+					httpServer.getServerConfiguration().addHttpHandler(
+							new CLStaticHttpHandler(
+									Main.class.getClassLoader(), "/"));
+
 				} catch (IOException e) {
 					throw Throwables.propagate(e);
 				}
@@ -126,7 +129,6 @@ public class Main {
 
 		// httpServer.stop();
 	}
-
 	/**
 	 * @param args
 	 */
@@ -195,7 +197,8 @@ public class Main {
 			if (CliConfSingleton.port == null)
 				CliConfSingleton.port = Integer.valueOf(ApplicationContext
 						.getProperties().getProperty("port"));
-			LOGGER.info("File found = {} ", aPPath);
+			LOGGER.info("File not found use default value or arg Path ={} ",
+					aPPath);
 			in.close();
 		} catch (FileNotFoundException e1) {
 			LOGGER.info("File not found use default value or arg Path ={} ",

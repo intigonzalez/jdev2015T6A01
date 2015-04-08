@@ -39,7 +39,7 @@ public interface ContentService {
 	 * @param id
 	 * @return
 	 */
-	public abstract Content createContent(Content content, String srcfile, String id);
+	public abstract Content createContent(Content content, String srcfile, String id) throws IOException;
 
 	/**
 	 * update Content 
@@ -80,7 +80,7 @@ public interface ContentService {
 	public abstract void updateContent(String contentsID, String status);
 
 	public abstract Content createContent(String userID,
-			InputStream uploadedInputStream, String[] fileType, File upload);
+			InputStream uploadedInputStream, String[] fileType, File upload) throws IOException;
 
 	public abstract Content createContent(String userID,
 			InputStream uploadedInputStream, String contentDisposition) throws IOException;
