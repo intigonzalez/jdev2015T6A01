@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
@@ -39,7 +40,8 @@ import com.enseirb.telecom.dngroup.dvd2c.service.RelationServiceImpl;
 public class RelationEndPoints {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RelationEndPoints.class);
 
-	RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), new UserRepositoryMongo("mediahome"));
+	@Autowired
+	protected RelationService rManager =null;
 
 	/**
 	 * get user for remote host

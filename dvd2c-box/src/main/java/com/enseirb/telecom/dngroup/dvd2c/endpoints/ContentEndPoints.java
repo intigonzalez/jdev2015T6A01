@@ -29,6 +29,7 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
@@ -41,12 +42,14 @@ import com.google.common.io.Files;
 // The Java class will be hosted at the URI path "/app/content"
 @Path("app/{userID}/content")
 public class ContentEndPoints {
-
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ContentEndPoints.class);
+	
+	@Autowired
+	protected ContentService uManager = null;
 
-	ContentService uManager = new ContentServiceImpl(
-			new ContentRepositoryMongo(), new RabbitMQServer());
+	// ContentService uManager = new ContentServiceImpl(
+	// new ContentRepositoryMongo(), new RabbitMQServer());
 
 	/**
 	 * Get all contents for a user. This request only called by videos owners
@@ -110,16 +113,16 @@ public class ContentEndPoints {
 	 * @throws IOException
 	 */
 	@POST
-	//@RolesAllowed({ "other", "authenticated" })
+	// @RolesAllowed({ "other", "authenticated" })
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response postContent(@PathParam("userID") String userID,
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail,
 			@FormDataParam("file") FormDataBodyPart body)
 			throws URISyntaxException, IOException {
-		
+
 		String fileName = fileDetail.getFileName();
-		LOGGER.info("New file {}",fileDetail);
+		LOGGER.info("New file {}", fileDetail);
 		String extension = Files.getFileExtension(fileName);
 		MediaType fileMediaType = body.getMediaType();
 		String fileTypeTemp = fileMediaType.toString();
@@ -152,24 +155,28 @@ public class ContentEndPoints {
 	 * @throws IOException
 	 */
 	@POST
-	//@RolesAllowed({ "other", "authenticated" })
+	// @RolesAllowed({ "other", "authenticated" })
 	@Path("local")
 	@Consumes(MediaType.WILDCARD)
-	public Response postContent2(	@PathParam("userID") String userID,
-									InputStream uploadedInputStream,
-									@HeaderParam("Content-Disposition") String contentDisposition ) throws URISyntaxException, IOException {
-		
-		LOGGER.debug("New local upload, Content-Disposition : "+contentDisposition);
+	public Response postContent2(@PathParam("userID") String userID,
+			InputStream uploadedInputStream,
+			@HeaderParam("Content-Disposition") String contentDisposition)
+			throws URISyntaxException, IOException {
+
+		LOGGER.debug("New local upload, Content-Disposition : "
+				+ contentDisposition);
 		try {
-			Content content = uManager.createContent(userID, uploadedInputStream, contentDisposition);
+			Content content = uManager.createContent(userID,
+					uploadedInputStream, contentDisposition);
 			content.setLink(CliConfSingleton.publicAddr + content.getLink());
 
-			LOGGER.debug("Content created :"+ CliConfSingleton.publicAddr + "/api/app/" + userID
-							+ "/content/" + content.getContentsID());
+			LOGGER.debug("Content created :" + CliConfSingleton.publicAddr
+					+ "/api/app/" + userID + "/content/"
+					+ content.getContentsID());
 			return Response.created(
 					new URI(CliConfSingleton.publicAddr + "/api/app/" + userID
 							+ "/content/" + content.getContentsID())).build();
-		} catch(IOException | SecurityException e) {
+		} catch (IOException | SecurityException e) {
 			throw e;
 		}
 	}

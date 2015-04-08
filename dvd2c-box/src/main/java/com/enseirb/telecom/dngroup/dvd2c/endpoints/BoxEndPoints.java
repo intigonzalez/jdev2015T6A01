@@ -19,10 +19,12 @@ import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
+import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
@@ -40,13 +42,23 @@ import com.enseirb.telecom.dngroup.dvd2c.service.RelationServiceImpl;
 
 @Path("box")
 public class BoxEndPoints {
-	private static final Logger LOGGER = LoggerFactory.getLogger(BoxEndPoints.class);
-	BoxService boxManager = new BoxServiceImpl(new BoxRepositoryMongo("mediahome"));
-	UserRepositoryMongo uRM = new UserRepositoryMongo("mediahome");
+
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(BoxEndPoints.class);
+	@Autowired
+	protected BoxService boxManager = null;
+
+	@Autowired
+	protected RelationService rManager = null;
+
+	@Autowired
+	protected ContentService uManager = null;
 
 	/**
-	 *  get box with boxID
-	 * @param boxId the box to get
+	 * get box with boxID
+	 * 
+	 * @param boxId
+	 *            the box to get
 	 * @return
 	 */
 	@GET
@@ -56,7 +68,7 @@ public class BoxEndPoints {
 		try {
 			return boxManager.getBoxOnLocal(boxId);
 		} catch (NoSuchBoxException e) {
-			
+
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 	}
@@ -66,7 +78,7 @@ public class BoxEndPoints {
 	 * 
 	 * @return
 	 * @throws URISyntaxException
-	 * @throws SuchBoxException 
+	 * @throws SuchBoxException
 	 */
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -78,16 +90,12 @@ public class BoxEndPoints {
 		if (boxManager.boxExistOnServer(box.getBoxID()) == false) {
 			boxManager.createBoxOnServer(box);
 			return Response.created(new URI(box.getBoxID())).build();
-		} 
-		else {
+		} else {
 			return Response.status(409).build();
 		}
 
 		// return Response.status(Status.SERVICE_UNAVAILABLE).build();
 	}
-	
-	
-
 
 	// @POST
 	// @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -122,20 +130,22 @@ public class BoxEndPoints {
 		// return Response.status(Status.SERVICE_UNAVAILABLE).build();
 
 	}
-	
-	
 
 	@PUT
 	@Path("relation/{userId}/{relationId}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response setAprouve(@PathParam("userId") String userId, @PathParam("relationId") String relationId) throws URISyntaxException {
-		RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), uRM);
-		LOGGER.debug("try to setAprouve a relation from a other box {} and {}", userId, relationId);
+	public Response setAprouve(@PathParam("userId") String userId,
+			@PathParam("relationId") String relationId)
+			throws URISyntaxException {
+
+		LOGGER.debug("try to setAprouve a relation from a other box {} and {}",
+				userId, relationId);
 		rManager.setAprouveBox(userId, relationId);
 		return Response.status(Status.ACCEPTED).build();
 	}
 
-	/** delete box
+	/**
+	 * delete box
 	 * 
 	 * @param boxID
 	 * @return
@@ -165,15 +175,18 @@ public class BoxEndPoints {
 	@DELETE
 	@Path("relation/{userId}/{relationId}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteFriend(@PathParam("userId") String userId, @PathParam("relationId") String relationId) {
-		LOGGER.debug("try to delete a relation from a other box {} and {}", userId, relationId);
-		RelationService rManager = new RelationServiceImpl(new RelationshipRepositoryMongo(), uRM);
+	public Response deleteFriend(@PathParam("userId") String userId,
+			@PathParam("relationId") String relationId) {
+		LOGGER.debug("try to delete a relation from a other box {} and {}",
+				userId, relationId);
+
 		rManager.deleteRelationBox(userId, relationId);
 		return Response.status(200).build();
 	}
 
 	/**
-	 * This endpoint is used by a box, to get the content of one of its relations.
+	 * This endpoint is used by a box, to get the content of one of its
+	 * relations.
 	 * 
 	 * @param relationID
 	 *            : remote user (the relation)
@@ -183,18 +196,18 @@ public class BoxEndPoints {
 	 */
 	@GET
 	@Path("{userID}/content/{relationID}")
-	
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<Content> getLocalContentForRelation(@PathParam("relationID") String relationID, @PathParam("userID") String userID) {
-		RelationServiceImpl relationService = new RelationServiceImpl(new RelationshipRepositoryMongo(), uRM);
-		ContentService uManager = new ContentServiceImpl(new ContentRepositoryMongo(), new RabbitMQServer());
+	public List<Content> getLocalContentForRelation(
+			@PathParam("relationID") String relationID,
+			@PathParam("userID") String userID) {
 
 		LOGGER.debug("Receive Request to get list content from {}", relationID);
-		if (relationService.RelationExist(userID, relationID)) {
-			Relation relation = relationService.getRelation(userID, relationID);
+		if (rManager.RelationExist(userID, relationID)) {
+			Relation relation = rManager.getRelation(userID, relationID);
 
 			LOGGER.debug("Check the relation : {}", relation);
-			List<Content> listContent = uManager.getAllContent(userID, relation);
+			List<Content> listContent = uManager
+					.getAllContent(userID, relation);
 			return listContent;
 		}
 		return null;

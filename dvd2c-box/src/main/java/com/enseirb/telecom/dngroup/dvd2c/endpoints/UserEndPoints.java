@@ -23,6 +23,7 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
@@ -36,7 +37,9 @@ import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
 @Path("app/account")
 public class UserEndPoints extends HttpServlet {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserEndPoints.class);
-	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo("mediahome"));
+	
+	@Autowired
+	protected AccountService uManager = null;
 
 	// Only for tests
 	@GET
