@@ -19,8 +19,8 @@ import com.lexicalscope.jewel.cli.InvalidOptionSpecificationException;
 public class CliConfSingleton {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CliConfSingleton.class);
 	public static String boxID;
-	public static Integer port;
-	public static String ip;
+	public static Integer appPort;
+	public static String appHostName;
 	public static String centralURL;
 	public static String contentPath;
 	public static String publicAddr;
@@ -32,10 +32,10 @@ public class CliConfSingleton {
 	public static void defaultValue() {
 		if (boxID == null)
 			boxID = "BOX_TEST";
-		if (port == null)
-			port = 9998;
-		if (ip == null)
-			ip = "0.0.0.0";
+		if (appPort == null)
+			appPort = 9998;
+		if (appHostName == null)
+			appHostName = "0.0.0.0";
 		if (centralURL == null)
 			centralURL = "http://central.homeb.tv:8080";
 		if (contentPath == null)

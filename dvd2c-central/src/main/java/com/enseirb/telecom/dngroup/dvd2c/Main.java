@@ -28,11 +28,11 @@ public class Main {
 	private static int getPort(int defaultPort) {
 		// grab port from environment, otherwise fall back to default port 9999
 		
-		return CliConfSingleton.port;
+		return CliConfSingleton.appPort;
 	}
 
 	private static URI getBaseURI() {
-		String ip = CliConfSingleton.ip;
+		String ip = CliConfSingleton.appHostName;
 		return UriBuilder.fromUri("http://" + ip + "/api/").port(getPort(9999))
 				.build();
 	}
@@ -57,8 +57,8 @@ public class Main {
 		CliConfiguration cliconf = CliFactory.parseArguments(
 				CliConfiguration.class, args);
 
-		CliConfSingleton.ip = cliconf.getIp();
-		CliConfSingleton.port = cliconf.getPort();
+		CliConfSingleton.appHostName = cliconf.getIp();
+		CliConfSingleton.appPort = cliconf.getPort();
 		CliConfSingleton.dbHostname = cliconf.getDbHostname();
 		CliConfSingleton.dbPort = cliconf.getDbPort();
 //		FileInputStream in;

@@ -31,7 +31,6 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 @Configuration
 @ComponentScan(basePackages = { "com.enseirb.telecom.dngroup.dvd2c",
 		"com.enseirb.telecom.dngroup.dvd2c.db", "com.enseirb.telecom.dngroup.dvd2c.conf" })
-@EnableJpaRepositories("fr.labri.progress.comet.repository")
 @Import(RabbitMqConfiguration.class)
 public class SpringConfiguration {
 
@@ -45,27 +44,8 @@ public class SpringConfiguration {
 		return om;
 		
 	}
-	
 
 
-	@Bean
-	public DataSource ds() {
 
-		return new JDBCDataSource();
-
-	}
-
-	@Bean(name = "transactionManager")
-	@Inject
-	public PlatformTransactionManager tm(EntityManagerFactory emf) {
-		return new JpaTransactionManager(emf);
-	}
-
-	@Bean(name = "entityManagerFactory")
-	@Inject
-	public EntityManagerFactory emf() {
-
-		return Persistence.createEntityManagerFactory("cache-orchestrator");
-	}
 
 }
