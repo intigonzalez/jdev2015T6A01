@@ -461,53 +461,22 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 	
 	
 	// Method to get the token thanks to our json secret. The user need to agree and copy-paste a link into the terminal.
-	private Gmail getService() throws IOException{
+	private Gmail getService(String token) throws IOException{
 		
 		// Link to give us rights to send mails
-		  final String SCOPE = "https://www.googleapis.com/auth/gmail.compose";
-		  final String APP_NAME = "Gmail API Quickstart";
+		  //final String SCOPE = "https://www.googleapis.com/auth/gmail.compose";
 		  // Path to the client_secret.json file downloaded from the Developer Console
-		  final String CLIENT_SECRET_PATH = "cloud/client_secret.json";
+		  //final String CLIENT_SECRET_PATH = "cloud/client_secret.json";
+		  final String APP_NAME = "Snapmail";
+
 
                   // Initialization
 		  HttpTransport httpTransport = new NetHttpTransport();
 		    JsonFactory jsonFactory = new JacksonFactory();
-		    GoogleClientSecrets clientSecrets;
-
-                    // Load our json file
-		    clientSecrets = GoogleClientSecrets.load(jsonFactory,  new FileReader(CLIENT_SECRET_PATH));
-
-		    // Allow user to authorize via url, thanks to our secret
-		    GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-		        httpTransport, jsonFactory, clientSecrets, Arrays.asList(SCOPE))
-		        .setAccessType("online")
-		        .setApprovalPrompt("auto").build();
-
-		    String url = flow.newAuthorizationUrl().setRedirectUri(GoogleOAuthConstants.OOB_REDIRECT_URI)
-		        .build();
-		    LOGGER.info("Please open the following URL in your browser then type"
-		                       + " the authorization code:\n" + url);
-
-		    // Open the url in the default browser.
-		    URI myUri = null;
-			try {
-				myUri = new URI(url);
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
-		    Desktop.getDesktop().browse(myUri);
 		    
-		    
-		    // Read code entered by user. The user has to copy-paste the code in the terminal (will be changed in M@H)
-		    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		    String code = br.readLine();
-
-		    // Generate Credential and token using retrieved code.
-		    GoogleTokenResponse response = flow.newTokenRequest(code)
-		        .setRedirectUri(GoogleOAuthConstants.OOB_REDIRECT_URI).execute();
 		    GoogleCredential credential = new GoogleCredential()
-		        .setFromTokenResponse(response);
-
+		        .setAccessToken(token.substring(token.lastIndexOf("access_token\":\"")+15,token.lastIndexOf("\",\"token_type")));
+		    LOGGER.info(token.substring(token.lastIndexOf("access_token\":\"")+15,token.lastIndexOf("\",\"token_type")));
 		    // Create a new authorized Gmail API client and return it.
 		    Gmail service = new Gmail.Builder(httpTransport, jsonFactory, credential)
 		        .setApplicationName(APP_NAME).build();
@@ -520,7 +489,13 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 		// Default properties
 		Properties properties = System.getProperties();
 	    Session session = Session.getInstance(properties);
-		
+	    HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(this.username, this.password);			
+		Client client = ClientBuilder.newClient();
+		client.register(feature);
+
+		WebTarget target = client.target("http://localhost/api/app/account/"+this.username+"/smtp");
+		SmtpProperty smtpProperty = target.request(MediaType.APPLICATION_XML_TYPE).get(SmtpProperty.class);
+		String token=smtpProperty.getToken();
 		try {
 			// Creation of the message that will be send in place of the received mail
 			// The attachments are removed and replaced by links which redirect to the file stored in the cloud
@@ -543,7 +518,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 	        LOGGER.info("Mail rebuilt and ready to be sent");
 			
 	        // Get Gmail service thanks to the token, build the Message and send it.
-	        Gmail service=getService();
+	        Gmail service=getService(token);
 	        com.google.api.services.gmail.model.Message message2= createMessageWithEmail(message);
 	        message2 = service.users().messages().send("me", message2).execute();
 	        
