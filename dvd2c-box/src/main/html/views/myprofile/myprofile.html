@@ -53,7 +53,7 @@
             	</button>
     		</div>
     		<div class="panel-body">
-    			<div class="col-xs-12">
+    			<div class="col-xs-18">
 	    			<div class="col-xs-6">
 	    				<div class="row">
 		    				<h4>Host</h4>
@@ -62,6 +62,10 @@
 		    			<div class="row">
 		    				<h4>Port</h4>
 		    				<p>{{user.smtp.port}}</p>
+		    			</div>
+		    			<div class="row">
+		    				<h4>Token</h4>
+		    				<p>{{user.smtp.token}}</p>
 		    			</div>
 	    			</div>
 	    			<div class="col-xs-6">
@@ -72,6 +76,28 @@
 		    			<div class="row">
 		    				<h4>Mot de passe</h4>
 		    				<p>{{user.smtp.password}}</p>
+		    			</div>
+
+		    			<div class="row">	
+		    				<h4>		
+	    						<button class="btn btn-success btn-sm col-xs-6" ng-click="user.openOauth()">Send my mail with Gmail</button>
+	    					</h4>
+	    				</div>
+	    				<div class="row">	
+		    				<h4>
+			    				<div class="form-group">
+	                        		<div class="input-group">
+	                            		<span class="input-group-addon">
+	                                    	<i class="glyphicon glyphicon-lock"></i>
+	                            		</span>
+	                            		<input class="form-control" placeholder=" Enter your code " ng-model="user.smtp.code"
+	                                   		type="text" >
+	                        		</div>
+	                    		</div>	
+		    				</h4>
+		    				<button ng-click="user.auth2token(user.smtp.code)" class="btn btn-lg btn-default btn-block"
+                                ng-class="user.class">Send code
+                            </button>
 		    			</div>
 	    			</div>
 		    	</div>

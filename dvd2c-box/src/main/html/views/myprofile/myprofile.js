@@ -14,6 +14,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
     .controller('ProfileController', ['$http', function ($http) {
 
         var user = this;
+       
         user.person = {};
         user.smtp = {};
         user.class= "";
@@ -29,7 +30,40 @@ angular.module('myApp.myprofile', ['ngRoute'])
         this.isSetTab = function (value) {
             return this.tab === value;
         };
-
+        
+        this.openOauth = function () {
+     	   var url="https://accounts.google.com/o/oauth2/auth?access_type=online&approval_prompt=auto&client_id=547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=https://www.googleapis.com/auth/gmail.compose";
+         	window.open(url);
+         };
+         
+         this.auth2token = function (value){
+        	 var req = {
+        			 method: 'POST',
+        			 url: 'https://www.googleapis.com/oauth2/v3/token',
+        			 headers: {
+        			   'Content-Type': 'application/x-www-form-urlencoded'
+        			 },
+        			 data : "client_id=547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com&client_secret=JG3LiwiX2gA362mTSGEJ5eC8&code="+value+"&redirect_uri=urn:ietf:wg:oauth:2.0:oob&grant_type=authorization_code"
+        			};
+ 
+        
+             $http(req)  
+             .success(function (data, status, headers, config) {
+                 console.log("Succeed");
+                 user.smtp.username="";
+                 user.smtp.password="";
+                 user.smtp.host="";
+                 user.smtp.port="";
+                 user.smtp.token=data;
+                 user.putSmtp(user.smtp);
+                 user.class = "btn-success";
+             })
+             .error(function (data, status, headers, config) {
+                 console.log("Failed while editing User Informations");
+                 user.class = "btn-danger";
+             });
+         };
+         
         this.getUser = function () {
             $http.get(PREFIX_RQ + "/api/app/account/" + userID)
                 .success(function (data, status, headers, config) {
@@ -83,5 +117,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
 
         this.getUser();
         this.getSmtp();
-
+        
+    
     }]);
+
