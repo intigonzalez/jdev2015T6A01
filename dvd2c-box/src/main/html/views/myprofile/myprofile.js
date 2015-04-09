@@ -97,9 +97,9 @@ angular.module('myApp.myprofile', ['ngRoute'])
             .success(function (data, status, headers, config)
             {
                 user.smtp = data.smtpProperty;
-                if (user.smtp.hasOwnProperty("token"))
+                if (user.smtp.hasOwnProperty("token") && user.smtp.token != "")
                 	user.smtpTab = 1;
-                else if (user.smtp.hasOwnProperty("username") && user.smtp.hasOwnProperty("host") && user.smtp.hasOwnProperty("port") && user.smtp.hasOwnProperty("password"))
+                else if (user.smtp.hasOwnProperty("username") && user.smtp.username != "" && user.smtp.hasOwnProperty("host") && user.smtp.host != "" && user.smtp.hasOwnProperty("port") && user.smtp.port != "" && user.smtp.hasOwnProperty("password") && user.smtp.password != "")
                 {
                 	user.smtpManualSettings = true;
                 	user.smtpTab = 2;
@@ -140,6 +140,13 @@ angular.module('myApp.myprofile', ['ngRoute'])
         this.setSMTPTab = function(value)
         {
         	this.smtpTab = value;
+        	if (value == 5)
+        	{
+        		if (user.smtp.host == "" || user.smtp.username == "" || user.smtp.password == "" || user.smtp.port == "")
+        			user.setSMTPTab(0);
+        		else
+        			user.setSMTPTab(2);
+        	}
         }
         
         this.isSMTPTab = function(value)
