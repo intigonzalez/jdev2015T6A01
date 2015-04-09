@@ -1,7 +1,8 @@
 package com.enseirb.telecom.dngroup.snapmail;
 
-
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
@@ -15,15 +16,13 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.subethamail.smtp.auth.UsernamePasswordValidator;
 import org.subethamail.smtp.helper.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,87 +48,102 @@ import javax.mail.util.SharedFileInputStream;
 import org.subethamail.smtp.MessageContext;
 import org.subethamail.smtp.TooMuchDataException;
 
-
-import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
+import com.google.api.client.auth.oauth2.TokenResponse;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.Base64;
+import com.google.api.services.gmail.Gmail;
 
-public class SimpleMessageListenerImpl implements SimpleMessageListener, UsernamePasswordValidator{
-	private final static Logger LOGGER = LoggerFactory.getLogger(SimpleMessageListener.class);
- 
+public class SimpleMessageListenerImpl implements SimpleMessageListener,
+		UsernamePasswordValidator {
+	private final static Logger LOGGER = LoggerFactory
+			.getLogger(SimpleMessageListener.class);
+
 	protected String username;
 	protected String password;
-	
-	//to display all recipients
+
+	// to display all recipients
 	ArrayList<String> recipientArray = new ArrayList<String>();
 	private String allrecipients;
 	private int counter = 0;
-	
-	//to certify that recipients are real adresses
+
+	// to certify that recipients are real adresses
 	private int position = 0;
-	
+
 	MessageContext context;
 	private String subject;
 	private String text;
 	private String type;
 	private InputStream data;
 
-	//private final static Logger LOGGER = Logger.getLogger(SimpleMessageListenerImpl.class.getName());
-	
+	// private final static Logger LOGGER =
+	// Logger.getLogger(SimpleMessageListenerImpl.class.getName());
+
 	@Override
-    public void login(String username, String password) {
+	public void login(String username, String password) {
 		this.username = username;
 		this.password = password;
-    }
-	
+	}
+
 	@Override
-	public boolean accept(String from, String recipient){
+	public boolean accept(String from, String recipient) {
 		position = recipient.indexOf("@");
-		if (position != -1){//If the address is correct mail address
-			recipientArray.add(""+recipient);
+		if (position != -1) {// If the address is correct mail address
+			recipientArray.add("" + recipient);
 			counter++;
 		}
 		return true;
 	}
-	
+
 	@Override
-	public void deliver(String from, String recipient, InputStream data) throws TooMuchDataException, IOException{
-		//Emptying the array
+	public void deliver(String from, String recipient, InputStream data)
+			throws TooMuchDataException, IOException {
+		// Emptying the array
 		counter--;
-		if (counter == 0){
+		if (counter == 0) {
 			allrecipients = recipientArray.toString();
-			this.allrecipients = this.allrecipients.substring(1, this.allrecipients.length()-1);
-		    LOGGER.info("\n--------------------------------------------------");
-		    LOGGER.info("FROM: "+from+"\n TO: "+allrecipients);
-			//data
+			this.allrecipients = this.allrecipients.substring(1,
+					this.allrecipients.length() - 1);
+			LOGGER.info("\n--------------------------------------------------");
+			LOGGER.info("FROM: " + from + "\n TO: " + allrecipients);
+			// data
 			this.data = data;
 			Properties props = new Properties();
 			Session session = Session.getInstance(props, null);
-	
+
 			// Creation of a new MIME Message
 			MimeMessage newMessage;
-			Multipart multiPart = new MimeMultipart();//mixed, related
-			
+			Multipart multiPart = new MimeMultipart();// mixed, related
+
 			try {
-				// The mail received as a stream of data by the app is stored into the MIME message
-				File mimeFile=saveFile("temp_mime", data);
-		        SharedFileInputStream fis = new SharedFileInputStream(mimeFile);
+				// The mail received as a stream of data by the app is stored
+				// into the MIME message
+				File mimeFile = saveFile("snapmail", data);
+				SharedFileInputStream fis = new SharedFileInputStream(mimeFile);
 				newMessage = new MimeMessage(session, fis);
-		        mimeFile.delete();
-		        
+				mimeFile.delete();
+
 				this.subject = newMessage.getSubject();
 				String contentType = newMessage.getContentType();
 				this.type = contentType;
 				Boolean isMultipart = contentType.contains("multipart");
-				
+
 				// Returns the text of the message
 				this.text = getTextFromMessage(newMessage);
 
-				LOGGER.info("Text : \n\t"+this.text);
-				
-				// If the message contains an attachment it is parsed to upload the file on the cloud
-				if(isMultipart) {
+				LOGGER.info("Text : \n\t" + this.text);
+
+				// If the message contains an attachment it is parsed to upload
+				// the file on the cloud
+				if (isMultipart) {
 					LOGGER.info("This mail is multipart");
-					parseMessage(newMessage,multiPart);
+					parseMessage(newMessage, multiPart);
 				}
 			} catch (MessagingException e1) {
 				// TODO Auto-generated catch block
@@ -138,291 +152,442 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		sendMail("smtp.gmail.com", recipient, multiPart);
-		recipientArray.clear();
+			sendMail("smtp.gmail.com", recipient, multiPart);
+			recipientArray.clear();
 		}
 	}
-	
+
 	private void sendMail(String host, String recipient, Multipart multiPart)
-	{
+			throws IOException {
 		// Get system properties
-		 Properties properties = System.getProperties();
-		 
-			properties = setSMTPProperties(properties);
-//			properties.setProperty("mail.smtp.auth", "true");
-//			properties.setProperty("mail.smtp.starttls.enable", "true");	// TLS Connection
-//			properties.setProperty("mail.smtp.host", host);					// Remote SMTP server address
-//			properties.setProperty("mail.user", this.username);				// Username used to log into the remote SMTP server
-//			properties.setProperty("mail.password", this.password);			// Password used to log into the remote SMTP server
-//			properties.setProperty("mail.smtp.port", "587");
-			final String pwd= properties.getProperty("mail.password");
-			final String usr=properties.getProperty("mail.user");
-		// These properties will change based on the remote smtp server used
-			   
-		// Get the default Session object.
-		Session session = Session.getDefaultInstance(properties,
-		new javax.mail.Authenticator() {
-			protected PasswordAuthentication getPasswordAuthentication() {
-			// Remote SMTP credentials
-			return new PasswordAuthentication(usr,pwd);
-			}
-		}
-		);
-		
+		Properties properties = System.getProperties();
+
+		properties = setSMTPProperties(properties);
+		Session session;
+		String token = properties.getProperty("mail.token");
+		if (token.equals("")) {
+			final String pwd = properties.getProperty("mail.password");
+			final String usr = properties.getProperty("mail.user");
+			// These properties will change based on the remote smtp server used
+
+			// Get the default Session object.
+			session = Session.getInstance(properties,
+					new javax.mail.Authenticator() {
+						protected PasswordAuthentication getPasswordAuthentication() {
+							// Remote SMTP credentials
+							return new PasswordAuthentication(usr, pwd);
+						}
+					});
+		} else
+			session = Session.getInstance(properties);
+
 		try {
-			// Creation of the message that will be send in place of the received mail
-			// The attachments are removed and replaced by links which redirect to the file stored in the cloud
+			// Creation of the message that will be send in place of the
+			// received mail
+			// The attachments are removed and replaced by links which redirect
+			// to the file stored in the cloud
 			//
 			MimeMessage message = new MimeMessage(session);
 			// Set From: header field of the header.
-	        message.setFrom(new InternetAddress(username));
-	        //message.setHeader("Content-Type", this.type);
-	        LOGGER.info("CONTENT-TYPE : "+this.type);
-	        // Set To: header field of the header.
-	        message.addRecipients(Message.RecipientType.TO,allrecipients);
-	        // Set Subject: header field
-	        message.setSubject(this.subject);
-	        // Now set the actual message
-	        //message.setContent(this.text, this.type);
-	        MimeBodyPart textPart = new MimeBodyPart();
-	        textPart.setContent(this.text, this.type);
-		    multiPart.addBodyPart(textPart);
-	        message.setContent(multiPart);
-	        LOGGER.info("Mail rebuilt and ready to be sent");
-			Transport.send(message);
+			message.setFrom(new InternetAddress(username));
+			// message.setHeader("Content-Type", this.type);
+			LOGGER.info("CONTENT-TYPE : " + this.type);
+			// Set To: header field of the header.
+			message.addRecipients(Message.RecipientType.TO, allrecipients);
+			// Set Subject: header field
+			message.setSubject(this.subject);
+			// Now set the actual message
+			// message.setContent(this.text, this.type);
+			MimeBodyPart textPart = new MimeBodyPart();
+			textPart.setContent(this.text, this.type);
+			multiPart.addBodyPart(textPart);
+			message.setContent(multiPart);
+			LOGGER.info("Mail rebuilt and ready to be sent");
+			if (token.equals("")) {
+				Transport.send(message);
+			} else {
+				Gmail service = getService(token);
+				com.google.api.services.gmail.model.Message message2 = createMessageWithEmail(message);
+				message2 = service.users().messages().send("me", message2)
+						.execute();
+			}
 			LOGGER.info("Mail sent successfully !");
 			LOGGER.info("--------------------------------------------------\n\n");
-		}catch (MessagingException mex) {
+		} catch (MessagingException mex) {
 			mex.printStackTrace();
 		}
 	}
-	
-	private void parseMessage(Message message, Multipart multiPart) throws MessagingException, IOException {
+
+	private void parseMessage(Message message, Multipart multiPart)
+			throws MessagingException, IOException {
 		boolean attachment = false;
-		
 		// Since the message is multipart, it can be casted as such
-		Multipart multipart = (Multipart)message.getContent();
+		Multipart multipart = (Multipart) message.getContent();
 
 		// Iteration through the different parts of the message
 		for (int j = 0; j < multipart.getCount(); j++) {
 			BodyPart bodyPart = multipart.getBodyPart(j);
-			
 			// A signed email will put the attachments into a MIME multipart,
-			// thus if a part is a MIME multipart it is likely to contain attachments
-			if(!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition())) {
-				
+			// thus if a part is a MIME multipart it is likely to contain
+			// attachments
+			if (!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition())) {
 				// If the part is not an attachment, but a MimeMultipart...
-				if (bodyPart.getContent().getClass().equals(MimeMultipart.class)) {
-					MimeMultipart mimemultipart = (MimeMultipart)bodyPart.getContent();
-					
-					// Iteration through the different parts of the MIME multipart
-					for (int k=0;k<mimemultipart.getCount();k++) {
-						if (mimemultipart.getBodyPart(k).getFileName() != null)
-						{
-							if ( Part.INLINE != null ){	
+				if (bodyPart.getContent().getClass()
+						.equals(MimeMultipart.class)) {
+					MimeMultipart mimemultipart = (MimeMultipart) bodyPart
+							.getContent();
+					// Iteration through the different parts of the MIME
+					// multipart
+					for (int k = 0; k < mimemultipart.getCount(); k++) {
+						if (mimemultipart.getBodyPart(k).getContentType()
+								.indexOf("text") == -1
+								&& mimemultipart.getBodyPart(k)
+										.getContentType().indexOf("multipart") == -1) {
+							if (Part.INLINE != null
+									| mimemultipart.getBodyPart(k).getHeader(
+											"Content-ID")[0] != null) {// if
+																		// attachment
+																		// +
+																		// embedded
+																		// picture
+																		// then
+																		// the
+																		// inline
+																		// disposition
+																		// is
+																		// not
+																		// writen
 								LOGGER.info("embedded picture");
-								//add picture inline hmtl part
-								// HTML version
-						        
-								DataSource ds = new ByteArrayDataSource(mimemultipart.getBodyPart(k).getInputStream(), mimemultipart.getBodyPart(k).getContentType());
-						        
-								//first part  (the html)
-						        BodyPart messageBodyPart = new MimeBodyPart();
-						        String htmlText = "<img src=\"cid:image\">";
-						        messageBodyPart.setContent(htmlText, "text/html");
-						        
-						        multiPart.addBodyPart(messageBodyPart);
-								
+
+								// add picture inline hmtl part
+								DataSource ds = new ByteArrayDataSource(
+										mimemultipart.getBodyPart(k)
+												.getInputStream(),
+										mimemultipart.getBodyPart(k)
+												.getContentType());
 								MimeBodyPart imagePart = new MimeBodyPart();
-						        imagePart.setDataHandler(new DataHandler(ds));
-						        imagePart.setFileName(mimemultipart.getBodyPart(k).getFileName());
-						        imagePart.setDisposition(MimeBodyPart.INLINE);
-						        imagePart.setHeader("Content-ID", "<image>");
-						        
-						        multiPart.addBodyPart(imagePart);
-							}
-							else{
-							
-								processAttachment(mimemultipart.getBodyPart(k).getFileName(),mimemultipart.getBodyPart(k).getInputStream(),mimemultipart.getBodyPart(k).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
+								imagePart.setDataHandler(new DataHandler(ds));
+								if (mimemultipart.getBodyPart(k).getFileName() != null)
+									imagePart.setFileName(mimemultipart
+											.getBodyPart(k).getFileName());
+								if (mimemultipart.getBodyPart(k).getFileName() != null)
+									imagePart
+											.setDisposition(MimeBodyPart.INLINE);
+								imagePart.setHeader(
+										"Content-ID",
+										mimemultipart.getBodyPart(k).getHeader(
+												"Content-ID")[0]);
+								multiPart.addBodyPart(imagePart);
+							} else if (Part.ATTACHMENT != null) {
+								processAttachment(
+										mimemultipart.getBodyPart(k)
+												.getFileName(),
+										mimemultipart.getBodyPart(k)
+												.getInputStream(),
+										mimemultipart
+												.getBodyPart(k)
+												.getContentType()
+												.substring(
+														0,
+														bodyPart.getContentType()
+																.indexOf(";")));
 								attachment = true;
-								System.out.println(mimemultipart.getBodyPart(k).getContent());
+							}
+						}
+						// if there is another mimemultipart
+						if (mimemultipart.getBodyPart(k).getContentType()
+								.indexOf("multipart") != -1) {
+							MimeMultipart mimemultipart_bis = (MimeMultipart) mimemultipart
+									.getBodyPart(k).getContent();
+							// Iteration through the different parts of the MIME
+							// multipart
+							for (int l = 0; l < mimemultipart_bis.getCount(); l++) {
+								if (mimemultipart_bis.getBodyPart(l)
+										.getContentType().indexOf("text") == -1) {
+									if (Part.INLINE != null
+											| mimemultipart_bis.getBodyPart(l)
+													.getHeader("Content-ID")[0] != null) {// if
+																							// attachment
+																							// +
+																							// embedded
+																							// picture
+																							// then
+																							// the
+																							// inline
+																							// disposition
+																							// is
+																							// not
+																							// wrote
+										LOGGER.info("embedded picture");
+
+										// add picture inline hmtl part
+										DataSource ds = new ByteArrayDataSource(
+												mimemultipart_bis
+														.getBodyPart(l)
+														.getInputStream(),
+												mimemultipart_bis
+														.getBodyPart(l)
+														.getContentType());
+										MimeBodyPart imagePart = new MimeBodyPart();
+										imagePart
+												.setDataHandler(new DataHandler(
+														ds));
+										if (mimemultipart_bis.getBodyPart(l)
+												.getFileName() != null)
+											imagePart
+													.setFileName(mimemultipart_bis
+															.getBodyPart(l)
+															.getFileName());
+										if (mimemultipart_bis.getBodyPart(l)
+												.getFileName() != null)
+											imagePart
+													.setDisposition(MimeBodyPart.INLINE);
+										imagePart
+												.setHeader(
+														"Content-ID",
+														mimemultipart_bis
+																.getBodyPart(l)
+																.getHeader(
+																		"Content-ID")[0]);
+										multiPart.addBodyPart(imagePart);
+									} else if (Part.ATTACHMENT != null) {
+										processAttachment(
+												mimemultipart_bis
+														.getBodyPart(l)
+														.getFileName(),
+												mimemultipart_bis
+														.getBodyPart(l)
+														.getInputStream(),
+												mimemultipart_bis
+														.getBodyPart(l)
+														.getContentType()
+														.substring(
+																0,
+																bodyPart.getContentType()
+																		.indexOf(
+																				";")));
+										attachment = true;
+									}
+								}
 							}
 						}
 					}
 				}
 				continue;
 			}
-			
 			// If the current part is explicitly an attachment...
-
-			processAttachment(bodyPart.getFileName(), bodyPart.getInputStream(),bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
+			String contentType = bodyPart.getContentType().substring(0,
+					bodyPart.getContentType().indexOf(";"));
+			processAttachment(bodyPart.getFileName(),
+					bodyPart.getInputStream(), contentType);
 			attachment = true;
-			LOGGER.info("Content type : "+bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
+			LOGGER.info("Content type : " + contentType);
 		}
-		
-		if(attachment)
+
+		if (attachment)
 			this.text += "------------------------------------";
 	}
-	
-	private void processAttachment(String filename, InputStream is, String Type) throws IOException {
-		this.text += "Attachment : "+filename+"\n";
+
+	private void processAttachment(String filename, InputStream is, String Type)
+			throws IOException {
+		this.text += "Attachment : " + filename + "\n";
 		String link = postFile(is, filename, Type);
 		this.text += "Link :" + link + "\n";
 	}
-	
-	private String getTextFromMessage(Part message) throws MessagingException, IOException {
+
+	private String getTextFromMessage(Part message) throws MessagingException,
+			IOException {
 		String s = new String();
 		this.type = message.getContentType();
-	
-		// If the type is text/html or text/plain, the text is extracted directly
+
+		// If the type is text/html or text/plain, the text is extracted
+		// directly
 		if (message.isMimeType("text/*")) {
-			s = (String)message.getContent();
+			s = (String) message.getContent();
 			return s;
 		}
-			
-		// Each part of a multipart/alternative type has the same content as the others,
-		// but in a different format 
-		if (message.isMimeType("multipart/alternative")) {
-		   Multipart mp = (Multipart)message.getContent();
-		   String text = null;
 
-		   for (int i = 0; i < mp.getCount(); i++) {
-			   Part bp = mp.getBodyPart(i);
-			   
-			   // If the type of this part is "text/plain" or "text/html",
-			   // the algorithm is used recursively on this specific part
-			   // in order to find the text inside it
-			   if (bp.isMimeType("text/plain")) {
-				   // The text stored in the part of type "text/plain"
-				   // is kept just in case nothing better is found
-				   // The priority is put on the type "text/html"
-				   if (text == null)
-					   text = getTextFromMessage(bp);
-				   continue;
-			   }
-			   else if (bp.isMimeType("text/html")) {
-				   s = getTextFromMessage(bp);
-				   if (s != null)
-					   return s;
-			   } 
-			   // If the type is neither "text/html" nor "text/plain",
-			   // the algorithm is used recursively on this specific part
-			   else {
-				   return getTextFromMessage(bp);
-			   }
-		   }
-		   return text;
+		// Each part of a multipart/alternative type has the same content as the
+		// others,
+		// but in a different format
+		if (message.isMimeType("multipart/alternative")) {
+			Multipart mp = (Multipart) message.getContent();
+			String text = null;
+
+			for (int i = 0; i < mp.getCount(); i++) {
+				Part bp = mp.getBodyPart(i);
+
+				// If the type of this part is "text/plain" or "text/html",
+				// the algorithm is used recursively on this specific part
+				// in order to find the text inside it
+				if (bp.isMimeType("text/plain")) {
+					// The text stored in the part of type "text/plain"
+					// is kept just in case nothing better is found
+					// The priority is put on the type "text/html"
+					if (text == null)
+						text = getTextFromMessage(bp);
+					continue;
+				} else if (bp.isMimeType("text/html")) {
+					s = getTextFromMessage(bp);
+					if (s != null)
+						return s;
+				}
+				// If the type is neither "text/html" nor "text/plain",
+				// the algorithm is used recursively on this specific part
+				else {
+					return getTextFromMessage(bp);
+				}
+			}
+			return text;
 		} else if (message.isMimeType("multipart/*")) {
-			Multipart mp = (Multipart)message.getContent();
-			// Iteration through all the parts in order to find the one containing the text
+			Multipart mp = (Multipart) message.getContent();
+			// Iteration through all the parts in order to find the one
+			// containing the text
 			for (int i = 0; i < mp.getCount(); i++) {
 				s = getTextFromMessage(mp.getBodyPart(i));
 				if (s != null)
 					return s;
-			}	
+			}
 		}
-	
+
 		return null;
 	}
-	
-	private File saveFile(String FileName, InputStream inputStream) throws IOException {
-		new File("cloud").mkdir();
-		File f = new File("cloud/" + FileName);
-		FileOutputStream fos = new FileOutputStream(f);
-		byte[] buf = new byte[4096];
-		int bytesRead;
-		while((bytesRead = inputStream.read(buf))!=-1)
-			fos.write(buf, 0, bytesRead);
-		fos.close();
+
+	private File saveFile(String filename, InputStream inputStream)
+			throws IOException {
+		File f = new File("/tmp/" + filename);
+		try {
+			// Temporary until we find a better way to do it
+			Files.copy(inputStream, f.toPath(),
+					StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			LOGGER.error("Cannot create temporary file", e);
+		}
 		return f;
 	}
-	
-	public String postFile(InputStream is, String filename, String Type) throws IOException
-	{	
+
+	public String postFile(InputStream is, String filename, String Type)
+			throws IOException {
 		try {
-			HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(this.username, this.password);
-			
+			HttpAuthenticationFeature feature = HttpAuthenticationFeature
+					.basic(this.username, this.password);
+
 			// Configuration of the client to allow a post with a large file
 			ClientConfig cc = new ClientConfig();
-			cc.property(ClientProperties.REQUEST_ENTITY_PROCESSING, "CHUNKED"); 
-			cc.property(ClientProperties.CHUNKED_ENCODING_SIZE, Integer.valueOf(128));
-			cc.property(ClientProperties.OUTBOUND_CONTENT_LENGTH_BUFFER, Integer.valueOf(128));
-		    Client client=ClientBuilder.newClient(cc);
-		    client.register(feature).register(MultiPartFeature.class);
-		
-		    WebTarget target = client.target("http://localhost:9998/api/app/" + this.username + "/content/local");
+			cc.property(ClientProperties.REQUEST_ENTITY_PROCESSING, "CHUNKED");
+			cc.property(ClientProperties.CHUNKED_ENCODING_SIZE,
+					Integer.valueOf(128));
+			cc.property(ClientProperties.OUTBOUND_CONTENT_LENGTH_BUFFER,
+					Integer.valueOf(128));
+			Client client = ClientBuilder.newClient(cc);
+			client.register(feature).register(MultiPartFeature.class);
 
-		    LOGGER.info("Filename : "+filename);
-		    Response response = target.request(Type).header("Content-Disposition", "attachment; filename="+ filename).post(Entity.entity(is,MediaType.WILDCARD), Response.class);
+			WebTarget target = client.target("http://localhost:9998/api/app/"
+					+ this.username + "/content");
 
-			// Get request to get the link
-			Client client2 = ClientBuilder.newClient();
-			client2.register(feature);
+			LOGGER.info("Filename : " + filename);
+			Response response = target
+					.request()
+					.header("Content-Disposition",
+							"attachment; filename=" + filename)
+					.post(Entity.entity(is, Type), Response.class);
 
-			if(response.getLocation() != null) {
-				WebTarget target2 = client2.target(response.getLocation());
-				String link;
-				Content content = target2.request(MediaType.APPLICATION_XML_TYPE).get(Content.class);
-				if(Type.contains("video")){
-				link="http://"+localAddress()+":9998/snapmail.html#/"+ username +content.getLink().substring(content.getLink().lastIndexOf("/")).replace("-", "");
-				}
-				else{
-				link=content.getLink().replace("localhost", localAddress())+"/"+filename.replace(" ", "_");
-				}
-				return link;
-			}
+			if (response.getLocation() != null)
+				return "http://"
+						+ localAddress()
+						+ "/"
+						+ "snapmail.html#/"
+						+ this.username
+						+ "/"
+						+ response.getLocation().toString().split("/content/")[1];
+
 			else {
 				LOGGER.error("Error during the upload : Media@Home did not return a location");
 				return "Error during the upload";
 			}
-			
+
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 403) {
-				LOGGER.error("Error 403 (get content)");
+				LOGGER.error("Error 403 (post content)");
 			} else {
 				throw e;
 			}
 		}
 		return "Error";
 	}
-	
+
 	@SuppressWarnings("finally")
-	private String localAddress(){
-		String add="";
-		try{
-		InetAddress addr = InetAddress.getLocalHost();
-		
-		add = addr.getHostName();
-		} catch(UnknownHostException e){
+	private String localAddress() {
+		String add = "";
+		try {
+			InetAddress addr = InetAddress.getLocalHost();
+
+			add = addr.getHostName();
+		} catch (UnknownHostException e) {
 			System.exit(1);
-		}finally{
-		return add;
+		} finally {
+			return add;
 		}
 	}
-	
+
 	private Properties setSMTPProperties(Properties properties) {
 
 		try {
-			HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(this.username, this.password);			
+			HttpAuthenticationFeature feature = HttpAuthenticationFeature
+					.basic(this.username, this.password);
 			Client client = ClientBuilder.newClient();
 			client.register(feature);
 
-			WebTarget target = client.target("http://localhost/api/app/account/"+this.username+"/smtp");
-			SmtpProperty smtpProperty = target.request(MediaType.APPLICATION_XML_TYPE).get(SmtpProperty.class);
-			
-			properties.setProperty("mail.smtp.auth", "true");
-			properties.setProperty("mail.smtp.starttls.enable", "true");	// TLS Connection
-			properties.setProperty("mail.smtp.host", smtpProperty.getHost());					// Remote SMTP server address
-			properties.setProperty("mail.user", smtpProperty.getUsername());				// Username used to log into the remote SMTP server
-			properties.setProperty("mail.password", smtpProperty.getPassword());			// Password used to log into the remote SMTP server
-			properties.setProperty("mail.smtp.port", smtpProperty.getPort());
-					
-			LOGGER.info("Connection to the remote SMTP server ---> "+smtpProperty.getUsername()+":"+smtpProperty.getPassword()+"@"+smtpProperty.getHost()+":"+smtpProperty.getPort());
+			WebTarget target = client
+					.target("http://localhost/api/app/account/" + this.username
+							+ "/smtp");
+			SmtpProperty smtpProperty = target.request(
+					MediaType.APPLICATION_XML_TYPE).get(SmtpProperty.class);
+			String token;
+			// If token exist
+			if (smtpProperty.getToken() == null)
+				token = "";
+			else
+				token = smtpProperty.getToken();
+
+			// If token is empty
+			if (token.equals("")) {
+				properties.setProperty("mail.smtp.auth", "true");
+				properties.setProperty("mail.smtp.starttls.enable", "true"); // TLS
+																				// Connection
+				properties
+						.setProperty("mail.smtp.host", smtpProperty.getHost()); // Remote
+																				// SMTP
+																				// server
+																				// address
+				properties.setProperty("mail.user", smtpProperty.getUsername()); // Username
+																					// used
+																					// to
+																					// log
+																					// into
+																					// the
+																					// remote
+																					// SMTP
+																					// server
+				properties.setProperty("mail.password",
+						smtpProperty.getPassword()); // Password used to log
+														// into the remote SMTP
+														// server
+				properties
+						.setProperty("mail.smtp.port", smtpProperty.getPort());
+				properties.setProperty("mail.token", "");
+			} else {
+				properties.setProperty("mail.token", token);
+			}
+			LOGGER.info("Connection to the remote SMTP server ---> "
+					+ smtpProperty.getUsername() + ":"
+					+ smtpProperty.getPassword() + "@" + smtpProperty.getHost()
+					+ ":" + smtpProperty.getPort());
 			return properties;
-	        
+
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 403) {
-				//TODO
+				// TODO
 				// PAS DE COMPTE ou MAUVAIS ADRESSE/MDP
 				LOGGER.error("Error 403 (get smtp property)");
 			} else {
@@ -433,4 +598,52 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 		return properties;
 	}
 
+	// Method to get the token thanks to our json secret. The user need to agree
+	// and copy-paste a link into the terminal.
+	private Gmail getService(String token) throws IOException {
+
+		// Link to give us rights to send mails
+		// final String SCOPE = "https://www.googleapis.com/auth/gmail.compose";
+		// Path to the client_secret.json file downloaded from the Developer
+		// Console
+		 final String CLIENT_SECRET_PATH = "cloud/client_secret.json";
+		final String APP_NAME = "Snapmail";
+
+		// Initialization
+		HttpTransport httpTransport = new NetHttpTransport();
+		JsonFactory jsonFactory = new JacksonFactory();
+		
+        GoogleCredential credential = createCredentialWithRefreshToken(
+                httpTransport, jsonFactory, new TokenResponse().setRefreshToken(token));
+            credential.getAccessToken();
+
+
+		
+		// Create a new authorized Gmail API client and return it.
+		Gmail service = new Gmail.Builder(httpTransport, jsonFactory,
+				credential).setApplicationName(APP_NAME).build();
+		return service;
+	}
+
+	// Method to convert the MimeMessage to a "Google" Message wich can be sent
+	// via Gmail API
+	private static com.google.api.services.gmail.model.Message createMessageWithEmail(
+			MimeMessage email) throws MessagingException, IOException {
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		email.writeTo(bytes);
+		// Encode the mail in base64 for the Gmail API
+		String encodedEmail = Base64.encodeBase64URLSafeString(bytes
+				.toByteArray());
+		com.google.api.services.gmail.model.Message message = new com.google.api.services.gmail.model.Message();
+		message.setRaw(encodedEmail);
+		return message;
+	}
+	public static GoogleCredential createCredentialWithRefreshToken(HttpTransport transport,
+            JsonFactory jsonFactory, TokenResponse tokenResponse) {
+       return new GoogleCredential.Builder().setTransport(transport)
+              .setJsonFactory(jsonFactory)
+              .setClientSecrets("547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com", "JG3LiwiX2gA362mTSGEJ5eC8")
+              .build()
+              .setFromTokenResponse(tokenResponse);
+        }
 }

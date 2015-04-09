@@ -140,8 +140,12 @@ public <S extends UserRepositoryObject> S update (S entity){
 				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
+			if (entity.getSmtpToken() != null) {
+				newDocument.append("$set",new BasicDBObject().append("smtpToken", entity.getSmtpToken()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
+				dbBox.update(searchQuery, newDocument);
+			}
 			
-
 			mongoClient.close();
 		} catch (UnknownHostException e) {
 			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);

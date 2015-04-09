@@ -44,7 +44,7 @@ public class Main {
 		sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
 		SimpleMessageListenerImpl mylistener = new SimpleMessageListenerImpl();
-        SMTPServer smtpServer = new SmtpServer(new SimpleMessageListenerAdapter(mylistener), sslContext);
+        SMTPServer smtpServer = new com.enseirb.telecom.dngroup.snapmail.SmtpServer(new SimpleMessageListenerAdapter(mylistener), sslContext);
     	
         //smtpServer.setRequireTLS(true);
         smtpServer.setEnableTLS(true);//allow secure/insecure Connections, the client choose.

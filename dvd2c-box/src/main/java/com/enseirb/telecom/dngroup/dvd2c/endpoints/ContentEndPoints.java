@@ -117,7 +117,9 @@ public class ContentEndPoints {
 			@FormDataParam("file") FormDataContentDisposition fileDetail,
 			@FormDataParam("file") FormDataBodyPart body)
 			throws URISyntaxException, IOException {
+		
 		String fileName = fileDetail.getFileName();
+		LOGGER.info("New file {}",fileDetail);
 		String extension = Files.getFileExtension(fileName);
 		MediaType fileMediaType = body.getMediaType();
 		String fileTypeTemp = fileMediaType.toString();
@@ -156,7 +158,7 @@ public class ContentEndPoints {
 									InputStream uploadedInputStream,
 									@HeaderParam("Content-Disposition") String contentDisposition ) throws URISyntaxException, IOException {
 		
-		LOGGER.debug("New local upload, Content-Disposition : "+contentDisposition);
+		LOGGER.debug("New upload, Content-Disposition : "+contentDisposition);
 		try {
 			Content content = uManager.createContent(userID, uploadedInputStream, contentDisposition);
 			content.setLink(CliConfSingleton.publicAddr + content.getLink());
