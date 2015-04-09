@@ -55,8 +55,10 @@ angular.module('myApp.myprofile', ['ngRoute'])
                  console.log("Succeed");
                  var data_json = angular.toJson(data);
                  var jsonobj=JSON.parse(data_json);
+                 
+                 user.code = "";
                  user.smtp.token=jsonobj.refresh_token;
-                 user.code="";
+
                  user.putSmtp(user.smtp);
                  user.class = "btn-success";
              })
@@ -102,6 +104,14 @@ angular.module('myApp.myprofile', ['ngRoute'])
                 	user.smtpManualSettings = true;
                 	user.smtpTab = 2;
                 }
+                else
+                	user.smtp = {
+                		host: "",
+                		port: "",
+                		username: "",
+                		password: "",
+                		token: ""
+                };
             })
             .error(function (data, status, headers, config) {
                 console.log("Failed while getting User Informations");
