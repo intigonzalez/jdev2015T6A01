@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -15,7 +16,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
@@ -26,7 +26,8 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 @Path("app/account")
 public class UserEndPoints {
 
-	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo("CentralMediaHome"));
+	@Inject
+	AccountService uManager;
 
 	@GET
 	@Path("{userID}")
@@ -53,6 +54,7 @@ public class UserEndPoints {
 
 	@GET
 	@Path("boxIX/{boxID}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<User> getUserFromBoxID(@PathParam("boxID") String boxID) {
 
 		return uManager.getUserFromBoxID(boxID);

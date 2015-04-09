@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -31,10 +32,10 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 @Path("app/box")
 public class BoxEndPoints {
 
-	BoxService boxManager = new BoxServiceImpl(new BoxRepositoryMongo(
-			"CentralMediaHome"));
-	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo(
-			"CentralMediaHome"));
+	@Inject
+	BoxService boxManager;
+	@Inject
+	AccountService uManager ;
 
 	/**
 	 * Get List of box

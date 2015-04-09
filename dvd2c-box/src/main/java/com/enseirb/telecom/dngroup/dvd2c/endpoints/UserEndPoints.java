@@ -62,7 +62,7 @@ public class UserEndPoints extends HttpServlet {
 	 */
 	@POST()
 	@Path("Connect")
-	@Produces({ "application/json"})// resultat en JSON
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })// resultat en JSON
 	public Response getConnect(User user){ //FormParam ce sont les parametres d'un formulaire. 
 		String userID = user.getUserID().toLowerCase();
 		
@@ -120,7 +120,7 @@ public class UserEndPoints extends HttpServlet {
 	 * @throws URISyntaxException
 	 */
 	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response createUser(User user) throws URISyntaxException {
 		if (uManager.userExistOnLocal(user.getUserID()) == false) {
 			user.setBoxID(CliConfSingleton.boxID);

@@ -55,10 +55,7 @@
 			<artifactId>jewelcli</artifactId>
 			<version>0.8.9</version>
 		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.ext</groupId>
-			<artifactId>jersey-spring3</artifactId>
-		</dependency>
+		
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>

@@ -59,15 +59,13 @@ public class BoxServiceImpl implements BoxService {
 	}
 
 	public Box getBoxOnLocal(String boxID) throws NoSuchBoxException {
-		
-		Box box = null;
-		box = boxDatabase.findOne(boxID).toBox();
+		BoxRepositoryObject box = boxDatabase.findOne(boxID);
 		if (box == null) {
 			LOGGER.debug("No Box Found : {}",boxID);
 			throw new NoSuchBoxException();
 		}
 		LOGGER.debug("Box Found : {}",box.getBoxID());
-		return box;
+		return box.toBox();
 	}
 
 	public Box createBoxOnServer(Box box){
