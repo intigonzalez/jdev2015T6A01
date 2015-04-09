@@ -427,6 +427,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener, Usernam
 				LOGGER.error("Error 403 (get smtp property)");
 			} else {
 				throw e;
+				
 			}
 		}
 		return properties;
