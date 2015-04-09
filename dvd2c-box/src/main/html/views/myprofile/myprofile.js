@@ -36,7 +36,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
         
         this.openOauth = function () {
      	   var url="https://accounts.google.com/o/oauth2/auth?access_type=offline&approval_prompt=force&client_id=547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=https://www.googleapis.com/auth/gmail.compose";
-         	window.open(url);
+         	window.open(url, "_blank", "toolbar=no, scrollbars=yes, resizable=yes");
          };
          
          this.auth2token = function (value){
