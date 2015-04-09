@@ -22,7 +22,6 @@ import org.subethamail.smtp.auth.UsernamePasswordValidator;
 import org.subethamail.smtp.helper.*;
 
 import java.io.File;
-
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -50,6 +49,8 @@ import org.subethamail.smtp.MessageContext;
 import org.subethamail.smtp.TooMuchDataException;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
+import com.philvarner.clamavj.ClamScan;
+import com.philvarner.clamavj.ScanResult;
 
 public class SimpleMessageListenerImpl implements SimpleMessageListener, UsernamePasswordValidator{
 	private final static Logger LOGGER = LoggerFactory.getLogger(SimpleMessageListener.class);
