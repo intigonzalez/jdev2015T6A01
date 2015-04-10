@@ -45,7 +45,7 @@ angular.module('myApp.mypictures', ['ngRoute', 'ui.bootstrap'])
         };
         this.generateLink = function(content) {
              if (content.status == "success") {
-                return content.link+"/"+content.name;
+                return content.link+"/original.jpg";
             }
             else {
                 return "";
