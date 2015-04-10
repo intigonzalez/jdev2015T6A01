@@ -83,14 +83,11 @@
     </dependency>
   </dependencies>
   <build>
-<<<<<<< Temporary merge branch 1
     <resources>
         <resource>
           <directory>src/main/java/com/enseirb/telecom/dngroup/snapmail</directory>
     </resource>
 </resources>
-=======
->>>>>>> Temporary merge branch 2
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
