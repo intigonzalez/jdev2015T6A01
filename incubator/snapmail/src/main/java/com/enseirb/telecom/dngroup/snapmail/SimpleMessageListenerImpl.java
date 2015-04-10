@@ -52,7 +52,6 @@ import org.subethamail.smtp.TooMuchDataException;
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.philvarner.clamavj.ClamScan;
 import com.philvarner.clamavj.ScanResult;
-
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants;
@@ -128,13 +127,6 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			// Creation of a new MIME Message
 			MimeMessage newMessage;
 			Multipart multiPart = new MimeMultipart();
-
-//			try {
-//				// The mail received as a stream of data by the app is stored
-//				// into the MIME message
-//				File mimeFile = saveFile("snapmail", data);
-//				SharedFileInputStream fis = new SharedFileInputStream(mimeFile);
-//				Multipart multiPart = new MimeMultipart();
 			
 			try {
 				// The mail received as a stream of data by the app is stored into the MIME message
@@ -580,7 +572,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			Client client = ClientBuilder.newClient(cc);
 			client.register(feature).register(MultiPartFeature.class);
 
-			WebTarget target = client.target("http://localhost:9998/api/app/"
+			WebTarget target = client.target("http://"+CliConfSingleton.conf.getMediaHomeHost()+":"+CliConfSingleton.conf.getMediaHomePort()+"/api/app/"
 					+ this.username + "/content");
 
 			LOGGER.info("Filename : " + filename);
@@ -637,7 +629,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			client.register(feature);
 
 			WebTarget target = client
-					.target("http://localhost/api/app/account/" + this.username
+					.target("http://"+CliConfSingleton.conf.getMediaHomeHost()+":"+CliConfSingleton.conf.getMediaHomePort()+"/api/app/account/" + this.username
 							+ "/smtp");
 			SmtpProperty smtpProperty = target.request(
 					MediaType.APPLICATION_XML_TYPE).get(SmtpProperty.class);
