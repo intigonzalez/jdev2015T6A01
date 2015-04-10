@@ -123,9 +123,49 @@
       </plugin>
     </plugins>
   </build>
+		<resources>
+			<resource>
+				<directory>src/main/java/com/enseirb/telecom/dngroup/snapmail</directory>
+			</resource>
+		</resources>
 
-  <scm>
-    <connection>scm:git:ssh://git@github.com/dngroup/Media-home.git</connection>
-    <tag>HEAD</tag>
-  </scm>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<inherited>true</inherited>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>com.enseirb.telecom.dngroup.snapmail.Main</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<scm>
+		<connection>scm:git:ssh://git@github.com/dngroup/Media-home.git</connection>
+		<tag>HEAD</tag>
+	</scm>
 </project>

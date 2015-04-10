@@ -180,3 +180,9 @@ video {
 		width: auto;
 	}
 }
+
+picture img
+{
+	display: block;
+	margin: 0 auto;
+}
