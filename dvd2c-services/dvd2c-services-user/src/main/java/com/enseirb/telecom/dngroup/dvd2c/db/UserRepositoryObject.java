@@ -1,31 +1,61 @@
 package com.enseirb.telecom.dngroup.dvd2c.db;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.couchbase.core.mapping.Document;
+import org.springframework.data.couchbase.core.mapping.Field;
+
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-
-@JsonIgnoreProperties(ignoreUnknown=true)
+@Document
 public class UserRepositoryObject {
+	@Id
 	protected String userID;
+	@Field
 	protected String boxID;
+	@Field
 	protected String firstname;
+	@Field
 	protected String surname;
+	@Field
 	protected String password;
+	@Field
 	protected String pubKey;
+	@Field
 	protected String privateKey;
 	/* SnapMail add-on */
+	@Field
 	protected String smtpHost;
+	@Field
 	protected String smtpPort;
+	@Field
 	protected String smtpUsername;
+	@Field
 	protected String smtpPassword;
+	@Field
 	protected String smtpToken;
-	public UserRepositoryObject(){
-		
+
+	@Field
+	protected BoxRepositoryObject box;
+
+	public BoxRepositoryObject getBox() {
+		return box;
 	}
-	
-	public UserRepositoryObject(String userID,String boxID, String firstname, String surname, String password, String pubKey, String privateKey, String smtpHost, String smtpPort, String smtpUsername, String smtpPassword, String smtpToken) {
+
+	public void setBox(BoxRepositoryObject box) {
+		this.box = box;
+	}
+
+	public UserRepositoryObject() {
+
+	}
+
+	public UserRepositoryObject(String userID, String boxID, String firstname,
+			String surname, String password, String pubKey, String privateKey,
+			String smtpHost, String smtpPort, String smtpUsername,
+			String smtpPassword, String smtpToken) {
 		super();
-		this.boxID=boxID;
+		this.boxID = boxID;
 		this.userID = userID;
 		this.firstname = firstname;
 		this.surname = surname;
@@ -39,10 +69,10 @@ public class UserRepositoryObject {
 		this.smtpPassword = smtpPassword;
 		this.smtpToken = smtpToken;
 	}
-	
+
 	public UserRepositoryObject(User user) {
 		this.userID = user.getUserID();
-		this.boxID=user.getBoxID();
+		this.boxID = user.getBoxID();
 		this.firstname = user.getFirstname();
 		this.surname = user.getSurname();
 		this.password = user.getPassword();
@@ -99,7 +129,7 @@ public class UserRepositoryObject {
 	public void setUserID(String userID) {
 		this.userID = userID;
 	}
-	
+
 	public User toUser() {
 		User user = new User();
 		user.setUserID(userID);

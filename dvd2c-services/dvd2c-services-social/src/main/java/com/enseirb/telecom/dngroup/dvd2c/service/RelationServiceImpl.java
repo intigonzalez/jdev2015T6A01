@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryObject;
+import com.enseirb.telecom.dngroup.dvd2c.db.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryObject;
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
@@ -38,7 +39,7 @@ public class RelationServiceImpl implements RelationService {
 	RelationshipRepository relationshipDatabase;
 	
 	@Inject
-	CrudRepository<UserRepositoryObject, String> userDatabase;
+	UserRepository userRepo;
 
 	public boolean RelationExist(String UserID, String actorID) {
 		return relationshipDatabase.exists(UserID, actorID);
@@ -88,7 +89,7 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public User getMe(String userID) {
-		UserRepositoryObject user = userDatabase.findOne(userID);
+		UserRepositoryObject user = userRepo.findOne(userID);
 
 		if (user == null) {
 			return null;
@@ -175,9 +176,9 @@ public class RelationServiceImpl implements RelationService {
 		relation.setAprouve(1);
 
 		// Prepare the relation for the "UserAsked"
-		UserRepositoryObject uro = userDatabase.findOne(userID);
+		UserRepositoryObject uro = userRepo.findOne(userID);
 		if (uro != null) {
-			User userWhoAsked = userDatabase.findOne(userID).toUser();
+			User userWhoAsked = userRepo.findOne(userID).toUser();
 			Relation relation2 = new Relation();
 			relation2.setActorID(userWhoAsked.getUserID());
 			relation2.setFirstname(userWhoAsked.getFirstname());
@@ -187,7 +188,7 @@ public class RelationServiceImpl implements RelationService {
 			relation2.setUnixTime(relation.getUnixTime());
 			relation2.getRoleID().add(0);
 			if (!fromBox) {
-				if (userDatabase.exists(relation.getActorID())) {
+				if (userRepo.exists(relation.getActorID())) {
 					relationshipDatabase.save(new RelationshipRepositoryObject(
 							relation.getActorID(), relation2));
 				} else {
@@ -232,7 +233,7 @@ public class RelationServiceImpl implements RelationService {
 				&& relation.getAprouve() == 3) {
 			relationIntoDb.setAprouve(3);
 
-			if (userDatabase.exists(relation.getActorID())) {
+			if (userRepo.exists(relation.getActorID())) {
 				Relation relation2 = relationshipDatabase.findOne(
 						relation.getActorID(), userID).toRelation();
 				relation2.setAprouve(3);
@@ -313,7 +314,7 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public void deleteRelationBox(String userId, String relationId) {
-		if (userDatabase.exists(userId)) {
+		if (userRepo.exists(userId)) {
 			relationshipDatabase.delete(userId, relationId);
 		}
 
@@ -321,7 +322,7 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public void deleteRelation(String userID, String actorID) {
-		if (userDatabase.exists(actorID)) {
+		if (userRepo.exists(actorID)) {
 			relationshipDatabase.delete(actorID, userID);
 
 		} else {

@@ -439,29 +439,6 @@ public class UserRepositoryImplMongo implements UserRepository {
 
 	}
 
-	@Override
-	public BoxRepositoryObject findBoxFromUserID(String userID) {
-		UserRepositoryImplMongo userRepositoryMongo = this;
-		BoxRepositoryMongo boxRepositoryMongo = new BoxRepositoryMongo(dbName);
 
-		UserRepositoryObject userRepositoryObject = userRepositoryMongo
-				.findOne(userID);
-		if (userRepositoryObject == null) {
-			LOGGER.error("userRepositoryObject is null");
-			return null;
-		}
-
-		User user = userRepositoryObject.toUser();
-		String boxID = user.getBoxID();
-		if (boxID == null) {
-
-			LOGGER.error("The user box ID is null");
-			return null;
-		}
-		BoxRepositoryObject boxRepositoryObject = boxRepositoryMongo
-				.findOne(boxID);
-
-		return boxRepositoryObject;
-	}
 
 }

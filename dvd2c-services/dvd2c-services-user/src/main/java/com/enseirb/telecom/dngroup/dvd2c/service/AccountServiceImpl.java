@@ -26,7 +26,7 @@ public class AccountServiceImpl implements AccountService {
 			.getLogger(AccountServiceImpl.class);
 
 	@Inject
-	protected UserRepository userDatabase;
+	protected UserRepository userRepository;
 
 	@Inject
 	protected RequestUserService requetUserService;
@@ -56,7 +56,7 @@ public class AccountServiceImpl implements AccountService {
 	 */
 	@Override
 	public boolean userExistOnLocal(String userID) {
-		boolean exist = userDatabase.exists(userID);
+		boolean exist = userRepository.exists(userID);
 		return exist;
 	}
 
@@ -69,7 +69,7 @@ public class AccountServiceImpl implements AccountService {
 	 */
 	@Override
 	public User getUserOnLocal(String email) {
-		UserRepositoryObject user = userDatabase.findOne(email);
+		UserRepositoryObject user = userRepository.findOne(email);
 		if (user == null) {
 			return null;
 		} else {
@@ -98,7 +98,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public List<User> getUserFromName(String firstname) {
 		// DB: need to change
-		Iterable<UserRepositoryObject> userIterable = userDatabase.findAll();
+		Iterable<UserRepositoryObject> userIterable = userRepository.findAll();
 		UserRepositoryObject userRepo = null;
 		List<User> listUser = new ArrayList<User>();
 
@@ -124,7 +124,7 @@ public class AccountServiceImpl implements AccountService {
 
 	public List<User> getUserFromBoxID(String boxID) {
 		// DB: need to change
-		Iterable<UserRepositoryObject> userIterable = userDatabase.findAll();
+		Iterable<UserRepositoryObject> userIterable = userRepository.findAll();
 		UserRepositoryObject userRepo = null;
 		List<User> listUser = new ArrayList<User>();
 
@@ -146,26 +146,29 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public User createUserOnServer(User user) {
 
-		try {
-			user.setBoxID(CliConfSingleton.boxID);
-
-			requetUserService.createUserORH(user);
-			return createUserOnLocal(user);
-		} catch (IOException e) {
-			LOGGER.debug("error during creating user on server : {} ",
-					user.getUserID(), e);
-		} catch (SuchUserException e) {
-			LOGGER.debug("User already existing {}", user.getUserID());
-		}
-
-		return user;
+		// Spring: fixme
+		// try {
+		// user.setBoxID(CliConfSingleton.boxID);
+		//
+		// requetUserService.createUserORH(user);
+		// return createUserOnLocal(user);
+		// } catch (IOException e) {
+		// LOGGER.debug("error during creating user on server : {} ",
+		// user.getUserID(), e);
+		// } catch (SuchUserException e) {
+		// LOGGER.debug("User already existing {}", user.getUserID());
+		// }
+		//
+		// return user;
+		user.setBoxID(CliConfSingleton.boxID);
+		return createUserOnLocal(user);
 	}
 
 	@Override
 	public User createUserOnLocal(User user) {
 
-		User u = userDatabase.save(new UserRepositoryObject(user)).toUser();
-		return u;
+		User u = userRepository.save(new UserRepositoryObject(user)).toUser();
+		return u;	
 	}
 
 	@Override
@@ -184,7 +187,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public void saveUserOnLocal(User user) {
-		userDatabase.save(new UserRepositoryObject(user));
+		userRepository.save(new UserRepositoryObject(user));
 	}
 
 	@Override
@@ -201,12 +204,12 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	public void deleteUserOnLocal(String userID) {
-		this.userDatabase.delete(userID);
+		this.userRepository.delete(userID);
 	}
 
 	@Override
 	public Box getBox(String userID) {
-		return this.userDatabase.findBoxFromUserID(userID).toBox();
+		return this.userRepository.findOne(userID).getBox().toBox();
 	}
 
 	@Override

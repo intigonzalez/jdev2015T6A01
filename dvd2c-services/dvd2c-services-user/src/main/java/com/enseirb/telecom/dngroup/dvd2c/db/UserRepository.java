@@ -2,16 +2,8 @@ package com.enseirb.telecom.dngroup.dvd2c.db;
 
 //import java.io.Serializable;
 
-public interface UserRepository extends
-		CrudRepository<UserRepositoryObject, String> {
-
-	// void findBoxFromBoxID(String boxID);
-
-	/**
-	 * get a box of user
-	 * @param userID the user to get box
-	 * @return the box object
-	 */
-	BoxRepositoryObject findBoxFromUserID(String userID);
+public interface UserRepository
+		extends
+		org.springframework.data.repository.CrudRepository<UserRepositoryObject, String> {
 
 }

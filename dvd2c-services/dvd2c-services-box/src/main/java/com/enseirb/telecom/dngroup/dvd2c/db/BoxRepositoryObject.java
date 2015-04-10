@@ -3,45 +3,54 @@ package com.enseirb.telecom.dngroup.dvd2c.db;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.couchbase.core.mapping.Document;
+import org.springframework.data.couchbase.core.mapping.Field;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
+@Document
 public class BoxRepositoryObject {
 
-	
+	@Id
 	String boxID;
+
+	@Field
 	String ip;
+	@Field
 	String pubKey;
+	@Field
 	String privateKey;
+	@Field
 	Integer TTL;
-	List<User> user;
 
 	public BoxRepositoryObject() {
 
 	}
 
-	public BoxRepositoryObject(ObjectId _id, String boxID, String ip, String pubKey, String privateKey, Integer tTL, List<User> user) {
+	public BoxRepositoryObject(ObjectId _id, String boxID, String ip,
+			String pubKey, String privateKey, Integer tTL, List<User> user) {
 		super();
-//		this._id = _id;
+		// this._id = _id;
 		this.boxID = boxID;
 		this.ip = ip;
 		this.pubKey = pubKey;
 		this.privateKey = privateKey;
 		this.TTL = tTL;
-		this.user = user;
+
 	}
-	public BoxRepositoryObject(String boxID, String ip, String pubKey, String privateKey, Integer tTL, List<User> user) {
+
+	public BoxRepositoryObject(String boxID, String ip, String pubKey,
+			String privateKey, Integer tTL, List<User> user) {
 		super();
-//		this._id = _id;
+		// this._id = _id;
 		this.boxID = boxID;
 		this.ip = ip;
 		this.pubKey = pubKey;
 		this.privateKey = privateKey;
 		this.TTL = tTL;
-		this.user = user;
 	}
 
 	public BoxRepositoryObject(Box box) {
@@ -50,7 +59,6 @@ public class BoxRepositoryObject {
 		this.pubKey = box.getPubKey();
 		this.privateKey = box.getPrivateKey();
 		this.TTL = box.getTTL();
-		this.user = box.getUser();
 
 	}
 
@@ -61,7 +69,6 @@ public class BoxRepositoryObject {
 		box.setPubKey(pubKey);
 		box.setPrivateKey(privateKey);
 		box.setTTL(TTL);
-		box.getUser().addAll(user);
 		return box;
 	}
 
@@ -88,7 +95,7 @@ public class BoxRepositoryObject {
 	public String getPrivateKey() {
 		return privateKey;
 	}
-	
+
 	public void setPubKey(String pubKey) {
 		this.pubKey = pubKey;
 	}
@@ -96,8 +103,7 @@ public class BoxRepositoryObject {
 	public void setPrivateKey(String privateKey) {
 		this.privateKey = privateKey;
 	}
-	
-	
+
 	public Integer getTTL() {
 		return TTL;
 	}
@@ -106,11 +112,4 @@ public class BoxRepositoryObject {
 		TTL = tTL;
 	}
 
-	public List<User> getUser() {
-		return user;
-	}
-
-	public void setUser(List<User> user) {
-		this.user = user;
-	}
 }

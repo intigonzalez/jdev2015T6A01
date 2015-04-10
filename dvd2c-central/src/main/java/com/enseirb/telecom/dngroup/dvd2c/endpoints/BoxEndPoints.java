@@ -18,15 +18,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryMongo;
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
-import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
-import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
-import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
-import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
+import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
+import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
 
 // The Java class will be hosted at the URI path "/myresource"
 @Path("app/box")

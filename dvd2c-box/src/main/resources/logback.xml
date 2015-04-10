@@ -12,7 +12,12 @@
 	</appender>
 
 	<logger name="com.enseirb.telecom.s9" level="DEBUG">
-		
+
+
+	</logger>
+	<logger name="com.couchbase" level="WARNING">
+	    
+	    
 	</logger>
 
 	<root level="INFO">
