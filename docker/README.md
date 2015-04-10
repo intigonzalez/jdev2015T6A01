@@ -20,7 +20,7 @@ https://docs.docker.com/compose/install/
 	chmod +x /usr/local/bin/docker-compose
 
 #### use composer
-
+ 
 	cd docker/composerHub
 	sudo docker-compose up
 	
@@ -120,3 +120,44 @@ _no support for this part_
 	-p 9999:9999 \
 	--link db:db \
 	central # java -jar dvd2c-central.jar --db-hostname db --db-port 27017
+
+	
+## automoatique reload docker
+
+
+add your root shh-key on your github
+
+	sudo su
+	ssh-keygen
+	ctrl + D
+	
+creat and edit this file
+	
+	nano ~/reload.sh
+	
+copy this
+
+	#!/bin/bash
+
+	cd /home/user/Media-home
+	git pull
+	cd docker/composer/composerBoxHub
+	sudo docker stop composerboxhub_box_1 composerboxhub_worker_1 composerboxhub_db_1
+	sudo docker-compose rm --force
+	sudo docker-compose pull
+	sudo docker-compose up
+
+run
+
+	chmod +x ~/reload.sh
+	
+create cron
+	
+	sudo crontab -e
+	
+add this and change "user" by your user name
+
+	0 4 * * * /home/user/reload.sh
+	
+
+	
