@@ -12,6 +12,8 @@ box:
    - worker
 db:
   image: mongo
+  ports:
+   - "27017:27017"
   volumes: 
    - /data/db:/data/db
 worker:
@@ -19,5 +21,10 @@ worker:
   volumes:
    - /var/www/html:/var/www/html
    - /tmp:/tmp
-
-
+snapmail:
+  build: ../../snapmail
+  command: java -jar snapmail.jar
+  ports:
+   - "25004:25004"
+  links:
+   - box

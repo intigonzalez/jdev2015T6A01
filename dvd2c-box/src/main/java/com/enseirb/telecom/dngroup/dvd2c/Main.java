@@ -105,8 +105,7 @@ public class Main {
 
 					HttpServer httpServer = startServer();
 
-					// httpServer.getServerConfiguration().addHttpHandler(new
-					// StaticHttpHandler("/var/www"), "/content");
+
 					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/videos"), "/videos");
 					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/pictures"), "/pictures");
 					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/cloud"), "/cloud");
