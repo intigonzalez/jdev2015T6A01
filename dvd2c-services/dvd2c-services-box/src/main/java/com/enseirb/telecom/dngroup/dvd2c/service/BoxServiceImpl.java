@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
+import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
@@ -27,7 +28,9 @@ public class BoxServiceImpl implements BoxService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(BoxServiceImpl.class);
 	@Inject
-	CrudRepository<BoxRepositoryObject, String> boxDatabase;
+	BoxRepository  boxDatabase;
+	
+	
 	RequestBoxService requetBoxService = new RequestBoxServiceImpl(
 			CliConfSingleton.centralURL
 					+ "/api/app/box/");

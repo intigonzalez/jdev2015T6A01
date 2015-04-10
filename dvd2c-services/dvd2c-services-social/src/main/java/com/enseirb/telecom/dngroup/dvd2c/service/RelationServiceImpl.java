@@ -42,7 +42,7 @@ public class RelationServiceImpl implements RelationService {
 	UserRepository userRepo;
 
 	public boolean RelationExist(String UserID, String actorID) {
-		return relationshipDatabase.exists(UserID, actorID);
+		return relationshipDatabase.exists(UserID+actorID);
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class RelationServiceImpl implements RelationService {
 
 					User relationUpdate = rrs.get(userID, rro.getActorID());
 					Relation relationIntoDb = relationshipDatabase.findOne(
-							userID, relationUpdate.getUserID()).toRelation();
+							userID + relationUpdate.getUserID()).toRelation();
 					relationIntoDb.setFirstname(relationUpdate.getFirstname());
 					relationIntoDb.setSurname(relationUpdate.getSurname());
 					relationshipDatabase.save(new RelationshipRepositoryObject(
@@ -79,7 +79,7 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public Relation getRelation(String userID, String actorID) {
 		RelationshipRepositoryObject relation = relationshipDatabase.findOne(
-				userID, actorID);
+				userID+ actorID);
 		if (relation == null) {
 			return null;
 		} else {
@@ -226,7 +226,7 @@ public class RelationServiceImpl implements RelationService {
 	public void saveRelation(String userID, Relation relation) {
 		// Here, the user is only allowed to edit the approve value if the
 		// current value is = 2
-		Relation relationIntoDb = relationshipDatabase.findOne(userID,
+		Relation relationIntoDb = relationshipDatabase.findOne(userID+
 				relation.getActorID()).toRelation();
 		if (relationIntoDb.getAprouve() != relation.getAprouve()
 				&& relationIntoDb.getAprouve() == 2
@@ -235,7 +235,7 @@ public class RelationServiceImpl implements RelationService {
 
 			if (userRepo.exists(relation.getActorID())) {
 				Relation relation2 = relationshipDatabase.findOne(
-						relation.getActorID(), userID).toRelation();
+						relation.getActorID()+ userID).toRelation();
 				relation2.setAprouve(3);
 				relationshipDatabase.save(new RelationshipRepositoryObject(
 						relation.getActorID(), relation2));
@@ -273,7 +273,7 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public void setAprouveBox(String userId, String relationId) {
-		Relation relationIntoDb = relationshipDatabase.findOne(userId,
+		Relation relationIntoDb = relationshipDatabase.findOne(userId+
 				relationId).toRelation();
 		if (relationIntoDb.getAprouve() == 1) {
 			relationIntoDb.setAprouve(3);
@@ -315,7 +315,7 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public void deleteRelationBox(String userId, String relationId) {
 		if (userRepo.exists(userId)) {
-			relationshipDatabase.delete(userId, relationId);
+			relationshipDatabase.delete(userId+ relationId);
 		}
 
 	}
@@ -323,7 +323,7 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public void deleteRelation(String userID, String actorID) {
 		if (userRepo.exists(actorID)) {
-			relationshipDatabase.delete(actorID, userID);
+			relationshipDatabase.delete(actorID+ userID);
 
 		} else {
 			RequestRelationService rss = new RequestRelationServiceImpl();
@@ -344,7 +344,7 @@ public class RelationServiceImpl implements RelationService {
 			}
 			rss.close();
 		}
-		relationshipDatabase.delete(userID, actorID);
+		relationshipDatabase.delete(userID+ actorID);
 
 	}
 

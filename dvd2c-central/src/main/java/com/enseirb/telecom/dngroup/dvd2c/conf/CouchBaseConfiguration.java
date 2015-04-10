@@ -7,10 +7,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.couchbase.config.AbstractCouchbaseConfiguration;
 import org.springframework.data.couchbase.repository.config.EnableCouchbaseRepositories;
 
+
+
 @Configuration
 @EnableCouchbaseRepositories(basePackages = { "com.enseirb.telecom.dngroup.dvd2c.db" })
 public class CouchBaseConfiguration extends AbstractCouchbaseConfiguration {
 
+	
 	@Override
 	protected List<String> bootstrapHosts() {
 		return Collections.singletonList("127.0.0.1");
@@ -18,8 +21,8 @@ public class CouchBaseConfiguration extends AbstractCouchbaseConfiguration {
 
 	@Override
 	protected String getBucketName() {
-		
-		return "mediahome";
+
+		return "central";
 	}
 
 	@Override

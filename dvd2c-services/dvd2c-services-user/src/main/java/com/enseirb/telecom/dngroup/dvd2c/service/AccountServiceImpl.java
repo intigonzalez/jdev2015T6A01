@@ -146,22 +146,20 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public User createUserOnServer(User user) {
 
-		// Spring: fixme
-		// try {
-		// user.setBoxID(CliConfSingleton.boxID);
-		//
-		// requetUserService.createUserORH(user);
-		// return createUserOnLocal(user);
-		// } catch (IOException e) {
-		// LOGGER.debug("error during creating user on server : {} ",
-		// user.getUserID(), e);
-		// } catch (SuchUserException e) {
-		// LOGGER.debug("User already existing {}", user.getUserID());
-		// }
-		//
-		// return user;
-		user.setBoxID(CliConfSingleton.boxID);
-		return createUserOnLocal(user);
+//		 Spring: fixme
+		 try {
+		 user.setBoxID(CliConfSingleton.boxID);
+		
+		 requetUserService.createUserORH(user);
+		 return createUserOnLocal(user);
+		 } catch (IOException e) {
+		 LOGGER.debug("error during creating user on server : {} ",
+		 user.getUserID(), e);
+		 } catch (SuchUserException e) {
+		 LOGGER.debug("User already existing {}", user.getUserID());
+		 }
+		
+		 return user;
 	}
 
 	@Override
