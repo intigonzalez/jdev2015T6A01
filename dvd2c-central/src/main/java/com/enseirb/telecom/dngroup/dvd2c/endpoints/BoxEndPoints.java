@@ -111,7 +111,7 @@ public class BoxEndPoints {
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(box.getBoxID())).build();
 		} else {
-			return Response.status(409).build();
+			return Response.status(404).build();
 		}
 	}
 
@@ -129,7 +129,7 @@ public class BoxEndPoints {
 			// NHE that the answer we expect from a post (see location header)
 			return Response.accepted().build();
 		} else {
-			return Response.status(409).build();
+			return Response.status(404).build();
 		}
 
 	}

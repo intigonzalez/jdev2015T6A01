@@ -68,10 +68,10 @@ public class AccountServiceImpl implements AccountService {
 	 * .String)
 	 */
 	@Override
-	public User getUserOnLocal(String email) {
+	public User getUserOnLocal(String email) throws NoSuchUserException {
 		UserRepositoryObject user = userRepository.findOne(email);
 		if (user == null) {
-			return null;
+			throw new NoSuchUserException();
 		} else {
 			return user.toUser();
 		}
@@ -98,6 +98,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public List<User> getUserFromName(String firstname) {
 		// DB: need to change
+		UserRepositoryObject userIterable1 = userRepository.findOne("da");
 		Iterable<UserRepositoryObject> userIterable = userRepository.findAll();
 		UserRepositoryObject userRepo = null;
 		List<User> listUser = new ArrayList<User>();
@@ -146,27 +147,27 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public User createUserOnServer(User user) {
 
-//		 Spring: fixme
-		 try {
-		 user.setBoxID(CliConfSingleton.boxID);
-		
-		 requetUserService.createUserORH(user);
-		 return createUserOnLocal(user);
-		 } catch (IOException e) {
-		 LOGGER.debug("error during creating user on server : {} ",
-		 user.getUserID(), e);
-		 } catch (SuchUserException e) {
-		 LOGGER.debug("User already existing {}", user.getUserID());
-		 }
-		
-		 return user;
+		// Spring: fixme
+		try {
+			user.setBoxID(CliConfSingleton.boxID);
+
+			requetUserService.createUserORH(user);
+			return createUserOnLocal(user);
+		} catch (IOException e) {
+			LOGGER.debug("error during creating user on server : {} ",
+					user.getUserID(), e);
+		} catch (SuchUserException e) {
+			LOGGER.debug("User already existing {}", user.getUserID());
+		}
+
+		return user;
 	}
 
 	@Override
 	public User createUserOnLocal(User user) {
 
 		User u = userRepository.save(new UserRepositoryObject(user)).toUser();
-		return u;	
+		return u;
 	}
 
 	@Override
@@ -206,8 +207,17 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public Box getBox(String userID) {
-		return this.userRepository.findOne(userID).getBox().toBox();
+	public Box getBox(String userID) throws NoSuchUserException {
+
+		UserRepositoryObject userRepositoryObject;
+		try {
+			userRepositoryObject = this.userRepository.findOne(userID);
+		} catch (Exception e) {
+			throw new NoSuchUserException();
+		}
+
+		return userRepositoryObject.getBox().toBox();
+
 	}
 
 	@Override
@@ -244,7 +254,8 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public boolean getUserVerification(String userID, String password) {
+	public boolean getUserVerification(String userID, String password)
+			throws NoSuchUserException {
 		if (password.equals(getUserOnLocal(userID).getPassword())) {
 			return true;
 		}

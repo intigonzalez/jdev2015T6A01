@@ -44,10 +44,12 @@ import java.io.IOException;
 import java.security.Principal;
 
 import javax.inject.Inject;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
 import org.glassfish.grizzly.http.server.GrizzlyPrincipal;
@@ -56,6 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryImplMongo;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
 import com.google.common.io.BaseEncoding;
@@ -90,8 +93,12 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
 							.decode(auth.substring(6)))).split(":");
 					final String userName = authData[0];
 					final String password = authData[1];
-					if (uManager.getUserVerification(userName, password)) {
-						return new GrizzlyPrincipal(userName);
+					try {
+						if (uManager.getUserVerification(userName, password)) {
+							return new GrizzlyPrincipal(userName);
+						}
+					} catch (NoSuchUserException e) {
+						throw new WebApplicationException(Status.NOT_FOUND);
 					}
 					return null;
 				}
@@ -122,9 +129,13 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
 							.get("authentication").getValue();
 					LOGGER.debug("{}", test[2]);
 					// User is authenticated and access to his own page
-					if (uManager.getUserOnLocal(userConnected) != null
-							&& userConnected.equals(test[2])) {
-						auth = "account";
+					try {
+						if (uManager.getUserOnLocal(userConnected) != null
+								&& userConnected.equals(test[2])) {
+							auth = "account";
+						}
+					} catch (NoSuchUserException e) {
+						throw new WebApplicationException(Status.NOT_FOUND);
 					}
 				} else if (role.equals("other")) {
 					// get the cookie

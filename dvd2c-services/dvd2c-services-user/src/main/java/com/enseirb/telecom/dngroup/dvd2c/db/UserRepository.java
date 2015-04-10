@@ -1,9 +1,15 @@
 package com.enseirb.telecom.dngroup.dvd2c.db;
 
+
+
+import org.springframework.data.repository.CrudRepository;
+
 //import java.io.Serializable;
 
 public interface UserRepository
 		extends
-		org.springframework.data.repository.CrudRepository<UserRepositoryObject, String> {
+		CrudRepository<UserRepositoryObject, String> {
+	
+
 
 }

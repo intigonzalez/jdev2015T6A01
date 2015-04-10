@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.util.List;
 
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
@@ -25,8 +26,9 @@ public interface AccountService {
 	 * get a user from local
 	 * @param userID the user to get
 	 * @return the user
+	 * @throws NoSuchUserException 
 	 */
-	public abstract User getUserOnLocal(String userID);
+	public abstract User getUserOnLocal(String userID) throws NoSuchUserException;
 
 	/**
 	 * get user by firstname form server
@@ -94,8 +96,9 @@ public interface AccountService {
 	 * SERVER SERVICES
 	 * @param userID to get a box
 	 * @return a box with lot information
+	 * @throws NoSuchUserException 
 	 */
-	public abstract Box getBox(String userID);
+	public abstract Box getBox(String userID) throws NoSuchUserException;
 
 	/**
 	 * get all user of boxes
@@ -117,8 +120,9 @@ public interface AccountService {
 	 * @param userID to get a true password
 	 * @param password the password to test
 	 * @return true if is equal
+	 * @throws NoSuchUserException 
 	 */
-	public abstract boolean getUserVerification(String userID, String password);
+	public abstract boolean getUserVerification(String userID, String password) throws NoSuchUserException;
 
 
 }

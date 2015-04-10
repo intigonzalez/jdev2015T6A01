@@ -13,9 +13,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
@@ -30,8 +33,13 @@ public class UserEndPoints {
 	@GET
 	@Path("{userID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public User getIt(@PathParam("userID") String userID) {
-		return uManager.getUserOnLocal(userID);
+	public User getUser(@PathParam("userID") String userID) {
+		try {
+			return uManager.getUserOnLocal(userID);
+		} catch (NoSuchUserException e) {
+
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
 	}
 
 	/**
@@ -62,19 +70,24 @@ public class UserEndPoints {
 	@GET
 	@Path("{userID}/box")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Box getBoxIt(@PathParam("userID") String userID) {
-		return uManager.getBox(userID);
+	public Box getBoxOfUser(@PathParam("userID") String userID) {
+		try {
+			return uManager.getBox(userID);
+		} catch (NoSuchUserException e) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
 	}
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postUser(User user) throws URISyntaxException {
+	public Response creatUser(User user) throws URISyntaxException {
 		if (uManager.userExistOnLocal(user.getUserID()) == false) {
 			uManager.createUserOnLocal(user);
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(user.getUserID())).build();
 		} else {
-			return Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND).build();
+			return Response.status(javax.ws.rs.core.Response.Status.CONFLICT)
+					.build();
 		}
 
 	}
@@ -88,15 +101,17 @@ public class UserEndPoints {
 	@PUT
 	@Path("{userID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putUser(User user) {
+	public Response updateUser(User user,@PathParam("userID") String userID) {
 		// TODO: need to check the authentication of the user
-
+		if (!user.getUserID().equals(userID)){
+			return Response.status(Status.NOT_ACCEPTABLE).build();
+		}
 		// modify the user
 		if (uManager.userExistOnLocal(user.getUserID())) {
 			uManager.saveUserOnLocal(user);
 			return Response.status(200).build();
 		} else {
-			return Response.status(409).build();
+			return Response.status(Status.NOT_FOUND).build();
 		}
 
 	}
@@ -105,11 +120,13 @@ public class UserEndPoints {
 	@Path("{userID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteUser(@PathParam("userID") String userID) {
-		// TODO: need to check the authentication of the user
 
-		// delete the user
-		uManager.deleteUserOnLocal(userID);
-		return Response.status(200).build();
+		if (uManager.userExistOnLocal(userID)) {
+			uManager.deleteUserOnLocal(userID);
+			return Response.status(200).build();
+		} else {
+			return Response.status(Status.NOT_FOUND).build();
+		}
 
 	}
 

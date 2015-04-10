@@ -15,17 +15,20 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
@@ -67,7 +70,12 @@ public class UserEndPoints extends HttpServlet {
 		String userID = user.getUserID().toLowerCase();
 		
 		if (uManager.userExistOnLocal(userID)) {
-			User userAuth = uManager.getUserOnLocal(userID);
+			User userAuth;
+			try {
+				userAuth = uManager.getUserOnLocal(userID);
+			} catch (NoSuchUserException e) {
+				throw new WebApplicationException(Status.NOT_FOUND);
+			}
 			if (user.getPassword().equals(userAuth.getPassword() ) ) {
 				return Response.ok()
 			               .cookie(new NewCookie("authentication", userID, "/", null,1,      
@@ -98,7 +106,11 @@ public class UserEndPoints extends HttpServlet {
 	@RolesAllowed({ "account", "authenticated" })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public User getUserByID(@PathParam("userID") String userID) {
-		return uManager.getUserOnLocal(userID);
+		try {
+			return uManager.getUserOnLocal(userID);
+		} catch (NoSuchUserException e) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
 	}
 	
 	/**
@@ -189,7 +201,12 @@ public class UserEndPoints extends HttpServlet {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public SmtpProperty getUserSmtpProperty(@PathParam("actorID") String actorIDFromPath){
 		SmtpProperty smtpProperty = new SmtpProperty();
-		User user = uManager.getUserOnLocal(actorIDFromPath);		
+		User user;
+		try {
+			user = uManager.getUserOnLocal(actorIDFromPath);
+		} catch (NoSuchUserException e) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}		
 		smtpProperty.setHost(user.getSmtpHost());
 		smtpProperty.setPort(user.getSmtpPort());
 		smtpProperty.setUsername(user.getSmtpUsername());
@@ -209,7 +226,12 @@ public class UserEndPoints extends HttpServlet {
 	//@RolesAllowed("account")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateUserSmtpProperty(SmtpProperty smtpProperty, @PathParam("actorID") String actorIDFromPath) {
-		User user = uManager.getUserOnLocal(actorIDFromPath);
+		User user;
+		try {
+			user = uManager.getUserOnLocal(actorIDFromPath);
+		} catch (NoSuchUserException e) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
 		
 		user.setSmtpHost(smtpProperty.getHost());
 		user.setSmtpPort(smtpProperty.getPort());

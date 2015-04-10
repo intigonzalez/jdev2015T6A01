@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Document
 public class UserRepositoryObject {
+	
 	@Id
 	protected String userID;
 	@Field
