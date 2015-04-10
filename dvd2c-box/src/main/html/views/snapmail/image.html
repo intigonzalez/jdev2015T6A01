@@ -1,8 +1,11 @@
 <!--  <img style="margin: 0 auto; display: block;" src="{{content.link + '/' + content.name}}" alt="{{content.name}}"> -->
 <picture style="margin: 0 auto; display: block;">
 	<!--[if IE 9]><video style="display: none;"><![endif]-->
-	<source srcset="{{content.link + '/' + content.name}}" media="(min-width: 1000px)">
-	<source srcset="{{content.link + '/' + content.name}}" media="(min-width: 800px)">
+	<source srcset="{{content.link + '/extralarge.jpg'}}" media="(min-width: 1382px)">
+	<source srcset="{{content.link + '/large.jpg'}}" media="(min-width: 992px)">
+	<source srcset="{{content.link + '/medium.jpg'}}" media="(min-width: 768px)">
+	<source srcset="{{content.link + '/small.jpg'}}" media="(max-width: 768px)">
 	<!--[if IE 9]></video><![endif]-->
-	<img srcset="{{content.link + '/' + content.name}}" alt="{{content.name}}">
+	<img srcset="{{content.link + '/original.jpg'}}" alt="{{content.name}}">
 </picture>
+<a ng-href="{{content.link + '/original.jpg' }}" class="download md">Download</a>
