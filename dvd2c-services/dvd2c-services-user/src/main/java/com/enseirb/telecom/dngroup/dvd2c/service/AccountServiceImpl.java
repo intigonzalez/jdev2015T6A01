@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
+import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepository;
+import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
@@ -27,6 +29,9 @@ public class AccountServiceImpl implements AccountService {
 
 	@Inject
 	protected UserRepository userRepository;
+	
+	@Inject
+	protected BoxRepository boxRepository;
 
 	@Inject
 	protected RequestUserService requetUserService;
@@ -98,10 +103,10 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public List<User> getUserFromName(String firstname) {
 		// DB: need to change
-		UserRepositoryObject userIterable1 = userRepository.findOne("da");
-		ArrayList<String> string = new ArrayList<String>() ;
-				string.add("da");
-		Iterable<UserRepositoryObject> userIterable = userRepository.findAll(string);
+//		UserRepositoryObject userIterable1 = userRepository.findOne("da");
+//		ArrayList<String> string = new ArrayList<String>() ;
+//				string.add("da");
+		Iterable<UserRepositoryObject> userIterable = userRepository.findAll();
 		UserRepositoryObject userRepo = null;
 		List<User> listUser = new ArrayList<User>();
 
@@ -217,8 +222,9 @@ public class AccountServiceImpl implements AccountService {
 		} catch (Exception e) {
 			throw new NoSuchUserException();
 		}
-
-		return userRepositoryObject.getBox().toBox();
+		String boxID = userRepositoryObject.getBoxID();
+		BoxRepositoryObject boxRepositoryObject = boxRepository.findOne(boxID);
+		return boxRepositoryObject.toBox();
 
 	}
 

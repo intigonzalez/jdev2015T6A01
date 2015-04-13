@@ -22,7 +22,7 @@ public class CouchBaseConfiguration extends AbstractCouchbaseConfiguration {
 	@Override
 	protected String getBucketName() {
 
-		return "default";
+		return "central";
 	}
 
 	@Override
