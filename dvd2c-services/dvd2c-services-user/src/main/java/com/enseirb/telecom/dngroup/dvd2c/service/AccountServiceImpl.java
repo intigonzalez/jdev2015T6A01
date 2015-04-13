@@ -99,7 +99,9 @@ public class AccountServiceImpl implements AccountService {
 	public List<User> getUserFromName(String firstname) {
 		// DB: need to change
 		UserRepositoryObject userIterable1 = userRepository.findOne("da");
-		Iterable<UserRepositoryObject> userIterable = userRepository.findAll();
+		ArrayList<String> string = new ArrayList<String>() ;
+				string.add("da");
+		Iterable<UserRepositoryObject> userIterable = userRepository.findAll(string);
 		UserRepositoryObject userRepo = null;
 		List<User> listUser = new ArrayList<User>();
 
