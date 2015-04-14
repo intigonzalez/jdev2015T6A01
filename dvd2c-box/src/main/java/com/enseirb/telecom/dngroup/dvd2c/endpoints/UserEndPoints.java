@@ -1,5 +1,6 @@
 package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
@@ -42,20 +44,20 @@ public class UserEndPoints extends HttpServlet {
 	@Inject
 	protected AccountService uManager;
 
-	// Only for tests
-	@GET
-	@Path("get")
-	//@RolesAllowed("account")
-	public Response addUser(@Context HttpHeaders headers,@Context SecurityContext context) {//@HeaderParam("cookie") String userAgent) {
-		
-		String userAgent = headers.getRequestHeader("cookie").get(0);
-		LOGGER.debug("userAgent : {}",userAgent);
-		return Response.status(200)
-			.entity("addUser is called, userAgent : " + userAgent)
-			.build();
- 
-	}
-	
+//	// Only for tests
+//	@GET
+//	@Path("get")
+//	//@RolesAllowed("account")
+//	public Response addUser(@Context HttpHeaders headers,@Context SecurityContext context) {//@HeaderParam("cookie") String userAgent) {
+//		
+//		String userAgent = headers.getRequestHeader("cookie").get(0);
+//		LOGGER.debug("userAgent : {}",userAgent);
+//		return Response.status(200)
+//			.entity("addUser is called, userAgent : " + userAgent)
+//			.build();
+// 
+//	}
+//	
 	/**
 	 * Create the cookie on user side when the user is connected
 	 * @param userAgent
@@ -65,7 +67,7 @@ public class UserEndPoints extends HttpServlet {
 	 */
 	@POST()
 	@Path("Connect")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })// resultat en JSON
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })// resultat en JSON
 	public Response getConnect(User user){ //FormParam ce sont les parametres d'un formulaire. 
 		String userID = user.getUserID().toLowerCase();
 		
@@ -135,8 +137,11 @@ public class UserEndPoints extends HttpServlet {
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response createUser(User user) throws URISyntaxException {
 		if (uManager.userExistOnLocal(user.getUserID()) == false) {
-			user.setBoxID(CliConfSingleton.boxID);
-			User u=uManager.createUserOnServer(user);
+		
+			User u;
+			try {
+				u = uManager.createUserOnServer(user);
+		
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(u.getUserID()))
 		               .cookie(new NewCookie("authentication", u.getUserID(), "/", null,1,      
@@ -145,8 +150,13 @@ public class UserEndPoints extends HttpServlet {
 		                       false ))
 		               .build();
 			//return Response.created(new URI(u.getUserID())).build();
+			} catch (SuchUserException e) {
+				throw new WebApplicationException("user"+ user.getUserID() + "already exists on central",Status.CONFLICT);
+			} catch (IOException e) {
+				throw new WebApplicationException("error for creating user",Status.INTERNAL_SERVER_ERROR);
+			}
 		} else {
-			return Response.status(409).build();
+			throw new WebApplicationException("user"+ user.getUserID() + "already exists on your box",Status.CONFLICT);
 		}
 	}
 
@@ -154,7 +164,7 @@ public class UserEndPoints extends HttpServlet {
 	 * Update User by userID
 	 * @param user the user information 
 	 * @param userIDFromPath the userID to update
-	 * @return webstatus
+	 * @return Response
 	 */
 	@PUT
 	@Path("{userID}")
@@ -239,7 +249,7 @@ public class UserEndPoints extends HttpServlet {
 		user.setSmtpPassword(smtpProperty.getPassword());
 		user.setSmtpToken(smtpProperty.getToken());
 		
-		uManager.saveUserOnServer(user);
+		uManager.saveUserOnLocal(user);
 		return Response.status(200).build();
 	}
 }

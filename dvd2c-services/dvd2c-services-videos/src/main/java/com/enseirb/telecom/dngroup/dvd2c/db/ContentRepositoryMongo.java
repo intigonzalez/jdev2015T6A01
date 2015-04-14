@@ -286,7 +286,7 @@ LOGGER.error("Connection to database failed ");
 
 	}
 
-	@Override
+	
 	public List<ContentRepositoryObject> findAllFromUser(String userID) {
 		List<ContentRepositoryObject> list = new ArrayList<ContentRepositoryObject>();
 

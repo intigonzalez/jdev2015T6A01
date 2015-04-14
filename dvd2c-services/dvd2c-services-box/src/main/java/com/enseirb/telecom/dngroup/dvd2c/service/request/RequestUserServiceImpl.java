@@ -117,12 +117,17 @@ public class RequestUserServiceImpl implements RequestUserService {
 	@Override
 	public void updateUserORH(User user) throws IOException,
 			NoSuchUserException {
-		user.setPassword(null);
+		User user2 = new User();
+		user2.setBoxID(user.getBoxID());
+		user2.setFirstname(user.getFirstname());
+		user2.setSurname(user.getSurname());
+		user2.setUserID(user.getUserID());
+
 		// Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(url + user.getUserID());
+		WebTarget target = client.target(url + user2.getUserID());
 		// try {
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE).put(
-				Entity.entity(user, MediaType.APPLICATION_XML), Response.class);
+				Entity.entity(user2, MediaType.APPLICATION_XML), Response.class);
 		switch (Status.fromStatusCode(response.getStatus())) {
 		case ACCEPTED:
 			// normal statement but don't is normally not that
@@ -131,6 +136,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 			// normal statement
 			break;
 		case OK:
+			// DB : current solution
 			// normal statement but don't use this because normally we need
 			// return a object
 			break;

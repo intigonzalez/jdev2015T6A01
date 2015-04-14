@@ -4,8 +4,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
+import javax.inject.Inject;
 import javax.servlet.ServletRegistration;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
@@ -20,6 +29,13 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
+import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepository;
+import com.enseirb.telecom.dngroup.dvd2c.db.UserRepository;
+import com.enseirb.telecom.dngroup.dvd2c.endpoints.BoxEndPoints;
+import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
+import com.enseirb.telecom.dngroup.dvd2c.model.Content;
+import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
+import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceImpl;
 import com.lexicalscope.jewel.cli.ArgumentValidationException;
 import com.lexicalscope.jewel.cli.CliFactory;
 import com.lexicalscope.jewel.cli.HelpRequestedException;
@@ -117,6 +133,21 @@ public class Main {
 			// finally, deploy the webapp
 			webappContext.deploy(server);
 			server.start();
+
+			try {
+				Client client = ClientBuilder.newClient();
+				WebTarget target = client.target(new URI("http://localhost:"
+						+ CliConfSingleton.appPort + "/api/box"));
+				LOGGER.debug("Launch the request to the central : {}",
+						target.getUri());
+
+				Response ent = target.request(MediaType.APPLICATION_XML_TYPE)
+						.post(null);
+				client.close();
+				LOGGER.debug("{}", ent);
+			} catch (URISyntaxException e) {
+				LOGGER.error("URI of server not good");
+			}
 
 			LOGGER.info("Jersey app started with WADL available at {}",
 					getBaseApiURI() + "/application.wadl");

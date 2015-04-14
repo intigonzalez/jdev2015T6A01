@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryObject;
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
@@ -77,11 +80,11 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public Relation getRelation(String userID, String actorID) {
+	public Relation getRelation(String userID, String actorID) throws NoSuchRelationException {
 		RelationshipRepositoryObject relation = relationshipDatabase.findOne(
 				userID+ actorID);
 		if (relation == null) {
-			return null;
+			throw new NoSuchRelationException();
 		} else {
 			return relation.toRelation();
 		}
@@ -281,6 +284,7 @@ public class RelationServiceImpl implements RelationService {
 					relationIntoDb));
 		} else {
 			LOGGER.error("Something has been changed...");
+			throw new WebApplicationException(Status.FORBIDDEN);
 		}
 
 	}

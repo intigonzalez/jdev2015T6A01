@@ -28,6 +28,7 @@ import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryImplMongo;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryImplMongo;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
@@ -81,18 +82,18 @@ public class BoxEndPoints {
 	 * @throws SuchBoxException
 	 */
 	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postBox() throws URISyntaxException, SuchBoxException {
+//	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response postBox() throws SuchBoxException, URISyntaxException {
 		// add a comment
 		Box box = new Box();
 		box.setBoxID(CliConfSingleton.boxID);
 		box.setIp(CliConfSingleton.publicAddr);
-		if (boxManager.boxExistOnServer(box.getBoxID()) == false) {
+//		if (boxManager.boxExistOnServer(box.getBoxID()) == false) {
 			boxManager.createBoxOnServer(box);
 			return Response.created(new URI(box.getBoxID())).build();
-		} else {
-			return Response.status(409).build();
-		}
+//		} else {
+//			return Response.status(409).build();
+//		}
 
 		// return Response.status(Status.SERVICE_UNAVAILABLE).build();
 	}
@@ -140,8 +141,14 @@ public class BoxEndPoints {
 
 		LOGGER.debug("try to setAprouve a relation from a other box {} and {}",
 				userId, relationId);
-		rManager.setAprouveBox(userId, relationId);
-		return Response.status(Status.ACCEPTED).build();
+		try {
+			rManager.getRelation(userId, relationId);
+
+			rManager.setAprouveBox(userId, relationId);
+			return Response.status(Status.ACCEPTED).build();
+		} catch (NoSuchRelationException e) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
 	}
 
 	/**
@@ -202,15 +209,21 @@ public class BoxEndPoints {
 			@PathParam("userID") String userID) {
 
 		LOGGER.debug("Receive Request to get list content from {}", relationID);
-		if (rManager.RelationExist(userID, relationID)) {
-			Relation relation = rManager.getRelation(userID, relationID);
+		try {
+
+			Relation relation;
+
+			relation = rManager.getRelation(userID, relationID);
 
 			LOGGER.debug("Check the relation : {}", relation);
 			List<Content> listContent = uManager
 					.getAllContent(userID, relation);
 			return listContent;
+
+		} catch (NoSuchRelationException e) {
+			throw new WebApplicationException(Status.NOT_ACCEPTABLE);
 		}
-		return null;
+
 	}
 
 }

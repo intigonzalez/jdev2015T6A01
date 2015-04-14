@@ -7,7 +7,6 @@ import org.springframework.data.couchbase.core.mapping.Document;
 import org.springframework.data.couchbase.core.mapping.Field;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Document
 public class RelationshipRepositoryObject {
@@ -31,7 +30,24 @@ public class RelationshipRepositoryObject {
 	@Field
 	List<Integer> role;
 
+	public RelationshipRepositoryObject() {
+	}
 
+	public RelationshipRepositoryObject(String iD, String userId,
+			String actorID, String firstname, String surname, String pubKey,
+			Integer aprouve, Long unixTime, List<Integer> role) {
+		super();
+		this.iD = userId + actorID;
+		this.userId = userId;
+		this.actorID = actorID;
+		this.firstname = firstname;
+		this.surname = surname;
+		this.pubKey = pubKey;
+		this.aprouve = aprouve;
+		this.unixTime = unixTime;
+		this.role = role;
+
+	}
 
 	public RelationshipRepositoryObject(String userId, String actorID,
 			String firstname, String surname, String pubKey, Integer aprouve,

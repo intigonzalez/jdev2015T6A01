@@ -3,6 +3,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 import java.io.IOException;
 import java.util.List;
 
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
@@ -23,8 +24,9 @@ public interface RelationService {
 	 * @param userID the main relation
 	 * @param relationID the id of relation
 	 * @return the relation
+	 * @throws NoSuchRelationException 
 	 */
-	public abstract Relation getRelation(String userID, String relationID);
+	public abstract Relation getRelation(String userID, String relationID) throws NoSuchRelationException;
 
 	/**
 	 * get the list of relation from a user

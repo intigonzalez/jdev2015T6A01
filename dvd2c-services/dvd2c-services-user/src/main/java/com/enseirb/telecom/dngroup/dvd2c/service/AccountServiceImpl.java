@@ -61,7 +61,9 @@ public class AccountServiceImpl implements AccountService {
 	 */
 	@Override
 	public boolean userExistOnLocal(String userID) {
+//		UserRepositoryObject user = userRepository.findOne(userID);
 		boolean exist = userRepository.exists(userID);
+		
 		return exist;
 	}
 
@@ -152,7 +154,7 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public User createUserOnServer(User user) {
+	public User createUserOnServer(User user) throws SuchUserException, IOException {
 
 		// Spring: fixme
 		try {
@@ -163,11 +165,11 @@ public class AccountServiceImpl implements AccountService {
 		} catch (IOException e) {
 			LOGGER.debug("error during creating user on server : {} ",
 					user.getUserID(), e);
+			throw e;
 		} catch (SuchUserException e) {
 			LOGGER.debug("User already existing {}", user.getUserID());
+			throw e;
 		}
-
-		return user;
 	}
 
 	@Override

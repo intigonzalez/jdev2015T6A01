@@ -1,24 +1,27 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.rmi.server.UID;
+//import java.nio.file.Files;
+//import java.nio.file.Path;
+//import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.NoContentException;
 
+import org.apache.tika.Tika;
 import org.jvnet.hk2.config.InjectionTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepository;
@@ -28,6 +31,8 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.model.Task;
 import com.enseirb.telecom.dngroup.dvd2c.utils.FileService;
 import com.google.common.base.Throwables;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
@@ -59,8 +64,7 @@ public class ContentServiceImpl implements ContentService {
 	public List<Content> getAllContentsFromUser(String userID) {
 
 		List<Content> listContent = new ArrayList<Content>();
-		Iterable<ContentRepositoryObject> contentsDb = contentDatabase
-				.findAllFromUser(userID);
+		Iterable<ContentRepositoryObject> contentsDb = contentDatabase.findAll();
 		Iterator<ContentRepositoryObject> itr = contentsDb.iterator();
 		while (itr.hasNext()) {
 			ContentRepositoryObject contentRepositoryObject = itr.next();
@@ -72,10 +76,10 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public Content getContent(String contentsID) {
+	public Content getContent(String contentsID) throws NoContentException {
 		ContentRepositoryObject content = contentDatabase.findOne(contentsID);
 		if (content == null) {
-			return null;
+			throw new NoContentException(contentsID);
 		} else {
 			return content.toContent();
 		}
@@ -121,12 +125,15 @@ public class ContentServiceImpl implements ContentService {
 		
 		// Temporary until we find a better way to deal with filenames
 		filename=filename.replace(" ", "_");
-		
-		Path tempFile = Files.createTempFile(null, null);
-		LOGGER.debug("Temporary file is here {}", tempFile.toAbsolutePath());
+		UUID uuid = UUID.randomUUID();
+		File tempFile = File.createTempFile(uuid.toString(), null);
+		LOGGER.debug("Temporary file is here {}", tempFile.getAbsolutePath());
 
-		writeToFile(uploadedInputStream, tempFile.toFile());
-		String fileType = Files.probeContentType(tempFile);
+		writeToFile(uploadedInputStream, tempFile);
+//		
+//		String fileType = Files.probeContentType(tempFile);
+		Tika tika = new Tika();
+		String fileType= tika.detect(tempFile);
 		LOGGER.debug("MIME : {}", fileType);
 
 		tmp = fileType.split("/");
@@ -138,7 +145,6 @@ public class ContentServiceImpl implements ContentService {
 		LOGGER.debug("File type: " + fileType + ", filename: " + filename);
 
 		String link;
-		UUID uuid = UUID.randomUUID();
 		Content content = new Content();
 		content.setName(filename);
 		content.setActorID(userID);
@@ -165,18 +171,30 @@ public class ContentServiceImpl implements ContentService {
 
 		// Create new folders if they don't exist
 		File file = new File("/var/www/html" + link);
+		
 		if (!file.exists())
-			file.mkdirs();
+			if (!file.mkdirs()){
+			LOGGER.error("Can not create the file are you corect right ?");
+			throw new IOException(file.getAbsolutePath());}
+		
+
+
 
 		// Moving the file
 		LOGGER.debug("Moving temporary file to /var/www/html" + link + "/"
 				+ filename);
 		File newFile = new File("/var/www/html" + link + "/" + filename);
-		Files.move(tempFile, newFile.toPath());
-		LOGGER.debug("File moved");
-		content = createContent(content, newFile.getAbsolutePath(),
-				content.getContentsID());
-		return content;
+		try {
+			Files.move(tempFile, newFile);
+			LOGGER.debug("File moved");
+			content = createContent(content, newFile.getAbsolutePath(),
+					content.getContentsID());
+			return content;
+		} catch (IOException e) {
+			LOGGER.error("Can not create the file are you corect right ?");
+			throw e;
+		}
+		
 	}
 
 	@Override
@@ -250,16 +268,16 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	// save uploaded file to new location
-	@Override
-	public void writeToFile(InputStream uploadedInputStream, File dest) {
+
+	private void writeToFile(InputStream uploadedInputStream, File dest) throws IOException {
 
 		try {
 			// NHE: we are not in C
-			Files.copy(uploadedInputStream, dest.toPath(),
-					StandardCopyOption.REPLACE_EXISTING);
+			ByteStreams.copy(uploadedInputStream,new FileOutputStream(dest));
 		} catch (IOException e) {
 
 			LOGGER.error("can not create file ", e);
+			throw e;
 		}
 
 	}

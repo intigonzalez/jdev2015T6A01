@@ -21,14 +21,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NoContentException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
@@ -41,7 +44,7 @@ public class ContentEndPoints {
 			.getLogger(ContentEndPoints.class);
 
 	@Inject
-	protected ContentService uManager;
+	protected ContentService cManager;
 
 	// ContentService uManager = new ContentServiceImpl(
 	// new ContentRepositoryMongo(), new RabbitMQServer());
@@ -57,7 +60,7 @@ public class ContentEndPoints {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<Content> getAllContentsFromUser(
 			@PathParam("userID") String userID) {
-		List<Content> contents = uManager.getAllContentsFromUser(userID);
+		List<Content> contents = cManager.getAllContentsFromUser(userID);
 		return contents;
 	}
 
@@ -73,17 +76,23 @@ public class ContentEndPoints {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Content getContentMetadata(@PathParam("userID") String userID,
 			@PathParam("contentsID") String contentsID) {
-		Content content = uManager.getContent(contentsID);
-		if (content.getActorID().equals(userID)) {
-			content.setLink(CliConfSingleton.publicAddr + content.getLink());
-			return content;
-		} else {
-			// No URL parameter idLanguage was sent
-			ResponseBuilder builder = Response
-					.status(Response.Status.FORBIDDEN);
-			builder.entity("This content doesn't belong to you ! ");
-			Response response = builder.build();
-			throw new WebApplicationException(response);
+		Content content;
+		try {
+			content = cManager.getContent(contentsID);
+			if (content.getActorID().equals(userID)) {
+				content.setLink(CliConfSingleton.publicAddr + content.getLink());
+				return content;
+			} else {
+				// No URL parameter idLanguage was sent
+				ResponseBuilder builder = Response
+						.status(Response.Status.FORBIDDEN);
+				builder.entity("This content doesn't belong to you ! ");
+				Response response = builder.build();
+				throw new WebApplicationException(response);
+			}
+		} catch (NoContentException e) {
+			throw new WebApplicationException(e.getLocalizedMessage(),
+					Status.NO_CONTENT);
 		}
 
 	}
@@ -102,18 +111,25 @@ public class ContentEndPoints {
 	public Response getContent(@PathParam("userID") String userID,
 			@PathParam("contentsID") String contentsID)
 			throws URISyntaxException {
-		Content content = uManager.getContent(contentsID);
-		if (content.getActorID().equals(userID)) {
-			URI uri = new URI(CliConfSingleton.publicAddr + content.getLink()
-					+ "/" + content.getName());
-			return Response.seeOther(uri).build();
-		} else {
-			// No URL parameter idLanguage was sent
-			ResponseBuilder builder = Response
-					.status(Response.Status.FORBIDDEN);
-			builder.entity("This content doesn't belong to you ! ");
-			Response response = builder.build();
-			throw new WebApplicationException(response);
+		Content content;
+		try {
+			content = cManager.getContent(contentsID);
+
+			if (content.getActorID().equals(userID)) {
+				URI uri = new URI(CliConfSingleton.publicAddr
+						+ content.getLink() + "/" + content.getName());
+				return Response.seeOther(uri).build();
+			} else {
+				// No URL parameter idLanguage was sent
+				ResponseBuilder builder = Response
+						.status(Response.Status.FORBIDDEN);
+				builder.entity("This content doesn't belong to you ! ");
+				Response response = builder.build();
+				throw new WebApplicationException(response);
+			}
+		} catch (NoContentException e) {
+			throw new WebApplicationException(e.getLocalizedMessage(),
+					Status.NO_CONTENT);
 		}
 
 	}
@@ -152,9 +168,9 @@ public class ContentEndPoints {
 		String fileTypeTemp = fileMediaType.toString();
 		String[] fileType = fileTypeTemp.split("/");
 
-		File upload = File.createTempFile(UUID.randomUUID().toString(), "." + extension,
-				Files.createTempDir());
-		Content content = uManager.createContent(userID, uploadedInputStream,
+		File upload = File.createTempFile(UUID.randomUUID().toString(), "."
+				+ extension, Files.createTempDir());
+		Content content = cManager.createContent(userID, uploadedInputStream,
 				fileType, upload);
 		// content.setLink(CliConfSingleton.publicAddr + content.getLink());
 		// return content;
@@ -171,7 +187,7 @@ public class ContentEndPoints {
 	 * 
 	 * @param userID
 	 *            the sender of the request
-	 * @param uploadedInputStream
+	 * @param iS
 	 * @param fileDetail
 	 * @param body
 	 * @return
@@ -182,15 +198,15 @@ public class ContentEndPoints {
 	@RolesAllowed({ "other", "authenticated" })
 	@Consumes(MediaType.WILDCARD)
 	public Response postContent2(@PathParam("userID") String userID,
-			InputStream uploadedInputStream,
+			InputStream iS,
 			@HeaderParam("Content-Disposition") String contentDisposition)
 			throws URISyntaxException, IOException {
 
 		LOGGER.debug("New local upload, Content-Disposition : "
 				+ contentDisposition);
 		try {
-			Content content = uManager.createContent(userID,
-					uploadedInputStream, contentDisposition);
+			Content content = cManager.createContent(userID, iS,
+					contentDisposition);
 			content.setLink(CliConfSingleton.publicAddr + content.getLink());
 
 			LOGGER.debug("Content created :" + CliConfSingleton.publicAddr
@@ -255,8 +271,8 @@ public class ContentEndPoints {
 		// TODO: need to check the authentication of the user
 		content.setContentsID(contentsID);
 		// modify the content
-		if (uManager.contentExist(content.getContentsID()) == true) {
-			uManager.saveContent(content);
+		if (cManager.contentExist(content.getContentsID()) == true) {
+			cManager.saveContent(content);
 			return Response.status(200).build();
 		} else {
 			return Response.status(409).build();
@@ -274,12 +290,21 @@ public class ContentEndPoints {
 	@RolesAllowed("other")
 	@Path("{contentsID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteContent(@PathParam("contentsID") String contentsID) {
+	public Response deleteContent(@PathParam("contentsID") String contentsID,
+			@PathParam("userID") String userID) {
 		// TODO: need to check the authentication of the user
 
-		// delete the content
-		uManager.deleteContent(contentsID);
-		return Response.status(200).build();
+		try {
+			Content contents = cManager.getContent(contentsID);
+			if (contents.getActorID().equals(userID)) {
+				cManager.deleteContent(contentsID);
+				return Response.status(200).build();
+			} else
+				throw new WebApplicationException(Status.FORBIDDEN);
+		} catch (NoContentException e) {
+			throw new WebApplicationException(e.getLocalizedMessage(),
+					Status.NO_CONTENT);
+		}
 
 	}
 

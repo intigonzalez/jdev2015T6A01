@@ -1,8 +1,10 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
@@ -41,8 +43,10 @@ public interface AccountService {
 	 *  create user on server and after in local
 	 * @param user to create
 	 * @return the user
+	 * @throws SuchUserException 
+	 * @throws IOException 
 	 */
-	public abstract User createUserOnServer(User user);
+	public abstract User createUserOnServer(User user) throws SuchUserException, IOException;
 	
 	/**
 	 *  create user on local

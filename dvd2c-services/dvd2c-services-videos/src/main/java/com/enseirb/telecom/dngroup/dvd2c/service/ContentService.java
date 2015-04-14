@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.ws.rs.core.NoContentException;
+
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 
@@ -29,8 +31,9 @@ public interface ContentService {
 	 * get more information from a contentsID
 	 * @param contentsID to get
 	 * @return Content 
+	 * @throws NoContentException 
 	 */
-	public abstract Content getContent(String contentsID);
+	public abstract Content getContent(String contentsID) throws NoContentException;
 
 	/**
 	 * send a new file (video actually) on box
@@ -54,13 +57,14 @@ public interface ContentService {
 	 */
 	public abstract void deleteContent(String contentsID);
 
-	/**
-	 * save uploaded file to new location
-	 * @param uploadedInputStream
-	 * @param uploadedFileLocation
-	 */
-	public abstract void writeToFile(InputStream uploadedInputStream,
-			File dest);
+//	/**
+//	 * save uploaded file to new location
+//	 * @param uploadedInputStream
+//	 * @param uploadedFileLocation
+//	 * @throws IOException 
+//	 */
+//	public abstract void writeToFile(InputStream uploadedInputStream,
+//			File dest) throws IOException;
 
 	/**
 	 * //TODO : explain this method
