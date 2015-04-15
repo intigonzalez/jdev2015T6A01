@@ -23,6 +23,8 @@ import org.subethamail.smtp.helper.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -53,6 +55,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.philvarner.clamavj.ClamScan;
 import com.philvarner.clamavj.ScanResult;
 import com.google.api.client.auth.oauth2.TokenResponse;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
@@ -729,10 +732,14 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		return message;
 	}
 	public static GoogleCredential createCredentialWithRefreshToken(HttpTransport transport,
-            JsonFactory jsonFactory, TokenResponse tokenResponse) {
+            JsonFactory jsonFactory, TokenResponse tokenResponse) throws FileNotFoundException, IOException {
+		
+		final  String CLIENT_SECRET_PATH = "Oauth_secrets/client_secret.json";
+		GoogleClientSecrets clientsecret =  GoogleClientSecrets.load(jsonFactory,  new FileReader(CLIENT_SECRET_PATH));
+		
        return new GoogleCredential.Builder().setTransport(transport)
               .setJsonFactory(jsonFactory)
-              .setClientSecrets("547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com", "JG3LiwiX2gA362mTSGEJ5eC8")
+              .setClientSecrets(clientsecret)
               .build()
               .setFromTokenResponse(tokenResponse);
         }
