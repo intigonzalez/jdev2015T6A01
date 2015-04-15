@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-@Service
+
 public class MessageBrokerServiceMock implements MessageBrokerService {
 
 	private static final Logger LOGGER = LoggerFactory
@@ -19,5 +19,7 @@ public class MessageBrokerServiceMock implements MessageBrokerService {
 		LOGGER.warn("Not implemented, nobody will ever perform this task!");
 
 	}
+
+
 
 }

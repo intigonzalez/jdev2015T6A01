@@ -1,43 +1,43 @@
-package com.enseirb.telecom.dngroup.dvd2c;
+package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.connection.Connection;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.stereotype.Service;
 
-import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
-import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
-import com.enseirb.telecom.dngroup.dvd2c.service.ContentServiceImpl;
-import com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQServiceImpl;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
-public class QueueConsumerApp {
-	private static final Logger LOGGER = LoggerFactory.getLogger(QueueConsumerApp.class);
-	/**
-	 * Create a queue with the correlation_id of the task, as we can wait the end message
-	 * @param queue
-	 * @throws IOException
-	 * @throws InterruptedException
+@Service
+public class QueueConsumerAppImp implements QueueConsumerApp {
+	private static final Logger LOGGER = LoggerFactory.getLogger(QueueConsumerAppImp.class);
+	
+	@Inject
+	ConnectionFactory factory;
+	
+	/* (non-Javadoc)
+	 * @see com.enseirb.telecom.dngroup.dvd2c.QueueConumerApp#getQueueMessage(java.lang.String, com.enseirb.telecom.dngroup.dvd2c.service.ContentService)
 	 */
-	public static void getQueueMessage(String queue) throws IOException,
+	@Override
+	public void getQueueMessage(String queue,ContentService contentService) throws IOException,
 			InterruptedException {
 		final String QUEUE_NAME = queue;
 
-		ConnectionFactory factory = new ConnectionFactory();
 		
-		factory.setHost(CliConfSingleton.rabbitHostname);
-		factory.setPort(CliConfSingleton.rabbitPort );
 		LOGGER.debug("Rabbit conection : host : {} , port : {} ",factory.getHost(),factory.getPort());
-		com.rabbitmq.client.Connection connection = factory.newConnection();
-		Channel channel = connection.createChannel();
+		Connection connection = factory.createConnection();
+		Channel channel = connection.createChannel(false);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("x-expires", 86400000);
 		channel.queueDeclare(QUEUE_NAME, true, false, true, map);
@@ -53,6 +53,7 @@ public class QueueConsumerApp {
 				JSONObject obj;
 				String status = null;
 				
+				
 				try {
 					obj = new JSONObject(result);
 					status = obj.getString("status");
@@ -60,8 +61,6 @@ public class QueueConsumerApp {
 				} catch (JSONException e) {
 					LOGGER.error("error for pars element",e);
 				}
-				//spring: fixme
-				ContentService contentService = new ContentServiceImpl();
 
 			
 				if (status.equals("SUCCESS")) {
