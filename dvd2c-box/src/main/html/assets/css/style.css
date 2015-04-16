@@ -2375,3 +2375,8 @@ label {
 iframe {
     background-color: black;
 }
+
+.padded-smtp
+{
+	padding: 3em 1em 0;
+}

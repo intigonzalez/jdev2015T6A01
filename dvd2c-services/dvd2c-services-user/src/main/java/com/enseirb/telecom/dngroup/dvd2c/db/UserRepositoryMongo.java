@@ -140,7 +140,7 @@ public <S extends UserRepositoryObject> S update (S entity){
 				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
-			if (entity.getSmtpPassword() != null) {
+			if (entity.getSmtpToken() != null) {
 				newDocument.append("$set",new BasicDBObject().append("smtpToken", entity.getSmtpToken()));
 				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
