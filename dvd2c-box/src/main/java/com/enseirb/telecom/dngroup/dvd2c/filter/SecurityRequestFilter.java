@@ -56,11 +56,8 @@ import org.glassfish.grizzly.http.server.GrizzlyPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryImplMongo;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
-import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
 import com.google.common.io.BaseEncoding;
 
 /**

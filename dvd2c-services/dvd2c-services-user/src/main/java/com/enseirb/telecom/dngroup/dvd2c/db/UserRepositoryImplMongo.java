@@ -20,11 +20,11 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
-public class UserRepositoryMongo implements UserRepository {
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserRepositoryMongo.class);
+public class UserRepositoryImplMongo implements UserRepository {
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserRepositoryImplMongo.class);
 	private String dbName;
 
-	public UserRepositoryMongo(String dbName) {
+	public UserRepositoryImplMongo(String dbName) {
 		this.dbName=dbName;
 	}
 
@@ -379,9 +379,9 @@ public <S extends UserRepositoryObject> S update (S entity){
 	}
 
 
-	@Override
+//	@Override
 	public BoxRepositoryObject findBoxFromUserID(String userID) {
-		UserRepositoryMongo userRepositoryMongo = this;
+		UserRepositoryImplMongo userRepositoryMongo = this;
 		BoxRepositoryMongo boxRepositoryMongo = new BoxRepositoryMongo(dbName);
 
 		UserRepositoryObject userRepositoryObject = userRepositoryMongo

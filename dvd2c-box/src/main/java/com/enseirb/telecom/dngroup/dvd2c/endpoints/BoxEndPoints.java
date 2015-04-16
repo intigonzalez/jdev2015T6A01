@@ -22,11 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
-import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryMongo;
-import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
-import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryImplMongo;
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryImplMongo;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
@@ -34,12 +29,8 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
-import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
-import com.enseirb.telecom.dngroup.dvd2c.service.ContentServiceImpl;
-import com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
-import com.enseirb.telecom.dngroup.dvd2c.service.RelationServiceImpl;
 
 @Path("box")
 public class BoxEndPoints {
@@ -82,18 +73,18 @@ public class BoxEndPoints {
 	 * @throws SuchBoxException
 	 */
 	@POST
-//	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	// @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postBox() throws SuchBoxException, URISyntaxException {
 		// add a comment
 		Box box = new Box();
 		box.setBoxID(CliConfSingleton.boxID);
 		box.setIp(CliConfSingleton.publicAddr);
-//		if (boxManager.boxExistOnServer(box.getBoxID()) == false) {
-			boxManager.createBoxOnServer(box);
-			return Response.created(new URI(box.getBoxID())).build();
-//		} else {
-//			return Response.status(409).build();
-//		}
+		// if (boxManager.boxExistOnServer(box.getBoxID()) == false) {
+		boxManager.createBoxOnServer(box);
+		return Response.created(new URI(box.getBoxID())).build();
+		// } else {
+		// return Response.status(409).build();
+		// }
 
 		// return Response.status(Status.SERVICE_UNAVAILABLE).build();
 	}
