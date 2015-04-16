@@ -3,6 +3,7 @@
         <h2>My Profile</h2>
     </div>
     
+    <!-- PROFILE -->
 	<div ng-show="user.isSetTab(0)">
     	<div class="panel panel-default">
     		<div class="panel-heading col-xs-12">
@@ -43,7 +44,64 @@
 	    	</div>
     	</div>
     </div>
+    <!-- EDIT PROFILE -->
+        <div class="row" ng-show="user.isSetTab(2)">
+        <form class="form-horizontal" name="registerForm" validate>
+            <!-- Edit Profil Form -->
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <!-- Name -->
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-user"></i> Firstname
+                            </span>
+                            <input class="form-control" placeholder="Firstname" ng-model="user.person.firstname"
+                                   type="text" autofocus required>
+                        </div>
+                    </div>
+                    <!-- Surname -->
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-user"></i>
+                            </span>
+                            <input class="form-control" placeholder="Surname" ng-model="user.person.surname"
+                                   type="text" autofocus>
+                        </div>
+                    </div>
+                    <!-- Password -->
+                    <div class="form-group">
+                        <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-lock"></i>
+                                </span>
+                            <input class="form-control" placeholder="Password" ng-model="user.person.password"
+                                   type="password">
+                        </div>
+                    </div>
+                    <!-- Mail Address -->
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">@</span>
+                            <input class="form-control" placeholder=" E-mail Address " ng-model="user.person.userID"
+                                   type="text">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button ng-click="user.putUser(user.person);user.setTab(0)" class="btn btn-lg btn-primary btn-block"
+                                ng-class="user.class"> Update information
+                        </button>
+                    </div>
+
+
+                </div>
+            </div>
+        </form>
+    </div>
     
+    <!-- SMTP PROPERTIES -->
     <div ng-show="user.isSetTab(0)">
     	<div class="panel panel-default text-center">
     		<div class="panel-heading col-xs-12">
