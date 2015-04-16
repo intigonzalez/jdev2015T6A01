@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,19 +20,12 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
-public class UserRepositoryImplMongo implements UserRepository {
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(UserRepositoryImplMongo.class);
+public class UserRepositoryMongo implements UserRepository {
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserRepositoryMongo.class);
+	private String dbName;
 
-	// SPRING:fixme
-	protected String dbName = "";
-
-	public String getDbName() {
-		return dbName;
-	}
-
-	public void setDbName(String dbName) {
-		this.dbName = dbName;
+	public UserRepositoryMongo(String dbName) {
+		this.dbName=dbName;
 	}
 
 	@Override
@@ -40,10 +34,10 @@ public class UserRepositoryImplMongo implements UserRepository {
 			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
-
+	
 			BasicDBObject query = new BasicDBObject("userID", id);
 			DBCursor cursor = dbUsers.find(query);
-
+	
 			if (cursor.hasNext()) {
 				mongoClient.close();
 				return true;
@@ -52,9 +46,7 @@ public class UserRepositoryImplMongo implements UserRepository {
 				return false;
 			}
 		} catch (UnknownHostException e) {
-			LOGGER.error(
-					"Connection to database failed (mongoDB installed and run ?)",
-					e);
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 			return true;
 		}
 	}
@@ -74,9 +66,7 @@ public class UserRepositoryImplMongo implements UserRepository {
 				dbUsers.save(DbInit.createDBObject(entity));
 				mongoClient.close();
 			} catch (UnknownHostException | JsonProcessingException e) {
-				LOGGER.error(
-						"Connection to database failed (mongoDB installed and run ?)",
-						e);
+				LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 				return null;
 			}
 		}
@@ -84,8 +74,8 @@ public class UserRepositoryImplMongo implements UserRepository {
 		return entity;
 	}
 
-	public <S extends UserRepositoryObject> S update(S entity) {
-
+public <S extends UserRepositoryObject> S update (S entity){
+		
 		MongoClient mongoClient;
 		try {
 			mongoClient = DbInit.connect();
@@ -95,111 +85,76 @@ public class UserRepositoryImplMongo implements UserRepository {
 			BasicDBObject newDocument = new BasicDBObject();
 
 			if (entity.getUserID() != null) {
-				newDocument.append("$set", new BasicDBObject().append("userID",
-						entity.getUserID()));
-				BasicDBObject searchQuery = new BasicDBObject().append(
-						"userID", entity.getUserID());
+				newDocument.append("$set",new BasicDBObject().append("userID", entity.getUserID()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getBoxID() != null) {
-				newDocument.append("$set",
-						new BasicDBObject().append("boxID", entity.getBoxID()));
-				BasicDBObject searchQuery = new BasicDBObject().append(
-						"userID", entity.getUserID());
+				newDocument.append("$set", new BasicDBObject().append("boxID",entity.getBoxID()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getSurname() != null) {// need to verify
-				newDocument.append(
-						"$set",
-						new BasicDBObject().append("surname",
-								entity.getSurname()));
-				BasicDBObject searchQuery = new BasicDBObject().append(
-						"userID", entity.getUserID());
+				newDocument.append("$set",new BasicDBObject().append("surname", entity.getSurname()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getFirstname() != null) {
-				newDocument.append(
-						"$set",
-						new BasicDBObject().append("firstname",
-								entity.getFirstname()));
-				BasicDBObject searchQuery = new BasicDBObject().append(
-						"userID", entity.getUserID());
+				newDocument.append("$set",new BasicDBObject().append("firstname", entity.getFirstname()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getPassword() != null) {
-				newDocument.append(
-						"$set",
-						new BasicDBObject().append("password",
-								entity.getPassword()));
-				BasicDBObject searchQuery = new BasicDBObject().append(
-						"userID", entity.getUserID());
+				newDocument.append("$set",new BasicDBObject().append("password", entity.getPassword()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getPubKey() != null) {
-				newDocument.append("$set", new BasicDBObject().append("pubKey",
-						entity.getPubKey()));
-				BasicDBObject searchQuery = new BasicDBObject().append(
-						"userID", entity.getUserID());
+				newDocument.append("$set",new BasicDBObject().append("pubKey", entity.getPubKey()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getPrivateKey() != null) {
-				newDocument.append(
-						"$set",
-						new BasicDBObject().append("privateKey",
-								entity.getPrivateKey()));
-				BasicDBObject searchQuery = new BasicDBObject().append(
-						"userID", entity.getUserID());
+				newDocument.append("$set",new BasicDBObject().append("privateKey", entity.getPrivateKey()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
 
 			/* SnapMail add-on */
 			if (entity.getSmtpHost() != null) {
-				newDocument.append(
-						"$set",
-						new BasicDBObject().append("smtpHost",
-								entity.getSmtpHost()));
-				BasicDBObject searchQuery = new BasicDBObject().append(
-						"userID", entity.getUserID());
+				newDocument.append("$set",new BasicDBObject().append("smtpHost", entity.getSmtpHost()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getSmtpPort() != null) {
-				newDocument.append(
-						"$set",
-						new BasicDBObject().append("smtpPort",
-								entity.getSmtpPort()));
-				BasicDBObject searchQuery = new BasicDBObject().append(
-						"userID", entity.getUserID());
+				newDocument.append("$set",new BasicDBObject().append("smtpPort", entity.getSmtpPort()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getSmtpUsername() != null) {
-				newDocument.append(
-						"$set",
-						new BasicDBObject().append("smtpUsername",
-								entity.getSmtpUsername()));
-				BasicDBObject searchQuery = new BasicDBObject().append(
-						"userID", entity.getUserID());
+				newDocument.append("$set",new BasicDBObject().append("smtpUsername", entity.getSmtpUsername()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
 			if (entity.getSmtpPassword() != null) {
-				newDocument.append(
-						"$set",
-						new BasicDBObject().append("smtpPassword",
-								entity.getSmtpPassword()));
-				BasicDBObject searchQuery = new BasicDBObject().append(
-						"userID", entity.getUserID());
+				newDocument.append("$set",new BasicDBObject().append("smtpPassword", entity.getSmtpPassword()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
 				dbBox.update(searchQuery, newDocument);
 			}
-
+			if (entity.getSmtpToken() != null) {
+				newDocument.append("$set",new BasicDBObject().append("smtpToken", entity.getSmtpToken()));
+				BasicDBObject searchQuery = new BasicDBObject().append("userID",entity.getUserID());
+				dbBox.update(searchQuery, newDocument);
+			}
+			
 			mongoClient.close();
 		} catch (UnknownHostException e) {
-			LOGGER.error(
-					"Connection to database failed (mongoDB installed and run ?)",
-					e);
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 		}
 
 		return entity;
 	}
-
+	
 	@Override
 	public UserRepositoryObject findOne(String id) {
 		// The id is the email address
@@ -209,66 +164,60 @@ public class UserRepositoryImplMongo implements UserRepository {
 			DBCollection dbUsers = db.getCollection("users");
 
 			BasicDBObject query = new BasicDBObject("userID", id);
-			// BasicDBObject query = new BasicDBObject();
-			// query.put("userID", Pattern.compile(id ,
-			// Pattern.CASE_INSENSITIVE));
+//			BasicDBObject query = new BasicDBObject();
+//			query.put("userID",  Pattern.compile(id , Pattern.CASE_INSENSITIVE));
 			DBCursor cursor = dbUsers.find(query);
 			UserRepositoryObject user = null;
 			ObjectMapper mapper = new ObjectMapper();
-
+			
 			if (cursor.hasNext()) {
 				try {
-					user = mapper.readValue(cursor.next().toString(),
-							UserRepositoryObject.class);
+					user = mapper.readValue(cursor.next().toString(), UserRepositoryObject.class);
 				} catch (IOException e) {
 
-					LOGGER.error("User Mapping failed ! ", e);
+					LOGGER.error("User Mapping failed ! ",e);
 				}
 			}
 			return user;
 
 		} catch (UnknownHostException e) {
-			LOGGER.error(
-					"Connection to database failed (mongoDB installed and run ?)",
-					e);
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 			return null;
 		}
 	}
 
 	@Override
 	public Iterable<UserRepositoryObject> findAll() {
-		// Iterable <UserRepositoryObject> listOfAllUsers = null;
-		List<UserRepositoryObject> listOfAllUsers = new ArrayList<UserRepositoryObject>();
-
-		try {
+		//Iterable <UserRepositoryObject> listOfAllUsers = null;
+		List <UserRepositoryObject> listOfAllUsers = new ArrayList<UserRepositoryObject>();
+		
+		try{
 			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
-
+			
 			ObjectMapper mapper = new ObjectMapper();
 			UserRepositoryObject user = null;
-
+			
 			DBCursor cursor = dbUsers.find();
-
-			while (cursor.hasNext()) {
+					
+			while(cursor.hasNext()){
 				try {
-					user = mapper.readValue(cursor.next().toString(),
-							UserRepositoryObject.class);
+					user = mapper.readValue(cursor.next().toString(), UserRepositoryObject.class);
 				} catch (IOException e) {
 					LOGGER.error("User Mapping failed ! ");
 				}
-
+				
 				listOfAllUsers.add(user);
 			}
-
-		} catch (UnknownHostException e) {
-			LOGGER.error(
-					"Connection to database failed (mongoDB installed and run ?)",
-					e);
+			
+		}
+		catch (UnknownHostException e){
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);		
 		}
 		return listOfAllUsers;
-
-		// throw new RuntimeException("not yet invented");
+		
+		//throw new RuntimeException("not yet invented");
 	}
 
 	@Override
@@ -305,9 +254,7 @@ public class UserRepositoryImplMongo implements UserRepository {
 			}
 
 		} catch (UnknownHostException e) {
-			LOGGER.error(
-					"Connection to database failed (mongoDB installed and run ?)",
-					e);
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 		}
 		return listOfAllUsers;
 
@@ -354,9 +301,7 @@ public class UserRepositoryImplMongo implements UserRepository {
 			BasicDBObject query = new BasicDBObject("userID", id);
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
-			LOGGER.error(
-					"Connection to database failed (mongoDB installed and run ?)",
-					e);
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 		}
 
 	}
@@ -367,13 +312,10 @@ public class UserRepositoryImplMongo implements UserRepository {
 			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
-			BasicDBObject query = new BasicDBObject("userID",
-					entity.getUserID());
+			BasicDBObject query = new BasicDBObject("userID", entity.getUserID());
 			dbUsers.remove(query);
 		} catch (UnknownHostException e) {
-			LOGGER.error(
-					"Connection to database failed (mongoDB installed and run ?)",
-					e);
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 		}
 
 	}
@@ -386,59 +328,80 @@ public class UserRepositoryImplMongo implements UserRepository {
 
 	@Override
 	public void deleteAll() {
+		
+		//throw new RuntimeException("not yet invented");
 
-		// throw new RuntimeException("not yet invented");
-
-		try {
+		try{
 			MongoClient mongoClient = DbInit.connect();
 			DB db = mongoClient.getDB(dbName);
 			DBCollection dbUsers = db.getCollection("users");
-
+			
 			dbUsers.drop();
 			mongoClient.close();
-
-		} catch (UnknownHostException e) {
-			LOGGER.error(
-					"Connection to database failed (mongoDB installed and run ?)",
-					e);
+			
+			}
+		catch(UnknownHostException e){
+			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
 		}
 	}
 
 	@Override
-	public <S extends UserRepositoryObject> Iterable<S> save(
-			Iterable<S> entities) {
-		// throw new RuntimeException("not yet invented");
-
+	public <S extends UserRepositoryObject> Iterable<S> save(Iterable<S> entities) {
+		//throw new RuntimeException("not yet invented");
+		
 		List<S> listOfAllUsers = new ArrayList<S>();
 		Iterator<S> iterator = entities.iterator();
-
-		while (iterator.hasNext()) {
-			if (exists(iterator.next().getUserID())) {
+		
+		while(iterator.hasNext()){
+			if(exists(iterator.next().getUserID())){
 				delete(iterator.next().getUserID());
 			}
-
-			try {
+			
+			try{
 				MongoClient mongoClient = DbInit.connect();
 				DB db = mongoClient.getDB(dbName);
 				DBCollection dbUsers = db.getCollection("user");
-
+				
 				try {
 					dbUsers.save(DbInit.createDBObject(iterator.next()));
 				} catch (JsonProcessingException e) {
-					LOGGER.error("can not parse this json", e);
+					LOGGER.error("can not parse this json" ,e);
 				}
-			} catch (UnknownHostException e) {
-				LOGGER.error(
-						"Connection to database failed (mongoDB installed and run ?)",
-						e);
-
+			}
+			catch(UnknownHostException e){
+				LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
+				
 			}
 		}
-
-		return listOfAllUsers;
-
+				
+		return listOfAllUsers ;
+		
 	}
 
 
+	@Override
+	public BoxRepositoryObject findBoxFromUserID(String userID) {
+		UserRepositoryMongo userRepositoryMongo = this;
+		BoxRepositoryMongo boxRepositoryMongo = new BoxRepositoryMongo(dbName);
+
+		UserRepositoryObject userRepositoryObject = userRepositoryMongo
+				.findOne(userID);
+		if (userRepositoryObject == null) {
+			LOGGER.error("userRepositoryObject is null");
+			return null;
+		}
+
+		User user = userRepositoryObject.toUser();
+		String boxID = user.getBoxID();
+		if (boxID == null) {
+
+			LOGGER.error("The user box ID is null");
+			return null;
+		}
+		BoxRepositoryObject boxRepositoryObject = boxRepositoryMongo
+				.findOne(boxID);
+
+		return boxRepositoryObject;
+	}
 
 }
