@@ -37,6 +37,9 @@ public class Main {
 		@Option(shortName = "p", defaultValue = "9998")
 		public String getMediaHomePort();
 
+		@Option(shortName = "p_cav", defaultValue = "3310")
+		public String getClamAVPort();
+
 	}
 
 	public static void main(String[] args) throws KeyStoreException,
