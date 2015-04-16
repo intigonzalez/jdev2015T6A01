@@ -18,8 +18,8 @@ RUN apt-get -y install wget libfaac-dev libgpac-dev \
 
 #!/bin/bash
 #Script for Ubuntu 14.04
-RUN wget http://brown:8080/job/FFmpeg/lastSuccessfulBuild/artifact/ffmpeg_2.6-1_amd64.deb
-RUN wget http://brown:8080/job/MP4Box/lastSuccessfulBuild/artifact/gpac_0.5.2-1_amd64.deb
+RUN wget http://jenkins.homeb.tv:8080/job/FFmpeg/lastSuccessfulBuild/artifact/ffmpeg_2.6-1_amd64.deb
+RUN wget http://jenkins.homeb.tv:8080/job/MP4Box/lastSuccessfulBuild/artifact/gpac_0.5.2-1_amd64.deb
 RUN apt-get -y install 
 
 
