@@ -35,8 +35,8 @@ angular.module('myApp.myprofile', ['ngRoute'])
         };
         
         this.openOauth = function () {
-     	   var url="https://accounts.google.com/o/oauth2/auth?access_type=offline&approval_prompt=force&client_id=547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=https://www.googleapis.com/auth/gmail.compose";
-         	window.open(url, "_blank", "toolbar=no, scrollbars=yes, resizable=yes");
+     	   var url="/api/oauth/" + user.person.userID + "/google";
+     	   window.open(url, "_blank", "toolbar=no, scrollbars=yes, resizable=yes");
          };
          
          this.auth2token = function (value){
@@ -93,7 +93,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
         
         this.getSmtp = function ()
         {
-        	$http.get(PREFIX_RQ + "/api/app/account/" + userID + "/smtp")
+        	$http.get(PREFIX_RQ + "/api/app/snapmail/" + userID + "/smtp")
             .success(function (data, status, headers, config)
             {
                 user.smtp = data.smtpProperty;
@@ -123,7 +123,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
             var data = {};
             data.smtpProperty = smtp;
             console.log(smtp);
-            $http.put(PREFIX_RQ + "/api/app/account/" + this.person.userID + "/smtp", data)
+            $http.put(PREFIX_RQ + "/api/app/snapmail/" + this.person.userID + "/smtp", data)
                 .success(function (data, status, headers, config) {
                     console.log("Succeed");
                     user.class = "btn-success";
