@@ -1,42 +1,40 @@
 package com.enseirb.telecom.dngroup.dvd2c.db;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.couchbase.core.mapping.Document;
-import org.springframework.data.couchbase.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Document
+@Document(collection="UserRepositoryObject")
 public class UserRepositoryObject {
 	
 	@Id
 	protected String userID;
-	@Field
+	
 	protected String boxID;
-	@Field
+	
 	protected String firstname;
-	@Field
+
 	protected String surname;
-	@Field
+	
 	protected String password;
-	@Field
+
 	protected String pubKey;
-	@Field
+
 	protected String privateKey;
 	/* SnapMail add-on */
-	@Field
+	
 	protected String smtpHost;
-	@Field
+
 	protected String smtpPort;
-	@Field
+
 	protected String smtpUsername;
-	@Field
+	
 	protected String smtpPassword;
-	@Field
+	
 	protected String smtpToken;
 
-	@Field
+	
 	protected BoxRepositoryObject box;
 
 	public BoxRepositoryObject getBox() {

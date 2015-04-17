@@ -4,26 +4,24 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.couchbase.core.mapping.Document;
-import org.springframework.data.couchbase.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Document
+@Document(collection="BoxRepositoryObject")
 public class BoxRepositoryObject {
 
 	@Id
 	String boxID;
 
-	@Field
+
 	String ip;
-	@Field
+
 	String pubKey;
-	@Field
+
 	String privateKey;
-	@Field
+
 	Integer TTL;
 
 	public BoxRepositoryObject() {
