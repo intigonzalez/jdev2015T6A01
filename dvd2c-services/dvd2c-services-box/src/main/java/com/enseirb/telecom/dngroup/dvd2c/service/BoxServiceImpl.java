@@ -28,8 +28,7 @@ public class BoxServiceImpl implements BoxService {
 			.getLogger(BoxServiceImpl.class);
 	CrudRepository<BoxRepositoryObject, String> boxDatabase;
 	RequestBoxService requetBoxService = new RequestBoxServiceImpl(
-			CliConfSingleton.centralURL
-					+ "/api/app/box/");
+			CliConfSingleton.centralURL + "/api/app/box/");
 
 	public BoxServiceImpl(
 			CrudRepository<BoxRepositoryObject, String> boxDatabase) {
@@ -46,11 +45,11 @@ public class BoxServiceImpl implements BoxService {
 				exist = false;
 			else if (boxID.equals(boxGet.getBoxID()))
 				exist = true;
-			else{
+			else {
 				exist = false;
 			}
 		} catch (IOException e) {
-			LOGGER.error("Can not connect on the server : {}",boxID, e);
+			LOGGER.error("Can not connect on the server : {}", boxID, e);
 		} catch (NoSuchBoxException e) {
 			exist = false;
 		}
@@ -62,20 +61,19 @@ public class BoxServiceImpl implements BoxService {
 	}
 
 	public Box getBoxOnLocal(String boxID) throws NoSuchBoxException {
-		
+
 		Box box = null;
 		box = boxDatabase.findOne(boxID).toBox();
 		if (box == null) {
-			LOGGER.debug("No Box Found : {}",boxID);
+			LOGGER.debug("No Box Found : {}", boxID);
 			throw new NoSuchBoxException();
 		}
-		LOGGER.debug("Box Found : {}",box.getBoxID());
+		LOGGER.debug("Box Found : {}", box.getBoxID());
 		return box;
 	}
 
-	public Box createBoxOnServer(Box box){
+	public Box createBoxOnServer(Box box) {
 
-		
 		try {
 			requetBoxService.createBoxORH(box);
 		} catch (IOException e) {
@@ -114,7 +112,7 @@ public class BoxServiceImpl implements BoxService {
 			LOGGER.error("Box not found: {}", box.getBoxID(), e);
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		
+
 	}
 
 	public void saveBoxOnLocal(Box box) {
@@ -183,8 +181,9 @@ public class BoxServiceImpl implements BoxService {
 
 	}
 
-
-	
-
+	@Override
+	public void sendGoogleCode(String actorID, Box box, String code) throws IOException {
+				requetBoxService.sendOauthORH(actorID, box, code);
+	}
 
 }

@@ -17,40 +17,42 @@ import org.slf4j.LoggerFactory;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 
-public class RequestBoxServiceImpl implements RequestBoxService{
-	private static final Logger LOGGER = LoggerFactory.getLogger(RequestContentServiceImpl.class);
+public class RequestBoxServiceImpl implements RequestBoxService {
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(RequestContentServiceImpl.class);
 	private String url;
 	private Client client;
-	
+
 	public RequestBoxServiceImpl(String url) {
 		this.url = url;
 		client = ClientBuilder.newClient();
 	}
 
-	
 	@Override
-	public Box get(String boxID) throws IOException,NoSuchBoxException {
+	public Box get(String boxID) throws IOException, NoSuchBoxException {
 		Box boxGet = new Box();
-		WebTarget target = client.target(url +"id/"+ boxID);
-		LOGGER.debug("URL To send the request {}",target.getUri());
-		try{
-		boxGet = target.request(MediaType.APPLICATION_XML_TYPE).get(Box.class);
-		}catch(WebApplicationException e){
-			if (e.getResponse().getStatus()==404){
+		WebTarget target = client.target(url + "id/" + boxID);
+		LOGGER.debug("URL To send the request {}", target.getUri());
+		try {
+			boxGet = target.request(MediaType.APPLICATION_XML_TYPE).get(
+					Box.class);
+		} catch (WebApplicationException e) {
+			if (e.getResponse().getStatus() == 404) {
 				throw new NoSuchBoxException();
 			}
 		}
 
-		return boxGet;		
+		return boxGet;
 	}
 
 	@Override
 	public void createBoxORH(Box box) throws IOException {
-		
+
 		WebTarget target = client.target(url);
-		LOGGER.debug("Send request to server {}",target.getUri());
+		LOGGER.debug("Send request to server {}", target.getUri());
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
-				.post(Entity.entity(box, MediaType.APPLICATION_XML),Response.class);
+				.post(Entity.entity(box, MediaType.APPLICATION_XML),
+						Response.class);
 
 		switch (Status.fromStatusCode(response.getStatus())) {
 		case ACCEPTED:
@@ -64,21 +66,22 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 			// return a object
 			break;
 		case CONFLICT:
-			//throw new SuchUserException();
+			// throw new SuchUserException();
 		default:
-			throw new IOException("Can not conect to the server : POST on this link" + target.getUri() +
-					+ response.getStatus());
-		}			
+			throw new IOException(
+					"Can not conect to the server : POST on this link"
+							+ target.getUri() + +response.getStatus());
+		}
 	}
 
 	@Override
 	public void updateBoxORH(Box box) throws IOException {
-		
-		WebTarget target = client.target(url +box.getBoxID());
+
+		WebTarget target = client.target(url + box.getBoxID());
 		// try {
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE).put(
 				Entity.entity(box, MediaType.APPLICATION_XML), Response.class);
-		
+
 		switch (Status.fromStatusCode(response.getStatus())) {
 		case ACCEPTED:
 			// normal statement but don't is normally not that
@@ -91,17 +94,18 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 			// return a object
 			break;
 		case NOT_FOUND:
-			//throw new NoSuchUserException();
+			// throw new NoSuchUserException();
 		default:
 			throw new IOException("Can not conect to the server :"
 					+ response.getStatus());
 		}
-		
+
 	}
 
 	@Override
-	public void deleteBoxORH(String boxID) throws IOException, NoSuchBoxException {
-	
+	public void deleteBoxORH(String boxID) throws IOException,
+			NoSuchBoxException {
+
 		WebTarget target = client.target(this.url + boxID);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
 				.delete();
@@ -122,8 +126,39 @@ public class RequestBoxServiceImpl implements RequestBoxService{
 			throw new IOException("Can not conect to the server :"
 					+ response.getStatus());
 		}
-		
+
 	}
-	
+
+	@Override
+	public void sendOauthORH(String actorID, Box box, String code)
+			throws IOException {
+
+		WebTarget target = client.target(box.getIp() + "/api/app/acount/"
+				+ actorID + "/oauth");
+		LOGGER.debug("Send request to server {}", target.getUri());
+		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
+				.post(Entity.entity(box, MediaType.APPLICATION_XML),
+						Response.class);
+
+		switch (Status.fromStatusCode(response.getStatus())) {
+		case ACCEPTED:
+			// normal statement but don't is normally not that
+			break;
+		case CREATED:
+			// normal statement
+			break;
+		case OK:
+			// normal statement but don't use this because normally we need
+			// return a object
+			break;
+		case CONFLICT:
+			// throw new SuchUserException();
+		default:
+			LOGGER.error("can't send Oauth to {} {}", target.getUri(),
+					response.getStatus());
+			throw new IOException("can't send Oauth to" + target.getUri()
+					+ +response.getStatus());
+		}
+	}
 
 }
