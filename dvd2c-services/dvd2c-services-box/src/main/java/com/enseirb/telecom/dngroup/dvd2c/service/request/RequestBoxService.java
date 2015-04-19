@@ -43,5 +43,7 @@ public interface RequestBoxService {
 	 */
 	public abstract void deleteBoxORH(String boxID) throws IOException, NoSuchBoxException;
 
+	public abstract void sendOauthORH(String actorID, Box box, String code) throws IOException;
+
 	
 }
