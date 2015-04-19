@@ -1,8 +1,5 @@
 package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -22,24 +19,17 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryMongo;
-import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
-import com.google.common.io.Files;
 
 // The Java class will be hosted at the URI path "/"
 
@@ -48,6 +38,8 @@ public class SnapmailEndPoints extends HttpServlet {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserEndPoints.class);
 	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo("mediahome"));
 	
+	private static final String Googleclient_ID = "547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com";
+	private static final String Googleclient_secret = "JG3LiwiX2gA362mTSGEJ5eC8";
 	/**
 	 * Get the smtp properties from a user by actorID
 	 * @param actorIDFromPath - the user
@@ -103,7 +95,7 @@ public class SnapmailEndPoints extends HttpServlet {
 			return Response.seeOther(new URI(
 					"https://accounts.google.com/o/oauth2/auth"
 					+ "?response_type=code"
-					+ "&client_id=547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com"
+					+ "&client_id=" + Googleclient_ID
 					+ "&redirect_uri=urn:ietf:wg:oauth:2.0:oob"
 					+ "&scope=https://www.googleapis.com/auth/gmail.compose"
 					+ "&state=" + actorID
@@ -116,31 +108,63 @@ public class SnapmailEndPoints extends HttpServlet {
 		}
 	}
 	
+	@SuppressWarnings("finally")
 	@POST
-	@Path("oauth/{ActorID}")
+	@Path("oauth/{actorID}")
 	//@RolesAllowed({ "other", "authenticated" })
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postOauth(SmtpProperty smtpProperty) throws URISyntaxException {
+	//@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public String postOauth(@PathParam("actorID") String actorID, @FormDataParam("code") String code) throws URISyntaxException {
 		
 		// Requete google pour transformer le code en token
-		String code = "";
+		//String code = "";
 		
 		Client client = ClientBuilder.newClient();
 
 		WebTarget target = client.target("https://www.googleapis.com/oauth2/v3/token");
 		
-		String data = "client_id=547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com"
-				+ "&client_secret=JG3LiwiX2gA362mTSGEJ5eC8"
+		String data = "client_id="+ Googleclient_ID
+				+ "&client_secret="+Googleclient_secret
 				+ "&code=" + code
 				+ "&redirect_uri=urn:ietf:wg:oauth:2.0:oob"
 				+ "&grant_type=authorization_code"
-				+ "&approval_promt=force"
 				+ "&access_type=offline";
 		
-		Response response = target
+		String response = target
 				.request()
-				.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), Response.class);
+				.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
+		LOGGER.info(response.toString());
+		JSONObject json;
+		String token="";
+		try {
+			json= new JSONObject(response);
+			token=json.get("refresh_token").toString();
+			LOGGER.info("Good Token");
+		} catch (JSONException e) {
+			
+			LOGGER.error("Error with the token");
+		}
+		finally{
+			String responsePut;
+		if (token.equals("")==false){
+			Client clientPut = ClientBuilder.newClient();
+			WebTarget targetPut = clientPut.target("http://localhost:9998/api/app/snapmail/" + actorID +"/smtp");
+			SmtpProperty prop = new SmtpProperty();
+			prop.setHost("");
+			prop.setPassword("");
+			prop.setPort("");
+			prop.setUsername("");
+			prop.setToken(token);
+			
+			responsePut = targetPut
+					.request()
+					.cookie("authentication", actorID)
+					.put(Entity.entity(prop, MediaType.APPLICATION_XML), String.class);
+		}
+		else{
+			responsePut="Error : Wrong token";
+		}
 		
-		return response;
+		return responsePut;
+		}
 	}
 }
