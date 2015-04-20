@@ -588,7 +588,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			if (response.getLocation() != null)
 				return "http://"
 						+ localAddress()
-						+ "/"
+						+ "/snapmail/"
 						+ "snapmail.html#/"
 						+ this.username
 						+ "/"
@@ -632,8 +632,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			client.register(feature);
 
 			WebTarget target = client
-					.target("http://"+CliConfSingleton.conf.getMediaHomeHost()+":"+CliConfSingleton.conf.getMediaHomePort()+"/api/app/account/" + this.username
-							+ "/smtp");
+					.target("http://"+CliConfSingleton.conf.getMediaHomeHost()+":"+CliConfSingleton.conf.getMediaHomePort()+"/api/app/snapmail/" + this.username + "/smtp");
 			SmtpProperty smtpProperty = target.request(
 					MediaType.APPLICATION_XML_TYPE).get(SmtpProperty.class);
 			String token;
