@@ -139,14 +139,11 @@ public class RequestBoxServiceImpl implements RequestBoxService {
 				+ actorID);
 		LOGGER.debug("Send request to server {}", target.getUri());
 		
-        Form form = new Form();
-        form.param("code", code);
-		Response response = target.request(MediaType.APPLICATION_JSON_TYPE).header("Content-Type","application/json")
-				.post(Entity.entity(form, MediaType.APPLICATION_JSON),
+        
+		Response response = target.request()
+				.post(Entity.entity(code, "text/plain"),
 						Response.class);
-LOGGER.info(target.request(MediaType.APPLICATION_XML_TYPE)
-		.post(Entity.entity(form, MediaType.APPLICATION_XML),
-				Response.class).toString());
+        LOGGER.info(response.toString());
 		switch (Status.fromStatusCode(response.getStatus())) {
 		case ACCEPTED:
 			// normal statement but don't is normally not that

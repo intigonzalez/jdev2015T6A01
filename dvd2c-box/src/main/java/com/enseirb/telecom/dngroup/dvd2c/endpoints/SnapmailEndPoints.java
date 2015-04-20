@@ -112,20 +112,20 @@ public class SnapmailEndPoints extends HttpServlet {
 	@POST
 	@Path("oauth/{actorID}")
 	//@RolesAllowed({ "other", "authenticated" })
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postOauth(@PathParam("actorID") String actorID, @FormDataParam("code") String code) throws URISyntaxException {
+	@Consumes("text/plain")
+	public Response postOauth(@PathParam("actorID") String actorID, String code) throws URISyntaxException {
 		
 		// Requete google pour transformer le code en token
-		//String code = "";
+		// String code = "";
 		
 		Client client = ClientBuilder.newClient();
 
 		WebTarget target = client.target("https://www.googleapis.com/oauth2/v3/token");
 		
-		String data = "client_id="+ Googleclient_ID
-				+ "&client_secret="+Googleclient_secret
+		String data = "client_id=" + Googleclient_ID
+				+ "&client_secret=" + Googleclient_secret
 				+ "&code=" + code
-				+ "&redirect_uri=urn:ietf:wg:oauth:2.0:oob"
+				+ "&redirect_uri=http://localhost:9999/api/oauth"
 				+ "&grant_type=authorization_code"
 				+ "&access_type=offline";
 		

@@ -112,7 +112,7 @@
     		</div>
     		<div class="padded-smtp">
 	    		<div class="panel-body" ng-show="user.isSMTPTab(0)" class="btn-group">
-	    			<button class="btn btn-success" ng-click="user.openOauth(); user.setSMTPTab(4)">Connect with OAuth</button>
+	    			<a class="btn btn-success" href="{{user.openOauth('google')}}">Connect with OAuth</a>
 	    			<button class="btn btn-info" ng-click="user.setSMTPTab(3)">Edit SMTP settings manually</button>
 	    		</div>
 	    		<div class="panel-body" ng-show="user.isSMTPTab(1)">
@@ -197,18 +197,6 @@
 			                </div>
 			            </div>
 			        </form>
-				</div>
-				<div class="panel-body" ng-show="user.isSMTPTab(4)">
-	    			<div class="form-group">
-			         	<div class="input-group">
-			            	<span class="input-group-addon">
-			                	<i class="glyphicon glyphicon-flag"></i>
-			               	</span>
-			            	<input class="form-control" placeholder="Token" ng-model="user.code"
-			                                   type="text" autofocus>
-			           	</div>
-			 		</div>
-			       	<button class="btn btn-warning" ng-click="user.auth2token(user.code); user.setSMTPTab(1)">Send</button>
 				</div>
 			</div>
     	</div>

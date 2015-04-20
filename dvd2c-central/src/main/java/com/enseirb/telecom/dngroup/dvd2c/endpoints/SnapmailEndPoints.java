@@ -1,6 +1,8 @@
 package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -36,22 +38,21 @@ public class SnapmailEndPoints {
 	 * 
 	 * 
 	 * @return
+	 * @throws URISyntaxException 
 	 */
 	@GET
-	public Response googlecode(@QueryParam("state")String actorID,@QueryParam("code") String code) {
+	public Response googlecode(@QueryParam("state")String actorID,@QueryParam("code") String code) throws URISyntaxException {
 		User actor = uManager.getUserOnLocal(actorID);
 		try {
 			Box box = boxManager.getBoxOnLocal(actor.getBoxID());
 			boxManager.sendGoogleCode(actorID,box,code);
-			
+			return Response.seeOther(new URI(box.getIp() + "/home.html#/myprofile")).build();
 		} catch (NoSuchBoxException e) {
 			LOGGER.error("box of {} not found",actorID);
 			throw new WebApplicationException("box of user not found",Status.NOT_FOUND);
 		}catch (IOException e) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		return null;
-		
 	}
 
 
