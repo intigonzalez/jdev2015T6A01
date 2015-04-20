@@ -3,35 +3,24 @@ package com.enseirb.telecom.dngroup.dvd2c.db;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.couchbase.core.mapping.Document;
-import org.springframework.data.couchbase.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Comment;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.model.Metadata;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
+@Document(collection="ContentRepositoryObject")
 public class ContentRepositoryObject {
 	@Id
 	String id;
-	@Field
+
 	String name;
-	@Field
 	String type;
-	@Field
 	String actorID;
-	@Field
 	Long unixTime;
-	@Field
 	String link;
-	@Field
 	String previewLink;
-	@Field
 	String status;
-	@Field
 	List<Comment> comment;
-	@Field
 	List<Integer> metadata;
 
 

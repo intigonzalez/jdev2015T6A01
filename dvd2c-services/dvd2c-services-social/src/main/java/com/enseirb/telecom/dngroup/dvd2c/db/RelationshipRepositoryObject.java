@@ -3,31 +3,22 @@ package com.enseirb.telecom.dngroup.dvd2c.db;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.couchbase.core.mapping.Document;
-import org.springframework.data.couchbase.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 
-@Document
+@Document(collection="RelationshipRepositoryObject")
 public class RelationshipRepositoryObject {
 
 	@Id
 	String iD;
-	@Field
 	String userId;
-	@Field
 	String actorID;
-	@Field
 	String firstname;
-	@Field
 	String surname;
-	@Field
 	String pubKey;
-	@Field
 	Integer aprouve;
-	@Field
 	Long unixTime;
-	@Field
 	List<Integer> role;
 
 	public RelationshipRepositoryObject() {
