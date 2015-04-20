@@ -588,7 +588,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			if (response.getLocation() != null)
 				return "http://"
 						+ localAddress()
-						+ "/"
+						+ "/snapmail/"
 						+ "snapmail.html#/"
 						+ this.username
 						+ "/"
