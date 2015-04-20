@@ -23,8 +23,14 @@ worker:
    - /tmp:/tmp
 snapmail:
   build: ../../snapmail
-  command: java -jar snapmail.jar
+  command: java -jar snapmail.jar -h box -c clamav
   ports:
    - "25004:25004"
   links:
    - box
+   - clamav
+clamav:
+  build: ../../clamav
+  command: /etc/init.d/clamav-daemon start
+  ports:
+   - "3310:3310"
