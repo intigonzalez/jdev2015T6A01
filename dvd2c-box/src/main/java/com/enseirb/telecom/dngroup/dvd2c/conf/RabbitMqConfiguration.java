@@ -48,7 +48,7 @@ public class RabbitMqConfiguration {
 		ConnectionFactory factory = connectionFactory();
 
 		connection = factory.createConnection();
-		channel = connection.createChannel(true);
+		channel = connection.createChannel(false);
 
 		channel.queueDeclare(QUEUE_NAME, true, false, false, null);
 		return channel;

@@ -19,9 +19,9 @@ import com.enseirb.telecom.dngroup.dvd2c.endpoints.UserEndPoints;
 public class RestConfiguration extends ResourceConfig {
 
 	public RestConfiguration() {
-		super(MyApplicationEventListener.class);
+		super();// super(MyApplicationEventListener.class);
 		// endpoints
-		
+
 		register(ContentEndPoints.class);
 		register(BoxEndPoints.class);
 		register(RelationEndPoints.class);
