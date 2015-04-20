@@ -2,7 +2,7 @@
 #Script for Ubuntu 14.04
 
 # Update
-sudo apt-get update -y
+#sudo apt-get update -y
 
 # Docker + Docker-compose installation
 if [[ ! $(which wget) ]] 
@@ -32,20 +32,40 @@ fi
 # Creation of the docker group
 if [[ ! $(egrep -i "^docker" /etc/group) ]]
 then
-	echo "Creation of the group docker"
+	echo "Creation of the group docker - You should log out and then log back in to make sure the changes took effect"
 	sudo groupadd docker
+	sudo chown root:docker /var/run/docker.sock
 fi
 
 # Add the current user to the group
 echo "Current user will be added to the group docker"
-sudo gpasswd -a ${USER} docker
+sudo usermod -a -G docker ${USER}
 sudo service docker restart
-newgrp docker
+#newgrp docker
+
+# Downloading and installation of media-home
+d=~/media-home/
+sm_docker_d=$d"docker/composer/composerSnapmail"
+echo $sm_docker_d
+if [[ ! -d $d ]]
+then
+	cd ~
+	git clone https://github.com/dngroup/media-home
+else
+	cd $d
+#	git pull
+fi
 
 # Creation of the cron job
-cronjob = "0 0 * * * sh -c"
-if [[ ! $(crontab -l | grep $cronjob) ]]
+freq="0 0 * * *"
+command=$d"docker_run.sh"
+cronjob=$freq$command
+
+if [[ ! $(crontab -l | grep "$command") ]]
 then
-	echo $cronjob
+	echo "[CREATE] cronjob to update media-home : $cronjob"
+	sudo printf "$(crontab -l)\n$cronjob" | sudo dd of=/var/spool/cron/crontabs/${USER}
 fi
-crontab -l
+
+cd $cd
+chmod +x docker_run.sh
