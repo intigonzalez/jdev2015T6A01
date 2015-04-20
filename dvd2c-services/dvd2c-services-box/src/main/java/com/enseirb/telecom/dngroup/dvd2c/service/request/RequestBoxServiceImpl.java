@@ -7,7 +7,9 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -133,13 +135,18 @@ public class RequestBoxServiceImpl implements RequestBoxService {
 	public void sendOauthORH(String actorID, Box box, String code)
 			throws IOException {
 
-		WebTarget target = client.target(box.getIp() + "/api/app/acount/"
-				+ actorID + "/oauth");
+		WebTarget target = client.target(box.getIp() + "/api/oauth/"
+				+ actorID);
 		LOGGER.debug("Send request to server {}", target.getUri());
-		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
-				.post(Entity.entity(box, MediaType.APPLICATION_XML),
+		
+        Form form = new Form();
+        form.param("code", code);
+		Response response = target.request(MediaType.APPLICATION_JSON_TYPE).header("Content-Type","application/json")
+				.post(Entity.entity(form, MediaType.APPLICATION_JSON),
 						Response.class);
-
+LOGGER.info(target.request(MediaType.APPLICATION_XML_TYPE)
+		.post(Entity.entity(form, MediaType.APPLICATION_XML),
+				Response.class).toString());
 		switch (Status.fromStatusCode(response.getStatus())) {
 		case ACCEPTED:
 			// normal statement but don't is normally not that

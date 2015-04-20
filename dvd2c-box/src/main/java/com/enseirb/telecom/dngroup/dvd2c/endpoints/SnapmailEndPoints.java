@@ -96,7 +96,7 @@ public class SnapmailEndPoints extends HttpServlet {
 					"https://accounts.google.com/o/oauth2/auth"
 					+ "?response_type=code"
 					+ "&client_id=" + Googleclient_ID
-					+ "&redirect_uri=urn:ietf:wg:oauth:2.0:oob"
+					+ "&redirect_uri=http://localhost:9999/api/oauth"
 					+ "&scope=https://www.googleapis.com/auth/gmail.compose"
 					+ "&state=" + actorID
 					+ "&access_type=offline"
@@ -112,8 +112,8 @@ public class SnapmailEndPoints extends HttpServlet {
 	@POST
 	@Path("oauth/{actorID}")
 	//@RolesAllowed({ "other", "authenticated" })
-	//@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public String postOauth(@PathParam("actorID") String actorID, @FormDataParam("code") String code) throws URISyntaxException {
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response postOauth(@PathParam("actorID") String actorID, @FormDataParam("code") String code) throws URISyntaxException {
 		
 		// Requete google pour transformer le code en token
 		//String code = "";
@@ -144,7 +144,7 @@ public class SnapmailEndPoints extends HttpServlet {
 			LOGGER.error("Error with the token");
 		}
 		finally{
-			String responsePut;
+			Response responsePut;
 		if (token.equals("")==false){
 			Client clientPut = ClientBuilder.newClient();
 			WebTarget targetPut = clientPut.target("http://localhost:9998/api/app/snapmail/" + actorID +"/smtp");
@@ -158,10 +158,10 @@ public class SnapmailEndPoints extends HttpServlet {
 			responsePut = targetPut
 					.request()
 					.cookie("authentication", actorID)
-					.put(Entity.entity(prop, MediaType.APPLICATION_XML), String.class);
+					.put(Entity.entity(prop, MediaType.APPLICATION_XML), Response.class);
 		}
 		else{
-			responsePut="Error : Wrong token";
+			responsePut=Response.status(500).build();
 		}
 		
 		return responsePut;
