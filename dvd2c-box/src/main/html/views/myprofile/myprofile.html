@@ -112,7 +112,8 @@
     		</div>
     		<div class="padded-smtp">
 	    		<div class="panel-body" ng-show="user.isSMTPTab(0)" class="btn-group">
-	    			<a class="btn btn-success" href="{{user.openOauth('google')}}">Connect with OAuth</a>
+	    			<a class="btn btn-success" href="{{user.openOauth('google')}}">Link my account with google</a>
+	    			<a class="btn btn-success" href="{{user.openOauth('yahoo')}}">Link my account with yahoo</a>
 	    			<button class="btn btn-info" ng-click="user.setSMTPTab(3)">Edit SMTP settings manually</button>
 	    		</div>
 	    		<div class="panel-body" ng-show="user.isSMTPTab(1)">

@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Base64;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServlet;
@@ -160,6 +161,9 @@ if(actorID.contains("@gmail.com")){
 {
 	WebTarget targetYahoo = client.target("https://api.login.yahoo.com/oauth2/get_token");
 	
+	String secure = Yahooclient_ID + ":" + Yahooclient_secret;
+	String encodedvalue= Base64.getEncoder().encodeToString(secure.getBytes());
+
 	data = "client_id=" + Yahooclient_ID
 			+ "&client_secret=" + Yahooclient_secret
 			+ "&code=" + code
@@ -169,7 +173,7 @@ if(actorID.contains("@gmail.com")){
 	
 	response = targetYahoo
 			.request()
-			.header("Authorization", "Basic")
+			.header("Authorization", "Basic " + encodedvalue)
 			.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
 	LOGGER.info(response.toString());
 	

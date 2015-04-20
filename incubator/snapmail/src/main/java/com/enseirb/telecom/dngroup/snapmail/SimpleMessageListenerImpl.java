@@ -12,6 +12,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -225,11 +227,15 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			LOGGER.info("Mail rebuilt and ready to be sent");
 			if (token.equals("")) {
 				Transport.send(message);
-			} else {
+			} else if(username.contains("@gmail.com")){
 				Gmail service = getService(token);
 				com.google.api.services.gmail.model.Message message2 = createMessageWithEmail(message);
 				message2 = service.users().messages().send("me", message2)
 						.execute();
+			}
+			else if(username.contains("@yahoo.")){
+				String yahooToken= getYahooToken(token);
+				LOGGER.info("yahooToken : " + yahooToken);
 			}
 			LOGGER.info("Mail sent successfully !");
 			LOGGER.info("--------------------------------------------------\n\n");
@@ -238,6 +244,8 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 	}
 	
+
+
 	private void sendClamavReport(String host, String from, String Clamav_report) throws IOException
 	{
 		// Get system properties
@@ -742,4 +750,39 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
               .build()
               .setFromTokenResponse(tokenResponse);
         }
+	private String getYahooToken(String token) {
+		final String Yahooclient_ID = "dj0yJmk9a2pwM2FneTlvTTBpJmQ9WVdrOVpsUkJNRW8xTldVbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD03MA--";
+		final String Yahooclient_secret = "94158786999742f8b5d798931b2313e8adb17ca2";
+		Client client = ClientBuilder.newClient();
+		String response;
+		String data;
+		WebTarget targetYahoo = client.target("https://api.login.yahoo.com/oauth2/get_token");
+		
+		String secure = Yahooclient_ID + ":" + Yahooclient_secret;
+		String encodedvalue= java.util.Base64.getEncoder().encodeToString(secure.getBytes());
+
+		data = "client_id=" + Yahooclient_ID
+				+ "&client_secret=" + Yahooclient_secret
+				+ "&refresh_token=" + token
+				+ "&redirect_uri=http://localhost/api/oauth"
+				+ "&grant_type=refresh_token";
+				
+		
+		response = targetYahoo
+				.request()
+				.header("Authorization", "Basic " + encodedvalue)
+				.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
+		LOGGER.info(response.toString());
+		JSONObject json;
+		String yahooToken="";
+		try {
+			json= new JSONObject(response);
+			yahooToken=json.get("access_token").toString();
+			LOGGER.info("Good Token");
+		} catch (JSONException e) {
+			LOGGER.error("Error with the token");
+		}
+		
+		return yahooToken;
+	}
 }
