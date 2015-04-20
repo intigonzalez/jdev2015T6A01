@@ -40,15 +40,6 @@ public class SpringConfiguration {
 		return om;
 
 	}
-	/*
-	 * Use the standard Mongo driver API to create a com.mongodb.Mongo instance.
-	 */
-	@Bean
-	public Mongo mongo() throws UnknownHostException {
-		return new Mongo(CliConfSingleton.dbHostname,CliConfSingleton.dbPort);
-	}
-	public @Bean MongoTemplate mongoTemplate() throws Exception {
-	      return new MongoTemplate(mongo(), "mydatabase");
-	  }
+
 
 }
