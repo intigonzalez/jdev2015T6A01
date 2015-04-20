@@ -30,6 +30,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
+import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 
 // The Java class will be hosted at the URI path "/"
 
@@ -37,9 +38,14 @@ import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
 public class SnapmailEndPoints extends HttpServlet {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserEndPoints.class);
 	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo("mediahome"));
-	
+		
 	private static final String Googleclient_ID = "547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com";
 	private static final String Googleclient_secret = "JG3LiwiX2gA362mTSGEJ5eC8";
+	private static final String Microsoftclient_ID = "0000000040153499";
+	private static final String Microsoftclient_secret = "Ha3x098elYnPNxF6vAm6NkG8ucTMEod4";
+	private static final String Yahooclient_ID = "dj0yJmk9a2pwM2FneTlvTTBpJmQ9WVdrOVpsUkJNRW8xTldVbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD03MA--";
+	private static final String Yahooclient_secret = "94158786999742f8b5d798931b2313e8adb17ca2";
+	private static final String redirectUri = CliConfSingleton.centralURL.toString() + "/api/oauth";
 	/**
 	 * Get the smtp properties from a user by actorID
 	 * @param actorIDFromPath - the user
@@ -96,13 +102,28 @@ public class SnapmailEndPoints extends HttpServlet {
 					"https://accounts.google.com/o/oauth2/auth"
 					+ "?response_type=code"
 					+ "&client_id=" + Googleclient_ID
-					+ "&redirect_uri=http://localhost:9999/api/oauth"
+					+ "&redirect_uri=" + redirectUri
 					+ "&scope=https://www.googleapis.com/auth/gmail.compose"
 					+ "&state=" + actorID
 					+ "&access_type=offline"
 					)).build();
 		case "microsoft":
-			return Response.seeOther(new URI("http://www.hotmail.fr")).build();
+			return Response.seeOther(new URI(
+					"https://login.windows.net/common/oauth2/authorize"
+					+ "?response_type=code"
+					+ "&client_id=" + Microsoftclient_ID
+					+ "&redirect_uri=" + redirectUri
+					+ "&resource=https://outlook.office365.com"
+					+ "&state=" + actorID
+					)).build();
+		case "yahoo":
+			return Response.seeOther(new URI(
+					"https://api.login.yahoo.com/oauth2/request_auth"
+					+ "?response_type=code"
+					+ "&client_id=" + Yahooclient_ID
+					+ "&redirect_uri=http://localhost/api/oauth"
+					+ "&state=" + actorID
+					)).build();
 		default:
 			return Response.status(404).build();
 		}
@@ -119,20 +140,55 @@ public class SnapmailEndPoints extends HttpServlet {
 		// String code = "";
 		
 		Client client = ClientBuilder.newClient();
-
-		WebTarget target = client.target("https://www.googleapis.com/oauth2/v3/token");
+		String response;
+		String data;
+if(actorID.contains("@gmail.com")){
+		WebTarget targetGoogle = client.target("https://www.googleapis.com/oauth2/v3/token");
 		
-		String data = "client_id=" + Googleclient_ID
+		data = "client_id=" + Googleclient_ID
 				+ "&client_secret=" + Googleclient_secret
 				+ "&code=" + code
-				+ "&redirect_uri=http://localhost:9999/api/oauth"
+				+ "&redirect_uri=" + redirectUri
 				+ "&grant_type=authorization_code"
 				+ "&access_type=offline";
 		
-		String response = target
+		response = targetGoogle
 				.request()
 				.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
 		LOGGER.info(response.toString());
+}else if(actorID.contains("@yahoo."))
+{
+	WebTarget targetYahoo = client.target("https://api.login.yahoo.com/oauth2/get_token");
+	
+	data = "client_id=" + Yahooclient_ID
+			+ "&client_secret=" + Yahooclient_secret
+			+ "&code=" + code
+			+ "&redirect_uri=http://localhost/api/oauth"
+			+ "&grant_type=authorization_code";
+			
+	
+	response = targetYahoo
+			.request()
+			.header("Authorization", "Basic")
+			.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
+	LOGGER.info(response.toString());
+	
+}else{
+	WebTarget targetOutlook = client.target("https://login.windows.net/common/oauth2/token");
+	
+	data = "client_id=" + Microsoftclient_ID
+			+ "&client_secret=" + Microsoftclient_secret
+			+ "&code=" + code
+			+ "&redirect_uri=" + redirectUri
+			+ "&grant_type=authorization_code";
+			
+	
+	response = targetOutlook
+			.request()
+			.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
+	LOGGER.info(response.toString());
+}
+		
 		JSONObject json;
 		String token="";
 		try {
@@ -163,7 +219,6 @@ public class SnapmailEndPoints extends HttpServlet {
 		else{
 			responsePut=Response.status(500).build();
 		}
-		
 		return responsePut;
 		}
 	}
