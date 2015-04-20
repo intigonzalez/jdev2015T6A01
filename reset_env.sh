@@ -1,3 +1,6 @@
+echo "[DELETE] Media@Home"
+rm -rf ~/media-home
+
 docker_pkg=$(dpkg -l | grep docker | tr -s ' ' | cut -d' ' -f2)
 for i in $docker_pkg
 do
