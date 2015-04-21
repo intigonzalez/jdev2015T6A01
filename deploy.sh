@@ -9,8 +9,13 @@ sudo apt-get -y install oracle-java8-installer maven mongodb-server git
 echo javax.xml.accessExternalSchema = all | sudo tee  /usr/lib/jvm/java-8-oracle/jre/lib/jaxp.properties > /dev/null
  
 # create folder video for put videos inside 
-mkdir /var/www/html
-chown "$USER":"$USER" -R /var/www/html
+sudo mkdir -p /var/www/html
+sudo chown "$USER":"$USER" -R /var/www/html
+
+# put default properties
+sudo mkdir -p /etc/mediahome
+sudo cp ./box.properties /etc/mediahome
+sudo cp ./central.properties /etc/mediahome
 
 # compile 
 mvn clean package 
