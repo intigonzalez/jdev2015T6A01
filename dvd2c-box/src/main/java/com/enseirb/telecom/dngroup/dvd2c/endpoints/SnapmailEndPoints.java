@@ -22,7 +22,6 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,12 +39,10 @@ public class SnapmailEndPoints extends HttpServlet {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserEndPoints.class);
 	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo("mediahome"));
 		
-	private static final String Googleclient_ID = "547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com";
-	private static final String Googleclient_secret = "JG3LiwiX2gA362mTSGEJ5eC8";
-	private static final String Microsoftclient_ID = "0000000040153499";
-	private static final String Microsoftclient_secret = "Ha3x098elYnPNxF6vAm6NkG8ucTMEod4";
-	private static final String Yahooclient_ID = "dj0yJmk9a2pwM2FneTlvTTBpJmQ9WVdrOVpsUkJNRW8xTldVbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD03MA--";
-	private static final String Yahooclient_secret = "94158786999742f8b5d798931b2313e8adb17ca2";
+	private static final String Googleclient_ID = CliConfSingleton.google_clientID;
+	private static final String Googleclient_secret = CliConfSingleton.google_clientsecret; 
+	private static final String Yahooclient_ID = CliConfSingleton.yahoo_clientID;
+	private static final String Yahooclient_secret = CliConfSingleton.yahoo_clientsecret;
 	private static final String redirectUri = CliConfSingleton.centralURL.toString() + "/api/oauth";
 	/**
 	 * Get the smtp properties from a user by actorID
@@ -108,15 +105,6 @@ public class SnapmailEndPoints extends HttpServlet {
 					+ "&state=" + actorID
 					+ "&access_type=offline"
 					)).build();
-		case "microsoft":
-			return Response.seeOther(new URI(
-					"https://login.windows.net/common/oauth2/authorize"
-					+ "?response_type=code"
-					+ "&client_id=" + Microsoftclient_ID
-					+ "&redirect_uri=" + redirectUri
-					+ "&resource=https://outlook.office365.com"
-					+ "&state=" + actorID
-					)).build();
 		case "yahoo":
 			return Response.seeOther(new URI(
 					"https://api.login.yahoo.com/oauth2/request_auth"
@@ -141,8 +129,9 @@ public class SnapmailEndPoints extends HttpServlet {
 		// String code = "";
 		
 		Client client = ClientBuilder.newClient();
-		String response;
+		String response="";
 		String data;
+		
 if(actorID.contains("@gmail.com")){
 		WebTarget targetGoogle = client.target("https://www.googleapis.com/oauth2/v3/token");
 		
@@ -175,24 +164,8 @@ if(actorID.contains("@gmail.com")){
 			.request()
 			.header("Authorization", "Basic " + encodedvalue)
 			.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
-	LOGGER.info(response.toString());
-	
-}else{
-	WebTarget targetOutlook = client.target("https://login.windows.net/common/oauth2/token");
-	
-	data = "client_id=" + Microsoftclient_ID
-			+ "&client_secret=" + Microsoftclient_secret
-			+ "&code=" + code
-			+ "&redirect_uri=" + redirectUri
-			+ "&grant_type=authorization_code";
-			
-	
-	response = targetOutlook
-			.request()
-			.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
-	LOGGER.info(response.toString());
+	LOGGER.info(response.toString());	
 }
-		
 		JSONObject json;
 		String token="";
 		try {

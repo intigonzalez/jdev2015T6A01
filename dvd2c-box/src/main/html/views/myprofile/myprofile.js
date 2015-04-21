@@ -35,6 +35,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
         };
         
         this.openOauth = function (service) {
+        	user.service=service;
      	   return "/api/oauth/" + user.person.userID + "/" + service;
          };
 

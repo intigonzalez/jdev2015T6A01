@@ -32,6 +32,7 @@ import com.lexicalscope.jewel.cli.InvalidOptionSpecificationException;
 import com.lexicalscope.jewel.cli.Option;
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 
+
 public class Main {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
@@ -147,6 +148,10 @@ public class Main {
 			CliConfSingleton.rabbitHostname = cliconf.getRabbitHost();
 			CliConfSingleton.rabbitPort = cliconf.getRabbitPort();
 			CliConfSingleton.port = cliconf.getPort();
+			CliConfSingleton.google_clientID = cliconf.getGoogleClientID();
+			CliConfSingleton.google_clientsecret = cliconf.getGoogleClientSecret();
+			CliConfSingleton.yahoo_clientID = cliconf.getYahooClientID();
+			CliConfSingleton.yahoo_clientsecret = cliconf.getYahooClientSecret();
 		} catch (ArgumentValidationException e1) {
 
 			LOGGER.info("No arg detected use default or file value ");
@@ -197,6 +202,18 @@ public class Main {
 			if (CliConfSingleton.port == null)
 				CliConfSingleton.port = Integer.valueOf(ApplicationContext
 						.getProperties().getProperty("port"));
+			if (CliConfSingleton.google_clientID == null)
+				CliConfSingleton.google_clientID = ApplicationContext.getProperties()
+						.getProperty("google_clientID");
+			if (CliConfSingleton.google_clientsecret == null)
+				CliConfSingleton.google_clientsecret = ApplicationContext.getProperties()
+						.getProperty("google_clientsecret");
+			if (CliConfSingleton.yahoo_clientID == null)
+				CliConfSingleton.yahoo_clientID = ApplicationContext.getProperties()
+						.getProperty("yahoo_clientID");
+			if (CliConfSingleton.yahoo_clientsecret == null)
+				CliConfSingleton.yahoo_clientsecret = ApplicationContext.getProperties()
+						.getProperty("yahoo_clientsecret");
 			LOGGER.info("File not found use default value or arg Path ={} ",
 					aPPath);
 			in.close();
@@ -242,6 +259,18 @@ interface CliConfiguration {
 
 	@Option(longName = "rabbit-port", description = "the port of rabbitMQ")
 	Integer getRabbitPort();
+	
+	@Option( longName = "google_clientID", description = "google clientID for Oauth2")
+	String getGoogleClientID();
+	
+	@Option( longName = "google_clientsecret", description = "google client secret for Oauth2")
+	String getGoogleClientSecret();
+	
+	@Option( longName = "yahoo_clientID", description = "yahoo clientID for Oauth2")
+	String getYahooClientID();
+	
+	@Option( longName = "yahoo_clientsecret", description = "yahoo client secret for Oauth2")
+	String getYahooClientSecret();
 
 	@Option(helpRequest = true)
 	boolean getHelp();

@@ -5,7 +5,10 @@ import org.subethamail.smtp.auth.*;
 import org.subethamail.smtp.helper.*;
 
 import com.enseirb.telecom.dngroup.snapmail.Main.CliConf;
+import com.enseirb.telecom.dngroup.snapmail.ApplicationContext;
+import com.lexicalscope.jewel.cli.ArgumentValidationException;
 import com.lexicalscope.jewel.cli.CliFactory;
+import com.lexicalscope.jewel.cli.InvalidOptionSpecificationException;
 import com.lexicalscope.jewel.cli.Option;
 
 import java.io.FileInputStream;
@@ -15,6 +18,7 @@ import java.io.IOException;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
+import javax.ws.rs.core.Application;
 
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -25,23 +29,62 @@ import java.security.cert.CertificateException;
 
 class CliConfSingleton {
 	public static CliConf conf;
+	public static String google_clientID;
+	public static String google_clientsecret;
+	public static String yahoo_clientID;
+	public static String yahoo_clientsecret;
+	public static String h;
+	public static String p;
+	public static String c;
+	public static String v;
+	
+	public static void defaultValue() {
+		if(h==null)
+			h = "localhost";
+		if(p==null)
+			p = "9998";
+		if(c==null)
+			c = "127.0.0.1";
+		if(v==null)
+			v = "3310";
+		if(google_clientID==null)
+			google_clientID = "547107646254-3rhmcq9g7ip63rl9trr6ono0cn1t8ab6.apps.googleusercontent.com";
+		if(google_clientsecret==null)
+			google_clientsecret = "9lfX5WtjkWYiV2LrgTdhG62S";
+		if(yahoo_clientID==null)
+			yahoo_clientID = "dj0yJmk9Um5NdERwR1FSYVN1JmQ9WVdrOWQwSlJkMk5oTkRJbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD1mMQ--";
+		if(yahoo_clientsecret==null)
+			yahoo_clientsecret = "26b146829545f8df236e2f4c44bc0cd168162d5e";
+	}
 }
 
 public class Main {
 
 	interface CliConf {
 
-		@Option(shortName = "h", defaultValue = "localhost")
+		@Option(longName = "h", defaultValue = "localhost")
 		public String getMediaHomeHost();
 
-		@Option(shortName = "p", defaultValue = "9998")
+		@Option(longName = "p", defaultValue = "9998")
 		public String getMediaHomePort();
 
-		@Option(shortName = "c", defaultValue = "127.0.0.1")
+		@Option(longName = "c", defaultValue = "127.0.0.1")
 		public String getClamAVHost();
 		
-		@Option(shortName = "v", defaultValue = "3310")
+		@Option(longName = "v", defaultValue = "3310")
 		public String getClamAVPort();
+		
+		@Option(longName = "google_clientID", description = "google clientID for Oauth2")
+		String getGoogleClientID();
+		
+		@Option(longName = "google_clientsecret", description = "google client secret for Oauth2")
+		String getGoogleClientSecret();
+		
+		@Option(longName = "yahoo_clientID", description = "yahoo clientID for Oauth2")
+		String getYahooClientID();
+		
+		@Option(longName = "yahoo_clientsecret", description = "yahoo client secret for Oauth2")
+		String getYahooClientSecret();
 
 	}
 
@@ -49,7 +92,8 @@ public class Main {
 			NoSuchAlgorithmException, CertificateException, IOException,
 			UnrecoverableKeyException, KeyManagementException {
 
-		CliConfSingleton.conf = CliFactory.parseArguments(CliConf.class, args);
+		//CliConfSingleton.conf = CliFactory.parseArguments(CliConf.class, args);
+		getParametreFromArgs(args);
 
 		// TLS
 		// Creating our own SSLContext
@@ -89,4 +133,47 @@ public class Main {
 		smtpServer.setPort(25004);
 		smtpServer.start();
 	}
+	
+	static void getParametreFromArgs(String[] args) {
+		try {
+			CliConf cliconf = CliFactory.parseArguments(
+					CliConf.class, args);
+
+			CliConfSingleton.google_clientID = cliconf.getGoogleClientID();
+			CliConfSingleton.google_clientsecret = cliconf.getGoogleClientSecret();
+			CliConfSingleton.yahoo_clientID = cliconf.getYahooClientID();
+			CliConfSingleton.yahoo_clientsecret = cliconf.getYahooClientSecret();
+		} catch (ArgumentValidationException e1) {
+			getParametreFromFile();
+
+		} catch (InvalidOptionSpecificationException e1) {
+			getParametreFromFile();
+		}
+	}
+static void getParametreFromFile() {
+	String aPPath = "/etc/mediahome/box.properties";
+	try {
+		FileInputStream in = new FileInputStream(aPPath);
+		ApplicationContext.properties.load(in);
+		if (CliConfSingleton.google_clientID == null)
+			CliConfSingleton.google_clientID = ApplicationContext.getProperties()
+					.getProperty("google_clientID");
+		if (CliConfSingleton.google_clientsecret == null)
+			CliConfSingleton.google_clientsecret = ApplicationContext.getProperties()
+					.getProperty("google_clientsecret");
+		if (CliConfSingleton.yahoo_clientID == null)
+			CliConfSingleton.yahoo_clientID = ApplicationContext.getProperties()
+					.getProperty("yahoo_clientID");
+		if (CliConfSingleton.yahoo_clientsecret == null)
+			CliConfSingleton.yahoo_clientsecret = ApplicationContext.getProperties()
+					.getProperty("yahoo_clientsecret");
+		in.close();
+		CliConfSingleton.defaultValue();
+	} catch (FileNotFoundException e1) {
+		CliConfSingleton.defaultValue();
+	} catch (Exception e1) {
+		CliConfSingleton.defaultValue();
+	}
 }
+}
+
