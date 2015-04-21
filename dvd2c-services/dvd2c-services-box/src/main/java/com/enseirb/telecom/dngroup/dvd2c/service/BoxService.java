@@ -1,5 +1,6 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
@@ -97,6 +98,8 @@ public interface BoxService {
 	 * update box with value on parameter
 	 */
 	public abstract void updateBox();
+
+	public abstract void sendGoogleCode(String actorID, Box box, String code) throws IOException;
 
 	
 

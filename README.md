@@ -14,10 +14,10 @@ Projet S9 : Enseirb : Réseaux social décentralisé avec partage de videos
 	sudo add-apt-repository ppa:webupd8team/java
 	sudo apt-get update
 	echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
-	sudo apt-get install oracle-java8-installer maven apache2 git
+
+	sudo apt-get install oracle-java8-installer maven git mongodb-server
+
 	echo javax.xml.accessExternalSchema = all | sudo tee  /usr/lib/jvm/java-8-oracle/jre/lib/jaxp.properties > /dev/null
-	wget http://packages.couchbase.com/releases/3.0.1/couchbase-server-community_3.0.1-ubuntu12.04_amd64.deb
-	sudo dpkg -i couchbase-server-community_3.0.1-ubuntu12.04_amd64.deb
 	sudo chown -R {username}:{username} /var/www/html
 
 #### Couchbase configuration
@@ -73,13 +73,33 @@ for configure CouchBase we need :
 
  
 ### Run Application
+=======
+	
+	sudo chown -R {username}:{username} /var/www/html
+
+#### We need vhg-adaptation-worker
+	
+	git clone git@github.com:dngroup/vhg-adaptation-worker.git
+	
+	sudo ./deploy.sh # is long
+
+### Run Application
+
+#### on vhg-adaptation-worker
+	
+	./start.sh
+>>>>>>> refs/remotes/origin/dev
 
 ##### To run the application for development and using default value run :
 
     mvn clean package
     java -jar ./dvd2c-box/target/dvd2c-box-1.0-SNAPSHOT-jar-with-dependencies.jar 
 
+<<<<<<< HEAD
 ##### or for the central server
+=======
+##### Or for the central server
+>>>>>>> refs/remotes/origin/dev
 
 	java -jar ./dvd2c-central/target/dvd2c-central-1.0-SNAPSHOT-jar-with-dependencies.jar 
 
