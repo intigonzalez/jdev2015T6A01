@@ -55,114 +55,114 @@ public class ContentRepositoryMongo implements ContentRepository {
 	 * @param entity
 	 * @return entity
 	 */
-	public <S extends ContentRepositoryObject> S update(S entity) {
-
-		MongoClient mongoClient;
-		try {
-			mongoClient = DbInit.connect();
-
-			DB db = mongoClient.getDB("mediahome");
-			DBCollection dbBox = db.getCollection("contents");
-			BasicDBObject newDocument = new BasicDBObject();
-
-//			if (entity.getId() != null) {
+//	public <S extends ContentRepositoryObject> S update(S entity) {
+//
+//		MongoClient mongoClient;
+//		try {
+//			mongoClient = DbInit.connect();
+//
+//			DB db = mongoClient.getDB("mediahome");
+//			DBCollection dbBox = db.getCollection("contents");
+//			BasicDBObject newDocument = new BasicDBObject();
+//
+////			if (entity.getId() != null) {
+////				newDocument.append("$set",
+////						new BasicDBObject().append("id", entity.getId()));
+////				BasicDBObject searchQuery = new BasicDBObject().append("id",
+////						entity.getId());
+////				dbBox.update(searchQuery, newDocument);
+////			}
+//			if (entity.getName() != null) {
 //				newDocument.append("$set",
-//						new BasicDBObject().append("id", entity.getId()));
+//						new BasicDBObject().append("firstname", entity.getName()));
 //				BasicDBObject searchQuery = new BasicDBObject().append("id",
 //						entity.getId());
 //				dbBox.update(searchQuery, newDocument);
 //			}
-			if (entity.getName() != null) {
-				newDocument.append("$set",
-						new BasicDBObject().append("firstname", entity.getName()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",
-						entity.getId());
-				dbBox.update(searchQuery, newDocument);
-			}
-			if (entity.getActorID() != null) {// need to verify
-				newDocument.append("$set", new BasicDBObject().append("userId",
-						entity.getActorID()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",
-						entity.getId());
-				dbBox.update(searchQuery, newDocument);
-			}
-			if (entity.getLink() != null) {
-				newDocument.append("$set",
-						new BasicDBObject().append("link", entity.getLink()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",
-						entity.getId());
-				dbBox.update(searchQuery, newDocument);
-			}
-			if (entity.getPreviewLink() != null) {
-				newDocument.append(
-						"$set",
-						new BasicDBObject().append("previewLink",
-								entity.getPreviewLink()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",
-						entity.getId());
-				dbBox.update(searchQuery, newDocument);
-			}
-			if (entity.getUnixTime() != null) {
-				newDocument.append(
-						"$set",
-						new BasicDBObject().append("unixTime",
-								entity.getUnixTime()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",
-						entity.getId());
-				dbBox.update(searchQuery, newDocument);
-			}
-			if (entity.getStatus() != null) {
-				newDocument.append("$set", new BasicDBObject().append("status",
-						entity.getStatus()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",
-						entity.getId());
-				dbBox.update(searchQuery, newDocument);
-			}
-
-			if (entity.getMetadata() != null) {try {
-				// need to verify
-					
-					List<Integer> metadatas = entity.getMetadata();
-												
-					List<Object> entityDBList = new BasicDBList();
-					for (Integer metadata : metadatas) {
-					
-					    DBObject userDBObject = new BasicDBObject();
-					    try {
-							userDBObject = DbInit.createDBObject(metadata);
-						} catch (JsonProcessingException e) {
-						
-							LOGGER.error("Impossible to create userDBObject",e);
-						}			    
-					    
-						entityDBList.add(userDBObject);
-						
-					}
-					
-					newDocument.append("$set",new BasicDBObject().append("authorization", entityDBList));
-					BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
-					dbBox.update(searchQuery, newDocument);
-			} catch (Exception e) {
-				LOGGER.debug("Can't update metadata",e);
-			}
-				}
-			if (entity.getComment() != null) {
-				newDocument.append(
-						"$set",
-						new BasicDBObject().append("comment",
-								entity.getComment()));
-				BasicDBObject searchQuery = new BasicDBObject().append("id",
-						entity.getId());
-				dbBox.update(searchQuery, newDocument);
-			}
-
-			mongoClient.close();
-		} catch (UnknownHostException e) {
-			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
-		}
-
-		return entity;
-	}
+//			if (entity.getActorID() != null) {// need to verify
+//				newDocument.append("$set", new BasicDBObject().append("userId",
+//						entity.getActorID()));
+//				BasicDBObject searchQuery = new BasicDBObject().append("id",
+//						entity.getId());
+//				dbBox.update(searchQuery, newDocument);
+//			}
+//			if (entity.getLink() != null) {
+//				newDocument.append("$set",
+//						new BasicDBObject().append("link", entity.getLink()));
+//				BasicDBObject searchQuery = new BasicDBObject().append("id",
+//						entity.getId());
+//				dbBox.update(searchQuery, newDocument);
+//			}
+//			if (entity.getPreviewLink() != null) {
+//				newDocument.append(
+//						"$set",
+//						new BasicDBObject().append("previewLink",
+//								entity.getPreviewLink()));
+//				BasicDBObject searchQuery = new BasicDBObject().append("id",
+//						entity.getId());
+//				dbBox.update(searchQuery, newDocument);
+//			}
+//			if (entity.getUnixTime() != null) {
+//				newDocument.append(
+//						"$set",
+//						new BasicDBObject().append("unixTime",
+//								entity.getUnixTime()));
+//				BasicDBObject searchQuery = new BasicDBObject().append("id",
+//						entity.getId());
+//				dbBox.update(searchQuery, newDocument);
+//			}
+//			if (entity.getStatus() != null) {
+//				newDocument.append("$set", new BasicDBObject().append("status",
+//						entity.getStatus()));
+//				BasicDBObject searchQuery = new BasicDBObject().append("id",
+//						entity.getId());
+//				dbBox.update(searchQuery, newDocument);
+//			}
+//
+//			if (entity.getMetadata() != null) {try {
+//				// need to verify
+//					
+//					List<Integer> metadatas = entity.getMetadata();
+//												
+//					List<Object> entityDBList = new BasicDBList();
+//					for (Integer metadata : metadatas) {
+//					
+//					    DBObject userDBObject = new BasicDBObject();
+//					    try {
+//							userDBObject = DbInit.createDBObject(metadata);
+//						} catch (JsonProcessingException e) {
+//						
+//							LOGGER.error("Impossible to create userDBObject",e);
+//						}			    
+//					    
+//						entityDBList.add(userDBObject);
+//						
+//					}
+//					
+//					newDocument.append("$set",new BasicDBObject().append("authorization", entityDBList));
+//					BasicDBObject searchQuery = new BasicDBObject().append("id",entity.getId());
+//					dbBox.update(searchQuery, newDocument);
+//			} catch (Exception e) {
+//				LOGGER.debug("Can't update metadata",e);
+//			}
+//				}
+//			if (entity.getComment() != null) {
+//				newDocument.append(
+//						"$set",
+//						new BasicDBObject().append("comment",
+//								entity.getComment()));
+//				BasicDBObject searchQuery = new BasicDBObject().append("id",
+//						entity.getId());
+//				dbBox.update(searchQuery, newDocument);
+//			}
+//
+//			mongoClient.close();
+//		} catch (UnknownHostException e) {
+//			LOGGER.error("Connection to database failed (mongoDB installed and run ?)",e);
+//		}
+//
+//		return entity;
+//	}
 
 	@Override
 	public <S extends ContentRepositoryObject> Iterable<S> save(

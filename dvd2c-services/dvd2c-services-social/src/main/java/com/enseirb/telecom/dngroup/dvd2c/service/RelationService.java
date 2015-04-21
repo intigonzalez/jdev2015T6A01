@@ -7,6 +7,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
+import com.enseirb.telecom.dngroup.dvd2c.model.Role;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public interface RelationService {
@@ -41,7 +42,7 @@ public interface RelationService {
 	 * @param roleID the group to get
 	 * @return the list of relation
 	 */
-	public abstract List<Relation> getListRelation(String userID, int roleID);
+	public abstract List<Relation> getListRelation(String userID, Role roleID);
 
 	/**
 	 * get all content of the first user to the seconde user

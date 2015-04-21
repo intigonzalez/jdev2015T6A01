@@ -2,7 +2,8 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
-	<xs:include schemaLocation="comment.xsd"></xs:include>
+    <xs:include schemaLocation="metadata.xsd"></xs:include>
+    <xs:include schemaLocation="comment.xsd"></xs:include>
 	
 	<xs:element name="content">
 		<xs:complexType>
@@ -38,7 +39,7 @@
 				</xs:element>
 
 
-				<xs:element name="metadata" type="xs:int" maxOccurs="unbounded" minOccurs="0"></xs:element>
+				<xs:element ref="metadata" maxOccurs="unbounded" minOccurs="0"></xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

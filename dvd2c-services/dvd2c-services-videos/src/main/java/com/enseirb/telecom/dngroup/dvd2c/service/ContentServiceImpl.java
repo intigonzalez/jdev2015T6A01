@@ -316,7 +316,7 @@ public class ContentServiceImpl implements ContentService {
 
 				if ((contentRepositoryObject.getActorID() != null)
 						&& (contentRepositoryObject.getActorID().equals(userID))) {
-					for (int i = 0; i < relation.getRoleID().size(); i++) { // For
+					for (int i = 0; i < relation.getRole().size(); i++) { // For
 																			// each
 																			// group
 																			// the
@@ -332,8 +332,7 @@ public class ContentServiceImpl implements ContentService {
 						for (int j = 0; j < contentRepositoryObject
 								.getMetadata().size(); j++) {
 
-							if (relation.getRoleID().get(i) == contentRepositoryObject
-									.getMetadata().get(j)) {
+							if (relation.getRole().get(i).getRoleId().equals(contentRepositoryObject.getMetadata().get(j).getRoleID())) {
 								contentRepositoryObject.getMetadata().clear();
 								contentRepositoryObject
 										.setLink(CliConfSingleton.publicAddr

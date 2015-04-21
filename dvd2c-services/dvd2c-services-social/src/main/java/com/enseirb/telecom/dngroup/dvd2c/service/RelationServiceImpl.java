@@ -25,6 +25,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
+import com.enseirb.telecom.dngroup.dvd2c.model.Role;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestContentServiceImpl;
@@ -126,14 +127,15 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public List<Relation> getListRelation(String userID, int roleIDfromUser) {
+	public List<Relation> getListRelation(String userID, Role roleIDfromUser) {
 
 		List<Relation> listRelation = getListRelation(userID);
 		List<Relation> listRelation2 = new ArrayList<Relation>();
 		for (int i = 0; i < listRelation.size(); i++) {
-			List<Integer> roles = listRelation.get(i).getRoleID();
-			for (Integer roleID : roles) {
-				if (roleID == roleIDfromUser) {
+			List<Role> roles = listRelation.get(i).getRole();
+			
+			for (Role role : roles) {
+				if (role.getRoleId().equals(roleIDfromUser)) {
 					listRelation2.add(listRelation.get(i));
 				}
 			}
@@ -148,10 +150,13 @@ public class RelationServiceImpl implements RelationService {
 	public void createDefaultRelation(String userIDFromPath,
 			String relationIDString, Boolean fromBox)
 			throws NoSuchUserException {
+		Role role = new Role();
+		role.setRoleId("public");
+		
 		Relation relation = new Relation();
 		relation.setActorID(relationIDString);
 		relation.setAprouve(1);
-		relation.getRoleID().add(0);
+		relation.getRole().add(role);
 		createRelation(userIDFromPath, relation, fromBox);
 
 	}
@@ -189,7 +194,9 @@ public class RelationServiceImpl implements RelationService {
 			relation2.setPubKey(userWhoAsked.getPubKey());
 			relation2.setAprouve(2);
 			relation2.setUnixTime(relation.getUnixTime());
-			relation2.getRoleID().add(0);
+			Role role = new Role();
+			role.setRoleId("public");
+			relation2.getRole().add(role);
 			if (!fromBox) {
 				if (userRepo.exists(relation.getActorID())) {
 					relationshipDatabase.save(new RelationshipRepositoryObject(
@@ -265,9 +272,9 @@ public class RelationServiceImpl implements RelationService {
 
 		}
 		// Or, the user can edit the group his/her relationshis is in.
-		if (!relationIntoDb.getRoleID().equals(relation.getRoleID())) {
-			relationIntoDb.getRoleID().clear();
-			relationIntoDb.getRoleID().addAll(relation.getRoleID());
+		if (!relationIntoDb.getRole().equals(relation.getRole())) {
+			relationIntoDb.getRole().clear();
+			relationIntoDb.getRole().addAll(relation.getRole());
 		}
 		relationshipDatabase.save(new RelationshipRepositoryObject(userID,
 				relationIntoDb));
