@@ -110,7 +110,7 @@ public class SnapmailEndPoints extends HttpServlet {
 					"https://api.login.yahoo.com/oauth2/request_auth"
 					+ "?response_type=code"
 					+ "&client_id=" + Yahooclient_ID
-					+ "&redirect_uri=http://localhost/api/oauth"
+					+ "&redirect_uri=" + redirectUri.replace(":9999","").replace(":8080", "")
 					+ "&state=" + actorID
 					)).build();
 		default:
@@ -121,17 +121,15 @@ public class SnapmailEndPoints extends HttpServlet {
 	@SuppressWarnings("finally")
 	@POST
 	@Path("oauth/{actorID}")
-	//@RolesAllowed({ "other", "authenticated" })
 	@Consumes("text/plain")
 	public Response postOauth(@PathParam("actorID") String actorID, String code) throws URISyntaxException {
 		
-		// Requete google pour transformer le code en token
-		// String code = "";
 		
 		Client client = ClientBuilder.newClient();
 		String response="";
 		String data;
 		
+// Send token request to google		
 if(actorID.contains("@gmail.com")){
 		WebTarget targetGoogle = client.target("https://www.googleapis.com/oauth2/v3/token");
 		
@@ -146,6 +144,8 @@ if(actorID.contains("@gmail.com")){
 				.request()
 				.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
 		LOGGER.info(response.toString());
+		
+// Send token request to Yahoo		
 }else if(actorID.contains("@yahoo."))
 {
 	WebTarget targetYahoo = client.target("https://api.login.yahoo.com/oauth2/get_token");
@@ -156,7 +156,7 @@ if(actorID.contains("@gmail.com")){
 	data = "client_id=" + Yahooclient_ID
 			+ "&client_secret=" + Yahooclient_secret
 			+ "&code=" + code
-			+ "&redirect_uri=http://localhost/api/oauth"
+			+ "&redirect_uri=" + redirectUri.replace(":9999","").replace(":8080", "")
 			+ "&grant_type=authorization_code";
 			
 	
@@ -166,6 +166,7 @@ if(actorID.contains("@gmail.com")){
 			.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
 	LOGGER.info(response.toString());	
 }
+// get the refresh token
 		JSONObject json;
 		String token="";
 		try {
@@ -177,21 +178,20 @@ if(actorID.contains("@gmail.com")){
 			LOGGER.error("Error with the token");
 		}
 		finally{
+			// save the token
 			Response responsePut;
-		if (token.equals("")==false){
-			Client clientPut = ClientBuilder.newClient();
-			WebTarget targetPut = clientPut.target("http://localhost:9998/api/app/snapmail/" + actorID +"/smtp");
-			SmtpProperty prop = new SmtpProperty();
-			prop.setHost("");
-			prop.setPassword("");
-			prop.setPort("");
-			prop.setUsername("");
-			prop.setToken(token);
+		if (token.equals("")==false){	
+			User user = uManager.getUserOnLocal(actorID);
 			
-			responsePut = targetPut
-					.request()
-					.cookie("authentication", actorID)
-					.put(Entity.entity(prop, MediaType.APPLICATION_XML), Response.class);
+			user.setSmtpHost("");
+			user.setSmtpPort("");
+			user.setSmtpUsername("");
+			user.setSmtpPassword("");
+			user.setSmtpToken(token);
+			
+			uManager.saveUserOnServer(user);
+			
+			responsePut =Response.status(200).build();
 		}
 		else{
 			responsePut=Response.status(500).build();
