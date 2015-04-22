@@ -139,10 +139,9 @@ public class Main {
 			CliConf cliconf = CliFactory.parseArguments(
 					CliConf.class, args);
 
-			CliConfSingleton.google_clientID = cliconf.getGoogleClientID();
-			CliConfSingleton.google_clientsecret = cliconf.getGoogleClientSecret();
-			CliConfSingleton.yahoo_clientID = cliconf.getYahooClientID();
-			CliConfSingleton.yahoo_clientsecret = cliconf.getYahooClientSecret();
+			CliConfSingleton.mediahome_host = cliconf.getMediaHomeHost();
+			CliConfSingleton.clamav_host = cliconf.getMediaHomeHost();
+			getParametreFromFile();
 		} catch (ArgumentValidationException e1) {
 			getParametreFromFile();
 
