@@ -753,6 +753,8 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	private String getYahooToken(String token) {
 		final String Yahooclient_ID = CliConfSingleton.yahoo_clientID;
 		final String Yahooclient_secret = CliConfSingleton.yahoo_clientsecret;
+		final String redirectUri = CliConfSingleton.centralURL.toString() + "/api/oauth";
+		
 		Client client = ClientBuilder.newClient();
 		String response;
 		String data;
@@ -764,7 +766,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		data = "client_id=" + Yahooclient_ID
 				+ "&client_secret=" + Yahooclient_secret
 				+ "&refresh_token=" + token
-				+ "&redirect_uri=http://localhost/api/oauth"
+				+ "&redirect_uri=" + redirectUri.replace(":9999","").replace(":8080", "")
 				+ "&grant_type=refresh_token";
 
 		response = targetYahoo

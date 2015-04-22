@@ -29,6 +29,7 @@ import java.security.cert.CertificateException;
 
 class CliConfSingleton {
 	public static CliConf conf;
+	public static String centralURL;
 	public static String google_clientID;
 	public static String google_clientsecret;
 	public static String yahoo_clientID;
@@ -39,6 +40,8 @@ class CliConfSingleton {
 	public static String clamav_port;
 	
 	public static void defaultValue() {
+		if(centralURL==null)
+			centralURL = "http://central.homeb.tv:8080";
 		if(mediahome_host==null)
 			mediahome_host = "localhost";
 		if(mediahome_port==null)
@@ -73,6 +76,9 @@ public class Main {
 		
 		@Option(shortName="v", longName = "clamav_port", defaultValue = "3310")
 		public String getClamAVPort();
+		
+		@Option(longName = "centralURL", description = "URL of the central server")
+		String getCentralUrl();
 		
 		@Option(longName = "google_clientID", description = "google clientID for Oauth2")
 		String getGoogleClientID();
@@ -154,6 +160,9 @@ static void getParametreFromFile() {
 	try {
 		FileInputStream in = new FileInputStream(aPPath);
 		ApplicationContext.properties.load(in);
+		if (CliConfSingleton.centralURL == null)
+			CliConfSingleton.centralURL = ApplicationContext.getProperties()
+					.getProperty("centralURL");
 		if (CliConfSingleton.google_clientID == null)
 			CliConfSingleton.google_clientID = ApplicationContext.getProperties()
 					.getProperty("google_clientID");
