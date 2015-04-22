@@ -8,60 +8,51 @@ Projet S9 : Enseirb : Réseaux social décentralisé avec partage de videos
 
 ## Application ##
 
-First install :
+
+### First install :
 
 	sudo add-apt-repository ppa:webupd8team/java
 	sudo apt-get update
 	echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
-	sudo apt-get install oracle-java8-installer maven apache2 mongodb-server git
+	sudo apt-get install oracle-java8-installer maven git mongodb-server
 	echo javax.xml.accessExternalSchema = all | sudo tee  /usr/lib/jvm/java-8-oracle/jre/lib/jaxp.properties > /dev/null
- 
-To run the application for development and using default value run :
+	
+	sudo chown -R {username}:{username} /var/www/html
+
+#### We need vhg-adaptation-worker
+	
+	git clone git@github.com:dngroup/vhg-adaptation-worker.git
+	
+	sudo ./deploy.sh # is long
+	
+	
+#### change with your configuration
+
+	sudo nano /etc/mediahome/box.properties
+	sudo nano /etc/mediahome/central.properties
+
+### Run Application
+
+#### on vhg-adaptation-worker
+	
+	./start.sh
+
+##### To run the application for development and using default value run :
 
     mvn clean package
     java -jar ./dvd2c-box/target/dvd2c-box-1.0-SNAPSHOT-jar-with-dependencies.jar 
-or for the central server
+
+##### Or for the central server
 
 	java -jar ./dvd2c-central/target/dvd2c-central-1.0-SNAPSHOT-jar-with-dependencies.jar 
 
-To run the application for real test, run :
+##### To run the application for real test, run :
 
     java -jar ./dvd2c-box/target/dvd2c-box-1.0-SNAPSHOT-jar-with-dependencies.jar  --ip 0.0.0.0 -p 9998 --db-hostname localhost --db-port 27017 -b BOX_TEST --content-path /var/www/html -c http://localhost:9999 -a http://localhost:9998  --rabbit-host localhost --rabbit-port 5672
     
-or for the central server
+##### or for the central server
 
 	java -jar ./dvd2c-central/target/dvd2c-central-1.0-SNAPSHOT-jar-with-dependencies.jar --ip 0.0.0.0 -p 9999 --db-hostname localhost --db-port 27017
-
-
-## Other Dependencies ##
-
-This application lanches a video processing in background. To do it, it sends messge to Celery with RabbtiMQ. Please check vhg-adaptation-worker project. There is a deploy.sh script to install all required packages and programs.
-
-If you have a segFault when you start celery, you shoud do this :
-
-    sudo apt-get remove python-librabbitmq
-
-## Apache Server Configuration ##
-
-An Apache Proxy is used to link HTTP Port (80) to Grizzly server. After Apache Installation, you have to enable HTTP Proxy module :
-
-    a2enmod proxy proxy_http
-
-Then, you have to edit the virutalhost configuration file and add the following lines :
-
-    Header always set Access-Control-Allow-Origin "*"
-    Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
-    Header always set Access-Control-Max-Age "1000"
-    Header always set Access-Control-Allow-Headers "x-requested-with, Content-Type, origin, authorization, accept, client-security-token, range"
-
-    ProxyPass /videos !
-    ProxyPass / http://localhost:9998/
-    ProxyPassReverse / http://localhost:9998/
-    ProxyPreserveHost On
-
-Be carefull on right acces for videos folder into your virtualhost folder (usually /var/www/html for Ubuntu 14.04). If you run Celery with you account you should change right access on videos folder with  this command into your virtualhost folder :
-
-    sudo chown -R {username} ./videos
 
 # API #
 
