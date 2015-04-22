@@ -33,20 +33,20 @@ class CliConfSingleton {
 	public static String google_clientsecret;
 	public static String yahoo_clientID;
 	public static String yahoo_clientsecret;
-	public static String h;
-	public static String p;
-	public static String c;
-	public static String v;
+	public static String mediahome_host;
+	public static String mediahome_port;
+	public static String clamav_host;
+	public static String clamav_port;
 	
 	public static void defaultValue() {
-		if(h==null)
-			h = "localhost";
-		if(p==null)
-			p = "9998";
-		if(c==null)
-			c = "127.0.0.1";
-		if(v==null)
-			v = "3310";
+		if(mediahome_host==null)
+			mediahome_host = "localhost";
+		if(mediahome_port==null)
+			mediahome_port = "9998";
+		if(clamav_host==null)
+			clamav_host = "127.0.0.1";
+		if(clamav_port==null)
+			clamav_port = "3310";
 		if(google_clientID==null)
 			google_clientID = "547107646254-3rhmcq9g7ip63rl9trr6ono0cn1t8ab6.apps.googleusercontent.com";
 		if(google_clientsecret==null)
@@ -62,16 +62,16 @@ public class Main {
 
 	interface CliConf {
 
-		@Option(longName = "h", defaultValue = "localhost")
+		@Option(longName = "mediahome_host", defaultValue = "localhost")
 		public String getMediaHomeHost();
 
-		@Option(longName = "p", defaultValue = "9998")
+		@Option(longName = "mediahome_port", defaultValue = "9998")
 		public String getMediaHomePort();
 
-		@Option(longName = "c", defaultValue = "127.0.0.1")
+		@Option(longName = "clamav_host", defaultValue = "127.0.0.1")
 		public String getClamAVHost();
 		
-		@Option(longName = "v", defaultValue = "3310")
+		@Option(longName = "clamav_port", defaultValue = "3310")
 		public String getClamAVPort();
 		
 		@Option(longName = "google_clientID", description = "google clientID for Oauth2")
