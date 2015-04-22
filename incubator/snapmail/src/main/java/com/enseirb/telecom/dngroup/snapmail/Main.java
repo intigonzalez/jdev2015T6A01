@@ -27,6 +27,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
+// Default CliConfSingleton
 class CliConfSingleton {
 	public static CliConf conf;
 	public static String centralURL;
@@ -39,6 +40,7 @@ class CliConfSingleton {
 	public static String clamav_host;
 	public static String clamav_port;
 	
+	// Default value if there is no file and no arguments
 	public static void defaultValue() {
 		if(centralURL==null)
 			centralURL = "http://central.homeb.tv:8080";
@@ -62,7 +64,7 @@ class CliConfSingleton {
 }
 
 public class Main {
-
+//Cliconf for hard coded values
 	interface CliConf {
 
 		@Option(shortName="h", longName = "mediahome_host", defaultValue = "localhost")
@@ -140,21 +142,32 @@ public class Main {
 		smtpServer.start();
 	}
 	
+	//Search configs in params
 	static void getParametreFromArgs(String[] args) {
 		try {
 			CliConf cliconf = CliFactory.parseArguments(
 					CliConf.class, args);
 
 			CliConfSingleton.mediahome_host = cliconf.getMediaHomeHost();
-			CliConfSingleton.clamav_host = cliconf.getMediaHomeHost();
-			getParametreFromFile();
 		} catch (ArgumentValidationException e1) {
-			getParametreFromFile();
+			
 
 		} catch (InvalidOptionSpecificationException e1) {
-			getParametreFromFile();
+		
 		}
+		try {
+			CliConf cliconf = CliFactory.parseArguments(
+					CliConf.class, args);
+			CliConfSingleton.clamav_host = cliconf.getMediaHomeHost();
+		} catch (ArgumentValidationException e1) {
+			
+
+		} catch (InvalidOptionSpecificationException e1) {
+		
+		}
+		getParametreFromFile();
 	}
+// Search configs in a file	
 static void getParametreFromFile() {
 	String aPPath = "/etc/mediahome/box.properties";
 	try {

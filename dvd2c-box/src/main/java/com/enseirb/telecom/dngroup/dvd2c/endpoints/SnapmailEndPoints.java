@@ -44,6 +44,7 @@ public class SnapmailEndPoints extends HttpServlet {
 	private static final String Yahooclient_ID = CliConfSingleton.yahoo_clientID;
 	private static final String Yahooclient_secret = CliConfSingleton.yahoo_clientsecret;
 	private static final String redirectUri = CliConfSingleton.centralURL.toString() + "/api/oauth";
+	
 	/**
 	 * Get the smtp properties from a user by actorID
 	 * @param actorIDFromPath - the user
@@ -88,8 +89,11 @@ public class SnapmailEndPoints extends HttpServlet {
 	}
 	
 	/**
-	 * Redirect the client to google api
+	 * Redirect the client to google or yahoo identification and authorization system
+	 * @param actorID
+	 * @param service (google or yahoo)
 	 * @throws URISyntaxException 
+	 * @return 302 if the service is known, or 404
 	 */
 	@GET
 	@Path("oauth/{actorID}/{service}")
@@ -110,7 +114,7 @@ public class SnapmailEndPoints extends HttpServlet {
 					"https://api.login.yahoo.com/oauth2/request_auth"
 					+ "?response_type=code"
 					+ "&client_id=" + Yahooclient_ID
-					+ "&redirect_uri=" + redirectUri.replace(":9999","").replace(":8080", "")
+					+ "&redirect_uri=" + redirectUri.replace(":9999","").replace(":8080", "")// Because yahoo refuse Uri with port
 					+ "&state=" + actorID
 					)).build();
 		default:
@@ -118,10 +122,19 @@ public class SnapmailEndPoints extends HttpServlet {
 		}
 	}
 	
-	@SuppressWarnings("finally")
+	/**
+	 * Request a refresh_token to google or yahoo thanks to the authorization code
+	 * and save this token
+	 * @param actorID
+	 * @param code
+	 * @throw URISyntaxException
+	 * @return an error if google or yahoo don't give a token, a "ok" if the token is saved
+	 */
+	
 	@POST
 	@Path("oauth/{actorID}")
 	@Consumes("text/plain")
+	@SuppressWarnings("finally")
 	public Response postOauth(@PathParam("actorID") String actorID, String code) throws URISyntaxException {
 		
 		
@@ -156,7 +169,7 @@ if(actorID.contains("@gmail.com")){
 	data = "client_id=" + Yahooclient_ID
 			+ "&client_secret=" + Yahooclient_secret
 			+ "&code=" + code
-			+ "&redirect_uri=" + redirectUri.replace(":9999","").replace(":8080", "")
+			+ "&redirect_uri=" + redirectUri.replace(":9999","").replace(":8080", "") // Because yahoo refuse Uri with port
 			+ "&grant_type=authorization_code";
 			
 	

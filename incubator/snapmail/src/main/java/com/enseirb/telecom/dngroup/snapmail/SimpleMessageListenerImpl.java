@@ -111,7 +111,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 		return true;
 	}
-
+// Receive and deliver the mail
 	@Override
 	public void deliver(String from, String recipient, InputStream data)
 			throws TooMuchDataException, IOException {
@@ -179,6 +179,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 	}
 
+	// Send the rebuilt mail
 	private void sendMail(String host, String recipient, Multipart multiPart)
 			throws IOException {
 		// Get system properties
@@ -245,7 +246,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	}
 	
 
-
+// Send a mail to the user when a file is infected
 	private void sendClamavReport(String host, String from, String Clamav_report) throws IOException
 	{
 		// Get system properties
@@ -291,6 +292,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 	}
 	
+	// Parse the message between the text and the attachment part
 	private void parseMessage(Message message, Multipart multiPart) throws MessagingException, IOException {
 		boolean attachment = false;
 		// Since the message is multipart, it can be casted as such
@@ -489,6 +491,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			this.text += "------------------------------------\n";
 	}
 
+	// Modify the mail and upload the attachment
 	private void processAttachment(String filename, InputStream is, String Type)
 			throws IOException {
 		this.text += "Attachment : " + filename + "\n";
@@ -496,6 +499,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		this.text += "Link :" + link + "\n";
 	}
 
+	// Get the text part from the mail
 	private String getTextFromMessage(Part message) throws MessagingException,
 			IOException {
 		String s = new String();
@@ -554,6 +558,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		return null;
 	}
 
+	// Save the temporary file who contains the mail inputstream
 	private File saveFile(String filename, InputStream inputStream)
 			throws IOException {
 		File f = new File("/tmp/" + filename);
@@ -567,6 +572,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		return f;
 	}
 
+	// Upload the file into the user Media@Home account
 	public String postFile(InputStream is, String filename, String Type)
 			throws IOException {
 		try {
@@ -617,6 +623,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		return "Error";
 	}
 
+	// Get the local network name of the server
 	@SuppressWarnings("finally")
 	private String localAddress() {
 		String add = "";
@@ -631,6 +638,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 	}
 
+	// Get the smtp properties of the user from Media@Home
 	private Properties setSMTPProperties(Properties properties) {
 
 		try {
@@ -750,6 +758,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
               .setFromTokenResponse(tokenResponse);
         }
 	
+	// Query to yahoo to get a new access_token thanks to the refresh_token
 	private String getYahooToken(String token) {
 		final String Yahooclient_ID = CliConfSingleton.yahoo_clientID;
 		final String Yahooclient_secret = CliConfSingleton.yahoo_clientsecret;
@@ -775,6 +784,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 				.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
 		LOGGER.info(response.toString());
 		
+		// Analysis of the response, get the access_token
 		JSONObject json;
 		String yahooToken="";
 		
