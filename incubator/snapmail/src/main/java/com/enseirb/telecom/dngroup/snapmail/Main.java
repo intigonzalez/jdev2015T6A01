@@ -62,16 +62,16 @@ public class Main {
 
 	interface CliConf {
 
-		@Option(longName = "mediahome_host", defaultValue = "localhost")
+		@Option(shortName="h", longName = "mediahome_host", defaultValue = "localhost")
 		public String getMediaHomeHost();
 
-		@Option(longName = "mediahome_port", defaultValue = "9998")
+		@Option(shortName="p", longName = "mediahome_port", defaultValue = "9998")
 		public String getMediaHomePort();
 
-		@Option(longName = "clamav_host", defaultValue = "127.0.0.1")
+		@Option(shortName="c", longName = "clamav_host", defaultValue = "127.0.0.1")
 		public String getClamAVHost();
 		
-		@Option(longName = "clamav_port", defaultValue = "3310")
+		@Option(shortName="v", longName = "clamav_port", defaultValue = "3310")
 		public String getClamAVPort();
 		
 		@Option(longName = "google_clientID", description = "google clientID for Oauth2")
