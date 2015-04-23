@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('myApp.myprofile', ['ngRoute'])
+angular.module('myApp.mySnapmailprofile', ['ngRoute'])
 
     .config(['$routeProvider', function ($routeProvider) {
-        $routeProvider.when('/myprofile', {
-            templateUrl: 'views/myprofile/myprofile.html',
+        $routeProvider.when('/mySnapmailprofile', {
+            templateUrl: 'snapmail/views/profile/profile.html',
             controller: 'ProfileCtrl'
         });
     }])
@@ -35,7 +35,6 @@ angular.module('myApp.myprofile', ['ngRoute'])
         };
         
         this.openOauth = function (service) {
-        	user.service=service;
      	   return "/api/oauth/" + user.person.userID + "/" + service;
          };
 
