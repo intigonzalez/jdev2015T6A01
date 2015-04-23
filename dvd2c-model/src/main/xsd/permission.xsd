@@ -5,11 +5,14 @@
   <xs:complexType>
     <xs:sequence>
 
-    	<xs:element name="permisionId" type="xs:string" maxOccurs="1"
+    	<xs:element name="object" type="xs:string" maxOccurs="1"
     		minOccurs="1">
     	</xs:element>
 
-    	<xs:element name="permisionType" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
+    	<xs:element name="action" type="xs:string" maxOccurs="1" minOccurs="1"></xs:element>
+    	<xs:element name="permisionType" type="xs:string" maxOccurs="1"
+    		minOccurs="1">
+    	</xs:element>
     	<xs:element name="info" type="xs:string" maxOccurs="1"
     		minOccurs="0">
     	</xs:element>

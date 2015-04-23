@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:include schemaLocation="role.xsd"></xs:include>
 	<xs:element name="relation">
 		<xs:complexType>
 			<xs:sequence>
@@ -23,7 +22,7 @@
 				<xs:element name="unix_time" type="xs:long" maxOccurs="1"
 					minOccurs="0" />
 
-				<xs:element ref="role" maxOccurs="unbounded" minOccurs="0" />
+				<xs:element name="role" type="xs:string" maxOccurs="unbounded" minOccurs="0" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

@@ -132,10 +132,10 @@ public class RelationServiceImpl implements RelationService {
 		List<Relation> listRelation = getListRelation(userID);
 		List<Relation> listRelation2 = new ArrayList<Relation>();
 		for (int i = 0; i < listRelation.size(); i++) {
-			List<Role> roles = listRelation.get(i).getRole();
+			List<String> roles = listRelation.get(i).getRole();
 			
-			for (Role role : roles) {
-				if (role.getRoleId().equals(roleIDfromUser)) {
+			for (String role : roles) {
+				if (role.equals(roleIDfromUser.getRoleId())) {
 					listRelation2.add(listRelation.get(i));
 				}
 			}
@@ -156,7 +156,7 @@ public class RelationServiceImpl implements RelationService {
 		Relation relation = new Relation();
 		relation.setActorID(relationIDString);
 		relation.setAprouve(1);
-		relation.getRole().add(role);
+		relation.getRole().add(role.getRoleId());
 		createRelation(userIDFromPath, relation, fromBox);
 
 	}
@@ -196,7 +196,7 @@ public class RelationServiceImpl implements RelationService {
 			relation2.setUnixTime(relation.getUnixTime());
 			Role role = new Role();
 			role.setRoleId("public");
-			relation2.getRole().add(role);
+			relation2.getRole().add(role.getRoleId());
 			if (!fromBox) {
 				if (userRepo.exists(relation.getActorID())) {
 					relationshipDatabase.save(new RelationshipRepositoryObject(

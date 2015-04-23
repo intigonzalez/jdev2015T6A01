@@ -20,6 +20,8 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
+import com.enseirb.telecom.dngroup.dvd2c.model.Permision;
+import com.enseirb.telecom.dngroup.dvd2c.model.Role;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 @Service
@@ -160,7 +162,7 @@ public class AccountServiceImpl implements AccountService {
 		try {
 			user.setBoxID(CliConfSingleton.boxID);
 
-			requetUserService.createUserORH(user);
+			requetUserService.createUserORH((new UserRepositoryObject(user)).toUserRestrited());
 			return createUserOnLocal(user);
 		} catch (IOException e) {
 			LOGGER.debug("error during creating user on server : {} ",
@@ -174,7 +176,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public User createUserOnLocal(User user) {
-
+		initUser(user);
 		User u = userRepository.save(new UserRepositoryObject(user)).toUser();
 		return u;
 	}
@@ -182,7 +184,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public void saveUserOnServer(User user) {
 		try {
-			requetUserService.updateUserORH(user);
+			requetUserService.updateUserORH((new UserRepositoryObject(user)).toUserRestrited());
 			saveUserOnLocal(user);
 		} catch (IOException e) {
 			LOGGER.error("Error for Update this user on server : {}",
@@ -270,5 +272,87 @@ public class AccountServiceImpl implements AccountService {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * @param user
+	 */
+	private static String READ = "read";
+
+	private static String COMMENT = "comment";
+
+	private static String PUBLIC = "public";
+	private static String PRIVATE = "private";
+	private static String FRIEND = "firend";
+
+	private static String METADATA = "metadata";
+	private static String RELATION = "relation";
+
+	private void initUser(User user) {
+		Permision permisonPublic = new Permision();
+		permisonPublic.setAction(READ);
+		permisonPublic.setObject(PUBLIC);
+		permisonPublic.setPermisionType(METADATA);
+		permisonPublic.setInfo("can read tagged \"public\" content");
+		Permision permisonPublicComment = new Permision();
+		permisonPublicComment.setAction(READ);
+		permisonPublicComment.setObject(PUBLIC);
+		permisonPublicComment.setPermisionType(METADATA);
+		permisonPublicComment.setInfo("can read tagged \"public\" content");
+
+		Role rolePublic = new Role();
+		rolePublic.setRoleId(PUBLIC);
+		rolePublic.setInfo("This tie is the default group. It allow viewing your public content");
+		rolePublic.getPermision().add(permisonPublic);
+		rolePublic.getPermision().add(permisonPublicComment);
+		user.getRole().add(rolePublic);
+		
+		Permision permisonPrivateRead = new Permision();
+		permisonPrivateRead.setAction(READ);
+		permisonPrivateRead.setObject(PRIVATE);
+		permisonPrivateRead.setPermisionType(METADATA);
+		permisonPrivateRead.setInfo("can see tagged \"private\" content");
+		Permision permisonPrivateComment = new Permision();
+		permisonPrivateComment.setAction(COMMENT);
+		permisonPrivateComment.setObject(PRIVATE);
+		permisonPrivateComment.setPermisionType(METADATA);
+		permisonPrivateComment.setInfo("can see tagged \"private\" content");
+		Permision permisonPrivateRelation = new Permision();
+		permisonPrivateRelation.setAction(READ);
+		permisonPrivateRelation.setObject(PRIVATE);
+		permisonPrivateRelation.setPermisionType(RELATION);
+		permisonPrivateRelation.setInfo("can see tagged \"private\" content");
+		Role rolePrive = new Role();
+		rolePrive.setRoleId(PRIVATE);
+		rolePrive.setInfo("it can read and comment on the content tagged \"private\"");
+		rolePrive.getPermision().add(permisonPrivateRead);
+		rolePrive.getPermision().add(permisonPrivateComment);
+		rolePrive.getPermision().add(permisonPrivateRelation);
+		rolePrive.getPermision().addAll(rolePublic.getPermision());
+		user.getRole().add(rolePrive);
+		
+		Permision permisonFriendRead = new Permision();
+		permisonFriendRead.setAction(READ);
+		permisonFriendRead.setObject(FRIEND);
+		permisonFriendRead.setPermisionType(METADATA);
+		permisonFriendRead.setInfo("can see tagged \"private\" content");
+		Permision permisonFriendComment = new Permision();
+		permisonFriendComment.setAction(COMMENT);
+		permisonFriendComment.setObject(FRIEND);
+		permisonFriendComment.setPermisionType(METADATA);
+		permisonFriendComment.setInfo("can comment tagged \"private\" content");
+		Permision permisonFriendRelation = new Permision();
+		permisonFriendRelation.setAction(READ);
+		permisonFriendRelation.setObject(FRIEND);
+		permisonFriendRelation.setPermisionType(RELATION);
+
+		permisonFriendRelation.setInfo("can see friendlist");
+		Role role = new Role();
+		role.setRoleId("Friend");
+		role.setInfo("it can read and comment on the content tagged \"private\"");
+		role.getPermision().add(permisonFriendRead);
+		role.getPermision().add(permisonFriendComment);
+		role.getPermision().add(permisonFriendRelation);
+		user.getRole().add(role);
 	}
 }

@@ -4,8 +4,7 @@
 
     <xs:include schemaLocation="metadata.xsd"></xs:include>
     <xs:include schemaLocation="comment.xsd"></xs:include>
-	
-	<xs:element name="content">
+    <xs:element name="content">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="contentsID" type="xs:string"
@@ -34,12 +33,11 @@
 				<xs:element name="type" type="xs:string" maxOccurs="1"
 					minOccurs="0">
 				</xs:element>
+
 				<xs:element ref="comment" maxOccurs="unbounded"
 					minOccurs="0">
 				</xs:element>
-
-
-				<xs:element ref="metadata" maxOccurs="unbounded" minOccurs="0"></xs:element>
+				<xs:element name="metadata" type="xs:string" maxOccurs="unbounded" minOccurs="0"></xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

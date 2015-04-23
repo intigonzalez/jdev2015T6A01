@@ -20,14 +20,14 @@ public class RelationshipRepositoryObject {
 	String pubKey;
 	Integer aprouve;
 	Long unixTime;
-	List<Role> role;
+	List<String> role;
 
 	public RelationshipRepositoryObject() {
 	}
 
 	public RelationshipRepositoryObject(String iD, String userId,
 			String actorID, String firstname, String surname, String pubKey,
-			Integer aprouve, Long unixTime, List<Role> role) {
+			Integer aprouve, Long unixTime, List<String> role) {
 		super();
 		this.iD = userId + actorID;
 		this.userId = userId;
@@ -43,7 +43,7 @@ public class RelationshipRepositoryObject {
 
 	public RelationshipRepositoryObject(String userId, String actorID,
 			String firstname, String surname, String pubKey, Integer aprouve,
-			Long unixTime, List<Role> role) {
+			Long unixTime, List<String> role) {
 		super();
 		this.iD = userId + actorID;
 		this.userId = userId;
@@ -81,7 +81,7 @@ public class RelationshipRepositoryObject {
 	/**
 	 * @return the role
 	 */
-	public List<Role> getRole() {
+	public List<String> getRole() {
 		return role;
 	}
 
@@ -89,7 +89,7 @@ public class RelationshipRepositoryObject {
 	 * @param role
 	 *            the role to set
 	 */
-	public void setRole(List<Role> role) {
+	public void setRole(List<String> role) {
 		this.role = role;
 	}
 

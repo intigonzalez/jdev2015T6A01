@@ -22,14 +22,14 @@ public class ContentRepositoryObject {
 	String previewLink;
 	String status;
 	List<Comment> comment;
-	List<Metadata> metadata;
+	List<String> metadata;
 
 
 
 	public ContentRepositoryObject() {
 	}
 
-	public ContentRepositoryObject(String id, String name, String type, String actorID, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<Metadata> metadata) {
+	public ContentRepositoryObject(String id, String name, String type, String actorID, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<String> metadata) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -60,14 +60,14 @@ public class ContentRepositoryObject {
 	/**
 	 * @return the metadata
 	 */
-	public List<Metadata> getMetadata() {
+	public List<String> getMetadata() {
 		return metadata;
 	}
 
 	/**
 	 * @param metadata the metadata to set
 	 */
-	public void setMetadata(List<Metadata> metadata) {
+	public void setMetadata(List<String> metadata) {
 		this.metadata = metadata;
 	}
 
