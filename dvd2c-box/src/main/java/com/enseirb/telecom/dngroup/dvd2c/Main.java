@@ -152,14 +152,14 @@ public class Main {
 			CliConfSingleton.google_clientsecret = cliconf.getGoogleClientSecret();
 			CliConfSingleton.yahoo_clientID = cliconf.getYahooClientID();
 			CliConfSingleton.yahoo_clientsecret = cliconf.getYahooClientSecret();
+			getParametreFromFile();
 		} catch (ArgumentValidationException e1) {
 
-			LOGGER.info("No arg detected use default or file value ");
-			getParametreFromFile();
+			throw e1;
+//			getParametreFromFile();
 
 		} catch (InvalidOptionSpecificationException e1) {
-			LOGGER.info("False arg detected use default or file value ");
-			getParametreFromFile();
+			throw e1;
 		}
 	}
 
@@ -214,8 +214,9 @@ public class Main {
 			if (CliConfSingleton.yahoo_clientsecret == null)
 				CliConfSingleton.yahoo_clientsecret = ApplicationContext.getProperties()
 						.getProperty("yahoo_clientsecret");
-			LOGGER.info("File not found use default value or arg Path ={} ",
+			LOGGER.info("File found use this values or arg Path ={} ",
 					aPPath);
+			CliConfSingleton.defaultValue();
 			in.close();
 		} catch (FileNotFoundException e1) {
 			LOGGER.info("File not found use default value or arg Path ={} ",
@@ -230,46 +231,46 @@ public class Main {
 
 interface CliConfiguration {
 
-	@Option(shortName = "b", longName = "boxID")
+	@Option(shortName = "b", longName = "boxID" , defaultToNull = true)
 	String getBoxID();
 
-	@Option(shortName = "p", longName = "port", description = "the port on which the frontend will listen for http connections")
+	@Option(shortName = "p", longName = "port", description = "the port on which the frontend will listen for http connections", defaultToNull = true)
 	Integer getPort();
 
-	@Option(shortName = "i", longName = "ip", description = "the IP on which the frontend will listen for http connections")
+	@Option(shortName = "i", longName = "ip", description = "the IP on which the frontend will listen for http connections", defaultToNull = true)
 	String getIp();
 
-	@Option(longName = "content-path", description = "path of content")
+	@Option(longName = "content-path", description = "path of content", defaultToNull = true)
 	String getContentPath();
 
-	@Option(shortName = "c", longName = "central-addr", description = "the http addr of central server")
+	@Option(shortName = "c", longName = "central-addr", description = "the http addr of central server", defaultToNull = true)
 	String getCentralURL();
 
-	@Option(shortName = "a", longName = "public-addr", description = "the http addr of curent box")
+	@Option(shortName = "a", longName = "public-addr", description = "the http addr of curent box", defaultToNull = true)
 	String getPublicAddr();
 
-	@Option(longName = "db-hostname", description = "the hostname of database")
+	@Option(longName = "db-hostname", description = "the hostname of database", defaultToNull = true)
 	String getDbHostname();
 
-	@Option(longName = "db-port", description = "the port of database")
+	@Option(longName = "db-port", description = "the port of database", defaultToNull = true)
 	Integer getDbPort();
 
-	@Option(longName = "rabbit-host", description = "the host of rabbitMQ")
+	@Option(longName = "rabbit-host", description = "the host of rabbitMQ", defaultToNull = true)
 	String getRabbitHost();
 
-	@Option(longName = "rabbit-port", description = "the port of rabbitMQ")
+	@Option(longName = "rabbit-port", description = "the port of rabbitMQ", defaultToNull = true)
 	Integer getRabbitPort();
 	
-	@Option( longName = "google_clientID", description = "google clientID for Oauth2")
+	@Option( longName = "google_clientID", description = "google clientID for Oauth2", defaultToNull = true)
 	String getGoogleClientID();
 	
-	@Option( longName = "google_clientsecret", description = "google client secret for Oauth2")
+	@Option( longName = "google_clientsecret", description = "google client secret for Oauth2", defaultToNull = true)
 	String getGoogleClientSecret();
 	
-	@Option( longName = "yahoo_clientID", description = "yahoo clientID for Oauth2")
+	@Option( longName = "yahoo_clientID", description = "yahoo clientID for Oauth2", defaultToNull = true)
 	String getYahooClientID();
 	
-	@Option( longName = "yahoo_clientsecret", description = "yahoo client secret for Oauth2")
+	@Option( longName = "yahoo_clientsecret", description = "yahoo client secret for Oauth2", defaultToNull = true)
 	String getYahooClientSecret();
 
 	@Option(helpRequest = true)

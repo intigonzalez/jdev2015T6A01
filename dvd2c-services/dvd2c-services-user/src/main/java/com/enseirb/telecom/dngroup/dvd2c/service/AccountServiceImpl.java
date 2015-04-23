@@ -147,7 +147,7 @@ public class AccountServiceImpl implements AccountService {
 		try {
 			user.setBoxID(CliConfSingleton.boxID);
 
-			requetUserService.createUserORH(user);
+			requetUserService.createUserORH((new UserRepositoryObject(user)).toUser());
 			return createUserOnLocal(user);
 		} catch (IOException e) {
 			LOGGER.debug("error during creating user on server : {} ",
@@ -169,7 +169,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public void saveUserOnServer(User user) {
 		try {
-			requetUserService.updateUserORH(user);
+			requetUserService.updateUserORH((new UserRepositoryObject(user)).toUser());
 			saveUserOnLocal(user);
 		} catch (IOException e) {
 			LOGGER.error("Error for Update this user on server : {}",
