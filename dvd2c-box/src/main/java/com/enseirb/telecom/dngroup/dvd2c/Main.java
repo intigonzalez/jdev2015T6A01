@@ -217,6 +217,7 @@ public class Main {
 			LOGGER.info("File not found use default value or arg Path ={} ",
 					aPPath);
 			in.close();
+			CliConfSingleton.defaultValue();
 		} catch (FileNotFoundException e1) {
 			LOGGER.info("File not found use default value or arg Path ={} ",
 					aPPath);

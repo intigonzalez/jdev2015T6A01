@@ -43,7 +43,10 @@ public class SnapmailEndPoints extends HttpServlet {
 	private static final String Googleclient_secret = CliConfSingleton.google_clientsecret; 
 	private static final String Yahooclient_ID = CliConfSingleton.yahoo_clientID;
 	private static final String Yahooclient_secret = CliConfSingleton.yahoo_clientsecret;
+	private static final String Microsoftclient_ID = "000000004C14F710";
+	private static final String Microsoftclient_secret = "nYBtVB-xkEUnVp3gZdkIMHu4DcAeGZPh";
 	private static final String redirectUri = CliConfSingleton.centralURL.toString() + "/api/oauth";
+	private static final String redirectUritest = "http://mathias.homeb.tv:9999/api/oauth"; 
 	
 	/**
 	 * Get the smtp properties from a user by actorID
@@ -109,6 +112,15 @@ public class SnapmailEndPoints extends HttpServlet {
 					+ "&state=" + actorID
 					+ "&access_type=offline"
 					)).build();
+		case "microsoft":
+			return Response.seeOther(new URI(
+					"https://login.microsoftonline.com/common/oauth2/authorize"
+					+ "?response_type=code"
+					+ "&client_id=" + Microsoftclient_ID
+					+ "&redirect_uri=" + redirectUri
+					+ "&resource=https://outlook.office365.com/api/v1.0/me/sendmail"
+					+ "&state=" + actorID
+					)).build();
 		case "yahoo":
 			return Response.seeOther(new URI(
 					"https://api.login.yahoo.com/oauth2/request_auth"
@@ -159,7 +171,7 @@ if(actorID.contains("@gmail.com")){
 		LOGGER.info(response.toString());
 		
 // Send token request to Yahoo		
-}else if(actorID.contains("@yahoo."))
+/*}else if(actorID.contains("@yahoo."))
 {
 	WebTarget targetYahoo = client.target("https://api.login.yahoo.com/oauth2/get_token");
 	
@@ -178,6 +190,21 @@ if(actorID.contains("@gmail.com")){
 			.header("Authorization", "Basic " + encodedvalue)
 			.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
 	LOGGER.info(response.toString());	
+*/
+} else {
+	WebTarget targetOutlook = client.target("https://login.windows.net/common/oauth2/token");
+	
+	data = "client_id=" + Microsoftclient_ID
+			+ "&client_secret=" + Microsoftclient_secret
+			+ "&code=" + code
+			+ "&redirect_uri=" + redirectUri
+			+ "&grant_type=authorization_code";
+			
+	
+	response = targetOutlook
+			.request()
+			.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
+	LOGGER.info(response.toString());
 }
 // get the refresh token
 		JSONObject json;

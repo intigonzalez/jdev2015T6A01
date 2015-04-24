@@ -29,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -179,7 +180,14 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 	}
 
-	// Send the rebuilt mail
+	/**
+	 * Rebuild and send mails, using the SMTPProperties of the sender
+	 * 
+	 * @param host
+	 * @param recipient
+	 * @param multiPart
+	 * @throws IOException
+	 */
 	private void sendMail(String host, String recipient, Multipart multiPart)
 			throws IOException {
 		// Get system properties
@@ -237,6 +245,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			else if(username.contains("@yahoo.")){
 				String yahooToken= getYahooToken(token);
 				LOGGER.info("yahooToken : " + yahooToken);
+				
 			}
 			LOGGER.info("Mail sent successfully !");
 			LOGGER.info("--------------------------------------------------\n\n");
@@ -246,7 +255,9 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	}
 	
 
-// Send a mail to the user when a file is infected
+
+
+	// Send a mail to the user when a file is infected
 	private void sendClamavReport(String host, String from, String Clamav_report) throws IOException
 	{
 		// Get system properties
@@ -571,8 +582,16 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 		return f;
 	}
-
-	// Upload the file into the user Media@Home account
+ 
+	/**
+	 * Upload the file into the user Media@Home account
+	 * 
+	 * @param is
+	 * @param filename
+	 * @param Type
+	 * @return (String) link to see the document
+	 * @throws IOException
+	 */
 	public String postFile(InputStream is, String filename, String Type)
 			throws IOException {
 		try {
@@ -637,8 +656,13 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			return add;
 		}
 	}
-
-	// Get the smtp properties of the user from Media@Home
+ 
+	/**
+	 * Get the smtp properties of the user from Media@Home
+	 * 
+	 * @param properties
+	 * @return SMTPProperties
+	 */
 	private Properties setSMTPProperties(Properties properties) {
 
 		try {
@@ -705,9 +729,13 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 		return properties;
 	}
-
-	// Method to get the token thanks to our json secret. The user need to agree
-	// and copy-paste a link into the terminal.
+ 
+	/**
+	 * Method to get the token thanks to our json secret. The user need to agree and copy-paste a link into the terminal.
+	 * @param token
+	 * @return Gmail service
+	 * @throws IOException
+	 */
 	private Gmail getService(String token) throws IOException {
 
 		// Link to give us rights to send mails
@@ -732,8 +760,14 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		return service;
 	}
 
-	// Method to convert the MimeMessage to a "Google" Message wich can be sent
-	// via Gmail API
+	 
+	/**
+	 * Method to convert the MimeMessage to a "Google" Message wich can be sent via Gmail API
+	 * @param email
+	 * @return
+	 * @throws MessagingException
+	 * @throws IOException
+	 */
 	private static com.google.api.services.gmail.model.Message createMessageWithEmail(
 			MimeMessage email) throws MessagingException, IOException {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -757,8 +791,12 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
               .build()
               .setFromTokenResponse(tokenResponse);
         }
-	
-	// Query to yahoo to get a new access_token thanks to the refresh_token
+
+	/**
+	 *  Query to yahoo to get a new access_token thanks to the refresh_token
+	 * @param token
+	 * @return yahooToken
+	 */
 	private String getYahooToken(String token) {
 		final String Yahooclient_ID = CliConfSingleton.yahoo_clientID;
 		final String Yahooclient_secret = CliConfSingleton.yahoo_clientsecret;
@@ -798,4 +836,6 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		
 		return yahooToken;
 	}
+	
+
 }
