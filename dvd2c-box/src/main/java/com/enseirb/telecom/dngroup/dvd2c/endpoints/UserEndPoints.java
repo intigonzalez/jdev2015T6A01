@@ -34,32 +34,36 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
+import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
 
 // The Java class will be hosted at the URI path "/app/account"
 
 @Path("app/account")
 public class UserEndPoints extends HttpServlet {
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserEndPoints.class);
-	
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(UserEndPoints.class);
+
 	@Inject
 	protected AccountService uManager;
 
-//	// Only for tests
-//	@GET
-//	@Path("get")
-//	//@RolesAllowed("account")
-//	public Response addUser(@Context HttpHeaders headers,@Context SecurityContext context) {//@HeaderParam("cookie") String userAgent) {
-//		
-//		String userAgent = headers.getRequestHeader("cookie").get(0);
-//		LOGGER.debug("userAgent : {}",userAgent);
-//		return Response.status(200)
-//			.entity("addUser is called, userAgent : " + userAgent)
-//			.build();
-// 
-//	}
-//	
+	// // Only for tests
+	// @GET
+	// @Path("get")
+	// //@RolesAllowed("account")
+	// public Response addUser(@Context HttpHeaders headers,@Context
+	// SecurityContext context) {//@HeaderParam("cookie") String userAgent) {
+	//
+	// String userAgent = headers.getRequestHeader("cookie").get(0);
+	// LOGGER.debug("userAgent : {}",userAgent);
+	// return Response.status(200)
+	// .entity("addUser is called, userAgent : " + userAgent)
+	// .build();
+	//
+	// }
+	//
 	/**
 	 * Create the cookie on user side when the user is connected
+	 * 
 	 * @param userAgent
 	 * @param username
 	 * @param password
@@ -67,10 +71,12 @@ public class UserEndPoints extends HttpServlet {
 	 */
 	@POST()
 	@Path("Connect")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })// resultat en JSON
-	public Response getConnect(User user){ //FormParam ce sont les parametres d'un formulaire. 
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	// resultat en JSON
+	public Response getConnect(User user) { // FormParam ce sont les parametres
+											// d'un formulaire.
 		String userID = user.getUserID().toLowerCase();
-		
+
 		if (uManager.userExistOnLocal(userID)) {
 			User userAuth;
 			try {
@@ -78,29 +84,27 @@ public class UserEndPoints extends HttpServlet {
 			} catch (NoSuchUserException e) {
 				throw new WebApplicationException(Status.NOT_FOUND);
 			}
-			if (user.getPassword().equals(userAuth.getPassword() ) ) {
-				return Response.ok()
-			               .cookie(new NewCookie("authentication", userID, "/", null,1,      
-			                       "no comment",      
-			                       1073741823 , // maxAge max int value/2      
-			                       false ))
-			               .build();			
+			if (user.getPassword().equals(userAuth.getPassword())) {
+				return Response
+						.ok()
+						.cookie(new NewCookie("authentication", userID, "/",
+								null, 1, "no comment", 1073741823, // maxAge max
+																	// int
+																	// value/2
+								false)).build();
 			}
-			return Response.status(403).build();			
-		}
-		else{
+			return Response.status(403).build();
+		} else {
 			return Response.status(403).build();
 		}
- 
-	}
-	
-	
 
-	
+	}
 
 	/**
 	 * Get a user by userID
-	 * @param userID the user to get
+	 * 
+	 * @param userID
+	 *            the user to get
 	 * @return a user
 	 */
 	@GET
@@ -114,66 +118,82 @@ public class UserEndPoints extends HttpServlet {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 	}
-	
+
 	/**
 	 * Find a list of users from their firstname on server
-	 * @param firstname the firstname to search
+	 * 
+	 * @param firstname
+	 *            the firstname to search
 	 * @return a list of user
 	 */
 	@GET
 	@Path("firstname/{firstname}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<User> getUserByName(@PathParam("firstname") String firstname){
+	public List<User> getUserByName(@PathParam("firstname") String firstname) {
 		return uManager.getUserFromNameOnServer(firstname);
 	}
 
 	/**
 	 * Create a user on server and local db
-	 * @param user the user to save
+	 * 
+	 * @param user
+	 *            the user to save
 	 * @return Status web
 	 * @throws URISyntaxException
 	 */
 	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createUser(User user) throws URISyntaxException {
 		if (uManager.userExistOnLocal(user.getUserID()) == false) {
-		
+
 			User u;
 			try {
 				u = uManager.createUserOnServer(user);
-		
-			// NHE that the answer we expect from a post (see location header)
-			return Response.created(new URI(u.getUserID()))
-		               .cookie(new NewCookie("authentication", u.getUserID(), "/", null,1,      
-		                       "no comment",      
-		                       1073741823 , // maxAge max int value/2      
-		                       false ))
-		               .build();
-			//return Response.created(new URI(u.getUserID())).build();
+
+				// NHE that the answer we expect from a post (see location
+				// header)
+				return Response
+						.created(new URI(u.getUserID()))
+						.cookie(new NewCookie("authentication", u.getUserID(),
+								"/", null, 1, "no comment", 1073741823, // maxAge
+																		// max
+																		// int
+																		// value/2
+								false)).build();
+				// return Response.created(new URI(u.getUserID())).build();
 			} catch (SuchUserException e) {
-				throw new WebApplicationException("user"+ user.getUserID() + "already exists on central",Status.CONFLICT);
+				throw new WebApplicationException("user" + user.getUserID()
+						+ "already exists on central", Status.CONFLICT);
 			} catch (IOException e) {
-				throw new WebApplicationException("error for creating user",Status.INTERNAL_SERVER_ERROR);
+				throw new WebApplicationException("error for creating user",
+						Status.INTERNAL_SERVER_ERROR);
 			}
 		} else {
-			throw new WebApplicationException("user"+ user.getUserID() + "already exists on your box",Status.CONFLICT);
+			throw new WebApplicationException("user" + user.getUserID()
+					+ "already exists on your box", Status.CONFLICT);
 		}
 	}
 
 	/**
 	 * Update User by userID
-	 * @param user the user information 
-	 * @param userIDFromPath the userID to update
+	 * 
+	 * @param user
+	 *            the user information
+	 * @param userIDFromPath
+	 *            the userID to update
 	 * @return Response
 	 */
 	@PUT
 	@Path("{userID}")
 	@RolesAllowed("account")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response updateUser(User user, @PathParam("userID") String userIDFromPath) {
+	public Response updateUser(User user,
+			@PathParam("userID") String userIDFromPath) {
 		// TODO: need to check the authentication of the user
-		// modify the user, check if the user has changed his email address, and check the ability of the new email address
-		if ( user.getUserID().equals(userIDFromPath ) || uManager.userExistOnLocal(user.getUserID()) == false ) {
+		// modify the user, check if the user has changed his email address, and
+		// check the ability of the new email address
+		if (user.getUserID().equals(userIDFromPath)
+				|| uManager.userExistOnLocal(user.getUserID()) == false) {
 			uManager.saveUserOnServer(user);
 			return Response.status(200).build();
 		} else {
@@ -184,7 +204,9 @@ public class UserEndPoints extends HttpServlet {
 
 	/**
 	 * Delete the user with userID
-	 * @param userID the userID to delete
+	 * 
+	 * @param userID
+	 *            the userID to delete
 	 * @return web status
 	 */
 	@DELETE
@@ -198,58 +220,5 @@ public class UserEndPoints extends HttpServlet {
 		uManager.deleteUserOnServer(userID);
 		return Response.status(200).build();
 
-	}
-	
-	/**
-	 * Get the smtp properties from a user by actorID
-	 * @param actorIDFromPath - the user
-	 * @return a collection of smtp property
-	 */
-	@GET
-	@Path("{actorID}/smtp")
-	@RolesAllowed({ "account", "authenticated" })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public SmtpProperty getUserSmtpProperty(@PathParam("actorID") String actorIDFromPath){
-		SmtpProperty smtpProperty = new SmtpProperty();
-		User user;
-		try {
-			user = uManager.getUserOnLocal(actorIDFromPath);
-		} catch (NoSuchUserException e) {
-			throw new WebApplicationException(Status.NOT_FOUND);
-		}		
-		smtpProperty.setHost(user.getSmtpHost());
-		smtpProperty.setPort(user.getSmtpPort());
-		smtpProperty.setUsername(user.getSmtpUsername());
-		smtpProperty.setPassword(user.getSmtpPassword());
-		smtpProperty.setToken(user.getSmtpToken());
-		return smtpProperty;
-	}
-	
-	/**
-	 * Update User smtp property by actorID
-	 * @param smtpProperty - the smtp property
-	 * @param actorIDFromPath the userID to update
-	 * @return webstatus
-	 */
-	@PUT
-	@Path("{actorID}/smtp")
-	//@RolesAllowed("account")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response updateUserSmtpProperty(SmtpProperty smtpProperty, @PathParam("actorID") String actorIDFromPath) {
-		User user;
-		try {
-			user = uManager.getUserOnLocal(actorIDFromPath);
-		} catch (NoSuchUserException e) {
-			throw new WebApplicationException(Status.NOT_FOUND);
-		}
-		
-		user.setSmtpHost(smtpProperty.getHost());
-		user.setSmtpPort(smtpProperty.getPort());
-		user.setSmtpUsername(smtpProperty.getUsername());
-		user.setSmtpPassword(smtpProperty.getPassword());
-		user.setSmtpToken(smtpProperty.getToken());
-		
-		uManager.saveUserOnLocal(user);
-		return Response.status(200).build();
 	}
 }

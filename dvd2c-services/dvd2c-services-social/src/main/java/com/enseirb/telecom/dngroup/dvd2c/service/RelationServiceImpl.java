@@ -44,6 +44,11 @@ public class RelationServiceImpl implements RelationService {
 	
 	@Inject
 	UserRepository userRepo;
+	
+	@Inject
+	RequestUserService rus ;
+	
+	@Inject RequestContentService requestContentService;
 
 	public boolean RelationExist(String UserID, String actorID) {
 		return relationshipDatabase.exists(UserID+actorID);
@@ -170,7 +175,7 @@ public class RelationServiceImpl implements RelationService {
 		 * to say it add as a friend
 		 */
 		User user = new User();
-		RequestUserService rus = new RequestUserServiceImpl();
+		
 		try {
 			user = rus.get(relation.getActorID());
 			if (user == null) {
@@ -300,7 +305,7 @@ public class RelationServiceImpl implements RelationService {
 	public List<Content> getAllContent(String userID, String relationID) {
 		try {
 
-			RequestContentService requestContentService = new RequestContentServiceImpl();
+			
 
 			List<Content> listContent = requestContentService.get(userID,
 					relationID);

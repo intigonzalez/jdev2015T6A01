@@ -82,6 +82,12 @@ for configure CouchBase we need :
 	git clone git@github.com:dngroup/vhg-adaptation-worker.git
 	
 	sudo ./deploy.sh # is long
+	
+	
+#### change with your configuration
+
+	sudo nano /etc/mediahome/box.properties
+	sudo nano /etc/mediahome/central.properties
 
 ### Run Application
 

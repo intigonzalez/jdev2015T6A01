@@ -30,9 +30,8 @@ public class BoxServiceImpl implements BoxService {
 	@Inject
 	BoxRepository  boxDatabase;
 	
-	
-	RequestBoxService requetBoxService = new RequestBoxServiceImpl(
-			CliConfSingleton.centralURL + "/api/app/box/");
+	@Inject
+	RequestBoxService requetBoxService ;
 
 
 
