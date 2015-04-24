@@ -1,5 +1,8 @@
 package com.enseirb.telecom.dngroup.dvd2c.conf;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -34,4 +37,10 @@ public class SpringConfiguration {
 
 	}
 
+	@Bean
+	public Client client() {
+		Client client = ClientBuilder.newClient();
+		return client;
+		
+	}
 }

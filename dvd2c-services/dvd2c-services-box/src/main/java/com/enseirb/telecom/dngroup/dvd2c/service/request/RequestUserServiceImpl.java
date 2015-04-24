@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
@@ -30,14 +32,12 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 public class RequestUserServiceImpl implements RequestUserService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RequestUserService.class);
-	private String url;
+//	@Inject
 	private Client client;
-	private String server;
-
+	private String server = CliConfSingleton.centralURL;;
+	private String url= server + "/api/app/account/";;
 	public RequestUserServiceImpl() {
 
-		server = CliConfSingleton.centralURL;
-		this.url = server + "/api/app/account/";
 		client = ClientBuilder.newClient();
 	}
 
@@ -66,15 +66,12 @@ public class RequestUserServiceImpl implements RequestUserService {
 		// Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(url + "firstname/" + firstname);
 		try {
-			listUser = target.request(MediaType.APPLICATION_XML_TYPE).get(
-					new GenericType<List<User>>() {
-					});
+			listUser = target.request(MediaType.APPLICATION_XML_TYPE).get(new GenericType<List<User>>(){});
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 500) {
-				LOGGER.error("Error on remote Host : get {}", target.getUri(),
-						e);
+				LOGGER.error("Error on remote Host : get {}",target.getUri(), e);
 			} else {
-				LOGGER.error("Error for get {}", target.getUri(), e);
+				LOGGER.error("Error for get {}",target.getUri(), e);
 			}
 
 		}
@@ -84,26 +81,14 @@ public class RequestUserServiceImpl implements RequestUserService {
 
 	@Override
 	public void createUserORH(User user) throws IOException, SuchUserException {
-		User user2 = new User();
-		user2.setBoxID(user.getBoxID());
-		user2.setFirstname(user.getFirstname());
-		user2.setSurname(user.getSurname());
-		user2.setUserID(user.getUserID());
 		WebTarget target = client.target(url);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
-				.post(Entity.entity(user2, MediaType.APPLICATION_XML),
+				.post(Entity.entity(user, MediaType.APPLICATION_XML),
 						Response.class);
 
 		switch (Status.fromStatusCode(response.getStatus())) {
-		case ACCEPTED:
-			// normal statement but don't is normally not that
-			break;
 		case CREATED:
 			// normal statement
-			break;
-		case OK:
-			// normal statement but don't use this because normally we need
-			// return a object
 			break;
 		case CONFLICT:
 			throw new SuchUserException();
@@ -115,19 +100,13 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 
 	@Override
-	public void updateUserORH(User user) throws IOException,
-			NoSuchUserException {
-		User user2 = new User();
-		user2.setBoxID(user.getBoxID());
-		user2.setFirstname(user.getFirstname());
-		user2.setSurname(user.getSurname());
-		user2.setUserID(user.getUserID());
+	public void updateUserORH(User user) throws IOException, NoSuchUserException {
 
 		// Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(url + user2.getUserID());
+		WebTarget target = client.target(url + user.getUserID());
 		// try {
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE).put(
-				Entity.entity(user2, MediaType.APPLICATION_XML), Response.class);
+				Entity.entity(user, MediaType.APPLICATION_XML), Response.class);
 		switch (Status.fromStatusCode(response.getStatus())) {
 		case ACCEPTED:
 			// normal statement but don't is normally not that

@@ -1,6 +1,5 @@
 'use strict';
 
-//TO DO
 var PREFIX_RQ = "";
 
 var app = angular.module('snapmailApp', ['ngRoute']);
@@ -8,10 +7,10 @@ var app = angular.module('snapmailApp', ['ngRoute']);
 app.config(function($routeProvider) {
 	$routeProvider
 	.when('/', {
-		templateUrl: 'views/snapmail/home.html'
+		templateUrl: 'views/content/home.html'
 	})
 	.when('/:sender/:id', {
-		templateUrl: 'views/snapmail/file.html',
+		templateUrl: 'views/content/file.html',
 		controller: 'snapmailCtrl'
 	})
 	.otherwise({redirectTo: '/'});
@@ -84,16 +83,16 @@ app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$rout
 			
 			$scope.getPlayer = function()
 			{
-				return 'views/snapmail/video/' + player + '.html';
+				return 'views/content/video/' + player + '.html';
 			}
 
-			return 'views/snapmail/video.html';
+			return 'views/content/video.html';
 		}
 		else if ($scope.type == 'image')
-			return 'views/snapmail/image.html';
+			return 'views/content/image.html';
 		else if ($scope.type == null)
-			return 'views/snapmail/404.html';
+			return 'views/content/404.html';
 		else
-			return 'views/snapmail/generic.html';
+			return 'views/content/generic.html';
 	}
 }]);
