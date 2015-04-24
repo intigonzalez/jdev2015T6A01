@@ -7,11 +7,13 @@ import java.net.URI;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.UriBuilder;
+import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
 
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
+import org.glassfish.grizzly.http.util.Header;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jettison.JettisonFeature;
@@ -105,15 +107,31 @@ public class Main {
 
 					HttpServer httpServer = startServer();
 
+					StaticHttpHandler videos = new StaticHttpHandlerCORS(
+							new String[] { "/var/www/html/videos" });
 
-					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/videos"), "/videos");
-					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/pictures"), "/pictures");
-					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/cloud"), "/cloud");
+					// set disable cache 
+					 videos.setFileCacheEnabled(false);
+
+					httpServer.getServerConfiguration().addHttpHandler(videos,
+							"/videos");
+
+					// httpServer.getServerConfiguration().addHttpHandler(
+					// new StaticHttpHandler("/var/www/html/videos"),
+					// "/videos");
+
+					httpServer.getServerConfiguration().addHttpHandler(
+							new StaticHttpHandler("/var/www/html/pictures"),
+							"/pictures");
+					httpServer.getServerConfiguration().addHttpHandler(
+							new StaticHttpHandler("/var/www/html/cloud"),
+							"/cloud");
 
 					httpServer.getServerConfiguration().addHttpHandler(
 							new CLStaticHttpHandler(
 									Main.class.getClassLoader(), "/"));
 
+					// httpServer.getServerConfiguration().setAllowPayloadForUndefinedHttpMethods(true);
 				} catch (IOException e) {
 					throw Throwables.propagate(e);
 				}
@@ -129,6 +147,7 @@ public class Main {
 
 		// httpServer.stop();
 	}
+
 	/**
 	 * @param args
 	 */
@@ -147,14 +166,20 @@ public class Main {
 			CliConfSingleton.rabbitHostname = cliconf.getRabbitHost();
 			CliConfSingleton.rabbitPort = cliconf.getRabbitPort();
 			CliConfSingleton.port = cliconf.getPort();
+			CliConfSingleton.google_clientID = cliconf.getGoogleClientID();
+			CliConfSingleton.google_clientsecret = cliconf
+					.getGoogleClientSecret();
+			CliConfSingleton.yahoo_clientID = cliconf.getYahooClientID();
+			CliConfSingleton.yahoo_clientsecret = cliconf
+					.getYahooClientSecret();
+			getParametreFromFile();
 		} catch (ArgumentValidationException e1) {
 
-			LOGGER.info("No arg detected use default or file value ");
-			getParametreFromFile();
+			throw e1;
+			// getParametreFromFile();
 
 		} catch (InvalidOptionSpecificationException e1) {
-			LOGGER.info("False arg detected use default or file value ");
-			getParametreFromFile();
+			throw e1;
 		}
 	}
 
@@ -197,9 +222,22 @@ public class Main {
 			if (CliConfSingleton.port == null)
 				CliConfSingleton.port = Integer.valueOf(ApplicationContext
 						.getProperties().getProperty("port"));
-			LOGGER.info("File not found use default value or arg Path ={} ",
-					aPPath);
+			if (CliConfSingleton.google_clientID == null)
+				CliConfSingleton.google_clientID = ApplicationContext
+						.getProperties().getProperty("google_clientID");
+			if (CliConfSingleton.google_clientsecret == null)
+				CliConfSingleton.google_clientsecret = ApplicationContext
+						.getProperties().getProperty("google_clientsecret");
+			if (CliConfSingleton.yahoo_clientID == null)
+				CliConfSingleton.yahoo_clientID = ApplicationContext
+						.getProperties().getProperty("yahoo_clientID");
+			if (CliConfSingleton.yahoo_clientsecret == null)
+				CliConfSingleton.yahoo_clientsecret = ApplicationContext
+						.getProperties().getProperty("yahoo_clientsecret");
+			LOGGER.info("File found use this values or arg Path ={} ", aPPath);
+			CliConfSingleton.defaultValue();
 			in.close();
+			CliConfSingleton.defaultValue();
 		} catch (FileNotFoundException e1) {
 			LOGGER.info("File not found use default value or arg Path ={} ",
 					aPPath);
@@ -213,35 +251,47 @@ public class Main {
 
 interface CliConfiguration {
 
-	@Option(shortName = "b", longName = "boxID")
+	@Option(shortName = "b", longName = "boxID", defaultToNull = true)
 	String getBoxID();
 
-	@Option(shortName = "p", longName = "port", description = "the port on which the frontend will listen for http connections")
+	@Option(shortName = "p", longName = "port", description = "the port on which the frontend will listen for http connections", defaultToNull = true)
 	Integer getPort();
 
-	@Option(shortName = "i", longName = "ip", description = "the IP on which the frontend will listen for http connections")
+	@Option(shortName = "i", longName = "ip", description = "the IP on which the frontend will listen for http connections", defaultToNull = true)
 	String getIp();
 
-	@Option(longName = "content-path", description = "path of content")
+	@Option(longName = "content-path", description = "path of content", defaultToNull = true)
 	String getContentPath();
 
-	@Option(shortName = "c", longName = "central-addr", description = "the http addr of central server")
+	@Option(shortName = "c", longName = "central-addr", description = "the http addr of central server", defaultToNull = true)
 	String getCentralURL();
 
-	@Option(shortName = "a", longName = "public-addr", description = "the http addr of curent box")
+	@Option(shortName = "a", longName = "public-addr", description = "the http addr of curent box", defaultToNull = true)
 	String getPublicAddr();
 
-	@Option(longName = "db-hostname", description = "the hostname of database")
+	@Option(longName = "db-hostname", description = "the hostname of database", defaultToNull = true)
 	String getDbHostname();
 
-	@Option(longName = "db-port", description = "the port of database")
+	@Option(longName = "db-port", description = "the port of database", defaultToNull = true)
 	Integer getDbPort();
 
-	@Option(longName = "rabbit-host", description = "the host of rabbitMQ")
+	@Option(longName = "rabbit-host", description = "the host of rabbitMQ", defaultToNull = true)
 	String getRabbitHost();
 
-	@Option(longName = "rabbit-port", description = "the port of rabbitMQ")
+	@Option(longName = "rabbit-port", description = "the port of rabbitMQ", defaultToNull = true)
 	Integer getRabbitPort();
+
+	@Option(longName = "google_clientID", description = "google clientID for Oauth2", defaultToNull = true)
+	String getGoogleClientID();
+
+	@Option(longName = "google_clientsecret", description = "google client secret for Oauth2", defaultToNull = true)
+	String getGoogleClientSecret();
+
+	@Option(longName = "yahoo_clientID", description = "yahoo clientID for Oauth2", defaultToNull = true)
+	String getYahooClientID();
+
+	@Option(longName = "yahoo_clientsecret", description = "yahoo client secret for Oauth2", defaultToNull = true)
+	String getYahooClientSecret();
 
 	@Option(helpRequest = true)
 	boolean getHelp();

@@ -22,7 +22,6 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +39,15 @@ public class SnapmailEndPoints extends HttpServlet {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserEndPoints.class);
 	AccountService uManager = new AccountServiceImpl(new UserRepositoryMongo("mediahome"));
 		
-	private static final String Googleclient_ID = "547107646254-uh9ism7k6qoho9jdcbg4v4rg4tt5pid0.apps.googleusercontent.com";
-	private static final String Googleclient_secret = "JG3LiwiX2gA362mTSGEJ5eC8";
-	private static final String Microsoftclient_ID = "0000000040153499";
-	private static final String Microsoftclient_secret = "Ha3x098elYnPNxF6vAm6NkG8ucTMEod4";
-	private static final String Yahooclient_ID = "dj0yJmk9a2pwM2FneTlvTTBpJmQ9WVdrOVpsUkJNRW8xTldVbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD03MA--";
-	private static final String Yahooclient_secret = "94158786999742f8b5d798931b2313e8adb17ca2";
+	private static final String Googleclient_ID = CliConfSingleton.google_clientID;
+	private static final String Googleclient_secret = CliConfSingleton.google_clientsecret; 
+	private static final String Yahooclient_ID = CliConfSingleton.yahoo_clientID;
+	private static final String Yahooclient_secret = CliConfSingleton.yahoo_clientsecret;
+	private static final String Microsoftclient_ID = "000000004C14F710";
+	private static final String Microsoftclient_secret = "nYBtVB-xkEUnVp3gZdkIMHu4DcAeGZPh";
 	private static final String redirectUri = CliConfSingleton.centralURL.toString() + "/api/oauth";
+	private static final String redirectUritest = "http://mathias.homeb.tv:9999/api/oauth"; 
+	
 	/**
 	 * Get the smtp properties from a user by actorID
 	 * @param actorIDFromPath - the user
@@ -91,8 +92,11 @@ public class SnapmailEndPoints extends HttpServlet {
 	}
 	
 	/**
-	 * Redirect the client to google api
+	 * Redirect the client to google or yahoo identification and authorization system
+	 * @param actorID
+	 * @param service (google or yahoo)
 	 * @throws URISyntaxException 
+	 * @return 302 if the service is known, or 404
 	 */
 	@GET
 	@Path("oauth/{actorID}/{service}")
@@ -110,11 +114,11 @@ public class SnapmailEndPoints extends HttpServlet {
 					)).build();
 		case "microsoft":
 			return Response.seeOther(new URI(
-					"https://login.windows.net/common/oauth2/authorize"
+					"https://login.microsoftonline.com/common/oauth2/authorize"
 					+ "?response_type=code"
 					+ "&client_id=" + Microsoftclient_ID
 					+ "&redirect_uri=" + redirectUri
-					+ "&resource=https://outlook.office365.com"
+					+ "&resource=https://outlook.office365.com/api/v1.0/me/sendmail"
 					+ "&state=" + actorID
 					)).build();
 		case "yahoo":
@@ -122,7 +126,7 @@ public class SnapmailEndPoints extends HttpServlet {
 					"https://api.login.yahoo.com/oauth2/request_auth"
 					+ "?response_type=code"
 					+ "&client_id=" + Yahooclient_ID
-					+ "&redirect_uri=http://localhost/api/oauth"
+					+ "&redirect_uri=" + redirectUri.replace(":9999","").replace(":8080", "")// Because yahoo refuse Uri with port
 					+ "&state=" + actorID
 					)).build();
 		default:
@@ -130,19 +134,27 @@ public class SnapmailEndPoints extends HttpServlet {
 		}
 	}
 	
-	@SuppressWarnings("finally")
+	/**
+	 * Request a refresh_token to google or yahoo thanks to the authorization code
+	 * and save this token
+	 * @param actorID
+	 * @param code
+	 * @throw URISyntaxException
+	 * @return an error if google or yahoo don't give a token, a "ok" if the token is saved
+	 */
+	
 	@POST
 	@Path("oauth/{actorID}")
-	//@RolesAllowed({ "other", "authenticated" })
 	@Consumes("text/plain")
+	@SuppressWarnings("finally")
 	public Response postOauth(@PathParam("actorID") String actorID, String code) throws URISyntaxException {
 		
-		// Requete google pour transformer le code en token
-		// String code = "";
 		
 		Client client = ClientBuilder.newClient();
-		String response;
+		String response="";
 		String data;
+		
+// Send token request to google		
 if(actorID.contains("@gmail.com")){
 		WebTarget targetGoogle = client.target("https://www.googleapis.com/oauth2/v3/token");
 		
@@ -157,7 +169,9 @@ if(actorID.contains("@gmail.com")){
 				.request()
 				.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
 		LOGGER.info(response.toString());
-}else if(actorID.contains("@yahoo."))
+		
+// Send token request to Yahoo		
+/*}else if(actorID.contains("@yahoo."))
 {
 	WebTarget targetYahoo = client.target("https://api.login.yahoo.com/oauth2/get_token");
 	
@@ -167,7 +181,7 @@ if(actorID.contains("@gmail.com")){
 	data = "client_id=" + Yahooclient_ID
 			+ "&client_secret=" + Yahooclient_secret
 			+ "&code=" + code
-			+ "&redirect_uri=http://localhost/api/oauth"
+			+ "&redirect_uri=" + redirectUri.replace(":9999","").replace(":8080", "") // Because yahoo refuse Uri with port
 			+ "&grant_type=authorization_code";
 			
 	
@@ -175,9 +189,9 @@ if(actorID.contains("@gmail.com")){
 			.request()
 			.header("Authorization", "Basic " + encodedvalue)
 			.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
-	LOGGER.info(response.toString());
-	
-}else{
+	LOGGER.info(response.toString());	
+*/
+} else {
 	WebTarget targetOutlook = client.target("https://login.windows.net/common/oauth2/token");
 	
 	data = "client_id=" + Microsoftclient_ID
@@ -192,7 +206,7 @@ if(actorID.contains("@gmail.com")){
 			.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
 	LOGGER.info(response.toString());
 }
-		
+// get the refresh token
 		JSONObject json;
 		String token="";
 		try {
@@ -204,21 +218,20 @@ if(actorID.contains("@gmail.com")){
 			LOGGER.error("Error with the token");
 		}
 		finally{
+			// save the token
 			Response responsePut;
-		if (token.equals("")==false){
-			Client clientPut = ClientBuilder.newClient();
-			WebTarget targetPut = clientPut.target("http://localhost:9998/api/app/snapmail/" + actorID +"/smtp");
-			SmtpProperty prop = new SmtpProperty();
-			prop.setHost("");
-			prop.setPassword("");
-			prop.setPort("");
-			prop.setUsername("");
-			prop.setToken(token);
+		if (token.equals("")==false){	
+			User user = uManager.getUserOnLocal(actorID);
 			
-			responsePut = targetPut
-					.request()
-					.cookie("authentication", actorID)
-					.put(Entity.entity(prop, MediaType.APPLICATION_XML), Response.class);
+			user.setSmtpHost("");
+			user.setSmtpPort("");
+			user.setSmtpUsername("");
+			user.setSmtpPassword("");
+			user.setSmtpToken(token);
+			
+			uManager.saveUserOnServer(user);
+			
+			responsePut =Response.status(200).build();
 		}
 		else{
 			responsePut=Response.status(500).build();

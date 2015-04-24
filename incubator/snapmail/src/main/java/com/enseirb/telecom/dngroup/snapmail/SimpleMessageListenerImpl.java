@@ -29,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -111,7 +112,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 		return true;
 	}
-
+// Receive and deliver the mail
 	@Override
 	public void deliver(String from, String recipient, InputStream data)
 			throws TooMuchDataException, IOException {
@@ -179,6 +180,14 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 	}
 
+	/**
+	 * Rebuild and send mails, using the SMTPProperties of the sender
+	 * 
+	 * @param host
+	 * @param recipient
+	 * @param multiPart
+	 * @throws IOException
+	 */
 	private void sendMail(String host, String recipient, Multipart multiPart)
 			throws IOException {
 		// Get system properties
@@ -236,6 +245,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			else if(username.contains("@yahoo.")){
 				String yahooToken= getYahooToken(token);
 				LOGGER.info("yahooToken : " + yahooToken);
+				
 			}
 			LOGGER.info("Mail sent successfully !");
 			LOGGER.info("--------------------------------------------------\n\n");
@@ -246,6 +256,8 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	
 
 
+
+	// Send a mail to the user when a file is infected
 	private void sendClamavReport(String host, String from, String Clamav_report) throws IOException
 	{
 		// Get system properties
@@ -291,6 +303,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 	}
 	
+	// Parse the message between the text and the attachment part
 	private void parseMessage(Message message, Multipart multiPart) throws MessagingException, IOException {
 		boolean attachment = false;
 		// Since the message is multipart, it can be casted as such
@@ -333,7 +346,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 								//Scan viruses,trojans & malware for INLINE Pictures in MimemMultipart
 								LOGGER.info("-----------------------------------------------------------");
 								LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart.getBodyPart(k).getFileName());
-								ClamScan clamScan = new ClamScan(CliConfSingleton.conf.getClamAVHost(), Integer.parseInt(CliConfSingleton.conf.getClamAVPort()), 0);
+								ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
 								ScanResult result = clamScan.scan(mimemultipart.getBodyPart(k).getInputStream());
 								LOGGER.info("ClamAv Scan Done !");
 								if ( (result.getStatus().toString()).equals("FAILED")){
@@ -363,7 +376,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 								//Scan viruses,trojans & malware for INLINE PICTURES
 								LOGGER.info("-----------------------------------------------------------");
 								LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart.getBodyPart(k).getFileName());
-								ClamScan clamScan = new ClamScan(CliConfSingleton.conf.getClamAVHost(), Integer.parseInt(CliConfSingleton.conf.getClamAVPort()), 0);
+								ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
 								ScanResult result = clamScan.scan(mimemultipart.getBodyPart(k).getInputStream());
 								LOGGER.info("ClamAv Scan Done !");
 								if ( (result.getStatus().toString()).equals("FAILED")){
@@ -408,7 +421,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 										//Scan viruses,trojans & malware for INLINE PICTURES
 										LOGGER.info("-----------------------------------------------------------");
 										LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart_bis.getBodyPart(l).getFileName());
-										ClamScan clamScan = new ClamScan(CliConfSingleton.conf.getClamAVHost(), Integer.parseInt(CliConfSingleton.conf.getClamAVPort()), 0);
+										ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
 										ScanResult result = clamScan.scan(mimemultipart_bis.getBodyPart(l).getInputStream());
 										LOGGER.info("ClamAv Scan Done !");
 										if ( (result.getStatus().toString()).equals("FAILED")){
@@ -436,7 +449,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 										//Scan viruses,trojans & malware for ATTACHMENTS IN MIMEMULTIPART
 										LOGGER.info("-----------------------------------------------------------");
 										LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart_bis.getBodyPart(l).getFileName());
-										ClamScan clamScan = new ClamScan(CliConfSingleton.conf.getClamAVHost(), Integer.parseInt(CliConfSingleton.conf.getClamAVPort()), 0);
+										ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
 										ScanResult result = clamScan.scan(mimemultipart_bis.getBodyPart(l).getInputStream());	
 										LOGGER.info("ClamAv Scan Done !");
 										if ( (result.getStatus().toString()).equals("FAILED")){
@@ -462,7 +475,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			//Scan viruses,trojans & malware for ATTACHMENTS
 			LOGGER.info("-----------------------------------------------------------");
 			LOGGER.info("Starting ClamAv Scan for file: "+bodyPart.getFileName());
-			ClamScan clamScan = new ClamScan(CliConfSingleton.conf.getClamAVHost(), Integer.parseInt(CliConfSingleton.conf.getClamAVPort()), 0);
+			ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
 			// other solution : Cast inputstream to a FileInputstream
 			// other solution : Input Stream into Byte Array
 			ScanResult result = clamScan.scan(bodyPart.getInputStream());
@@ -489,6 +502,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			this.text += "------------------------------------\n";
 	}
 
+	// Modify the mail and upload the attachment
 	private void processAttachment(String filename, InputStream is, String Type)
 			throws IOException {
 		this.text += "Attachment : " + filename + "\n";
@@ -496,6 +510,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		this.text += "Link :" + link + "\n";
 	}
 
+	// Get the text part from the mail
 	private String getTextFromMessage(Part message) throws MessagingException,
 			IOException {
 		String s = new String();
@@ -554,6 +569,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		return null;
 	}
 
+	// Save the temporary file who contains the mail inputstream
 	private File saveFile(String filename, InputStream inputStream)
 			throws IOException {
 		File f = new File("/tmp/" + filename);
@@ -566,7 +582,16 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 		return f;
 	}
-
+ 
+	/**
+	 * Upload the file into the user Media@Home account
+	 * 
+	 * @param is
+	 * @param filename
+	 * @param Type
+	 * @return (String) link to see the document
+	 * @throws IOException
+	 */
 	public String postFile(InputStream is, String filename, String Type)
 			throws IOException {
 		try {
@@ -583,7 +608,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			Client client = ClientBuilder.newClient(cc);
 			client.register(feature).register(MultiPartFeature.class);
 
-			WebTarget target = client.target("http://"+CliConfSingleton.conf.getMediaHomeHost()+":"+CliConfSingleton.conf.getMediaHomePort()+"/api/app/"
+			WebTarget target = client.target("http://"+CliConfSingleton.mediahome_host+":"+CliConfSingleton.mediahome_port+"/api/app/"
 					+ this.username + "/content");
 
 			LOGGER.info("Filename : " + filename);
@@ -617,6 +642,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		return "Error";
 	}
 
+	// Get the local network name of the server
 	@SuppressWarnings("finally")
 	private String localAddress() {
 		String add = "";
@@ -630,7 +656,13 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			return add;
 		}
 	}
-
+ 
+	/**
+	 * Get the smtp properties of the user from Media@Home
+	 * 
+	 * @param properties
+	 * @return SMTPProperties
+	 */
 	private Properties setSMTPProperties(Properties properties) {
 
 		try {
@@ -640,7 +672,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			client.register(feature);
 
 			WebTarget target = client
-					.target("http://"+CliConfSingleton.conf.getMediaHomeHost()+":"+CliConfSingleton.conf.getMediaHomePort()+"/api/app/snapmail/" + this.username + "/smtp");
+					.target("http://"+ CliConfSingleton.mediahome_host + ":" + CliConfSingleton.mediahome_port +"/api/app/snapmail/" + this.username + "/smtp");
 			SmtpProperty smtpProperty = target.request(
 					MediaType.APPLICATION_XML_TYPE).get(SmtpProperty.class);
 			String token;
@@ -697,17 +729,22 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 		return properties;
 	}
-
-	// Method to get the token thanks to our json secret. The user need to agree
-	// and copy-paste a link into the terminal.
+ 
+	/**
+	 * Method to get the token thanks to our json secret. The user need to agree and copy-paste a link into the terminal.
+	 * @param token
+	 * @return Gmail service
+	 * @throws IOException
+	 */
 	private Gmail getService(String token) throws IOException {
 
 		// Link to give us rights to send mails
 		// final String SCOPE = "https://www.googleapis.com/auth/gmail.compose";
 		// Path to the client_secret.json file downloaded from the Developer
 		// Console
-		 final String CLIENT_SECRET_PATH = "cloud/client_secret.json";
+		
 		final String APP_NAME = "Snapmail";
+		
 
 		// Initialization
 		HttpTransport httpTransport = new NetHttpTransport();
@@ -717,16 +754,20 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
                 httpTransport, jsonFactory, new TokenResponse().setRefreshToken(token));
             credential.getAccessToken();
 
-
-		
 		// Create a new authorized Gmail API client and return it.
 		Gmail service = new Gmail.Builder(httpTransport, jsonFactory,
 				credential).setApplicationName(APP_NAME).build();
 		return service;
 	}
 
-	// Method to convert the MimeMessage to a "Google" Message wich can be sent
-	// via Gmail API
+	 
+	/**
+	 * Method to convert the MimeMessage to a "Google" Message wich can be sent via Gmail API
+	 * @param email
+	 * @return
+	 * @throws MessagingException
+	 * @throws IOException
+	 */
 	private static com.google.api.services.gmail.model.Message createMessageWithEmail(
 			MimeMessage email) throws MessagingException, IOException {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -741,18 +782,26 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	public static GoogleCredential createCredentialWithRefreshToken(HttpTransport transport,
             JsonFactory jsonFactory, TokenResponse tokenResponse) throws FileNotFoundException, IOException {
 		
-		final  String CLIENT_SECRET_PATH = "Oauth_secrets/client_secret.json";
-		GoogleClientSecrets clientsecret =  GoogleClientSecrets.load(jsonFactory,  new FileReader(CLIENT_SECRET_PATH));
-		
+		final String googleclient_ID = CliConfSingleton.google_clientID;
+		final String googleclient_secret = CliConfSingleton.google_clientsecret;
+
        return new GoogleCredential.Builder().setTransport(transport)
               .setJsonFactory(jsonFactory)
-              .setClientSecrets(clientsecret)
+              .setClientSecrets(googleclient_ID,googleclient_secret)
               .build()
               .setFromTokenResponse(tokenResponse);
         }
+
+	/**
+	 *  Query to yahoo to get a new access_token thanks to the refresh_token
+	 * @param token
+	 * @return yahooToken
+	 */
 	private String getYahooToken(String token) {
-		final String Yahooclient_ID = "dj0yJmk9a2pwM2FneTlvTTBpJmQ9WVdrOVpsUkJNRW8xTldVbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD03MA--";
-		final String Yahooclient_secret = "94158786999742f8b5d798931b2313e8adb17ca2";
+		final String Yahooclient_ID = CliConfSingleton.yahoo_clientID;
+		final String Yahooclient_secret = CliConfSingleton.yahoo_clientsecret;
+		final String redirectUri = CliConfSingleton.centralURL.toString() + "/api/oauth";
+		
 		Client client = ClientBuilder.newClient();
 		String response;
 		String data;
@@ -764,17 +813,19 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		data = "client_id=" + Yahooclient_ID
 				+ "&client_secret=" + Yahooclient_secret
 				+ "&refresh_token=" + token
-				+ "&redirect_uri=http://localhost/api/oauth"
+				+ "&redirect_uri=" + redirectUri.replace(":9999","").replace(":8080", "")
 				+ "&grant_type=refresh_token";
-				
-		
+
 		response = targetYahoo
 				.request()
 				.header("Authorization", "Basic " + encodedvalue)
 				.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
 		LOGGER.info(response.toString());
+		
+		// Analysis of the response, get the access_token
 		JSONObject json;
 		String yahooToken="";
+		
 		try {
 			json= new JSONObject(response);
 			yahooToken=json.get("access_token").toString();
@@ -785,4 +836,6 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		
 		return yahooToken;
 	}
+	
+
 }

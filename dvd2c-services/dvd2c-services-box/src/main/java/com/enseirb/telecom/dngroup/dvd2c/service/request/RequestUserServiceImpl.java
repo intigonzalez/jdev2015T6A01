@@ -80,14 +80,15 @@ public class RequestUserServiceImpl implements RequestUserService {
 
 	@Override
 	public void createUserORH(User user) throws IOException, SuchUserException {
-		User user2 = new User();
-		user2.setBoxID(user.getBoxID());
-		user2.setFirstname(user.getFirstname());
-		user2.setSurname(user.getSurname());
-		user2.setUserID(user.getUserID());
+		user.setPassword(null);
+		user.setSmtpHost(null);
+		user.setSmtpPassword(null);
+		user.setSmtpPort(null);
+		user.setSmtpToken(null);
+		user.setSmtpUsername(null);
 		WebTarget target = client.target(url);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
-				.post(Entity.entity(user2, MediaType.APPLICATION_XML),
+				.post(Entity.entity(user, MediaType.APPLICATION_XML),
 						Response.class);
 
 		switch (Status.fromStatusCode(response.getStatus())) {
@@ -113,6 +114,11 @@ public class RequestUserServiceImpl implements RequestUserService {
 	@Override
 	public void updateUserORH(User user) throws IOException, NoSuchUserException {
 		user.setPassword(null);
+		user.setSmtpHost(null);
+		user.setSmtpPassword(null);
+		user.setSmtpPort(null);
+		user.setSmtpToken(null);
+		user.setSmtpUsername(null);
 		// Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(url + user.getUserID());
 		// try {
