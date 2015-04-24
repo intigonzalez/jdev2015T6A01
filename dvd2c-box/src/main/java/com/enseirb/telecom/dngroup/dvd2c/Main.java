@@ -7,11 +7,13 @@ import java.net.URI;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.UriBuilder;
+import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
 
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
+import org.glassfish.grizzly.http.util.Header;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jettison.JettisonFeature;
@@ -31,7 +33,6 @@ import com.lexicalscope.jewel.cli.CliFactory;
 import com.lexicalscope.jewel.cli.InvalidOptionSpecificationException;
 import com.lexicalscope.jewel.cli.Option;
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
-
 
 public class Main {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
@@ -106,15 +107,31 @@ public class Main {
 
 					HttpServer httpServer = startServer();
 
+					StaticHttpHandler videos = new StaticHttpHandlerCORS(
+							new String[] { "/var/www/html/videos" });
 
-					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/videos"), "/videos");
-					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/pictures"), "/pictures");
-					httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler("/var/www/html/cloud"), "/cloud");
+					// set disable cache 
+					 videos.setFileCacheEnabled(false);
+
+					httpServer.getServerConfiguration().addHttpHandler(videos,
+							"/videos");
+
+					// httpServer.getServerConfiguration().addHttpHandler(
+					// new StaticHttpHandler("/var/www/html/videos"),
+					// "/videos");
+
+					httpServer.getServerConfiguration().addHttpHandler(
+							new StaticHttpHandler("/var/www/html/pictures"),
+							"/pictures");
+					httpServer.getServerConfiguration().addHttpHandler(
+							new StaticHttpHandler("/var/www/html/cloud"),
+							"/cloud");
 
 					httpServer.getServerConfiguration().addHttpHandler(
 							new CLStaticHttpHandler(
 									Main.class.getClassLoader(), "/"));
 
+					// httpServer.getServerConfiguration().setAllowPayloadForUndefinedHttpMethods(true);
 				} catch (IOException e) {
 					throw Throwables.propagate(e);
 				}
@@ -130,6 +147,7 @@ public class Main {
 
 		// httpServer.stop();
 	}
+
 	/**
 	 * @param args
 	 */
@@ -149,14 +167,16 @@ public class Main {
 			CliConfSingleton.rabbitPort = cliconf.getRabbitPort();
 			CliConfSingleton.port = cliconf.getPort();
 			CliConfSingleton.google_clientID = cliconf.getGoogleClientID();
-			CliConfSingleton.google_clientsecret = cliconf.getGoogleClientSecret();
+			CliConfSingleton.google_clientsecret = cliconf
+					.getGoogleClientSecret();
 			CliConfSingleton.yahoo_clientID = cliconf.getYahooClientID();
-			CliConfSingleton.yahoo_clientsecret = cliconf.getYahooClientSecret();
+			CliConfSingleton.yahoo_clientsecret = cliconf
+					.getYahooClientSecret();
 			getParametreFromFile();
 		} catch (ArgumentValidationException e1) {
 
 			throw e1;
-//			getParametreFromFile();
+			// getParametreFromFile();
 
 		} catch (InvalidOptionSpecificationException e1) {
 			throw e1;
@@ -203,19 +223,18 @@ public class Main {
 				CliConfSingleton.port = Integer.valueOf(ApplicationContext
 						.getProperties().getProperty("port"));
 			if (CliConfSingleton.google_clientID == null)
-				CliConfSingleton.google_clientID = ApplicationContext.getProperties()
-						.getProperty("google_clientID");
+				CliConfSingleton.google_clientID = ApplicationContext
+						.getProperties().getProperty("google_clientID");
 			if (CliConfSingleton.google_clientsecret == null)
-				CliConfSingleton.google_clientsecret = ApplicationContext.getProperties()
-						.getProperty("google_clientsecret");
+				CliConfSingleton.google_clientsecret = ApplicationContext
+						.getProperties().getProperty("google_clientsecret");
 			if (CliConfSingleton.yahoo_clientID == null)
-				CliConfSingleton.yahoo_clientID = ApplicationContext.getProperties()
-						.getProperty("yahoo_clientID");
+				CliConfSingleton.yahoo_clientID = ApplicationContext
+						.getProperties().getProperty("yahoo_clientID");
 			if (CliConfSingleton.yahoo_clientsecret == null)
-				CliConfSingleton.yahoo_clientsecret = ApplicationContext.getProperties()
-						.getProperty("yahoo_clientsecret");
-			LOGGER.info("File found use this values or arg Path ={} ",
-					aPPath);
+				CliConfSingleton.yahoo_clientsecret = ApplicationContext
+						.getProperties().getProperty("yahoo_clientsecret");
+			LOGGER.info("File found use this values or arg Path ={} ", aPPath);
 			CliConfSingleton.defaultValue();
 			in.close();
 		} catch (FileNotFoundException e1) {
@@ -231,7 +250,7 @@ public class Main {
 
 interface CliConfiguration {
 
-	@Option(shortName = "b", longName = "boxID" , defaultToNull = true)
+	@Option(shortName = "b", longName = "boxID", defaultToNull = true)
 	String getBoxID();
 
 	@Option(shortName = "p", longName = "port", description = "the port on which the frontend will listen for http connections", defaultToNull = true)
@@ -260,17 +279,17 @@ interface CliConfiguration {
 
 	@Option(longName = "rabbit-port", description = "the port of rabbitMQ", defaultToNull = true)
 	Integer getRabbitPort();
-	
-	@Option( longName = "google_clientID", description = "google clientID for Oauth2", defaultToNull = true)
+
+	@Option(longName = "google_clientID", description = "google clientID for Oauth2", defaultToNull = true)
 	String getGoogleClientID();
-	
-	@Option( longName = "google_clientsecret", description = "google client secret for Oauth2", defaultToNull = true)
+
+	@Option(longName = "google_clientsecret", description = "google client secret for Oauth2", defaultToNull = true)
 	String getGoogleClientSecret();
-	
-	@Option( longName = "yahoo_clientID", description = "yahoo clientID for Oauth2", defaultToNull = true)
+
+	@Option(longName = "yahoo_clientID", description = "yahoo clientID for Oauth2", defaultToNull = true)
 	String getYahooClientID();
-	
-	@Option( longName = "yahoo_clientsecret", description = "yahoo client secret for Oauth2", defaultToNull = true)
+
+	@Option(longName = "yahoo_clientsecret", description = "yahoo client secret for Oauth2", defaultToNull = true)
 	String getYahooClientSecret();
 
 	@Option(helpRequest = true)
