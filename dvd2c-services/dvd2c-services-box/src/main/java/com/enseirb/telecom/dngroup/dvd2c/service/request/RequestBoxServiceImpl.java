@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service.request;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -15,20 +16,24 @@ import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
+import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 
+@Service
 public class RequestBoxServiceImpl implements RequestBoxService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RequestContentServiceImpl.class);
 
-	private String url;
+	private String url = CliConfSingleton.centralURL + "/api/app/box/";
+	
+	@Inject
 	private Client client;
 
-	public RequestBoxServiceImpl(String url) {
-		this.url = url;
-		client = ClientBuilder.newClient();
+	public RequestBoxServiceImpl() {
+
 	}
 
 	@Override
@@ -136,15 +141,12 @@ public class RequestBoxServiceImpl implements RequestBoxService {
 	public void sendOauthORH(String actorID, Box box, String code)
 			throws IOException {
 
-		WebTarget target = client.target(box.getIp() + "/api/oauth/"
-				+ actorID);
+		WebTarget target = client.target(box.getIp() + "/api/oauth/" + actorID);
 		LOGGER.debug("Send request to server {}", target.getUri());
-		
-        
-		Response response = target.request()
-				.post(Entity.entity(code, "text/plain"),
-						Response.class);
-        LOGGER.info(response.toString());
+
+		Response response = target.request().post(
+				Entity.entity(code, "text/plain"), Response.class);
+		LOGGER.info(response.toString());
 		switch (Status.fromStatusCode(response.getStatus())) {
 		case ACCEPTED:
 			// normal statement but don't is normally not that

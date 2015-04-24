@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service.request;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -25,14 +26,12 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 public class RequestRelationServiceImpl implements RequestRelationService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RequestRelationServiceImpl.class);
+	@Inject
 	private Client client;
-	// private String centralServer;
+	@Inject 
 	private RequestUserService requestServ;
-
 	public RequestRelationServiceImpl() {
 
-		client = ClientBuilder.newClient();
-		requestServ = new RequestUserServiceImpl();
 	}
 
 	@Override

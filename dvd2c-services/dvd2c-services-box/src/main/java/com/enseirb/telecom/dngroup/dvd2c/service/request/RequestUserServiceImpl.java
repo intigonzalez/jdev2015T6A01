@@ -32,13 +32,13 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 public class RequestUserServiceImpl implements RequestUserService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RequestUserService.class);
-//	@Inject
+	@Inject
 	private Client client;
 	private String server = CliConfSingleton.centralURL;;
 	private String url= server + "/api/app/account/";;
 	public RequestUserServiceImpl() {
-
-		client = ClientBuilder.newClient();
+//
+//		client = ClientBuilder.newClient();
 	}
 
 	@Override
