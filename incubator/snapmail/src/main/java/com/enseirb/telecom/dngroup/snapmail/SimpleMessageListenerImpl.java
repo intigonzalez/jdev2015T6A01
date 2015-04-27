@@ -343,50 +343,70 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 																		// not
 																		// writen
 								LOGGER.info("embedded picture");
-								//Scan viruses,trojans & malware for INLINE Pictures in MimemMultipart
-								LOGGER.info("-----------------------------------------------------------");
-								LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart.getBodyPart(k).getFileName());
-								ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
-								ScanResult result = clamScan.scan(mimemultipart.getBodyPart(k).getInputStream());
-								LOGGER.info("ClamAv Scan Done !");
-								if ( (result.getStatus().toString()).equals("FAILED")){
-									mail_infected = true;
-									LOGGER.info("The file is infected !");
+								try {
+									//Scan viruses,trojans & malware for INLINE Pictures in MimemMultipart
 									LOGGER.info("-----------------------------------------------------------");
-									Clamav_report += "---\nFile infected : "+mimemultipart.getBodyPart(k).getFileName()+"\nSignature : "+result.getSignature()+"\nData Size : "+mimemultipart.getBodyPart(k).getSize()+"\nDescription : "+mimemultipart.getBodyPart(k).getDescription()+"\nContent-Type : "+mimemultipart.getBodyPart(k).getContentType()+"\n---\n";
-								}
-								else{
-									LOGGER.info("No virus found in the file !");
+									LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart.getBodyPart(k).getFileName());
+									ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
+									ScanResult result = clamScan.scan(mimemultipart.getBodyPart(k).getInputStream());
+									LOGGER.info("ClamAv Scan Done !");
+									if ( (result.getStatus().toString()).equals("FAILED")){
+										mail_infected = true;
+										LOGGER.info("The file is infected !");
+										LOGGER.info("-----------------------------------------------------------");
+										Clamav_report += "---\nFile infected : "+mimemultipart.getBodyPart(k).getFileName()+"\nSignature : "+result.getSignature()+"\nData Size : "+mimemultipart.getBodyPart(k).getSize()+"\nDescription : "+mimemultipart.getBodyPart(k).getDescription()+"\nContent-Type : "+mimemultipart.getBodyPart(k).getContentType()+"\n---\n";
+									}
+									else{
+										LOGGER.info("No virus found in the file !");
+										LOGGER.info("-----------------------------------------------------------");
+										//add picture inline hmtl part
+										DataSource ds = new ByteArrayDataSource(mimemultipart.getBodyPart(k).getInputStream(), mimemultipart.getBodyPart(k).getContentType());
+										MimeBodyPart imagePart = new MimeBodyPart();
+									    imagePart.setDataHandler(new DataHandler(ds));
+									    if (mimemultipart.getBodyPart(k).getFileName() != null)
+									    imagePart.setFileName(mimemultipart.getBodyPart(k).getFileName());
+									    if (mimemultipart.getBodyPart(k).getFileName() != null)
+									    imagePart.setDisposition(MimeBodyPart.INLINE);
+									    imagePart.setHeader("Content-ID", mimemultipart.getBodyPart(k).getHeader("Content-ID")[0]);
+									    multiPart.addBodyPart(imagePart);
+									}
+								} catch (NumberFormatException e) {
 									LOGGER.info("-----------------------------------------------------------");
 									//add picture inline hmtl part
 									DataSource ds = new ByteArrayDataSource(mimemultipart.getBodyPart(k).getInputStream(), mimemultipart.getBodyPart(k).getContentType());
 									MimeBodyPart imagePart = new MimeBodyPart();
-							        imagePart.setDataHandler(new DataHandler(ds));
-							        if (mimemultipart.getBodyPart(k).getFileName() != null)
-							        imagePart.setFileName(mimemultipart.getBodyPart(k).getFileName());
-							        if (mimemultipart.getBodyPart(k).getFileName() != null)
-							        imagePart.setDisposition(MimeBodyPart.INLINE);
-							        imagePart.setHeader("Content-ID", mimemultipart.getBodyPart(k).getHeader("Content-ID")[0]);
-							        multiPart.addBodyPart(imagePart);
+								    imagePart.setDataHandler(new DataHandler(ds));
+								    if (mimemultipart.getBodyPart(k).getFileName() != null)
+								    imagePart.setFileName(mimemultipart.getBodyPart(k).getFileName());
+								    if (mimemultipart.getBodyPart(k).getFileName() != null)
+								    imagePart.setDisposition(MimeBodyPart.INLINE);
+								    imagePart.setHeader("Content-ID", mimemultipart.getBodyPart(k).getHeader("Content-ID")[0]);
+								    multiPart.addBodyPart(imagePart);
 								}
 							}
 							else if (Part.ATTACHMENT != null){
-								//Scan viruses,trojans & malware for ATTACHMENT in MimemMultipart
-								LOGGER.info("embedded picture");
-								//Scan viruses,trojans & malware for INLINE PICTURES
-								LOGGER.info("-----------------------------------------------------------");
-								LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart.getBodyPart(k).getFileName());
-								ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
-								ScanResult result = clamScan.scan(mimemultipart.getBodyPart(k).getInputStream());
-								LOGGER.info("ClamAv Scan Done !");
-								if ( (result.getStatus().toString()).equals("FAILED")){
-									mail_infected = true;
-									LOGGER.info("The file is infected !");
+								try {
+									//Scan viruses,trojans & malware for ATTACHMENT in MimemMultipart
+									LOGGER.info("embedded picture");
+									//Scan viruses,trojans & malware for INLINE PICTURES
 									LOGGER.info("-----------------------------------------------------------");
-									Clamav_report += "---\nFile infected : "+mimemultipart.getBodyPart(k).getFileName()+"\nSignature : "+result.getSignature()+"\nData Size : "+mimemultipart.getBodyPart(k).getSize()+"\nDescription : "+mimemultipart.getBodyPart(k).getDescription()+"\nContent-Type : "+mimemultipart.getBodyPart(k).getContentType()+"\n---\n";
-								}
-								else{
-									LOGGER.info("No virus found in the file !");
+									LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart.getBodyPart(k).getFileName());
+									ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
+									ScanResult result = clamScan.scan(mimemultipart.getBodyPart(k).getInputStream());
+									LOGGER.info("ClamAv Scan Done !");
+									if ( (result.getStatus().toString()).equals("FAILED")){
+										mail_infected = true;
+										LOGGER.info("The file is infected !");
+										LOGGER.info("-----------------------------------------------------------");
+										Clamav_report += "---\nFile infected : "+mimemultipart.getBodyPart(k).getFileName()+"\nSignature : "+result.getSignature()+"\nData Size : "+mimemultipart.getBodyPart(k).getSize()+"\nDescription : "+mimemultipart.getBodyPart(k).getDescription()+"\nContent-Type : "+mimemultipart.getBodyPart(k).getContentType()+"\n---\n";
+									}
+									else{
+										LOGGER.info("No virus found in the file !");
+										LOGGER.info("-----------------------------------------------------------");
+										processAttachment(mimemultipart.getBodyPart(k).getFileName(),mimemultipart.getBodyPart(k).getInputStream(),mimemultipart.getBodyPart(k).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
+										attachment = true;
+									}
+								} catch (NumberFormatException e) {
 									LOGGER.info("-----------------------------------------------------------");
 									processAttachment(mimemultipart.getBodyPart(k).getFileName(),mimemultipart.getBodyPart(k).getInputStream(),mimemultipart.getBodyPart(k).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
 									attachment = true;
@@ -418,20 +438,35 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 																							// not
 																							// wrote
 										LOGGER.info("embedded picture");
-										//Scan viruses,trojans & malware for INLINE PICTURES
-										LOGGER.info("-----------------------------------------------------------");
-										LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart_bis.getBodyPart(l).getFileName());
-										ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
-										ScanResult result = clamScan.scan(mimemultipart_bis.getBodyPart(l).getInputStream());
-										LOGGER.info("ClamAv Scan Done !");
-										if ( (result.getStatus().toString()).equals("FAILED")){
-											mail_infected = true;
-											LOGGER.info("The file is infected !");
+										try {
+											//Scan viruses,trojans & malware for INLINE PICTURES
 											LOGGER.info("-----------------------------------------------------------");
-											Clamav_report += "---\nFile infected : "+mimemultipart.getBodyPart(l).getFileName()+"\nSignature : "+result.getSignature()+"\nData Size : "+mimemultipart.getBodyPart(l).getSize()+"\nDescription : "+mimemultipart.getBodyPart(l).getDescription()+"\nContent-Type : "+mimemultipart.getBodyPart(l).getContentType()+"\n---\n";
-										}
-										else{
-											LOGGER.info("No virus found in the file !");
+											LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart_bis.getBodyPart(l).getFileName());
+											ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
+											ScanResult result = clamScan.scan(mimemultipart_bis.getBodyPart(l).getInputStream());
+											LOGGER.info("ClamAv Scan Done !");
+											if ( (result.getStatus().toString()).equals("FAILED")){
+												mail_infected = true;
+												LOGGER.info("The file is infected !");
+												LOGGER.info("-----------------------------------------------------------");
+												Clamav_report += "---\nFile infected : "+mimemultipart.getBodyPart(l).getFileName()+"\nSignature : "+result.getSignature()+"\nData Size : "+mimemultipart.getBodyPart(l).getSize()+"\nDescription : "+mimemultipart.getBodyPart(l).getDescription()+"\nContent-Type : "+mimemultipart.getBodyPart(l).getContentType()+"\n---\n";
+											}
+											else{
+												LOGGER.info("No virus found in the file !");
+												LOGGER.info("-----------------------------------------------------------");
+												//add picture inline hmtl part
+												DataSource ds = new ByteArrayDataSource(mimemultipart_bis.getBodyPart(l).getInputStream(), mimemultipart_bis.getBodyPart(l).getContentType());
+												MimeBodyPart imagePart = new MimeBodyPart();
+												imagePart.setDataHandler(new DataHandler(ds));
+												if (mimemultipart_bis.getBodyPart(l).getFileName() != null)
+													imagePart.setFileName(mimemultipart_bis.getBodyPart(l).getFileName());
+												if (mimemultipart_bis.getBodyPart(l).getFileName() != null)
+													imagePart.setDisposition(MimeBodyPart.INLINE);
+												imagePart.setHeader("Content-ID", mimemultipart_bis.getBodyPart(l).getHeader("Content-ID")[0]);
+												multiPart.addBodyPart(imagePart);
+											}
+										} catch (NumberFormatException e) {
+											
 											LOGGER.info("-----------------------------------------------------------");
 											//add picture inline hmtl part
 											DataSource ds = new ByteArrayDataSource(mimemultipart_bis.getBodyPart(l).getInputStream(), mimemultipart_bis.getBodyPart(l).getContentType());
@@ -446,23 +481,31 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 										}
 									}
 									else if (Part.ATTACHMENT != null){
-										//Scan viruses,trojans & malware for ATTACHMENTS IN MIMEMULTIPART
-										LOGGER.info("-----------------------------------------------------------");
-										LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart_bis.getBodyPart(l).getFileName());
-										ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
-										ScanResult result = clamScan.scan(mimemultipart_bis.getBodyPart(l).getInputStream());	
-										LOGGER.info("ClamAv Scan Done !");
-										if ( (result.getStatus().toString()).equals("FAILED")){
-											mail_infected = true;
-											LOGGER.info("The file is infected !");
+										try {
+											//Scan viruses,trojans & malware for ATTACHMENTS IN MIMEMULTIPART
 											LOGGER.info("-----------------------------------------------------------");
-											Clamav_report += "---\nFile infected : "+mimemultipart.getBodyPart(l).getFileName()+"\nSignature : "+result.getSignature()+"\nData Size : "+mimemultipart.getBodyPart(l).getSize()+"\nDescription : "+mimemultipart.getBodyPart(l).getDescription()+"\nContent-Type : "+mimemultipart.getBodyPart(l).getContentType()+"\n---\n";
-										}
-										else{
-											LOGGER.info("No virus found in the file !");
+											LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart_bis.getBodyPart(l).getFileName());
+											ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
+											ScanResult result = clamScan.scan(mimemultipart_bis.getBodyPart(l).getInputStream());	
+											LOGGER.info("ClamAv Scan Done !");
+											if ( (result.getStatus().toString()).equals("FAILED")){
+												mail_infected = true;
+												LOGGER.info("The file is infected !");
+												LOGGER.info("-----------------------------------------------------------");
+												Clamav_report += "---\nFile infected : "+mimemultipart.getBodyPart(l).getFileName()+"\nSignature : "+result.getSignature()+"\nData Size : "+mimemultipart.getBodyPart(l).getSize()+"\nDescription : "+mimemultipart.getBodyPart(l).getDescription()+"\nContent-Type : "+mimemultipart.getBodyPart(l).getContentType()+"\n---\n";
+											}
+											else{
+												LOGGER.info("No virus found in the file !");
+												LOGGER.info("-----------------------------------------------------------");
+												processAttachment(mimemultipart_bis.getBodyPart(l).getFileName(),mimemultipart_bis.getBodyPart(l).getInputStream(),mimemultipart_bis.getBodyPart(l).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
+												attachment = true;
+											}
+										} catch (NumberFormatException e) {
+											LOGGER.info("ClamAV isn't working");
 											LOGGER.info("-----------------------------------------------------------");
 											processAttachment(mimemultipart_bis.getBodyPart(l).getFileName(),mimemultipart_bis.getBodyPart(l).getInputStream(),mimemultipart_bis.getBodyPart(l).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
 											attachment = true;
+											
 										}
 									}
 								}
@@ -472,30 +515,42 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 				}
 				continue;
 			}
-			//Scan viruses,trojans & malware for ATTACHMENTS
-			LOGGER.info("-----------------------------------------------------------");
-			LOGGER.info("Starting ClamAv Scan for file: "+bodyPart.getFileName());
-			ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
-			// other solution : Cast inputstream to a FileInputstream
-			// other solution : Input Stream into Byte Array
-			ScanResult result = clamScan.scan(bodyPart.getInputStream());
-			LOGGER.info("ClamAv Scan Done !");
+			
+			try {
+				//Scan viruses,trojans & malware for ATTACHMENTS
+				LOGGER.info("-----------------------------------------------------------");
+				LOGGER.info("Starting ClamAv Scan for file: "+bodyPart.getFileName());
+				ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
+				// other solution : Cast inputstream to a FileInputstream
+				// other solution : Input Stream into Byte Array
+				ScanResult result = clamScan.scan(bodyPart.getInputStream());
+				LOGGER.info("ClamAv Scan Done !");
 
-			if ( (result.getStatus().toString()).equals("FAILED")){
-				mail_infected = true;
-				LOGGER.info("The file is infected !");
+				if ( (result.getStatus().toString()).equals("FAILED")){
+					mail_infected = true;
+					LOGGER.info("The file is infected !");
+					LOGGER.info("-----------------------------------------------------------");
+					Clamav_report += "---\nFile infected : "+bodyPart.getFileName()+"\nSignature : "+result.getSignature()+"\nData Size : "+bodyPart.getSize()+"\nDescription : "+bodyPart.getDescription()+"\nContent-Type : "+bodyPart.getContentType()+"\n---\n";
+				}
+				else{
+					LOGGER.info("No virus found in the file !");
+					LOGGER.info("-----------------------------------------------------------");
+					// If the current part is explicitly an attachment...
+					String contentType = bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";"));
+					processAttachment(bodyPart.getFileName(), bodyPart.getInputStream(), contentType);
+					attachment = true;
+					LOGGER.info("Content type : "+ contentType);
+				}
+			} catch (NumberFormatException e) {
+				LOGGER.info("ClamAV isn't working");
 				LOGGER.info("-----------------------------------------------------------");
-				Clamav_report += "---\nFile infected : "+bodyPart.getFileName()+"\nSignature : "+result.getSignature()+"\nData Size : "+bodyPart.getSize()+"\nDescription : "+bodyPart.getDescription()+"\nContent-Type : "+bodyPart.getContentType()+"\n---\n";
-			}
-			else{
-				LOGGER.info("No virus found in the file !");
-				LOGGER.info("-----------------------------------------------------------");
-				// If the current part is explicitly an attachment...
 				String contentType = bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";"));
 				processAttachment(bodyPart.getFileName(), bodyPart.getInputStream(), contentType);
 				attachment = true;
 				LOGGER.info("Content type : "+ contentType);
 			}
+		
+			
 		}
 		
 		if(attachment)
