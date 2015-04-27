@@ -106,9 +106,9 @@ public class ContentEndPoints {
 	 */
 	@GET
 	@Path("{contentsID}")
-	@RolesAllowed({ "authenticated", "other" })
+	//@RolesAllowed({ "authenticated", "other" })
 	@Produces({ MediaType.WILDCARD })
-	public Response getContent(@PathParam("userID") String userID,
+	public Content getContent(@PathParam("userID") String userID,
 			@PathParam("contentsID") String contentsID)
 			throws URISyntaxException {
 		Content content;
@@ -116,9 +116,11 @@ public class ContentEndPoints {
 			content = cManager.getContent(contentsID);
 
 			if (content.getActorID().equals(userID)) {
-				URI uri = new URI(CliConfSingleton.publicAddr
+				/*URI uri = new URI(CliConfSingleton.publicAddr
 						+ content.getLink() + "/" + content.getName());
-				return Response.seeOther(uri).build();
+				return Response.seeOther(uri).build();*/
+				content.setLink(CliConfSingleton.publicAddr + content.getLink());
+				return content;
 			} else {
 				// No URL parameter idLanguage was sent
 				ResponseBuilder builder = Response
