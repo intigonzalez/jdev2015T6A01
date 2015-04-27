@@ -147,6 +147,7 @@ public class RequestBoxServiceImpl implements RequestBoxService {
 
 			Response response = target.request().post(
 					Entity.entity(code, "text/plain"), Response.class);
+			LOGGER.info("reponce ok");
 			LOGGER.info(response.toString());
 			switch (Status.fromStatusCode(response.getStatus())) {
 			case ACCEPTED:
@@ -168,6 +169,11 @@ public class RequestBoxServiceImpl implements RequestBoxService {
 						+ +response.getStatus());
 			}
 		} catch (Exception e) {
+			LOGGER.error("",e);
+			// a suprimer
+			e.printStackTrace();
+		}
+		catch (Throwable e) {
 			LOGGER.error("",e);
 			// a suprimer
 			e.printStackTrace();
