@@ -1,6 +1,6 @@
 box:
   image: dngroup/media-home-box
-  command: java -jar dvd2c-box.jar --ip 0.0.0.0 -p 9998 --db-hostname db  -c http://central.homeb.tv:8080  --rabbit-host worker
+  command: curl -L "http://nexus.homeb.tv:8080/nexus/service/local/artifact/maven/redirect?r=snapshots&g=com/enseirb/telecom/dngroup/dvd2c&a=dvd2c-box&v=LATEST&c=jar-with-dependencies" -o dvd2c-box.jar && java -jar dvd2c-box.jar --ip 0.0.0.0 -p 9998 --db-hostname db  -c http://central.homeb.tv:8080  --rabbit-host worker
   ports:
    - "9998:9998"
   volumes:
