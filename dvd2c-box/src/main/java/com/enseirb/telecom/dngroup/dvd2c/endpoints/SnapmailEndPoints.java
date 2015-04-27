@@ -119,6 +119,7 @@ public class SnapmailEndPoints extends HttpServlet {
 					+ "&redirect_uri=" + redirectUri
 					+ "&scope=https://www.googleapis.com/auth/gmail.compose"
 					+ "&state=" + actorID
+					+ "&approval_prompt=force"
 					+ "&access_type=offline"
 					)).build();
 		case "yahoo":
