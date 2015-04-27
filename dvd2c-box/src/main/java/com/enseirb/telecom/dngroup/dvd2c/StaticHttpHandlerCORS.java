@@ -30,10 +30,10 @@ public final class StaticHttpHandlerCORS extends StaticHttpHandler {
 	        final Response response) throws Exception {
 		//DEV: change * by a better uri
 		response.setHeader("Access-Control-Allow-Origin", "*");
-		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-		response.setHeader("Access-Control-Allow-Headers", "x-requested-with, Content-Type, origin, authorization, accept, client-security-token, range");
-		response.setHeader("Access-Control-Max-Age","1000");
-		response.setHeader("Allow","OPTIONS,GET,HEAD,POST");
+//		response.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+		response.setHeader("Access-Control-Allow-Headers", /*"x-requested-with, Content-Type, origin, authorization, accept, client-security-token,*/ "range");
+//		response.setHeader("Access-Control-Max-Age","1000");
+//		response.setHeader("Allow","OPTIONS,GET");
 
 
         boolean found = false;
