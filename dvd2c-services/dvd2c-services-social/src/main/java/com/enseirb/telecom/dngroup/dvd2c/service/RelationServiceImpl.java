@@ -81,7 +81,6 @@ public class RelationServiceImpl implements RelationService {
 
 			}
 		}
-		rrs.close();
 	}
 
 	@Override
@@ -216,7 +215,6 @@ public class RelationServiceImpl implements RelationService {
 					}
 					// Send a request to the right box with the profile of
 					// userID
-					rss.close();
 				}
 			} else {
 				relation.setAprouve(2);
@@ -263,7 +261,6 @@ public class RelationServiceImpl implements RelationService {
 							"Can not set aprouve {} for {} user not found",
 							userID, relation.getActorID(), e);
 				}
-				rss.close();
 				// Send a request to the box to tell it the user accepts the
 				// relationship
 			}
@@ -351,7 +348,6 @@ public class RelationServiceImpl implements RelationService {
 						"Can not delete a relation betewen {} and {} box of the first not found",
 						userID, actorID, e);
 			}
-			rss.close();
 		}
 		relationshipDatabase.delete(userID+ actorID);
 

@@ -88,11 +88,7 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 		}
 	}
 
-	@Override
-	public void close() {
-		client.close();
 
-	}
 
 	@Override
 	public void deleteRelationORH(String relationOfRequest,
@@ -155,4 +151,6 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 		}
 
 	}
+
+
 }

@@ -24,10 +24,7 @@ public interface RequestRelationService {
      */
     public abstract User get(String UserID, String UserToGet) throws IOException, NoSuchUserException, NoSuchBoxException;
 
-    /**
-     * close the connection
-     */
-    public abstract void close();
+
 
     /**
      * Create a relation on the remote host
