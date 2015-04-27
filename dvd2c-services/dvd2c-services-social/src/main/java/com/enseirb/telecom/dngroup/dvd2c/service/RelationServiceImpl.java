@@ -46,6 +46,8 @@ public class RelationServiceImpl implements RelationService {
 	
 	@Inject
 	RequestUserService rus ;
+	@Inject
+	RequestRelationService rss;
 	
 	@Inject RequestContentService requestContentService;
 
@@ -200,7 +202,7 @@ public class RelationServiceImpl implements RelationService {
 							relation.getActorID(), relation2));
 				} else {
 
-					RequestRelationService rss = new RequestRelationServiceImpl();
+				
 					try {
 						rss.updateRelationORH(relation2, relation);
 					} catch (IOException e) {
@@ -246,7 +248,7 @@ public class RelationServiceImpl implements RelationService {
 				relationshipDatabase.save(new RelationshipRepositoryObject(
 						relation.getActorID(), relation2));
 			} else {
-				RequestRelationService rss = new RequestRelationServiceImpl();
+				
 				try {
 					rss.setAprouveRelationORH(userID, relation.getActorID());
 				} catch (IOException e) {
@@ -332,7 +334,6 @@ public class RelationServiceImpl implements RelationService {
 			relationshipDatabase.delete(actorID+ userID);
 
 		} else {
-			RequestRelationService rss = new RequestRelationServiceImpl();
 			try {
 				rss.deleteRelationORH(userID, actorID);
 			} catch (IOException e) {

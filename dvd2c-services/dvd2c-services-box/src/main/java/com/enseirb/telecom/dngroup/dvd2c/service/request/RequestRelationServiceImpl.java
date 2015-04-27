@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
@@ -23,6 +24,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
+@Service
 public class RequestRelationServiceImpl implements RequestRelationService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RequestRelationServiceImpl.class);

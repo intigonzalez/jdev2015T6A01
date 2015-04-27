@@ -34,11 +34,10 @@ public class RequestUserServiceImpl implements RequestUserService {
 			.getLogger(RequestUserService.class);
 	@Inject
 	private Client client;
+	
 	private String server = CliConfSingleton.centralURL;;
 	private String url= server + "/api/app/account/";;
 	public RequestUserServiceImpl() {
-//
-//		client = ClientBuilder.newClient();
 	}
 
 	@Override
