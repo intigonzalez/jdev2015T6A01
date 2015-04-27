@@ -141,30 +141,36 @@ public class RequestBoxServiceImpl implements RequestBoxService {
 	public void sendOauthORH(String actorID, Box box, String code)
 			throws IOException {
 
-		WebTarget target = client.target(box.getIp() + "/api/oauth/" + actorID);
-		LOGGER.debug("Send request to server {}", target.getUri());
+		try {
+			WebTarget target = client.target(box.getIp() + "/api/oauth/" + actorID);
+			LOGGER.debug("Send request to server {}", target.getUri());
 
-		Response response = target.request().post(
-				Entity.entity(code, "text/plain"), Response.class);
-		LOGGER.info(response.toString());
-		switch (Status.fromStatusCode(response.getStatus())) {
-		case ACCEPTED:
-			// normal statement but don't is normally not that
-			break;
-		case CREATED:
-			// normal statement
-			break;
-		case OK:
-			// normal statement but don't use this because normally we need
-			// return a object
-			break;
-		case CONFLICT:
-			// throw new SuchUserException();
-		default:
-			LOGGER.error("can't send Oauth to {} {}", target.getUri(),
-					response.getStatus());
-			throw new IOException("can't send Oauth to" + target.getUri()
-					+ +response.getStatus());
+			Response response = target.request().post(
+					Entity.entity(code, "text/plain"), Response.class);
+			LOGGER.info(response.toString());
+			switch (Status.fromStatusCode(response.getStatus())) {
+			case ACCEPTED:
+				// normal statement but don't is normally not that
+				break;
+			case CREATED:
+				// normal statement
+				break;
+			case OK:
+				// normal statement but don't use this because normally we need
+				// return a object
+				break;
+			case CONFLICT:
+				// throw new SuchUserException();
+			default:
+				LOGGER.error("can't send Oauth to {} {}", target.getUri(),
+						response.getStatus());
+				throw new IOException("can't send Oauth to" + target.getUri()
+						+ +response.getStatus());
+			}
+		} catch (Exception e) {
+			LOGGER.error("",e);
+			// a suprimer
+			e.printStackTrace();
 		}
 	}
 
