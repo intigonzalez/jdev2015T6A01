@@ -1,31 +1,30 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="relation">
+		<xs:complexType>
+			<xs:sequence>
 
-<xs:element name="relation">
-	<xs:complexType>
-		<xs:sequence>
+				<xs:element name="type" type="xs:string" maxOccurs="1"
+					minOccurs="0">
+				</xs:element>
+				<xs:element name="actorID" type="xs:string" maxOccurs="1"
+					minOccurs="1" />
+				<xs:element name="firstname" type="xs:string" maxOccurs="1"
+					minOccurs="0" />
+				<xs:element name="surname" type="xs:string" maxOccurs="1"
+					minOccurs="0" />
+				<xs:element name="pubKey" type="xs:string" maxOccurs="1"
+					minOccurs="0" />
+				<xs:element name="aprouve" type="xs:int" maxOccurs="1"
+					minOccurs="0" />
+				<!-- 1 : I asked and I am waiting for Answer, 2 : I received a request, 
+					and I shoud answer, 3 : Request Accepted -->
+				<xs:element name="unix_time" type="xs:long" maxOccurs="1"
+					minOccurs="0" />
 
-			<xs:element name="type" type="xs:string" maxOccurs="1"
-				minOccurs="0"></xs:element>
-			<xs:element name="actorID" type="xs:string"
-				maxOccurs="1" minOccurs="1" />
-			<xs:element name="firstname" type="xs:string" maxOccurs="1"
-				minOccurs="0" />
-			<xs:element name="surname" type="xs:string" maxOccurs="1"
-				minOccurs="0" />
-			<xs:element name="pubKey" type="xs:string" maxOccurs="1"
-				minOccurs="0" />
-			<xs:element name="aprouve" type="xs:int" maxOccurs="1"
-				minOccurs="0" />
-			<!-- 1 : I asked and I am waiting for Answer, 2 : I received a request, 
-				and I shoud answer, 3 : Request Accepted -->
-			<xs:element name="unix_time" type="xs:long" maxOccurs="1"
-				minOccurs="0" />
-			<xs:element name="roleID" type="xs:int" maxOccurs="unbounded"
-				minOccurs="0">
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
-</xs:element>
+				<xs:element name="role" type="xs:string" maxOccurs="unbounded" minOccurs="0" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 
 </xs:schema>

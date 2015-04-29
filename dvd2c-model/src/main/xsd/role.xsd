@@ -1,21 +1,20 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
+    <xs:include schemaLocation="permission.xsd"></xs:include>
     <xs:element name="role">
   <xs:complexType>
     <xs:sequence>
 
-                <xs:element name="id" type="xs:int" maxOccurs="1" minOccurs="1"></xs:element>
-                <xs:element name="name" type="xs:string" maxOccurs="1"
-    		minOccurs="0">
+    	<xs:element name="roleId" type="xs:string" maxOccurs="1"
+    		minOccurs="1">
     	</xs:element>
-    	<xs:element name="droit" type="xs:string" maxOccurs="unbounded"
-    		minOccurs="0" />
 
     	<xs:element name="info" type="xs:string" maxOccurs="1"
     		minOccurs="0">
     	</xs:element>
 
+    	<xs:element ref="permision" maxOccurs="unbounded" minOccurs="0"></xs:element>
     </xs:sequence>
   </xs:complexType>
 </xs:element>

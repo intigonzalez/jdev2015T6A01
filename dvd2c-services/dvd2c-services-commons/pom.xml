@@ -22,12 +22,6 @@
 				<artifactId>javax.servlet-api</artifactId>
 				<version>3.1.0</version>
 			</dependency>
-
-			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-web</artifactId>
-			</dependency>
-
 			<dependency>
 				<groupId>org.springframework.amqp</groupId>
 				<artifactId>spring-rabbit</artifactId>
@@ -41,6 +35,17 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
+	
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+		</dependency>
+		
 		<dependency>
 			<groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
 			<artifactId>dvd2c-model</artifactId>

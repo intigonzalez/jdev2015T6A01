@@ -1,50 +1,44 @@
 package com.enseirb.telecom.dngroup.dvd2c.db;
 
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
+import com.enseirb.telecom.dngroup.dvd2c.model.Role;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
-@Document(collection="UserRepositoryObject")
+@Document(collection = "UserRepositoryObject")
 public class UserRepositoryObject {
-	
+
 	@Id
 	protected String userID;
-	
+
 	protected String boxID;
-	
+
 	protected String firstname;
 
 	protected String surname;
-	
+
 	protected String password;
 
 	protected String pubKey;
 
 	protected String privateKey;
 	/* SnapMail add-on */
-	
+
 	protected String smtpHost;
 
 	protected String smtpPort;
 
 	protected String smtpUsername;
-	
+
 	protected String smtpPassword;
-	
+
 	protected String smtpToken;
 
-	
-	protected BoxRepositoryObject box;
-
-	public BoxRepositoryObject getBox() {
-		return box;
-	}
-
-	public void setBox(BoxRepositoryObject box) {
-		this.box = box;
-	}
+	private List<Role> role;
 
 	public UserRepositoryObject() {
 
@@ -53,7 +47,7 @@ public class UserRepositoryObject {
 	public UserRepositoryObject(String userID, String boxID, String firstname,
 			String surname, String password, String pubKey, String privateKey,
 			String smtpHost, String smtpPort, String smtpUsername,
-			String smtpPassword, String smtpToken) {
+			String smtpPassword, String smtpToken, List<Role> role) {
 		super();
 		this.boxID = boxID;
 		this.userID = userID;
@@ -62,6 +56,7 @@ public class UserRepositoryObject {
 		this.password = password;
 		this.pubKey = pubKey;
 		this.privateKey = privateKey;
+		this.role = role;
 		/* SnapMail add-on */
 		this.smtpHost = smtpHost;
 		this.smtpPort = smtpPort;
@@ -78,12 +73,28 @@ public class UserRepositoryObject {
 		this.password = user.getPassword();
 		this.pubKey = user.getPubKey();
 		this.privateKey = user.getPrivateKey();
+		this.role = user.getRole();
 		/* SnapMail add-on */
 		this.smtpHost = user.getSmtpHost();
 		this.smtpPort = user.getSmtpPort();
 		this.smtpUsername = user.getSmtpUsername();
 		this.smtpPassword = user.getSmtpPassword();
 		this.smtpToken = user.getSmtpToken();
+	}
+
+	/**
+	 * @return the role
+	 */
+	public List<Role> getRole() {
+		return role;
+	}
+
+	/**
+	 * @param role
+	 *            the role to set
+	 */
+	public void setRole(List<Role> role) {
+		this.role = role;
 	}
 
 	public String getFirstname() {
@@ -128,24 +139,6 @@ public class UserRepositoryObject {
 
 	public void setUserID(String userID) {
 		this.userID = userID;
-	}
-
-	public User toUser() {
-		User user = new User();
-		user.setUserID(userID);
-		user.setFirstname(firstname);
-		user.setSurname(surname);
-		user.setPassword(password);
-		user.setPrivateKey(privateKey);
-		user.setPubKey(pubKey);
-		user.setBoxID(boxID);
-		/* SnapMail add-on */
-		user.setSmtpHost(smtpHost);
-		user.setSmtpPort(smtpPort);
-		user.setSmtpUsername(smtpUsername);
-		user.setSmtpPassword(smtpPassword);
-		user.setSmtpToken(smtpToken);
-		return user;
 	}
 
 	public String getUserID() {
@@ -200,4 +193,33 @@ public class UserRepositoryObject {
 	public void setSmtpToken(String smtpToken) {
 		this.smtpToken = smtpToken;
 	}
+
+	public User toUserRestrited() {
+		User user = new User();
+		user.setUserID(userID);
+		user.setFirstname(firstname);
+		user.setSurname(surname);
+		user.setBoxID(boxID);
+		return user;
+	}
+
+	public User toUser() {
+		User user = new User();
+		user.setUserID(userID);
+		user.setFirstname(firstname);
+		user.setSurname(surname);
+		user.setPassword(password);
+		user.setPrivateKey(privateKey);
+		user.setPubKey(pubKey);
+		user.setBoxID(boxID);
+		user.getRole().addAll(role);
+		/* SnapMail add-on */
+		user.setSmtpHost(smtpHost);
+		user.setSmtpPort(smtpPort);
+		user.setSmtpUsername(smtpUsername);
+		user.setSmtpPassword(smtpPassword);
+		user.setSmtpToken(smtpToken);
+		return user;
+	}
+
 }

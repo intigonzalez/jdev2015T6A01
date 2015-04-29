@@ -64,7 +64,8 @@ public class ContentServiceImpl implements ContentService {
 	public List<Content> getAllContentsFromUser(String userID) {
 
 		List<Content> listContent = new ArrayList<Content>();
-		Iterable<ContentRepositoryObject> contentsDb = contentDatabase.findAll();
+		Iterable<ContentRepositoryObject> contentsDb = contentDatabase
+				.findAll();
 		Iterator<ContentRepositoryObject> itr = contentsDb.iterator();
 		while (itr.hasNext()) {
 			ContentRepositoryObject contentRepositoryObject = itr.next();
@@ -87,7 +88,8 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public Content createContent(String userID,
-			InputStream uploadedInputStream, String[] fileType, File upload) throws IOException {
+			InputStream uploadedInputStream, String[] fileType, File upload)
+			throws IOException {
 		LOGGER.debug("New file write on system {}", upload.getAbsolutePath());
 		writeToFile(uploadedInputStream, upload);
 		LOGGER.debug("New file uploaded with the type {}", fileType[0]);
@@ -122,18 +124,18 @@ public class ContentServiceImpl implements ContentService {
 			filename = tmp[1];
 		else
 			filename = userID;
-		
+
 		// Temporary until we find a better way to deal with filenames
-		filename=filename.replace(" ", "_");
+		filename = filename.replace(" ", "_");
 		UUID uuid = UUID.randomUUID();
 		File tempFile = File.createTempFile(uuid.toString(), null);
 		LOGGER.debug("Temporary file is here {}", tempFile.getAbsolutePath());
 
 		writeToFile(uploadedInputStream, tempFile);
-//		
-//		String fileType = Files.probeContentType(tempFile);
+		//
+		// String fileType = Files.probeContentType(tempFile);
 		Tika tika = new Tika();
-		String fileType= tika.detect(tempFile);
+		String fileType = tika.detect(tempFile);
 		LOGGER.debug("MIME : {}", fileType);
 
 		tmp = fileType.split("/");
@@ -171,14 +173,12 @@ public class ContentServiceImpl implements ContentService {
 
 		// Create new folders if they don't exist
 		File file = new File("/var/www/html" + link);
-		
+
 		if (!file.exists())
-			if (!file.mkdirs()){
-			LOGGER.error("Can not create the file are you corect right ?");
-			throw new IOException(file.getAbsolutePath());}
-		
-
-
+			if (!file.mkdirs()) {
+				LOGGER.error("Can not create the file are you corect right ?");
+				throw new IOException(file.getAbsolutePath());
+			}
 
 		// Moving the file
 		LOGGER.debug("Moving temporary file to /var/www/html" + link + "/"
@@ -194,13 +194,13 @@ public class ContentServiceImpl implements ContentService {
 			LOGGER.error("Can not create the file are you corect right ?");
 			throw e;
 		}
-		
+
 	}
 
 	@Override
-	public Content createContent(Content content, String srcfile, String id) throws IOException {
+	public Content createContent(Content content, String srcfile, String id)
+			throws IOException {
 
-		
 		switch (content.getType()) {
 		case "video":
 			try {
@@ -221,7 +221,7 @@ public class ContentServiceImpl implements ContentService {
 				rabbitMq.addTask(xstream.toXML(task), task.getId());
 
 			} catch (IOException e) {
-				LOGGER.error("can't connect to rabitMQ",e);
+				LOGGER.error("can't connect to rabitMQ", e);
 				throw Throwables.propagate(e);
 			}
 			break;
@@ -244,7 +244,7 @@ public class ContentServiceImpl implements ContentService {
 				rabbitMq.addTask(xstream.toXML(task), task.getId());
 
 			} catch (IOException e) {
-				LOGGER.error("can't connect to rabitMQ",e);
+				LOGGER.error("can't connect to rabitMQ", e);
 				throw Throwables.propagate(e);
 			}
 			break;
@@ -269,11 +269,12 @@ public class ContentServiceImpl implements ContentService {
 
 	// save uploaded file to new location
 
-	private void writeToFile(InputStream uploadedInputStream, File dest) throws IOException {
+	private void writeToFile(InputStream uploadedInputStream, File dest)
+			throws IOException {
 
 		try {
 			// NHE: we are not in C
-			ByteStreams.copy(uploadedInputStream,new FileOutputStream(dest));
+			ByteStreams.copy(uploadedInputStream, new FileOutputStream(dest));
 		} catch (IOException e) {
 
 			LOGGER.error("can not create file ", e);
@@ -316,13 +317,8 @@ public class ContentServiceImpl implements ContentService {
 
 				if ((contentRepositoryObject.getActorID() != null)
 						&& (contentRepositoryObject.getActorID().equals(userID))) {
-					for (int i = 0; i < relation.getRoleID().size(); i++) { // For
-																			// each
-																			// group
-																			// the
-																			// relation
-																			// belongs
-																			// to
+					// For each group the relation belongs to
+					for (int i = 0; i < relation.getRole().size(); i++) {
 						if (contentRepositoryObject.getMetadata() != null) {
 							if (contentRepositoryObject.getMetadata().size() == 0) {
 
@@ -332,8 +328,11 @@ public class ContentServiceImpl implements ContentService {
 						for (int j = 0; j < contentRepositoryObject
 								.getMetadata().size(); j++) {
 
-							if (relation.getRoleID().get(i) == contentRepositoryObject
-									.getMetadata().get(j)) {
+							if (relation
+									.getRole()
+									.get(i)
+									.equals(contentRepositoryObject
+											.getMetadata().get(j))) {
 								contentRepositoryObject.getMetadata().clear();
 								contentRepositoryObject
 										.setLink(CliConfSingleton.publicAddr

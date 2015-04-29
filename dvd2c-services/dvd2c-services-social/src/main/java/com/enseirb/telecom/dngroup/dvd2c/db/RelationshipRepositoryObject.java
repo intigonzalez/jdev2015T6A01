@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
+import com.enseirb.telecom.dngroup.dvd2c.model.Role;
 
 @Document(collection="RelationshipRepositoryObject")
 public class RelationshipRepositoryObject {
@@ -19,14 +20,14 @@ public class RelationshipRepositoryObject {
 	String pubKey;
 	Integer aprouve;
 	Long unixTime;
-	List<Integer> role;
+	List<String> role;
 
 	public RelationshipRepositoryObject() {
 	}
 
 	public RelationshipRepositoryObject(String iD, String userId,
 			String actorID, String firstname, String surname, String pubKey,
-			Integer aprouve, Long unixTime, List<Integer> role) {
+			Integer aprouve, Long unixTime, List<String> role) {
 		super();
 		this.iD = userId + actorID;
 		this.userId = userId;
@@ -42,7 +43,7 @@ public class RelationshipRepositoryObject {
 
 	public RelationshipRepositoryObject(String userId, String actorID,
 			String firstname, String surname, String pubKey, Integer aprouve,
-			Long unixTime, List<Integer> role) {
+			Long unixTime, List<String> role) {
 		super();
 		this.iD = userId + actorID;
 		this.userId = userId;
@@ -65,7 +66,7 @@ public class RelationshipRepositoryObject {
 		this.pubKey = relation.getPubKey();
 		this.aprouve = relation.getAprouve();
 		this.unixTime = relation.getUnixTime();
-		this.role = relation.getRoleID();
+		this.role = relation.getRole();
 
 	}
 
@@ -80,7 +81,7 @@ public class RelationshipRepositoryObject {
 	/**
 	 * @return the role
 	 */
-	public List<Integer> getRole() {
+	public List<String> getRole() {
 		return role;
 	}
 
@@ -88,7 +89,7 @@ public class RelationshipRepositoryObject {
 	 * @param role
 	 *            the role to set
 	 */
-	public void setRole(List<Integer> role) {
+	public void setRole(List<String> role) {
 		this.role = role;
 	}
 
@@ -158,7 +159,7 @@ public class RelationshipRepositoryObject {
 		relation.setPubKey(pubKey);
 		relation.setUnixTime(unixTime);
 		relation.setAprouve(aprouve);
-		relation.getRoleID().addAll(role);
+		relation.getRole().addAll(role);
 		return relation;
 
 	}

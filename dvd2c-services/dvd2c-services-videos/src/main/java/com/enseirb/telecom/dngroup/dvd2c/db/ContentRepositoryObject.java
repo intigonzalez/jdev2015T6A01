@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Comment;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
+import com.enseirb.telecom.dngroup.dvd2c.model.Metadata;
 
 @Document(collection="ContentRepositoryObject")
 public class ContentRepositoryObject {
@@ -21,14 +22,14 @@ public class ContentRepositoryObject {
 	String previewLink;
 	String status;
 	List<Comment> comment;
-	List<Integer> metadata;
+	List<String> metadata;
 
 
 
 	public ContentRepositoryObject() {
 	}
 
-	public ContentRepositoryObject(String id, String name, String type, String actorID, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<Integer> metadata) {
+	public ContentRepositoryObject(String id, String name, String type, String actorID, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<String> metadata) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -59,14 +60,14 @@ public class ContentRepositoryObject {
 	/**
 	 * @return the metadata
 	 */
-	public List<Integer> getMetadata() {
+	public List<String> getMetadata() {
 		return metadata;
 	}
 
 	/**
 	 * @param metadata the metadata to set
 	 */
-	public void setMetadata(List<Integer> metadata) {
+	public void setMetadata(List<String> metadata) {
 		this.metadata = metadata;
 	}
 
