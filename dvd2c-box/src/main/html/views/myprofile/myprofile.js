@@ -1,8 +1,52 @@
 'use strict';
 
-angular.module('myApp.myprofile', ['ngRoute'])
+var mod = angular.module('myApp.myprofile', ['ngRoute','ngMockE2E']);
 
-    .config(['$routeProvider', function ($routeProvider) {
+mod.run(function($httpBackend) {
+
+	// returns the current list of phones
+	
+	
+	$httpBackend
+			.when('GET', /^\/api\/app\/account\/[^//]+$/)
+			.respond(
+					function(method, url, data, headers) {
+						var data = '{"user":{"userID":"testtest","firstname":"nicolas","surname":"viotech","boxID":"no_used","password":"dummypwd"}}';
+						var header = {};
+						return [ 200, data , {} ];
+
+					});
+	
+	$httpBackend
+	.when('GET', /^\/api\/app\/snapmail\/[^//]+\/smtp$/)
+	.respond(
+			function(method, url, data, headers) {
+				var data = {"smtpProperty":""};
+				var header = {};
+				return [ 200, data , {} ];
+
+			});
+	
+	$httpBackend
+	.when('PUT', /api\/app\/account\/[^//]+$/)
+	.respond(
+			function(method, url, data, headers) {
+				var user=JSON.parse(data).user;
+				if (user.userID.indexOf("@") > -1)
+					return [ 200, {} , {} ];
+				else
+					return [ 409, {} , {} ];
+			});
+	
+	$httpBackend.whenGET(/views/).passThrough();
+	
+	
+});
+
+
+
+
+    mod.config(['$routeProvider', function ($routeProvider) {
         $routeProvider.when('/myprofile', {
             templateUrl: 'views/myprofile/myprofile.html',
             controller: 'ProfileCtrl'
