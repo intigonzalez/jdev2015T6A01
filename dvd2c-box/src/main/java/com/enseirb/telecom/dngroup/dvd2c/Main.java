@@ -61,7 +61,7 @@ public class Main {
 	}
 
 	/**
-	 * Main method.
+	 * Main method .
 	 * 
 	 * @param args
 	 * @throws IOException
