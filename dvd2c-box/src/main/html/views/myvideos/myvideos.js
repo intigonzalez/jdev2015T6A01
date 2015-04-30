@@ -146,7 +146,7 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
                 });
             }
             else {
-                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", video.roleID);
+                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", video.metadata);
                 $scope.roles[index].value=true;
             }
         }
