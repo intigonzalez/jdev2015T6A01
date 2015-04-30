@@ -3,8 +3,32 @@ PREFIX_RQ = "";
 //PREFIX_RQ = "http://localhost:9998";
 
 
-var ConnectionForm = angular.module('ConnectionForm', []);
-//Hello
+var ConnectionForm = angular.module('ConnectionForm', ['ngMockE2E','ngCookies']);
+
+ConnectionForm.run(function($httpBackend,$cookieStore ) {
+
+	// returns the current list of phones	
+	$httpBackend.when('POST', '/api/app/account/Connect').respond(
+			function(method, url, data, headers) {
+					data=JSON.parse(data);
+					if(data.user.userID=="testtest"){
+						var user='testtest';
+						console.log(user);
+						$cookieStore.put('authentication',user); 
+						 
+						return [ 200, {}, {} ];
+					}
+					else if(data.user.userID=="test@test.fr"){
+						$cookieStore.put("authentication",'test@test.fr'); 
+						return [ 200, {}, {} ];
+					}
+					else{
+						return [ 403, {}, {} ];
+					}
+			});
+});
+
+
 ConnectionForm.controller("mainController", function ($scope, $http) {
     var errorConnection = false;
     $scope.CredentialsCheck = function(){

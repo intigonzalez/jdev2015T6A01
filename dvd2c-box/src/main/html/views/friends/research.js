@@ -1,8 +1,46 @@
 'use strict';
 
-angular.module('myApp.friendSearch', ['ngRoute', 'ui.bootstrap'])
+var mod = angular.module('myApp.friendSearch', ['ngRoute', 'ui.bootstrap','ngMockE2E'])
+mod.run(function($httpBackend) {
 
-    .config(['$routeProvider', function ($routeProvider) {
+	// returns the current list of phones
+	
+	
+
+
+	$httpBackend.when('GET', /^\/api\/app\/account\/firstname\/[^//]+$/)
+	.respond(
+			function(method, url, data, headers) {
+			if(url=="/api/app/account/firstname/clement") {				
+			var data = '{"users":{"user":[{"userID":"cgonzalez@viotech.net","firstname":"Clement","surname":"Gonzalez","boxID":"BOX_ORANGE"},{"userID":"clement@gmail.com","firstname":"Clement","surname":"Calais","boxID":"BOX_BLUE"}]}}'
+			}
+				else if(url=="/api/app/account/firstname/david") {				
+			var data = '{"users":{"user":{"userID":"dbourasseau@viotech.net","firstname":"David","surname":"Bourasseau","boxID":"BOX_BLUE"}}}'
+			}
+				else {
+				    var data = '{"users":""}'
+				    }
+					return [ 200, data , {} ];			
+			});
+				$httpBackend.when('POST', /^\/api\/app\/[^//]+\/relation\/[^//]+$/)
+	.respond(
+			function(method, url, data, headers) {
+			
+					return [ 200, data , {} ];			
+			});
+			
+	
+
+
+	
+	
+	$httpBackend.whenGET(/views/).passThrough();
+	
+	
+});
+
+
+    mod.config(['$routeProvider', function ($routeProvider) {
         $routeProvider.when('/searchfriends', {
             templateUrl: 'views/friends/research.html',
             controller: 'FriendsCtrl'

@@ -1,8 +1,27 @@
 'use strict';
 
-angular.module('myApp.newvideo', ['ngRoute', 'angularFileUpload'])
+var mod = angular.module('myApp.newvideo', ['ngRoute', 'angularFileUpload','ngMockE2E'])
+mod.run(function($httpBackend) {
 
-    .config(['$routeProvider', function ($routeProvider) {
+	// returns the current list of phones
+	
+	
+
+
+	$httpBackend.when('POST', /api\/app\/[^//]+\/content$/)
+	.respond(
+			function(method, url, data, headers) {				
+					return [ 200, {} , {} ];			
+			});
+	
+	
+	
+	$httpBackend.whenGET(/views/).passThrough();
+	
+	
+});
+
+    mod.config(['$routeProvider', function ($routeProvider) {
         $routeProvider.when('/newvideo', {
             templateUrl: 'views/newvideo/newvideo.html',
             controller: 'NewVideosCtrl'
