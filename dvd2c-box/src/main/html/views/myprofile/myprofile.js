@@ -11,7 +11,8 @@ mod.run(function($httpBackend) {
 			.when('GET', /^\/api\/app\/account\/[^//]+$/)
 			.respond(
 					function(method, url, data, headers) {
-						var data = '{"user":{"userID":"testtest","firstname":"nicolas","surname":"viotech","boxID":"no_used","password":"dummypwd"}}';
+						var data = '{"user":{"userID":"orange@orange.fr","firstname":"orange","surname":"fruit","boxID":"BOX_ORANGE","password":"orange","smtpHost":"host","smtpPort":3128,"smtpUsername":"user","smtpPassword":"password","smtpToken":""}}';
+						
 						var header = {};
 						return [ 200, data , {} ];
 
@@ -21,7 +22,7 @@ mod.run(function($httpBackend) {
 	.when('GET', /^\/api\/app\/snapmail\/[^//]+\/smtp$/)
 	.respond(
 			function(method, url, data, headers) {
-				var data = {"smtpProperty":""};
+				var data =  '{"smtpProperty":{"host":"host","port":3128,"username":"user","password":"password","token":""}}';
 				var header = {};
 				return [ 200, data , {} ];
 

@@ -12,7 +12,14 @@ ConnectionForm.run(function($httpBackend,$cookieStore ) {
 			function(method, url, data, headers) {
 					data=JSON.parse(data);
 					if(data.user.userID=="testtest"){
-						$cookieStore.put("authentication","testtest"); 
+						var user='testtest';
+						console.log(user);
+						$cookieStore.put('authentication',user); 
+						 
+						return [ 200, {}, {} ];
+					}
+					else if(data.user.userID=="test@test.fr"){
+						$cookieStore.put("authentication",'test@test.fr'); 
 						return [ 200, {}, {} ];
 					}
 					else{

@@ -1,8 +1,39 @@
 'use strict';
+var mod = angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap','ngMockE2E'])
+mod.run(function($httpBackend) {
 
-angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
+	// returns the current list of phones
+	
+	
+	$httpBackend
+			.when('GET', /^\/api\/app\/[^//]+\/content$/)
+			.respond(
+					function(method, url, data, headers) {
+						var data = '{"contents":{"content":[{"contentsID":"1d3742b64cb04324b5ba68f9ce5ee48f","name":"holiday.mp4","actorID":"test@test.fr","metadata":[2,3],"unix_time":1430376221,"link":"\/dev\/videos","status":"success","type":"video"},{"contentsID":"120d1872788b4f908666bf3020e72119","name":"week.mp4","actorID":"test@test.fr","unix_time":1430377750,"link":"\/dev\/videos","status":"success","type":"video"},{"contentsID":"7ad7ac91918246b29262dcdcca317eb5","name":"doc.pdf","actorID":"test@test.fr","unix_time":1430378104,"link":"\/dev\/document","status":"success","type":"application"},{"contentsID":"ff0a9ae6265e41e1a7dae732d2630134","name":"info.jpg","actorID":"test@test.fr","unix_time":1430378104,"link":"\/dev\/picture","status":"success","type":"image"},{"contentsID":"f8224d615764402f88c0686653e99a65","name":"parameter.txt","actorID":"test@test.fr","unix_time":1430378145,"link":"\/dev\/document","status":"success","type":"application"},{"contentsID":"f97103baf72344309fc1c04c0b87aea5","name":"me.jpg","actorID":"test@test.fr","unix_time":1430378145,"link":"\/dev\/picture","status":"success","type":"image","metadata":[0,1]}]}}'
+						var header = {};
+						return [ 200, data , {} ];
 
-    .config(['$routeProvider', function ($routeProvider) {
+					});
+				
+	$httpBackend.when('DELETE', /api\/app\/[^//]+\/content\/[^//]+$/)
+	.respond(
+			function(method, url, data, headers) {				
+					return [ 200, {} , {} ];			
+			});
+
+	$httpBackend.when('PUT', /api\/app\/[^//]+\/content\/[^//]+$/)
+	.respond(
+			function(method, url, data, headers) {				
+					return [ 200, {} , {} ];			
+			});
+	
+	
+	
+	$httpBackend.whenGET(/views/).passThrough();
+	
+	
+});
+    mod.config(['$routeProvider', function ($routeProvider) {
         $routeProvider.when('/myvideos', {
             templateUrl: 'views/myvideos/myvideos.html',
             controller: 'MyVideosCtrl'
@@ -146,7 +177,7 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
                 });
             }
             else {
-                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", video.roleID);
+                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", video.metadata );
                 $scope.roles[index].value=true;
             }
         }
