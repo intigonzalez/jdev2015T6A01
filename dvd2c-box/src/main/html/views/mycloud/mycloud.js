@@ -126,8 +126,8 @@ angular.module('myApp.mycloud', ['ngRoute', 'ui.bootstrap'])
         $scope.roles = angular.copy(roles);
         if (document.metadata === undefined) {
         } else {
-            if ( angular.isArray(document.metadata.roleID) ) {
-                angular.forEach(document.metadata.roleID, function (id) {
+            if ( angular.isArray(document.metadata) ) {
+                angular.forEach(document.metadata, function (id) {
                     var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", id);
                     $scope.roles[index].value = true;
                 });

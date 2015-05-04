@@ -170,8 +170,8 @@ mod.run(function($httpBackend) {
         $scope.roles = angular.copy(roles);
         if (video.metadata === undefined) {
         } else {
-            if ( angular.isArray(video.metadata.roleID) ) {
-                angular.forEach(video.metadata.roleID, function (id) {
+            if ( angular.isArray(video.metadata) ) {
+                angular.forEach(video.metadata, function (id) {
                     var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", id);
                     $scope.roles[index].value = true;
                 });
