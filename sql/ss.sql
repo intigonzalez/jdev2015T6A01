@@ -451,6 +451,37 @@ LOCK TABLES `conversations` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `devices`
+--
+
+DROP TABLE IF EXISTS `devices`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `devices` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `actor_id` int(11) DEFAULT NULL,
+  `manufacturer` varchar(255) DEFAULT NULL,
+  `model` varchar(255) DEFAULT NULL,
+  `os_type` varchar(16) DEFAULT NULL,
+  `os_version` varchar(16) DEFAULT NULL,
+  `app_version` varchar(16) DEFAULT NULL,
+  `registration_id` varbinary(4096) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_devices_on_actor_id` (`actor_id`),
+  CONSTRAINT `devices_on_actor_id` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `devices`
+--
+
+LOCK TABLES `devices` WRITE;
+/*!40000 ALTER TABLE `devices` DISABLE KEYS */;
+/*!40000 ALTER TABLE `devices` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `documents`
 --
 
