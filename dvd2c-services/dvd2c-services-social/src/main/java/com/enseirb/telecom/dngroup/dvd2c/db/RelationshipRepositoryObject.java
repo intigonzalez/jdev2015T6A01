@@ -2,16 +2,16 @@ package com.enseirb.telecom.dngroup.dvd2c.db;
 
 import java.util.List;
 
+import javax.persistence.Entity;
+
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
-import com.enseirb.telecom.dngroup.dvd2c.model.Role;
 
-@Document(collection="RelationshipRepositoryObject")
+@Entity
 public class RelationshipRepositoryObject {
 
-	@Id
+	@javax.persistence.Id
 	String iD;
 	String userId;
 	String actorID;

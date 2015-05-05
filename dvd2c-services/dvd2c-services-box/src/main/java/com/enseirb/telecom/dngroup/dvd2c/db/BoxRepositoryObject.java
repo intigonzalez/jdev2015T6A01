@@ -2,19 +2,25 @@ package com.enseirb.telecom.dngroup.dvd2c.db;
 
 import java.util.List;
 
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
-@Document(collection="BoxRepositoryObject")
+@Entity
+//@NamedQuery(name = "Box.findByTheUsersName", query = "from Box u where u.boxID = ?1")
 public class BoxRepositoryObject {
 
 	@Id
+//	@GeneratedValue(strategy = GenerationType.AUTO)
+//	private Long id;
+	@Column(unique = true)
 	String boxID;
-
 
 	String ip;
 
@@ -28,17 +34,17 @@ public class BoxRepositoryObject {
 
 	}
 
-	public BoxRepositoryObject(ObjectId _id, String boxID, String ip,
-			String pubKey, String privateKey, Integer tTL, List<User> user) {
-		super();
-		// this._id = _id;
-		this.boxID = boxID;
-		this.ip = ip;
-		this.pubKey = pubKey;
-		this.privateKey = privateKey;
-		this.TTL = tTL;
-
-	}
+	// public BoxRepositoryObject(ObjectId _id, String boxID, String ip,
+	// String pubKey, String privateKey, Integer tTL, List<User> user) {
+	// super();
+	// // this._id = _id;
+	// this.boxID = boxID;
+	// this.ip = ip;
+	// this.pubKey = pubKey;
+	// this.privateKey = privateKey;
+	// this.TTL = tTL;
+	//
+	// }
 
 	public BoxRepositoryObject(String boxID, String ip, String pubKey,
 			String privateKey, Integer tTL, List<User> user) {

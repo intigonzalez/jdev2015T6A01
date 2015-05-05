@@ -1,18 +1,31 @@
 package com.enseirb.telecom.dngroup.dvd2c.db;
 
+import java.io.Serializable;
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+//import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.model.Role;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
-@Document(collection = "UserRepositoryObject")
-public class UserRepositoryObject {
+//@Entity
+@Entity
+//@NamedQuery(name = "User.findByTheUsersName", query = "from User u where u.userID = ?1")
+public class UserRepositoryObject implements Serializable{
 
 	@Id
+//	@GeneratedValue(strategy = GenerationType.AUTO)
+//	private Long id;
+	@Column(unique = true)
 	protected String userID;
 
 	protected String boxID;
@@ -38,16 +51,14 @@ public class UserRepositoryObject {
 
 	protected String smtpToken;
 
-	private List<Role> role;
+//	private List<Role> role;
 
-	public UserRepositoryObject() {
 
-	}
 
 	public UserRepositoryObject(String userID, String boxID, String firstname,
 			String surname, String password, String pubKey, String privateKey,
 			String smtpHost, String smtpPort, String smtpUsername,
-			String smtpPassword, String smtpToken, List<Role> role) {
+			String smtpPassword, String smtpToken/*, List<Role> role*/) {
 		super();
 		this.boxID = boxID;
 		this.userID = userID;
@@ -56,7 +67,7 @@ public class UserRepositoryObject {
 		this.password = password;
 		this.pubKey = pubKey;
 		this.privateKey = privateKey;
-		this.role = role;
+//		this.role = role;
 		/* SnapMail add-on */
 		this.smtpHost = smtpHost;
 		this.smtpPort = smtpPort;
@@ -73,7 +84,7 @@ public class UserRepositoryObject {
 		this.password = user.getPassword();
 		this.pubKey = user.getPubKey();
 		this.privateKey = user.getPrivateKey();
-		this.role = user.getRole();
+//		this.role = user.getRole();
 		/* SnapMail add-on */
 		this.smtpHost = user.getSmtpHost();
 		this.smtpPort = user.getSmtpPort();
@@ -81,21 +92,22 @@ public class UserRepositoryObject {
 		this.smtpPassword = user.getSmtpPassword();
 		this.smtpToken = user.getSmtpToken();
 	}
-
-	/**
-	 * @return the role
-	 */
-	public List<Role> getRole() {
-		return role;
-	}
-
-	/**
-	 * @param role
-	 *            the role to set
-	 */
-	public void setRole(List<Role> role) {
-		this.role = role;
-	}
+//
+//	/**
+//	 * @return the role
+//	 */
+//	@OneToMany(targetEntity=Role.class, mappedBy="UserRepositoryObject", fetch=FetchType.EAGER)
+//	public List<Role> getRole() {
+//		return role;
+//	}
+//
+//	/**
+//	 * @param role
+//	 *            the role to set
+//	 */
+//	public void setRole(List<Role> role) {
+//		this.role = role;
+//	}
 
 	public String getFirstname() {
 		return firstname;
@@ -212,7 +224,7 @@ public class UserRepositoryObject {
 		user.setPrivateKey(privateKey);
 		user.setPubKey(pubKey);
 		user.setBoxID(boxID);
-		user.getRole().addAll(role);
+//		user.getRole().addAll(role);
 		/* SnapMail add-on */
 		user.setSmtpHost(smtpHost);
 		user.setSmtpPort(smtpPort);
