@@ -1,4 +1,4 @@
-package com.enseirb.telecom.dngroup.snapmail;
+package com.enseirb.telecom.dngroup.snapmail.mail;
 
 import java.net.*;
 import java.nio.file.Files;
@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -56,6 +57,7 @@ import org.subethamail.smtp.MessageContext;
 import org.subethamail.smtp.TooMuchDataException;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
+import com.enseirb.telecom.dngroup.snapmail.cli.CliConfSingleton;
 import com.philvarner.clamavj.ClamScan;
 import com.philvarner.clamavj.ScanResult;
 import com.google.api.client.auth.oauth2.TokenResponse;
@@ -79,7 +81,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	protected String password;
 
 	// to display all recipients
-	ArrayList<String> recipientArray = new ArrayList<String>();
+	List<String> recipientArray = new ArrayList<String>();
 	private String allrecipients;
 	private int counter = 0;
 
@@ -340,11 +342,11 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 * Parse the message between the text and the attachment part, and scan it with clamAV
 	 * 
 	 * @param message
-	 * @param multiPart
+	 * @param output
 	 * @throws MessagingException
 	 * @throws IOException
 	 */
-	private void parseMessage(Message message, Multipart multiPart) throws MessagingException, IOException {
+	private void parseMessage(Message message, Multipart output) throws MessagingException, IOException {
 		this.text += "\n------------------------------------\n";
 		// Since the message is multipart, it can be casted as such
 		Multipart multipart = (Multipart) message.getContent();
@@ -408,7 +410,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 									    if (mimemultipart.getBodyPart(k).getFileName() != null)
 									    imagePart.setDisposition(MimeBodyPart.INLINE);
 									    imagePart.setHeader("Content-ID", mimemultipart.getBodyPart(k).getHeader("Content-ID")[0]);
-									    multiPart.addBodyPart(imagePart);
+									    output.addBodyPart(imagePart);
 									    this.text += "\nThis email is free of viruses and malware because ClamAV Antivirus protection is enabled.";
 									}
 								} catch (IOException clam) {
@@ -422,7 +424,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 								    if (mimemultipart.getBodyPart(k).getFileName() != null)
 								    imagePart.setDisposition(MimeBodyPart.INLINE);
 								    imagePart.setHeader("Content-ID", mimemultipart.getBodyPart(k).getHeader("Content-ID")[0]);
-								    multiPart.addBodyPart(imagePart);
+								    output.addBodyPart(imagePart);
 								    this.text += "\nClamAV is disabled. Your attachments haven't been checked by an antivirus.";
 								}
 							}
@@ -505,7 +507,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 												if (mimemultipart_bis.getBodyPart(l).getFileName() != null)
 													imagePart.setDisposition(MimeBodyPart.INLINE);
 												imagePart.setHeader("Content-ID", mimemultipart_bis.getBodyPart(l).getHeader("Content-ID")[0]);
-												multiPart.addBodyPart(imagePart);
+												output.addBodyPart(imagePart);
 												this.text += "\nThis email is free of viruses and malware because ClamAV Antivirus protection is enabled.";
 											}
 										} catch (IOException clam) {
@@ -520,7 +522,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 											if (mimemultipart_bis.getBodyPart(l).getFileName() != null)
 												imagePart.setDisposition(MimeBodyPart.INLINE);
 											imagePart.setHeader("Content-ID", mimemultipart_bis.getBodyPart(l).getHeader("Content-ID")[0]);
-											multiPart.addBodyPart(imagePart);
+											output.addBodyPart(imagePart);
 											this.text += "\nClamAV is disabled. Your attachments haven't been checked by an antivirus.";
 										}
 									}
@@ -688,6 +690,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 */
 	private File saveFile(String filename, InputStream inputStream)
 			throws IOException {
+		//nh: please use Files.createTempFile(prefix, suffix, attrs)
 		File f = new File("/tmp/" + filename);
 		try {
 			// Temporary until we find a better way to do it
@@ -710,20 +713,24 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 */
 	public String postFile(InputStream is, String filename, String Type)
 			throws IOException {
+		//nh: to extract in a dedicated service class
 		try {
 			HttpAuthenticationFeature feature = HttpAuthenticationFeature
 					.basic(this.username, this.password);
 
 			// Configuration of the client to allow a post with a large file
+			//nh: please create only 1 client and close it properly
 			ClientConfig cc = new ClientConfig();
 			cc.property(ClientProperties.REQUEST_ENTITY_PROCESSING, "CHUNKED");
 			cc.property(ClientProperties.CHUNKED_ENCODING_SIZE,
 					Integer.valueOf(128));
 			cc.property(ClientProperties.OUTBOUND_CONTENT_LENGTH_BUFFER,
 					Integer.valueOf(128));
+			
 			Client client = ClientBuilder.newClient(cc);
 			client.register(feature).register(MultiPartFeature.class);
 
+			//nh: create
 			WebTarget target = client.target("http://"+CliConfSingleton.mediahome_host+":"+CliConfSingleton.mediahome_port+"/api/app/"
 					+ this.username + "/content");
 

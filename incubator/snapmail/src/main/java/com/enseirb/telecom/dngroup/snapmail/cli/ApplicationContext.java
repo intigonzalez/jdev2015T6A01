@@ -1,9 +1,11 @@
-package com.enseirb.telecom.dngroup.snapmail;
+package com.enseirb.telecom.dngroup.snapmail.cli;
 
 import java.util.Properties;
 
+
+//NH: merge with cliconf single
 public abstract class ApplicationContext {
-	static Properties properties = new Properties();
+	public static Properties properties = new Properties();
 
 	public static Properties getProperties() {
 		return properties;

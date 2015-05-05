@@ -1,9 +1,9 @@
-package com.enseirb.telecom.dngroup.snapmail;
+package com.enseirb.telecom.dngroup.snapmail.mail;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import javax.net.ssl.SSLContext;
 
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
@@ -11,14 +11,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.subethamail.smtp.MessageHandlerFactory;
 
-import org.subethamail.smtp.server.SMTPServer;
+/**
+ * 
+ * adapt subethamail framework for using TLS
+ NH:review doc
+ */
+public class SnapMailSMTPServer extends org.subethamail.smtp.server.SMTPServer{
 
-public class SmtpServer extends SMTPServer{
-
-  private final static Logger log = LoggerFactory.getLogger(SMTPServer.class);
+  private final static Logger log = LoggerFactory.getLogger(SnapMailSMTPServer.class);
   private SSLContext context;
 
-  protected SmtpServer(MessageHandlerFactory factory, SSLContext context) {
+  public SnapMailSMTPServer(MessageHandlerFactory factory, SSLContext context) {
     super(factory);
     this.context = context;
   }
