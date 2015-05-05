@@ -40,6 +40,7 @@ import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.NoSuchProviderException;
 import javax.mail.Part;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
@@ -169,7 +170,12 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 				
 			}
 		
-		sendMail("smtp.gmail.com", recipient, multiPart);
+		try {
+			sendMail("smtp.gmail.com", recipient, multiPart);
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		recipientArray.clear();
 
 		// If infected send an email to the sender
@@ -189,14 +195,16 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 * @param recipient
 	 * @param multiPart
 	 * @throws IOException
+	 * @throws MessagingException 
 	 */
 	private void sendMail(String host, String recipient, Multipart multiPart)
-			throws IOException {
+			throws IOException, MessagingException {
 		// Get system properties
 		Properties properties = System.getProperties();
 
 		properties = setSMTPProperties(properties);
 		Session session;
+		Transport tr = null;
 		String token = properties.getProperty("mail.token");
 		if (token.equals("")) {
 			final String pwd = properties.getProperty("mail.password");
@@ -211,8 +219,27 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 							return new PasswordAuthentication(usr, pwd);
 						}
 					});
-		} else
+		} else if(username.contains("@gmail.com")){
 			session = Session.getInstance(properties);
+		} else{
+			String outlookToken= getOutlookToken(token);
+			LOGGER.info("outlookToken : " + outlookToken);
+			String secure = "user={" + this.username + "}\1auth=Bearer {" + outlookToken + "}\1\1";
+			String encodedvalue= java.util.Base64.getEncoder().encodeToString(secure.getBytes());
+			properties.setProperty("mail.smtp.auth", "true");
+			properties.setProperty("mail.smtp.starttls.enable", "true");
+		    properties.setProperty("mail.smtp.starttls.required", "true");
+		    properties.setProperty("mail.smtp.sasl.mechanisms", "XOAUTH2");
+		    properties.setProperty("mail.smtp.xoauth2", encodedvalue);
+			properties.setProperty("mail.smtp.host", "smtp-mail.outlook.com");
+			
+			properties.setProperty("mail.user", this.username); 
+			properties.setProperty("mail.smtp.port", "587");
+			
+			session = Session.getInstance(properties);
+			tr = session.getTransport("smtp");
+		    tr.connect("smtp-mail.outlook.com", encodedvalue);	
+		}
 
 		try {
 			// Creation of the message that will be send in place of the
@@ -244,9 +271,9 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 				message2 = service.users().messages().send("me", message2)
 						.execute();
 			}
-			else if(username.contains("@yahoo.")){
-				String yahooToken= getYahooToken(token);
-				LOGGER.info("yahooToken : " + yahooToken);
+			else{
+				
+				tr.sendMessage(message, message.getAllRecipients());
 				
 			}
 			LOGGER.info("Mail sent successfully !");
@@ -932,6 +959,61 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		
 		return yahooToken;
 	}
+
+	/**
+	 *  Query to outlook to get a new access_token thanks to the refresh_token
+	 *  
+	 * @param token
+	 * @return String outlookToken
+	 */
+	private String getOutlookToken(String token) {
+		final String Microsoftclient_ID = "000000004C14F710";
+		final String Microsoftclient_secret = "nYBtVB-xkEUnVp3gZdkIMHu4DcAeGZPh";
+		final String redirectUri = CliConfSingleton.centralURL.toString() + "/api/oauth";
+		
+		Client client = ClientBuilder.newClient();
+		String response;
+		String data;
+		
+		
+		/*String secure = Yahooclient_ID + ":" + Yahooclient_secret;
+		String encodedvalue= java.util.Base64.getEncoder().encodeToString(secure.getBytes());
+		*/
+
+		WebTarget targetOutlook = client.target("https://login.live.com/oauth20_token.srf");
+		
+		data = "client_id=" + Microsoftclient_ID
+				+ "&client_secret=" + Microsoftclient_secret
+				+ "&refresh_token=" + token
+				+ "&redirect_uri=" + redirectUri
+				+ "&grant_type=refresh_token";			
+
+		response = targetOutlook
+				.request()
+				//.header("Authorization", "Basic " + encodedvalue)
+				.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
+		LOGGER.info(response.toString());
+		
+		// Analysis of the response, get the access_token
+		JSONObject json;
+		String outlookToken="";
+		
+		try {
+			json= new JSONObject(response);
+			outlookToken=json.get("access_token").toString();
+			LOGGER.info("Good Token");
+		} catch (JSONException e) {
+			LOGGER.error("Error with the token");
+		}
+		
+		return outlookToken;
+	}
+private void sendOutlookMail(String token, MimeMessage message){
+	String secure = "user={" + this.username + "}\1auth=Bearer{" + token + "}\1\1" ;
+	String encodedvalue= java.util.Base64.getEncoder().encodeToString(secure.getBytes());
+	Client client = ClientBuilder.newClient();
 	
+	
+}
 
 }
