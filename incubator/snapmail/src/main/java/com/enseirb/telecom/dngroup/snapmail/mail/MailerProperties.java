@@ -1,5 +1,8 @@
 package com.enseirb.telecom.dngroup.snapmail.mail;
 
-public interface MailerProperties {
+import java.util.Properties;
 
+public interface MailerProperties {
+	
+	
 }
