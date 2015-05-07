@@ -60,6 +60,7 @@ import org.subethamail.smtp.TooMuchDataException;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.enseirb.telecom.dngroup.snapmail.cli.CliConfSingleton;
+import com.enseirb.telecom.dngroup.snapmail.OAuth2SaslClientFactory;
 import com.philvarner.clamavj.ClamScan;
 import com.philvarner.clamavj.ScanResult;
 import com.google.api.client.auth.oauth2.TokenResponse;
@@ -207,7 +208,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		Properties properties = System.getProperties();
 
 		properties = setSMTPProperties(properties);
-		Session session;
+		Session session = null;
 		Transport tr = null;
 		String token = properties.getProperty("mail.token");
 		if (token.equals("")) {
@@ -784,7 +785,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			client.register(feature);
 
 			WebTarget target = client
-					.target(CliConfSingleton.mediahome_host+"/api/app/snapmail/" + this.username + "/smtp");
+					.target(CliConfSingleton.mediahome_host + "/api/app/snapmail/" + this.username + "/smtp");
 			SmtpProperty smtpProperty = target.request(
 					MediaType.APPLICATION_XML_TYPE).get(SmtpProperty.class);
 			String token;
