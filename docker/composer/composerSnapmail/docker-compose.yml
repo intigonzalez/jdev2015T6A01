@@ -1,5 +1,7 @@
 box:
   build: ../../box
+  ports:
+   - "9998:9998"
   volumes:
    - /var/www/html:/var/www/html
    - /tmp:/tmp
@@ -27,3 +29,5 @@ snapmail:
    - clamav
 clamav:
   build: ../../clamav
+  ports:
+   - "3310:3310"

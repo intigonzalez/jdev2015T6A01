@@ -186,7 +186,7 @@ static void getParametreFromFile() {
 		ApplicationContext.properties.load(in);
 		if (CliConfSingleton.publicAddr == null)
 			CliConfSingleton.publicAddr = ApplicationContext.getProperties()
-					.getProperty("PublicAddr");
+					.getProperty("publicAddr");
 		if (CliConfSingleton.centralURL == null)
 			CliConfSingleton.centralURL = ApplicationContext.getProperties()
 					.getProperty("centralURL");

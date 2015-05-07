@@ -388,7 +388,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 									//Scan viruses,trojans & malware for INLINE Pictures in MimemMultipart
 									LOGGER.info("-----------------------------------------------------------");
 									LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart.getBodyPart(k).getFileName());
-									ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 0);
+									ClamScan clamScan = new ClamScan(CliConfSingleton.publicAddr, Integer.parseInt(CliConfSingleton.clamav_port), 0);
 									ScanResult result = clamScan.scan(mimemultipart.getBodyPart(k).getInputStream());
 									LOGGER.info("ClamAv Scan Done !");
 									if ( (result.getStatus().toString()).equals("FAILED")){
