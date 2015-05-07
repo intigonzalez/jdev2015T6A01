@@ -31,6 +31,8 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.security.Provider;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -224,23 +226,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		} else if(username.contains("@gmail.com")){
 			session = Session.getInstance(properties);
 		} else{
-			String outlookToken= getOutlookToken(token);
-			LOGGER.info("outlookToken : " + outlookToken);
-			String secure = "user={" + this.username + "}\1auth=Bearer {" + outlookToken + "}\1\1";
-			String encodedvalue= java.util.Base64.getEncoder().encodeToString(secure.getBytes());
-			properties.setProperty("mail.smtp.auth", "true");
-			properties.setProperty("mail.smtp.starttls.enable", "true");
-		    properties.setProperty("mail.smtp.starttls.required", "true");
-		    properties.setProperty("mail.smtp.sasl.mechanisms", "XOAUTH2");
-		    properties.setProperty("mail.smtp.xoauth2", encodedvalue);
-			properties.setProperty("mail.smtp.host", "smtp-mail.outlook.com");
-			
-			properties.setProperty("mail.user", this.username); 
-			properties.setProperty("mail.smtp.port", "587");
-			
-			session = Session.getInstance(properties);
-			tr = session.getTransport("smtp");
-		    tr.connect("smtp-mail.outlook.com", encodedvalue);	
+			tr= outlookConnect(session,properties, tr, token);
 		}
 
 		try {
@@ -731,7 +717,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			client.register(feature).register(MultiPartFeature.class);
 
 			//nh: create
-			WebTarget target = client.target("http://"+CliConfSingleton.mediahome_host+":"+CliConfSingleton.mediahome_port+"/api/app/"
+			WebTarget target = client.target(CliConfSingleton.mediahome_host+"/api/app/"
 					+ this.username + "/content");
 
 			LOGGER.info("Filename : " + filename);
@@ -742,8 +728,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 					.post(Entity.entity(is, Type), Response.class);
 
 			if (response.getLocation() != null)
-				return "http://"
-						+ localAddress()
+				return  CliConfSingleton.mediahome_host
 						+ "/snapmail/"
 						+ "snapmail.html#/"
 						+ this.username
@@ -799,7 +784,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			client.register(feature);
 
 			WebTarget target = client
-					.target("http://"+ CliConfSingleton.mediahome_host + ":" + CliConfSingleton.mediahome_port +"/api/app/snapmail/" + this.username + "/smtp");
+					.target(CliConfSingleton.mediahome_host+"/api/app/snapmail/" + this.username + "/smtp");
 			SmtpProperty smtpProperty = target.request(
 					MediaType.APPLICATION_XML_TYPE).get(SmtpProperty.class);
 			String token;
@@ -1015,12 +1000,40 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		
 		return outlookToken;
 	}
-private void sendOutlookMail(String token, MimeMessage message){
-	String secure = "user={" + this.username + "}\1auth=Bearer{" + token + "}\1\1" ;
-	String encodedvalue= java.util.Base64.getEncoder().encodeToString(secure.getBytes());
-	Client client = ClientBuilder.newClient();
+
+
+		 
+private Transport outlookConnect(Session session,Properties properties, Transport tr, String token) throws MessagingException{
+	String outlookToken= getOutlookToken(token);	
+	 final class OAuth2Provider extends Provider {
+		    private static final long serialVersionUID = 1L;
+
+		    public OAuth2Provider() {
+		      super("Google OAuth2 Provider", 1.0,
+		            "Provides the XOAUTH2 SASL Mechanism");
+		      put("SaslClientFactory.XOAUTH2",
+		          "com.enseirb.telecom.dngroup.snapmail.OAuth2SaslClientFactory");
+		    }
+		  }
+	Security.addProvider(new OAuth2Provider());
+	properties.setProperty("mail.smtp.auth", "true");
+	properties.setProperty("mail.smtp.starttls.enable", "true");
+    properties.setProperty("mail.smtp.starttls.required", "true");
+    properties.setProperty("mail.smtp.sasl.enable", "true");
+    properties.setProperty("mail.smtp.sasl.mechanisms", "XOAUTH2");
+    properties.setProperty(OAuth2SaslClientFactory.OAUTH_TOKEN_PROP, outlookToken);
+	properties.setProperty("mail.smtp.host", "smtp-mail.outlook.com");
+	properties.setProperty("mail.user", this.username);
+	properties.setProperty("mail.smtp.port", "587");
 	
+	session = Session.getInstance(properties, null);
+	session.setDebug(true);
+    
+	tr = session.getTransport("smtp");
+	String emptyPassword="";
+    tr.connect("smtp-mail.outlook.com", 587, this.username, emptyPassword);
 	
+    return tr;
 }
 
 }

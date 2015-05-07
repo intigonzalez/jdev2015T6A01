@@ -11,6 +11,7 @@ import com.enseirb.telecom.dngroup.snapmail.mail.SimpleMessageListenerImpl;
 import com.lexicalscope.jewel.cli.ArgumentValidationException;
 import com.lexicalscope.jewel.cli.CliFactory;
 import com.lexicalscope.jewel.cli.InvalidOptionSpecificationException;
+import com.lexicalscope.jewel.cli.Option;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -107,6 +108,9 @@ public class Main {
 		try {
 			FileInputStream in = new FileInputStream(aPPath);
 			ApplicationContext.properties.load(in);
+			if (CliConfSingleton.mediahome_host == null)
+			CliConfSingleton.mediahome_host = ApplicationContext.getProperties()
+					.getProperty("publicAddr");
 			if (CliConfSingleton.centralURL == null)
 				CliConfSingleton.centralURL = ApplicationContext
 						.getProperties().getProperty("centralURL");
