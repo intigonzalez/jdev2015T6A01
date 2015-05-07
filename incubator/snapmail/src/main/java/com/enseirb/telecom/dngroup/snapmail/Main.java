@@ -34,6 +34,7 @@ import java.util.Enumeration;
 // Default CliConfSingleton
 class CliConfSingleton {
 	public static CliConf conf;
+	public static String publicAddr;
 	public static String centralURL;
 	public static String google_clientID;
 	public static String google_clientsecret;
@@ -56,6 +57,8 @@ class CliConfSingleton {
 			clamav_host = "127.0.0.1";
 		if(clamav_port==null)
 			clamav_port = "3310";
+		if(publicAddr==null)
+			publicAddr = "127.0.0.1";
 		if(google_clientID==null)
 			google_clientID = "547107646254-3rhmcq9g7ip63rl9trr6ono0cn1t8ab6.apps.googleusercontent.com";
 		if(google_clientsecret==null)
@@ -82,6 +85,9 @@ public class Main {
 		
 		@Option(shortName="v", longName = "clamav_port", defaultToNull=true)
 		public String getClamAVPort();
+		
+		@Option(longName = "publicAddr", description = "Public IP address", defaultToNull=true)
+		String getPublicAddr();
 		
 		@Option(longName = "centralURL", description = "URL of the central server", defaultToNull=true)
 		String getCentralUrl();
@@ -178,6 +184,9 @@ static void getParametreFromFile() {
 	try {
 		FileInputStream in = new FileInputStream(aPPath);
 		ApplicationContext.properties.load(in);
+		if (CliConfSingleton.publicAddr == null)
+			CliConfSingleton.publicAddr = ApplicationContext.getProperties()
+					.getProperty("PublicAddr");
 		if (CliConfSingleton.centralURL == null)
 			CliConfSingleton.centralURL = ApplicationContext.getProperties()
 					.getProperty("centralURL");

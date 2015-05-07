@@ -21,5 +21,6 @@ RUN echo "TCPSocket 3310" >> /etc/clamav/clamd.conf && \
 
 EXPOSE 3310
 
-# Run ClamAV-daemon
-RUN /etc/init.d/clamav-daemon start
+# Run clamav
+CMD /etc/init.d/clamav-daemon start && sleep infinity
+
