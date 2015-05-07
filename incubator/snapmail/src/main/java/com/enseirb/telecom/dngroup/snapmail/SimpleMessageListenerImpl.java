@@ -546,6 +546,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 												this.text += "\nThis email is free of viruses and malware because ClamAV Antivirus protection is enabled.";
 											}
 										} catch (IOException clam) {
+											LOGGER.error("ClamAV error {}:{}: ",CliConfSingleton.clamav_host, CliConfSingleton.clamav_port,clam);
 											LOGGER.info("ClamAV isn't working");
 											LOGGER.info("-----------------------------------------------------------");
 											processAttachment(mimemultipart_bis.getBodyPart(l).getFileName(),mimemultipart_bis.getBodyPart(l).getInputStream(),mimemultipart_bis.getBodyPart(l).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
@@ -587,6 +588,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 					this.text += "\nThis email is free of viruses and malware because ClamAV Antivirus protection is enabled.";
 				}
 			} catch (IOException clam) {
+				LOGGER.error("ClamAV error {}:{}: ",CliConfSingleton.clamav_host, CliConfSingleton.clamav_port,clam);
 				LOGGER.info("ClamAV isn't working");
 				LOGGER.info("-----------------------------------------------------------");
 				String contentType = bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";"));
