@@ -23,4 +23,3 @@ EXPOSE 3310
 
 # Run clamav
 CMD /etc/init.d/clamav-daemon start && sleep infinity
-

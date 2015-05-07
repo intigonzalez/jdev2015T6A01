@@ -24,6 +24,8 @@ snapmail:
   build: ../../snapmail
   ports:
    - "25004:25004"
+  volumes:
+   - /etc/mediahome:/etc/mediahome
   links:
    - box
    - clamav
