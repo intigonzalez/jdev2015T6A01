@@ -1,6 +1,5 @@
 box:
   build: ../../box
-  command: java -jar dvd2c-box.jar --ip 0.0.0.0 -p 9998 --db-hostname db -b BOX_DOCKER  -c http://central.homeb.tv:8080/ -a http://box:9998 --rabbit-host worker
   ports:
    - "9998:9998"
   volumes:
@@ -23,7 +22,6 @@ worker:
    - /tmp:/tmp
 snapmail:
   build: ../../snapmail
-  command: java -jar snapmail.jar -h box -c clamav
   ports:
    - "25004:25004"
   links:
@@ -31,6 +29,6 @@ snapmail:
    - clamav
 clamav:
   build: ../../clamav
-  command: /etc/init.d/clamav-daemon start
+  command: sleep infinity
   ports:
    - "3310:3310"

@@ -22,4 +22,4 @@ RUN echo "TCPSocket 3310" >> /etc/clamav/clamd.conf && \
 EXPOSE 3310
 
 # Run ClamAV-daemon
-CMD /etc/init.d/clamav-daemon start
+RUN /etc/init.d/clamav-daemon start
