@@ -31,6 +31,8 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.security.Provider;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -45,6 +47,7 @@ import javax.mail.Part;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.URLName;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -58,6 +61,7 @@ import org.subethamail.smtp.TooMuchDataException;
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.philvarner.clamavj.ClamScan;
 import com.philvarner.clamavj.ScanResult;
+import com.sun.mail.smtp.SMTPTransport;
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -203,7 +207,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		Properties properties = System.getProperties();
 
 		properties = setSMTPProperties(properties);
-		Session session;
+		Session session = null;
 		Transport tr = null;
 		String token = properties.getProperty("mail.token");
 		if (token.equals("")) {
@@ -222,23 +226,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		} else if(username.contains("@gmail.com")){
 			session = Session.getInstance(properties);
 		} else{
-			String outlookToken= getOutlookToken(token);
-			LOGGER.info("outlookToken : " + outlookToken);
-			String secure = "user={" + this.username + "}\1auth=Bearer {" + outlookToken + "}\1\1";
-			String encodedvalue= java.util.Base64.getEncoder().encodeToString(secure.getBytes());
-			properties.setProperty("mail.smtp.auth", "true");
-			properties.setProperty("mail.smtp.starttls.enable", "true");
-		    properties.setProperty("mail.smtp.starttls.required", "true");
-		    properties.setProperty("mail.smtp.sasl.mechanisms", "XOAUTH2");
-		    properties.setProperty("mail.smtp.xoauth2", encodedvalue);
-			properties.setProperty("mail.smtp.host", "smtp-mail.outlook.com");
-			
-			properties.setProperty("mail.user", this.username); 
-			properties.setProperty("mail.smtp.port", "587");
-			
-			session = Session.getInstance(properties);
-			tr = session.getTransport("smtp");
-		    tr.connect("smtp-mail.outlook.com", encodedvalue);	
+			tr= outlookConnect(session,properties, tr, token);
 		}
 
 		try {
@@ -1008,12 +996,39 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		
 		return outlookToken;
 	}
-private void sendOutlookMail(String token, MimeMessage message){
-	String secure = "user={" + this.username + "}\1auth=Bearer{" + token + "}\1\1" ;
-	String encodedvalue= java.util.Base64.getEncoder().encodeToString(secure.getBytes());
-	Client client = ClientBuilder.newClient();
 	
-	
-}
 
+		 
+private Transport outlookConnect(Session session,Properties properties, Transport tr, String token) throws MessagingException{
+	String outlookToken= getOutlookToken(token);	
+	 final class OAuth2Provider extends Provider {
+		    private static final long serialVersionUID = 1L;
+
+		    public OAuth2Provider() {
+		      super("Google OAuth2 Provider", 1.0,
+		            "Provides the XOAUTH2 SASL Mechanism");
+		      put("SaslClientFactory.XOAUTH2",
+		          "com.enseirb.telecom.dngroup.snapmail.OAuth2SaslClientFactory");
+		    }
+		  }
+	Security.addProvider(new OAuth2Provider());
+	properties.setProperty("mail.smtp.auth", "true");
+	properties.setProperty("mail.smtp.starttls.enable", "true");
+    properties.setProperty("mail.smtp.starttls.required", "true");
+    properties.setProperty("mail.smtp.sasl.enable", "true");
+    properties.setProperty("mail.smtp.sasl.mechanisms", "XOAUTH2");
+    properties.setProperty(OAuth2SaslClientFactory.OAUTH_TOKEN_PROP, outlookToken);
+	properties.setProperty("mail.smtp.host", "smtp-mail.outlook.com");
+	properties.setProperty("mail.user", this.username);
+	properties.setProperty("mail.smtp.port", "587");
+	
+	session = Session.getInstance(properties, null);
+	session.setDebug(true);
+    
+	tr = session.getTransport("smtp");
+	String emptyPassword="";
+    tr.connect("smtp-mail.outlook.com", 587, this.username, emptyPassword);
+	
+    return tr;
+}
 }
