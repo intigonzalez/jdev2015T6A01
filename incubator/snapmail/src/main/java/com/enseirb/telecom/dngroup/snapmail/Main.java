@@ -114,9 +114,6 @@ public class Main {
 
 		//CliConfSingleton.conf = CliFactory.parseArguments(CliConf.class, args);
 		getParametreFromArgs(args);
-		final Logger LOGGER = LoggerFactory
-				.getLogger(SimpleMessageListener.class);
-		LOGGER.info("Public IP address : " + CliConfSingleton.publicAddr);
 		
 		// TLS
 		// Creating our own SSLContext

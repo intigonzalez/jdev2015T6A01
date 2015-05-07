@@ -388,7 +388,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 									//Scan viruses,trojans & malware for INLINE Pictures in MimemMultipart
 									LOGGER.info("-----------------------------------------------------------");
 									LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart.getBodyPart(k).getFileName());
-									ClamScan clamScan = new ClamScan(CliConfSingleton.publicAddr, Integer.parseInt(CliConfSingleton.clamav_port), 0);
+									ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 10);
 									ScanResult result = clamScan.scan(mimemultipart.getBodyPart(k).getInputStream());
 									LOGGER.info("ClamAv Scan Done !");
 									if ( (result.getStatus().toString()).equals("FAILED")){
@@ -434,7 +434,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 									//Scan viruses,trojans & malware for INLINE PICTURES
 									LOGGER.info("-----------------------------------------------------------");
 									LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart.getBodyPart(k).getFileName());
-									ClamScan clamScan = new ClamScan(CliConfSingleton.publicAddr, Integer.parseInt(CliConfSingleton.clamav_port), 0);
+									ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 10);
 									ScanResult result = clamScan.scan(mimemultipart.getBodyPart(k).getInputStream());
 									LOGGER.info("ClamAv Scan Done !");
 									if ( (result.getStatus().toString()).equals("FAILED")){
@@ -485,7 +485,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 											//Scan viruses,trojans & malware for INLINE PICTURES
 											LOGGER.info("-----------------------------------------------------------");
 											LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart_bis.getBodyPart(l).getFileName());
-											ClamScan clamScan = new ClamScan(CliConfSingleton.publicAddr, Integer.parseInt(CliConfSingleton.clamav_port), 0);
+											ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 10);
 											ScanResult result = clamScan.scan(mimemultipart_bis.getBodyPart(l).getInputStream());
 											LOGGER.info("ClamAv Scan Done !");
 											if ( (result.getStatus().toString()).equals("FAILED")){
@@ -530,7 +530,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 											//Scan viruses,trojans & malware for ATTACHMENTS IN MIMEMULTIPART
 											LOGGER.info("-----------------------------------------------------------");
 											LOGGER.info("Starting ClamAv Scan for file: "+mimemultipart_bis.getBodyPart(l).getFileName());
-											ClamScan clamScan = new ClamScan(CliConfSingleton.publicAddr, Integer.parseInt(CliConfSingleton.clamav_port), 0);
+											ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 10);
 											ScanResult result = clamScan.scan(mimemultipart_bis.getBodyPart(l).getInputStream());	
 											LOGGER.info("ClamAv Scan Done !");
 											if ( (result.getStatus().toString()).equals("FAILED")){
@@ -565,7 +565,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 				//Scan viruses,trojans & malware for ATTACHMENTS
 				LOGGER.info("-----------------------------------------------------------");
 				LOGGER.info("Starting ClamAv Scan for file: "+bodyPart.getFileName());
-				ClamScan clamScan = new ClamScan(CliConfSingleton.publicAddr, Integer.parseInt(CliConfSingleton.clamav_port), 0);
+				ClamScan clamScan = new ClamScan(CliConfSingleton.clamav_host, Integer.parseInt(CliConfSingleton.clamav_port), 10);
 				// other solution : Cast inputstream to a FileInputstream
 				// other solution : Input Stream into Byte Array
 				ScanResult result = clamScan.scan(bodyPart.getInputStream());
