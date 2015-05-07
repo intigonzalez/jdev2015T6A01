@@ -712,7 +712,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			Client client = ClientBuilder.newClient(cc);
 			client.register(feature).register(MultiPartFeature.class);
 
-			WebTarget target = client.target("http://"+CliConfSingleton.mediahome_host+":"+CliConfSingleton.mediahome_port+"/api/app/"
+			WebTarget target = client.target(CliConfSingleton.mediahome_host+"/api/app/"
 					+ this.username + "/content");
 
 			LOGGER.info("Filename : " + filename);
@@ -723,8 +723,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 					.post(Entity.entity(is, Type), Response.class);
 
 			if (response.getLocation() != null)
-				return "http://"
-						+ localAddress()
+				return  CliConfSingleton.mediahome_host
 						+ "/snapmail/"
 						+ "snapmail.html#/"
 						+ this.username
@@ -780,7 +779,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			client.register(feature);
 
 			WebTarget target = client
-					.target("http://"+ CliConfSingleton.mediahome_host + ":" + CliConfSingleton.mediahome_port +"/api/app/snapmail/" + this.username + "/smtp");
+					.target(CliConfSingleton.mediahome_host+"/api/app/snapmail/" + this.username + "/smtp");
 			SmtpProperty smtpProperty = target.request(
 					MediaType.APPLICATION_XML_TYPE).get(SmtpProperty.class);
 			String token;
