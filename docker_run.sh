@@ -1,6 +1,6 @@
 #!/bin/bash
 
-root_dir=~/media-home/
+root_dir=~/docker/media-home/
 sm_docker_dir=$root_dir"docker/composer/composerSnapmail/"
 
 cd $sm_docker_dir

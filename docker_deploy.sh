@@ -47,7 +47,7 @@ sudo service docker restart
 #newgrp docker
 
 # Downloading and installation of media-home
-d=~/media-home/
+d=~/docker/Media-home/
 sm_docker_d=$d"docker/composer/composerSnapmail"
 branch="dev-docker"
 
