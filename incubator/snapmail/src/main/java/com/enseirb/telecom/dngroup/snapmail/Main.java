@@ -1,5 +1,7 @@
 package com.enseirb.telecom.dngroup.snapmail;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.subethamail.smtp.server.SMTPServer;
 import org.subethamail.smtp.auth.*;
 import org.subethamail.smtp.helper.*;
@@ -112,7 +114,10 @@ public class Main {
 
 		//CliConfSingleton.conf = CliFactory.parseArguments(CliConf.class, args);
 		getParametreFromArgs(args);
-
+		final Logger LOGGER = LoggerFactory
+				.getLogger(SimpleMessageListener.class);
+		LOGGER.info("Public IP address : " + CliConfSingleton.publicAddr);
+		
 		// TLS
 		// Creating our own SSLContext
 		// Create and initialize the SSLContext with key material
