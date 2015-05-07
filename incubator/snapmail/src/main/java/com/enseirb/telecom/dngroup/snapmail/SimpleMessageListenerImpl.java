@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -765,16 +766,23 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 */
 	@SuppressWarnings("finally")
 	private String localAddress() {
-		String add = "";
+		String addr = "";
 		try {
-			InetAddress addr = InetAddress.getLocalHost();
-
-			add = addr.getHostName();
-		} catch (UnknownHostException e) {
-			System.exit(1);
-		} finally {
-			return add;
+			NetworkInterface n = NetworkInterface.getByName("eth0");
+			
+		    Enumeration e = n.getInetAddresses();
+		    while (e.hasMoreElements())
+		    {
+		        InetAddress i = (InetAddress) e.nextElement();
+		        if(i instanceof Inet4Address)
+		        	addr = i.getHostAddress().toString();
+		    }
+		} catch (SocketException e) {
+			e.printStackTrace();
 		}
+	    finally {
+	    	return addr;
+	    }
 	}
  
 	/**
