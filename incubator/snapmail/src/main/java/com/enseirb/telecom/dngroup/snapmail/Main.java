@@ -11,17 +11,12 @@ import com.enseirb.telecom.dngroup.snapmail.mail.SimpleMessageListenerImpl;
 import com.lexicalscope.jewel.cli.ArgumentValidationException;
 import com.lexicalscope.jewel.cli.CliFactory;
 import com.lexicalscope.jewel.cli.InvalidOptionSpecificationException;
-import com.lexicalscope.jewel.cli.Option;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
-import javax.ws.rs.core.Application;
-
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -29,15 +24,22 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
+
+
 public class Main {
 	public static void main(String[] args) throws KeyStoreException,
 			NoSuchAlgorithmException, CertificateException, IOException,
-			UnrecoverableKeyException, KeyManagementException {
+			UnrecoverableKeyException, KeyManagementException, InterruptedException {
 
 		// CliConfSingleton.conf = CliFactory.parseArguments(CliConf.class,
 		// args);
 		getParametreFromArgs(args);
 
+		//Start the grizzly server in a thread
+		ThreadGrizzly webServer = new ThreadGrizzly();
+		webServer.start();
+		
+		
 		// TLS
 		// Creating our own SSLContext
 		// Create and initialize the SSLContext with key material
