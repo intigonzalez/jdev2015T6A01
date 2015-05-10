@@ -1,4 +1,4 @@
-package com.enseirb.telecom.dngroup.dvd2c.endpoints;
+package com.enseirb.telecom.dngroup.snapmail;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,6 +28,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enseirb.telecom.dngroup.dvd2c.endpoints.UserEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;

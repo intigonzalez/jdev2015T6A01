@@ -6,6 +6,8 @@ import java.util.List;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
+import com.enseirb.telecom.dngroup.dvd2c.model.Property;
+import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public interface AccountService {
@@ -128,5 +130,6 @@ public interface AccountService {
 	 */
 	public abstract boolean getUserVerification(String userID, String password) throws NoSuchUserException;
 
-
+	public abstract List<Property> getPropertiesForUser(final String userId,final String propertyGroupName);
+	public abstract void setPropertiesForUser(final String userId,final String propertyGroupName, PropertyGroups propertyGroups);
 }

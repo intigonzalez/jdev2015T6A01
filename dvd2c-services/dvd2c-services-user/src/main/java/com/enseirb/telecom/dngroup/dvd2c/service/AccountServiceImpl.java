@@ -2,10 +2,14 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import jersey.repackaged.com.google.common.base.Predicate;
+import jersey.repackaged.com.google.common.collect.Collections2;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +24,8 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
+import com.enseirb.telecom.dngroup.dvd2c.model.Property;
+import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 @Service
@@ -270,5 +276,48 @@ public class AccountServiceImpl implements AccountService {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public List<Property> getPropertiesForUser(String userId, final String propertyGroupName) {
+	
+		for (PropertyGroups pg : Collections2.filter(
+				this.userRepository.findOne(userId).getPropertyGroups(),
+				new Predicate<PropertyGroups>() {
+	
+					@Override
+					public boolean apply(PropertyGroups input) {
+						return propertyGroupName.equals(input.getName());
+					}
+				})) {
+			return pg.getProps();
+		}
+		return Collections.emptyList();	
+	}
+	
+	@Override
+	public void setPropertiesForUser(final String userId,final String propertyGroupName, PropertyGroups propertyGroups) {
+		UserRepositoryObject user = this.userRepository.findOne(userId);
+		PropertyGroups pg = null;
+		for(PropertyGroups pr : user.getPropertyGroups()){
+			if (pr.getName().equals(propertyGroupName)){
+				pg = pr;
+			}
+		}
+		if(pg == null) {
+			pg = new PropertyGroups();
+			pg.setName(propertyGroupName);
+			user.getPropertyGroups().add(pg);
+		}
+		else
+			pg.getProps().clear();
+		
+		for(Property property : propertyGroups.getProps()) {
+			Property p = new Property();
+			p.setKey(property.getKey());
+			p.setValue(property.getValue());
+			pg.getProps().add(p);
+		}
+		this.saveUserOnServer(user.toUser());
 	}
 }

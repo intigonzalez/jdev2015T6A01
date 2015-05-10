@@ -1,9 +1,12 @@
 package com.enseirb.telecom.dngroup.dvd2c.db;
 
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 @Document(collection="UserRepositoryObject")
@@ -23,17 +26,8 @@ public class UserRepositoryObject {
 	protected String pubKey;
 
 	protected String privateKey;
-	/* SnapMail add-on */
 	
-	protected String smtpHost;
-
-	protected String smtpPort;
-
-	protected String smtpUsername;
-	
-	protected String smtpPassword;
-	
-	protected String smtpToken;
+	protected List<PropertyGroups> propertyGroups;
 
 	
 	protected BoxRepositoryObject box;
@@ -52,8 +46,7 @@ public class UserRepositoryObject {
 
 	public UserRepositoryObject(String userID, String boxID, String firstname,
 			String surname, String password, String pubKey, String privateKey,
-			String smtpHost, String smtpPort, String smtpUsername,
-			String smtpPassword, String smtpToken) {
+			List<PropertyGroups> propertyGroups) {
 		super();
 		this.boxID = boxID;
 		this.userID = userID;
@@ -62,12 +55,7 @@ public class UserRepositoryObject {
 		this.password = password;
 		this.pubKey = pubKey;
 		this.privateKey = privateKey;
-		/* SnapMail add-on */
-		this.smtpHost = smtpHost;
-		this.smtpPort = smtpPort;
-		this.smtpUsername = smtpUsername;
-		this.smtpPassword = smtpPassword;
-		this.smtpToken = smtpToken;
+		this.propertyGroups = propertyGroups;
 	}
 
 	public UserRepositoryObject(User user) {
@@ -78,12 +66,7 @@ public class UserRepositoryObject {
 		this.password = user.getPassword();
 		this.pubKey = user.getPubKey();
 		this.privateKey = user.getPrivateKey();
-		/* SnapMail add-on */
-		this.smtpHost = user.getSmtpHost();
-		this.smtpPort = user.getSmtpPort();
-		this.smtpUsername = user.getSmtpUsername();
-		this.smtpPassword = user.getSmtpPassword();
-		this.smtpToken = user.getSmtpToken();
+		this.propertyGroups = user.getPropertyGroups();
 	}
 
 	public String getFirstname() {
@@ -139,12 +122,7 @@ public class UserRepositoryObject {
 		user.setPrivateKey(privateKey);
 		user.setPubKey(pubKey);
 		user.setBoxID(boxID);
-		/* SnapMail add-on */
-		user.setSmtpHost(smtpHost);
-		user.setSmtpPort(smtpPort);
-		user.setSmtpUsername(smtpUsername);
-		user.setSmtpPassword(smtpPassword);
-		user.setSmtpToken(smtpToken);
+		user.getPropertyGroups().addAll(propertyGroups);
 		return user;
 	}
 
@@ -160,44 +138,11 @@ public class UserRepositoryObject {
 		this.boxID = boxID;
 	}
 
-	/* SnapMail add-on */
-	public String getSmtpHost() {
-		return smtpHost;
+	public List<PropertyGroups> getPropertyGroups() {
+		return propertyGroups;
 	}
 
-	public void setSmtpHost(String smtpHost) {
-		this.smtpHost = smtpHost;
-	}
-
-	public String getSmtpPort() {
-		return smtpPort;
-	}
-
-	public void setSmtpPort(String smtpPort) {
-		this.smtpPort = smtpPort;
-	}
-
-	public String getSmtpUsername() {
-		return smtpUsername;
-	}
-
-	public void setSmtpUsername(String smtpUsername) {
-		this.smtpUsername = smtpUsername;
-	}
-
-	public String getSmtpPassword() {
-		return smtpPassword;
-	}
-
-	public void setSmtpPassword(String smtpPassword) {
-		this.smtpPassword = smtpPassword;
-	}
-
-	public String getSmtpToken() {
-		return smtpToken;
-	}
-
-	public void setSmtpToken(String smtpToken) {
-		this.smtpToken = smtpToken;
+	public void setPropertyGroups(List<PropertyGroups> propertyGroups) {
+		this.propertyGroups = propertyGroups;
 	}
 }

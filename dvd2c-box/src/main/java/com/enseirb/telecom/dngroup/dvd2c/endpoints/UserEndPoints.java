@@ -17,24 +17,20 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
-import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
+import com.enseirb.telecom.dngroup.dvd2c.model.Property;
+import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
-import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
 
 // The Java class will be hosted at the URI path "/app/account"
 
@@ -117,6 +113,35 @@ public class UserEndPoints extends HttpServlet {
 		} catch (NoSuchUserException e) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
+	}
+	
+	/**
+	 * Get the propertyGroups of a user by userID
+	 * 
+	 * @param userID
+	 *            the user to get
+	 * @return a user
+	 */
+	@GET
+	@Path("{userID}/properties/{propertyGroupName}")
+	@RolesAllowed({ "account", "authenticated" })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public List<Property> getUserProperties(@PathParam("userID") String userID, @PathParam("propertyGroupName") String propertyGroupName) {
+		// Not working for unknown reason
+		return uManager.getPropertiesForUser(userID, propertyGroupName);
+	}
+	
+	/**
+	 * 
+	 *
+	 */
+	@PUT
+	@Path("{userID}/properties/{propertyGroupName}")
+	@RolesAllowed({ "account", "authenticated" })
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response postUserProps(PropertyGroups propertyGroups, @PathParam("userID") String userID, @PathParam("propertyGroupName") String propertyGroupName) {
+		uManager.setPropertiesForUser(userID, propertyGroupName, propertyGroups);
+		return Response.status(200).build();
 	}
 
 	/**
