@@ -1,8 +1,11 @@
 package com.enseirb.telecom.dngroup.snapmail.mail;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 /**
  * 
- * @author nherbaut
  *
  */
 public interface MediaHomeFacade {
@@ -10,11 +13,10 @@ public interface MediaHomeFacade {
 	/**
 	 * take a bodypart from the mail and create a MH link from it 
 	 */
-	void bodyPart2Link();
+	public abstract String bodyPart2Link(InputStream inputStream, String filename, String type,  String username, String password, List<String> recipients) throws IOException;
 	
 	/**
-	 * for a specific user, retreive his smtp parameters
+	 * for a specific user, retrieve his smtp parameters
 	 */
-	void getSmtpParam();
-
+	public abstract MailerProperties getSmtpParam(String username, String password);
 }

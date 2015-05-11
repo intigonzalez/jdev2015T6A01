@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:include schemaLocation="property.xsd"></xs:include>
+	<xs:complexType name="propertyGroups">
+		<xs:sequence>
+			<xs:element name="props" type="property" maxOccurs="unbounded" minOccurs="0"></xs:element>
+			<xs:element name="name" type="xs:string"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

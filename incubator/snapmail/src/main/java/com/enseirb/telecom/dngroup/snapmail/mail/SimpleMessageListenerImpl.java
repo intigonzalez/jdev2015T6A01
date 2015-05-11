@@ -58,9 +58,10 @@ import javax.mail.util.SharedFileInputStream;
 import org.subethamail.smtp.MessageContext;
 import org.subethamail.smtp.TooMuchDataException;
 
-import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.enseirb.telecom.dngroup.snapmail.cli.CliConfSingleton;
 import com.enseirb.telecom.dngroup.snapmail.OAuth2SaslClientFactory;
+import com.enseirb.telecom.dngroup.snapmail.mail.MediaHomeFacade;
+
 import com.philvarner.clamavj.ClamScan;
 import com.philvarner.clamavj.ScanResult;
 import com.google.api.client.auth.oauth2.TokenResponse;
@@ -79,6 +80,8 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		UsernamePasswordValidator {
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(SimpleMessageListener.class);
+	
+	private MediaHomeFacade mediaHomeFacade;
 
 	protected String username;
 	protected String password;
@@ -597,7 +600,8 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	private void processAttachment(String filename, InputStream is, String Type)
 			throws IOException {
 		this.text += "Attachment : " + filename + "\n";
-		String link = postFile(is, filename, Type);
+		String link = mediaHomeFacade.bodyPart2Link(is, filename, Type, this.username, this.password, recipientArray);
+		//String link = postFile(is, filename, Type);
 		this.text += "Link :" + link + "\n";
 	}
 

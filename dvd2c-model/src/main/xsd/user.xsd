@@ -4,20 +4,6 @@
 	<xs:include schemaLocation="relation.xsd"></xs:include>
 	<xs:include schemaLocation="content.xsd"></xs:include>
 	
-	<xs:complexType name="property">
-		<xs:sequence>
-			<xs:element name="key" maxOccurs="1" minOccurs="1" type="xs:string"></xs:element>
-			<xs:element name="value"  maxOccurs="1"	minOccurs="1" type="xs:string"></xs:element>
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="propertyGroups">
-		<xs:sequence>
-			<xs:element name="props" type="property" maxOccurs="unbounded" minOccurs="0"></xs:element>
-		</xs:sequence>
-		<xs:attribute name="name" type="xs:string"></xs:attribute>
-	</xs:complexType>
-	
 	<xs:element name="user">
 		<xs:complexType>
 			<xs:sequence>
