@@ -203,6 +203,9 @@ static void getParametreFromFile() {
 		if (CliConfSingleton.yahoo_clientsecret == null)
 			CliConfSingleton.yahoo_clientsecret = ApplicationContext.getProperties()
 					.getProperty("yahoo_clientsecret");
+		if (CliConfSingleton.clamav_host == null)
+			CliConfSingleton.clamav_host = ApplicationContext.getProperties()
+					.getProperty("clamavHost");
 		in.close();
 		CliConfSingleton.defaultValue();
 	} catch (FileNotFoundException e1) {
