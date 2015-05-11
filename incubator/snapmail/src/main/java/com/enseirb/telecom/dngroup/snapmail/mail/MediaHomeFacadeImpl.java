@@ -20,18 +20,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.snapmail.cli.CliConfSingleton;
+import com.enseirb.telecom.dngroup.snapmail.exception.NoSuchProperty;
 import com.enseirb.telecom.dngroup.snapmail.mail.impl.GoogleMailProperties;
-import com.enseirb.telecom.dngroup.snapmail.mail.impl.MicrosorfMailProperties;
+import com.enseirb.telecom.dngroup.snapmail.mail.impl.MicrosoftMailProperties;
 import com.enseirb.telecom.dngroup.snapmail.mail.impl.SMTPProperties;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.model.Property;
+import com.google.common.base.Strings;
 
 public class MediaHomeFacadeImpl implements MediaHomeFacade {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(MediaHomeFacadeImpl.class);
+	protected User user;
+	protected MediaHomeFacadeImpl(){
 
+	}
+public MediaHomeFacadeImpl(String username,String password){
+	this.user=getUser(username, password);
+}
 	@Override
 	public String bodyPart2Link(InputStream inputStream, String filename, String type, String username, String password, List<String> recipients) throws IOException {
 		//nh: to extract in a dedicated service class
@@ -112,14 +120,9 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 	}
 
 	@Override
-	public MailerProperties getSmtpParam(String username, String password) {
+	public MailerProperties getSmtpParam() throws NoSuchProperty{
 		try {
-			HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(username, password);
-			Client client = ClientBuilder.newClient();
-			client.register(feature);
-	
-			WebTarget target = client.target(CliConfSingleton.mediahome_host + "/api/app/account/" + username);
-			User user = target.request(MediaType.APPLICATION_XML_TYPE).get(User.class);
+		
 			
 			for(PropertyGroups pg : user.getPropertyGroups()) {
 				if(pg.getName().equals("snapmail")) {
@@ -133,7 +136,7 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 							
 						case "microsoft":
 							if(p.getValue() != null && p.getValue() != "")
-								return new MicrosorfMailProperties(p.getValue());
+								return new MicrosoftMailProperties(p.getValue());
 							break;
 							
 						case "host":
@@ -151,12 +154,16 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 						case "password":
 							smtpProperties.setPassword(p.getValue());
 							break;
+						
 						}
+					}
+					if(Strings.isNullOrEmpty(smtpProperties.getUsername()) || Strings.isNullOrEmpty(smtpProperties.getPassword())){
+						throw new NoSuchProperty();
 					}
 					return smtpProperties;
 				}
 			}
-			LOGGER.error("Error: there is no snapmail propertyGroups for the user "+username);
+			LOGGER.error("Error: there is no snapmail propertyGroups for the user "+this.user.getUserID());
 			
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 403) {
@@ -167,5 +174,15 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 		}
 		// TODO: need to be changed
 		return null;
+	}
+
+	protected User getUser(String username, String password) {
+		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(username, password);
+		Client client = ClientBuilder.newClient();
+		client.register(feature);
+
+		WebTarget target = client.target(CliConfSingleton.mediahome_host + "/api/app/account/" + username);
+		User user = target.request(MediaType.APPLICATION_XML_TYPE).get(User.class);
+		return user;
 	}
 }

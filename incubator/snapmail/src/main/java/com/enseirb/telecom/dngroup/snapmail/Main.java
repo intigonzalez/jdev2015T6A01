@@ -36,7 +36,7 @@ public class Main {
 		getParametreFromArgs(args);
 
 		//Start the grizzly server in a thread
-		ThreadGrizzly webServer = new ThreadGrizzly();
+		ThreadRestServer webServer = new ThreadRestServer();
 		webServer.start();
 		
 		

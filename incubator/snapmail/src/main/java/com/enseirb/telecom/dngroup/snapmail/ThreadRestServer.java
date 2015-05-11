@@ -19,8 +19,8 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 
 import com.lexicalscope.jewel.cli.HelpRequestedException;
 
-public class ThreadGrizzly extends Thread{
-	private static final Logger LOGGER = LoggerFactory.getLogger(ThreadGrizzly.class);
+public class ThreadRestServer extends Thread{
+	private static final Logger LOGGER = LoggerFactory.getLogger(ThreadRestServer.class);
 	private static final String BASE_PATH = "api";
 
 	private static URI getBaseApiURI() {
@@ -29,7 +29,7 @@ public class ThreadGrizzly extends Thread{
 				"http://" + "localhost" + ":"
 						+ "9997").build();
 	}
-	public ThreadGrizzly(){
+	public ThreadRestServer(){
 		
 	}
 	@Override
