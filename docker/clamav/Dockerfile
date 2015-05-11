@@ -15,11 +15,15 @@ RUN apt-get install clamav clamav-daemon -y
 RUN freshclam -v
 
 # Change the ClamAV configuration file
-RUN echo "TCPSocket 3310" >> /etc/clamav/clamd.conf && \
-    echo "TCPAddr 127.0.0.1" >> /etc/clamav/clamd.conf && \
-    sed -i '4,5d' /etc/clamav/clamd.conf 
+RUN echo "TCPSocket 3310" > /etc/clamav/clamd.conf
+RUN echo "User clamav" >> /etc/clamav/clamd.conf
+RUN echo "LogTime yes" >> /etc/clamav/clamd.conf
+RUN echo "LogSyslog yes" >> /etc/clamav/clamd.conf
+RUN echo "PidFile /var/run/clamd.pid" >> /etc/clamav/clamd.conf
+RUN echo "TemporaryDirectory /tmp" >> /etc/clamav/clamd.conf
+RUN echo "FixStaleSocket yes" >> /etc/clamav/clamd.conf
 
 EXPOSE 3310
 
 # Run clamav
-ENTRYPOINT service clamav-daemon start && sleep infinity
+ENTRYPOINT service clamav-daemon restart && sleep infinity

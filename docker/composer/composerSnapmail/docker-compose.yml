@@ -31,5 +31,3 @@ snapmail:
    - clamav
 clamav:
   build: ../../clamav
-  expose:
-   - "3310"

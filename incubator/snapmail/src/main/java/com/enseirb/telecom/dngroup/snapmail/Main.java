@@ -171,7 +171,6 @@ public class Main {
 		try {
 			CliConf cliconf = CliFactory.parseArguments(
 					CliConf.class, args);
-			CliConfSingleton.clamav_host = cliconf.getMediaHomeHost();
 		} catch (ArgumentValidationException e1) {
 			
 
