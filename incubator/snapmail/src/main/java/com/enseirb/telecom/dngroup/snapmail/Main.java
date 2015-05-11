@@ -173,6 +173,9 @@ static void getParametreFromFile() {
 	try {
 		FileInputStream in = new FileInputStream(aPPath);
 		ApplicationContext.properties.load(in);
+		if (CliConfSingleton.mediahome_host == null)
+			CliConfSingleton.mediahome_host = ApplicationContext.getProperties()
+					.getProperty("publicAddr");
 		if (CliConfSingleton.centralURL == null)
 			CliConfSingleton.centralURL = ApplicationContext.getProperties()
 					.getProperty("centralURL");

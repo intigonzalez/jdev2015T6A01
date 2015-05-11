@@ -31,6 +31,8 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.security.Provider;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -40,10 +42,12 @@ import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.NoSuchProviderException;
 import javax.mail.Part;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.URLName;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -57,6 +61,7 @@ import org.subethamail.smtp.TooMuchDataException;
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.philvarner.clamavj.ClamScan;
 import com.philvarner.clamavj.ScanResult;
+import com.sun.mail.smtp.SMTPTransport;
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -131,7 +136,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			Session session = Session.getInstance(props, null);
 
 			// Creation of a new MIME Message
-			MimeMessage newMessage;
+			MimeMessage newMessage = null;
 			Multipart multiPart = new MimeMultipart();
 			
 			try {
@@ -157,17 +162,24 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 				if (isMultipart) {
 					LOGGER.info("This mail is multipart");
 					parseMessage(newMessage,multiPart);
-					this.text += "\nThis email is free of viruses and malware because ClamAV Antivirus protection is enabled.";
+					
 				}
 			} catch (MessagingException e1) {
-				// TODO Auto-generated catch block
+				
 				e1.printStackTrace();
+				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
+				
 			}
 		
-		sendMail("smtp.gmail.com", recipient, multiPart);
+		try {
+			sendMail("smtp.gmail.com", recipient, multiPart);
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		recipientArray.clear();
 
 		// If infected send an email to the sender
@@ -187,14 +199,16 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 * @param recipient
 	 * @param multiPart
 	 * @throws IOException
+	 * @throws MessagingException 
 	 */
 	private void sendMail(String host, String recipient, Multipart multiPart)
-			throws IOException {
+			throws IOException, MessagingException {
 		// Get system properties
 		Properties properties = System.getProperties();
 
 		properties = setSMTPProperties(properties);
-		Session session;
+		Session session = null;
+		Transport tr = null;
 		String token = properties.getProperty("mail.token");
 		if (token.equals("")) {
 			final String pwd = properties.getProperty("mail.password");
@@ -209,8 +223,11 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 							return new PasswordAuthentication(usr, pwd);
 						}
 					});
-		} else
+		} else if(username.contains("@gmail.com")){
 			session = Session.getInstance(properties);
+		} else{
+			tr= outlookConnect(session,properties, tr, token);
+		}
 
 		try {
 			// Creation of the message that will be send in place of the
@@ -242,9 +259,9 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 				message2 = service.users().messages().send("me", message2)
 						.execute();
 			}
-			else if(username.contains("@yahoo.")){
-				String yahooToken= getYahooToken(token);
-				LOGGER.info("yahooToken : " + yahooToken);
+			else{
+				
+				tr.sendMessage(message, message.getAllRecipients());
 				
 			}
 			LOGGER.info("Mail sent successfully !");
@@ -254,10 +271,14 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 	}
 	
-
-
-
-	// Send a mail to the user when a file is infected
+	/**
+	 * Send a mail to the user when a file is infected
+	 * 
+	 * @param host
+	 * @param from
+	 * @param Clamav_report
+	 * @throws IOException
+	 */
 	private void sendClamavReport(String host, String from, String Clamav_report) throws IOException
 	{
 		// Get system properties
@@ -303,9 +324,16 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		}
 	}
 	
-	// Parse the message between the text and the attachment part
+	/**
+	 * Parse the message between the text and the attachment part, and scan it with clamAV
+	 * 
+	 * @param message
+	 * @param multiPart
+	 * @throws MessagingException
+	 * @throws IOException
+	 */
 	private void parseMessage(Message message, Multipart multiPart) throws MessagingException, IOException {
-		boolean attachment = false;
+		this.text += "\n------------------------------------\n";
 		// Since the message is multipart, it can be casted as such
 		Multipart multipart = (Multipart) message.getContent();
 
@@ -369,8 +397,9 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 									    imagePart.setDisposition(MimeBodyPart.INLINE);
 									    imagePart.setHeader("Content-ID", mimemultipart.getBodyPart(k).getHeader("Content-ID")[0]);
 									    multiPart.addBodyPart(imagePart);
+									    this.text += "\nThis email is free of viruses and malware because ClamAV Antivirus protection is enabled.";
 									}
-								} catch (NumberFormatException e) {
+								} catch (IOException clam) {
 									LOGGER.info("-----------------------------------------------------------");
 									//add picture inline hmtl part
 									DataSource ds = new ByteArrayDataSource(mimemultipart.getBodyPart(k).getInputStream(), mimemultipart.getBodyPart(k).getContentType());
@@ -382,6 +411,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 								    imagePart.setDisposition(MimeBodyPart.INLINE);
 								    imagePart.setHeader("Content-ID", mimemultipart.getBodyPart(k).getHeader("Content-ID")[0]);
 								    multiPart.addBodyPart(imagePart);
+								    this.text += "\nClamAV is disabled. Your attachments haven't been checked by an antivirus.";
 								}
 							}
 							else if (Part.ATTACHMENT != null){
@@ -404,12 +434,12 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 										LOGGER.info("No virus found in the file !");
 										LOGGER.info("-----------------------------------------------------------");
 										processAttachment(mimemultipart.getBodyPart(k).getFileName(),mimemultipart.getBodyPart(k).getInputStream(),mimemultipart.getBodyPart(k).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
-										attachment = true;
+										this.text += "\nThis email is free of viruses and malware because ClamAV Antivirus protection is enabled.";
 									}
-								} catch (NumberFormatException e) {
+								} catch (IOException clam) {
 									LOGGER.info("-----------------------------------------------------------");
 									processAttachment(mimemultipart.getBodyPart(k).getFileName(),mimemultipart.getBodyPart(k).getInputStream(),mimemultipart.getBodyPart(k).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
-									attachment = true;
+									this.text += "\nClamAV is disabled. Your attachments haven't been checked by an antivirus.";
 								}
 							}
 						}
@@ -464,8 +494,9 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 													imagePart.setDisposition(MimeBodyPart.INLINE);
 												imagePart.setHeader("Content-ID", mimemultipart_bis.getBodyPart(l).getHeader("Content-ID")[0]);
 												multiPart.addBodyPart(imagePart);
+												this.text += "\nThis email is free of viruses and malware because ClamAV Antivirus protection is enabled.";
 											}
-										} catch (NumberFormatException e) {
+										} catch (IOException clam) {
 											
 											LOGGER.info("-----------------------------------------------------------");
 											//add picture inline hmtl part
@@ -478,6 +509,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 												imagePart.setDisposition(MimeBodyPart.INLINE);
 											imagePart.setHeader("Content-ID", mimemultipart_bis.getBodyPart(l).getHeader("Content-ID")[0]);
 											multiPart.addBodyPart(imagePart);
+											this.text += "\nClamAV is disabled. Your attachments haven't been checked by an antivirus.";
 										}
 									}
 									else if (Part.ATTACHMENT != null){
@@ -498,13 +530,13 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 												LOGGER.info("No virus found in the file !");
 												LOGGER.info("-----------------------------------------------------------");
 												processAttachment(mimemultipart_bis.getBodyPart(l).getFileName(),mimemultipart_bis.getBodyPart(l).getInputStream(),mimemultipart_bis.getBodyPart(l).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
-												attachment = true;
+												this.text += "\nThis email is free of viruses and malware because ClamAV Antivirus protection is enabled.";
 											}
-										} catch (NumberFormatException e) {
+										} catch (IOException clam) {
 											LOGGER.info("ClamAV isn't working");
 											LOGGER.info("-----------------------------------------------------------");
 											processAttachment(mimemultipart_bis.getBodyPart(l).getFileName(),mimemultipart_bis.getBodyPart(l).getInputStream(),mimemultipart_bis.getBodyPart(l).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
-											attachment = true;
+											this.text += "\nClamAV is disabled. Your attachments haven't been checked by an antivirus.";
 											
 										}
 									}
@@ -538,26 +570,29 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 					// If the current part is explicitly an attachment...
 					String contentType = bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";"));
 					processAttachment(bodyPart.getFileName(), bodyPart.getInputStream(), contentType);
-					attachment = true;
 					LOGGER.info("Content type : "+ contentType);
+					this.text += "\nThis email is free of viruses and malware because ClamAV Antivirus protection is enabled.";
 				}
-			} catch (NumberFormatException e) {
+			} catch (IOException clam) {
 				LOGGER.info("ClamAV isn't working");
 				LOGGER.info("-----------------------------------------------------------");
 				String contentType = bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";"));
 				processAttachment(bodyPart.getFileName(), bodyPart.getInputStream(), contentType);
-				attachment = true;
 				LOGGER.info("Content type : "+ contentType);
-			}
-		
-			
+				this.text += "\nClamAV is disabled. Your attachments haven't been checked by an antivirus.";
+				
+			}			
 		}
-		
-		if(attachment)
-			this.text += "------------------------------------\n";
 	}
 
-	// Modify the mail and upload the attachment
+	/**
+	 * Modify the mail and upload the attachment
+	 * 
+	 * @param filename
+	 * @param is
+	 * @param Type
+	 * @throws IOException
+	 */
 	private void processAttachment(String filename, InputStream is, String Type)
 			throws IOException {
 		this.text += "Attachment : " + filename + "\n";
@@ -565,7 +600,14 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		this.text += "Link :" + link + "\n";
 	}
 
-	// Get the text part from the mail
+	/**
+	 * Get the text part from the mail
+	 * 
+	 * @param message
+	 * @return
+	 * @throws MessagingException
+	 * @throws IOException
+	 */
 	private String getTextFromMessage(Part message) throws MessagingException,
 			IOException {
 		String s = new String();
@@ -624,7 +666,14 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		return null;
 	}
 
-	// Save the temporary file who contains the mail inputstream
+	/**
+	 *Save the temporary file who contains the mail inputstream in /tmp
+	 * 
+	 * @param filename
+	 * @param inputStream
+	 * @return
+	 * @throws IOException
+	 */
 	private File saveFile(String filename, InputStream inputStream)
 			throws IOException {
 		File f = new File("/tmp/" + filename);
@@ -663,7 +712,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			Client client = ClientBuilder.newClient(cc);
 			client.register(feature).register(MultiPartFeature.class);
 
-			WebTarget target = client.target("http://"+CliConfSingleton.mediahome_host+":"+CliConfSingleton.mediahome_port+"/api/app/"
+			WebTarget target = client.target(CliConfSingleton.mediahome_host+"/api/app/"
 					+ this.username + "/content");
 
 			LOGGER.info("Filename : " + filename);
@@ -674,8 +723,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 					.post(Entity.entity(is, Type), Response.class);
 
 			if (response.getLocation() != null)
-				return "http://"
-						+ localAddress()
+				return  CliConfSingleton.mediahome_host
 						+ "/snapmail/"
 						+ "snapmail.html#/"
 						+ this.username
@@ -697,7 +745,11 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		return "Error";
 	}
 
-	// Get the local network name of the server
+	/**
+	 * Get the local network name of the server
+	 * 
+	 * @return String nameoftheserver
+	 */
 	@SuppressWarnings("finally")
 	private String localAddress() {
 		String add = "";
@@ -716,7 +768,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 * Get the smtp properties of the user from Media@Home
 	 * 
 	 * @param properties
-	 * @return SMTPProperties
+	 * @return Properties 
 	 */
 	private Properties setSMTPProperties(Properties properties) {
 
@@ -727,7 +779,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			client.register(feature);
 
 			WebTarget target = client
-					.target("http://"+ CliConfSingleton.mediahome_host + ":" + CliConfSingleton.mediahome_port +"/api/app/snapmail/" + this.username + "/smtp");
+					.target(CliConfSingleton.mediahome_host+"/api/app/snapmail/" + this.username + "/smtp");
 			SmtpProperty smtpProperty = target.request(
 					MediaType.APPLICATION_XML_TYPE).get(SmtpProperty.class);
 			String token;
@@ -787,6 +839,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
  
 	/**
 	 * Method to get the token thanks to our json secret. The user need to agree and copy-paste a link into the terminal.
+	 * 
 	 * @param token
 	 * @return Gmail service
 	 * @throws IOException
@@ -818,8 +871,9 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 
 	/**
 	 * Method to convert the MimeMessage to a "Google" Message wich can be sent via Gmail API
+	 * 
 	 * @param email
-	 * @return
+	 * @return Message
 	 * @throws MessagingException
 	 * @throws IOException
 	 */
@@ -849,8 +903,9 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 
 	/**
 	 *  Query to yahoo to get a new access_token thanks to the refresh_token
+	 *  
 	 * @param token
-	 * @return yahooToken
+	 * @return String yahooToken
 	 */
 	private String getYahooToken(String token) {
 		final String Yahooclient_ID = CliConfSingleton.yahoo_clientID;
@@ -891,6 +946,88 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		
 		return yahooToken;
 	}
+
+	/**
+	 *  Query to outlook to get a new access_token thanks to the refresh_token
+	 *  
+	 * @param token
+	 * @return String outlookToken
+	 */
+	private String getOutlookToken(String token) {
+		final String Microsoftclient_ID = "000000004C14F710";
+		final String Microsoftclient_secret = "nYBtVB-xkEUnVp3gZdkIMHu4DcAeGZPh";
+		final String redirectUri = CliConfSingleton.centralURL.toString() + "/api/oauth";
+		
+		Client client = ClientBuilder.newClient();
+		String response;
+		String data;
+		
+		
+		/*String secure = Yahooclient_ID + ":" + Yahooclient_secret;
+		String encodedvalue= java.util.Base64.getEncoder().encodeToString(secure.getBytes());
+		*/
+
+		WebTarget targetOutlook = client.target("https://login.live.com/oauth20_token.srf");
+		
+		data = "client_id=" + Microsoftclient_ID
+				+ "&client_secret=" + Microsoftclient_secret
+				+ "&refresh_token=" + token
+				+ "&redirect_uri=" + redirectUri
+				+ "&grant_type=refresh_token";			
+
+		response = targetOutlook
+				.request()
+				//.header("Authorization", "Basic " + encodedvalue)
+				.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
+		LOGGER.info(response.toString());
+		
+		// Analysis of the response, get the access_token
+		JSONObject json;
+		String outlookToken="";
+		
+		try {
+			json= new JSONObject(response);
+			outlookToken=json.get("access_token").toString();
+			LOGGER.info("Good Token");
+		} catch (JSONException e) {
+			LOGGER.error("Error with the token");
+		}
+		
+		return outlookToken;
+	}
 	
 
+		 
+private Transport outlookConnect(Session session,Properties properties, Transport tr, String token) throws MessagingException{
+	String outlookToken= getOutlookToken(token);	
+	 final class OAuth2Provider extends Provider {
+		    private static final long serialVersionUID = 1L;
+
+		    public OAuth2Provider() {
+		      super("Google OAuth2 Provider", 1.0,
+		            "Provides the XOAUTH2 SASL Mechanism");
+		      put("SaslClientFactory.XOAUTH2",
+		          "com.enseirb.telecom.dngroup.snapmail.OAuth2SaslClientFactory");
+		    }
+		  }
+	Security.addProvider(new OAuth2Provider());
+	properties.setProperty("mail.smtp.auth", "true");
+	properties.setProperty("mail.smtp.starttls.enable", "true");
+    properties.setProperty("mail.smtp.starttls.required", "true");
+    properties.setProperty("mail.smtp.sasl.enable", "true");
+    properties.setProperty("mail.smtp.sasl.mechanisms", "XOAUTH2");
+    properties.setProperty(OAuth2SaslClientFactory.OAUTH_TOKEN_PROP, outlookToken);
+	properties.setProperty("mail.smtp.host", "smtp-mail.outlook.com");
+	properties.setProperty("mail.user", this.username);
+	properties.setProperty("mail.smtp.port", "587");
+	
+	session = Session.getInstance(properties, null);
+	session.setDebug(true);
+    
+	tr = session.getTransport("smtp");
+	String emptyPassword="";
+    tr.connect("smtp-mail.outlook.com", 587, this.username, emptyPassword);
+	
+    return tr;
+}
 }

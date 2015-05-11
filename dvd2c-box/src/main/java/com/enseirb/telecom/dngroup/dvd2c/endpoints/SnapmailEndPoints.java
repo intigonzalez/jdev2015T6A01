@@ -114,12 +114,15 @@ public class SnapmailEndPoints extends HttpServlet {
 					)).build();
 		case "microsoft":
 			return Response.seeOther(new URI(
-					"https://login.microsoftonline.com/common/oauth2/authorize"
+					//"https://login.microsoftonline.com/common/oauth2/authorize"
+					"https://login.live.com/oauth20_authorize.srf"
 					+ "?response_type=code"
 					+ "&client_id=" + Microsoftclient_ID
 					+ "&redirect_uri=" + redirectUri
-					+ "&resource=https://outlook.office365.com/api/v1.0/me/sendmail"
+					+ "&scope=wl.offline_access,wl.imap"
 					+ "&state=" + actorID
+					+ "&access_type=offline"
+					+ "&approval_prompt=force"
 					)).build();
 		case "yahoo":
 			return Response.seeOther(new URI(
@@ -192,7 +195,7 @@ if(actorID.contains("@gmail.com")){
 	LOGGER.info(response.toString());	
 */
 } else {
-	WebTarget targetOutlook = client.target("https://login.windows.net/common/oauth2/token");
+	WebTarget targetOutlook = client.target("https://login.live.com/oauth20_token.srf");
 	
 	data = "client_id=" + Microsoftclient_ID
 			+ "&client_secret=" + Microsoftclient_secret
