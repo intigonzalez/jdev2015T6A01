@@ -11,6 +11,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.snapmail.exception.NoSuchProperty;
 import com.enseirb.telecom.dngroup.snapmail.mail.impl.GoogleMailProperties;
+import com.enseirb.telecom.dngroup.snapmail.mail.impl.MicrosoftMailProperties;
 
 public class MediaHomeFacadeTest {
 	MediaHomeFacadeImpl objectToTest;
@@ -43,8 +44,22 @@ public class MediaHomeFacadeTest {
 		
 		MailerProperties properties = objectToTest.getSmtpParam();
 		assertTrue(properties instanceof GoogleMailProperties);
+	
+	}
+	
+	@Test
+	public void testMicrosoftToken() throws NoSuchProperty{
+		objectToTest.user=new User();
+		PropertyGroups propgroup = new PropertyGroups();
+		propgroup.setName("snapmail");
+		Property p= new Property();
+		p.setKey("microsoft");
+		p.setValue("123A3413232324234");
+		propgroup.getProps().add(p);
+		objectToTest.user.getPropertyGroups().add(propgroup);
 		
-		
+		MailerProperties properties = objectToTest.getSmtpParam();
+		assertTrue(properties instanceof MicrosoftMailProperties);	
 		
 	}
 	
