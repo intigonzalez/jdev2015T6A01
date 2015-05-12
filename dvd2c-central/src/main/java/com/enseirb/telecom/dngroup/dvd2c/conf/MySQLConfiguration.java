@@ -1,5 +1,7 @@
 package com.enseirb.telecom.dngroup.dvd2c.conf;
 
+import java.util.Properties;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -27,8 +29,8 @@ class ApplicationConfig {
 	private static final String PROPERTY_NAME_DATABASE_URL = "jdbc:mysql://localhost:3306/mediahome";
 	private static final String PROPERTY_NAME_DATABASE_USERNAME = "mediahome";
 
-	private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "hibernate.dialect";
-	private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "hibernate.show_sql";
+	private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "org.hibernate.dialect.MySQLDialect";
+	private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "true";
 	private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "com.enseirb.telecom.dngroup.dvd2c.db";
 
 
@@ -51,13 +53,17 @@ class ApplicationConfig {
 
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		vendorAdapter.setGenerateDdl(true);
-
+		Properties props = new Properties();
+		props.put("hibernate.hbm2ddl.auto", "create-drop");
+		
+		
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setJpaVendorAdapter(vendorAdapter);
 		factory.setPackagesToScan(PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN);
 		factory.setDataSource(dataSource());
+		factory.setJpaProperties(props);
 		factory.afterPropertiesSet();
-
+		
 		return factory.getObject();
 	}
 

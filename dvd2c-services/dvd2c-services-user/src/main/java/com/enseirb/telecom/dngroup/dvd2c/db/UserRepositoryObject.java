@@ -50,6 +50,8 @@ public class UserRepositoryObject implements Serializable{
 	protected String smtpPassword;
 
 	protected String smtpToken;
+	
+	
 
 //	private List<Role> role;
 
