@@ -724,8 +724,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 					.post(Entity.entity(is, Type), Response.class);
 
 			if (response.getLocation() != null)
-				return "http://"
-						+ CliConfSingleton.publicAddr
+				return  CliConfSingleton.publicAddr
 						+ "/snapmail/"
 						+ "snapmail.html#/"
 						+ this.username
@@ -1004,13 +1003,6 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		
 		return outlookToken;
 	}
-private void sendOutlookMail(String token, MimeMessage message){
-	String secure = "user={" + this.username + "}\1auth=Bearer{" + token + "}\1\1" ;
-	String encodedvalue= java.util.Base64.getEncoder().encodeToString(secure.getBytes());
-	Client client = ClientBuilder.newClient();
-	
-	
-}
 
 private Transport outlookConnect(Session session,Properties properties, Transport tr, String token) throws MessagingException{
 	String outlookToken= getOutlookToken(token);	
