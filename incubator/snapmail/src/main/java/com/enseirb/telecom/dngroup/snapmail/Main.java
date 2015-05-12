@@ -35,6 +35,7 @@ class CliConfSingleton {
 	public static String google_clientsecret;
 	public static String yahoo_clientID;
 	public static String yahoo_clientsecret;
+	public static String publicAddr;
 	public static String mediahome_host;
 	public static String mediahome_port;
 	public static String clamav_host;

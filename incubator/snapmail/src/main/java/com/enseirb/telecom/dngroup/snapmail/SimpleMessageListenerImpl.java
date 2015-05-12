@@ -31,7 +31,10 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.security.Provider;
+import java.security.Security;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
