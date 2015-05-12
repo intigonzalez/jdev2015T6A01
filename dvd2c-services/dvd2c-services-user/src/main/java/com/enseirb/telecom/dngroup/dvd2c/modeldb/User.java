@@ -1,4 +1,4 @@
-package com.enseirb.telecom.dngroup.dvd2c.model;
+package com.enseirb.telecom.dngroup.dvd2c.modeldb;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -12,16 +12,10 @@ import java.util.Date;
 @Entity
 @Table(name="users")
 @NamedQuery(name="User.findAll", query="SELECT u FROM User u")
-public class User implements Serializable {
+public class User extends Actor implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Integer id;
-
-	@Column(name="actor_id")
-	private int actorId;
-
+	
 	@Column(name="authentication_token")
 	private String authenticationToken;
 
@@ -30,10 +24,7 @@ public class User implements Serializable {
 
 	private byte connected;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="created_at")
-	private Date createdAt;
-
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="current_sign_in_at")
 	private Date currentSignInAt;
@@ -72,28 +63,11 @@ public class User implements Serializable {
 
 	private String status;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="updated_at")
-	private Date updatedAt;
-
+	
 	public User() {
 	}
 
-	public Integer getId() {
-		return this.id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public int getActorId() {
-		return this.actorId;
-	}
-
-	public void setActorId(int actorId) {
-		this.actorId = actorId;
-	}
+	
 
 	public String getAuthenticationToken() {
 		return this.authenticationToken;
@@ -119,13 +93,7 @@ public class User implements Serializable {
 		this.connected = connected;
 	}
 
-	public Date getCreatedAt() {
-		return this.createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
+	
 
 	public Date getCurrentSignInAt() {
 		return this.currentSignInAt;
@@ -223,12 +191,6 @@ public class User implements Serializable {
 		this.status = status;
 	}
 
-	public Date getUpdatedAt() {
-		return this.updatedAt;
-	}
-
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
-	}
+	
 
 }

@@ -1,22 +1,21 @@
-package com.enseirb.telecom.dngroup.dvd2c.model;
+package com.enseirb.telecom.dngroup.dvd2c.modeldb;
 
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
-
 
 /**
  * The persistent class for the profiles database table.
  * 
  */
 @Entity
-@Table(name="profiles")
-@NamedQuery(name="Profile.findAll", query="SELECT p FROM Profile p")
-public class Profile implements Serializable {
+@Table(name = "profiles")
+@NamedQuery(name = "Profile.findAll", query = "SELECT p FROM Profile p")
+public class Profile extends DBObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
 	private String address;
@@ -29,7 +28,7 @@ public class Profile implements Serializable {
 	private String country;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="created_at")
+	@Column(name = "created_at")
 	private Date createdAt;
 
 	private String description;
@@ -46,7 +45,7 @@ public class Profile implements Serializable {
 
 	private String phone;
 
-	@Column(name="prefix_key")
+	@Column(name = "prefix_key")
 	private int prefixKey;
 
 	private String province;
@@ -54,15 +53,14 @@ public class Profile implements Serializable {
 	private String skype;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="updated_at")
+	@Column(name = "updated_at")
 	private Date updatedAt;
 
 	private String website;
 
 	private String zipcode;
 
-	//bi-directional many-to-one association to Actor
-	@ManyToOne
+	@OneToOne()
 	private Actor actor;
 
 	public Profile() {

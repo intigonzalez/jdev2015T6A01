@@ -1,21 +1,13 @@
 package com.enseirb.telecom.dngroup.dvd2c.db;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-//import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
-import com.enseirb.telecom.dngroup.dvd2c.model.Role;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
+//import javax.persistence.Entity;
 
 //@Entity
 @Entity

@@ -1,69 +1,70 @@
-package com.enseirb.telecom.dngroup.dvd2c.model;
+package com.enseirb.telecom.dngroup.dvd2c.modeldb;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
+
 import java.util.Date;
 import java.util.List;
-
 
 /**
  * The persistent class for the actors database table.
  * 
  */
 @Entity
-@Table(name="actors")
-@NamedQuery(name="Actor.findAll", query="SELECT a FROM Actor a")
-public class Actor implements Serializable {
+@Table(name = "actors")
+@NamedQuery(name = "Actor.findAll", query = "SELECT a FROM Actor a")
+@Inheritance(strategy=InheritanceType.JOINED)
+public class Actor extends DBObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@Column(name="activity_object_id")
+	@Column(name = "activity_object_id")
 	private int activityObjectId;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="created_at")
+	@Column(name = "created_at")
 	private Date createdAt;
 
 	private String email;
 
-	@Column(name="logo_content_type")
+	@Column(name = "logo_content_type")
 	private String logoContentType;
 
-	@Column(name="logo_file_name")
+	@Column(name = "logo_file_name")
 	private String logoFileName;
 
-	@Column(name="logo_file_size")
+	@Column(name = "logo_file_size")
 	private int logoFileSize;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="logo_updated_at")
+	@Column(name = "logo_updated_at")
 	private Date logoUpdatedAt;
 
 	private String name;
 
-	@Column(name="notification_settings")
+	@Column(name = "notification_settings")
 	private String notificationSettings;
 
-	@Column(name="notify_by_email")
+	@Column(name = "notify_by_email")
 	private byte notifyByEmail;
 
-	@Column(name="subject_type")
+	@Column(name = "subject_type")
 	private String subjectType;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="updated_at")
+	@Column(name = "updated_at")
 	private Date updatedAt;
 
-	//bi-directional many-to-one association to Group
-	@ManyToMany(mappedBy="actor")
+	@ManyToMany
+	@JoinTable(name = "ACTOR_GROUPS", joinColumns = { @JoinColumn(name = "ACTOR_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "GROUP_ID", referencedColumnName = "ID") })
 	private List<Group> groups;
 
-	//bi-directional many-to-one association to Profile
-	@OneToMany(mappedBy="actor")
-	private List<Profile> profiles;
+	@OneToOne(mappedBy = "actor")
+	private Profile profile;
 
 	public Actor() {
 	}
@@ -180,40 +181,12 @@ public class Actor implements Serializable {
 		this.groups = groups;
 	}
 
-	public Group addGroup(Group group) {
-		getGroups().add(group);
-		group.setActor(this);
-
-		return group;
+	public Profile getProfile() {
+		return this.profile;
 	}
 
-	public Group removeGroup(Group group) {
-		getGroups().remove(group);
-		group.setActor(null);
-
-		return group;
-	}
-
-	public List<Profile> getProfiles() {
-		return this.profiles;
-	}
-
-	public void setProfiles(List<Profile> profiles) {
-		this.profiles = profiles;
-	}
-
-	public Profile addProfile(Profile profile) {
-		getProfiles().add(profile);
-		profile.setActor(this);
-
-		return profile;
-	}
-
-	public Profile removeProfile(Profile profile) {
-		getProfiles().remove(profile);
-		profile.setActor(null);
-
-		return profile;
+	public void setProfiles(Profile profile) {
+		this.profile = profile;
 	}
 
 }
