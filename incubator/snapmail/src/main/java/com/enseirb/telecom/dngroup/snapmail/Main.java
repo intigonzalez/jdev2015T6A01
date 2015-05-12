@@ -47,6 +47,8 @@ class CliConfSingleton {
 			centralURL = "http://central.homeb.tv:8080";
 		if(mediahome_host==null)
 			mediahome_host = "localhost";
+		if(publicAddr==null)
+			publicAddr = "127.0.0.1";
 		if(mediahome_port==null)
 			mediahome_port = "9998";
 		if(clamav_host==null)
@@ -153,6 +155,7 @@ public class Main {
 					CliConf.class, args);
 
 			CliConfSingleton.mediahome_host = cliconf.getMediaHomeHost();
+			getParametreFromFile();
 		} catch (ArgumentValidationException e1) {
 			
 

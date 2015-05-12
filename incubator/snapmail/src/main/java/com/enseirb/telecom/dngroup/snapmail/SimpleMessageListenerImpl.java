@@ -589,7 +589,8 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 					LOGGER.info("Content type : "+ contentType);
 					this.text += "\nThis email is free of viruses and malware because ClamAV Antivirus protection is enabled.";
 				}
-			} catch (IOException clam) {
+			} catch (IOException clam) { 
+				LOGGER.error("ClamAV error {}:{}: ",CliConfSingleton.clamav_host, CliConfSingleton.clamav_port,clam);
 				LOGGER.info("ClamAV isn't working");
 				LOGGER.info("-----------------------------------------------------------");
 				String contentType = bodyPart.getContentType().substring(0, bodyPart.getContentType().indexOf(";"));
