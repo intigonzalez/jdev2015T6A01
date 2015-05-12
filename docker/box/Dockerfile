@@ -11,5 +11,5 @@ RUN mkdir -p /etc/mediahome
 EXPOSE 9998
 
 # get the lasted version of dvd2c-box
-ADD http://nexus.homeb.tv:8080/nexus/service/local/artifact/maven/redirect?r=snapmaildocker&g=com/enseirb/telecom/dngroup/dvd2c&a=dvd2c-box&v=LATEST&c=jar-with-dependencies&arg=arg dvd2c-box-docker.jar
-CMD sleep 10 && java -jar dvd2c-box-docker.jar --ip 0.0.0.0 -p 9998 --db-hostname db  --rabbit-host worker
+ADD http://nexus.homeb.tv:8080/nexus/service/local/artifact/maven/redirect?r=snapmail&g=com/enseirb/telecom/dngroup/dvd2c&a=dvd2c-box&v=LATEST&c=jar-with-dependencies dvd2c-box.jar
+CMD sleep 10 && java -jar dvd2c-box.jar --ip 0.0.0.0 -p 9998 --db-hostname db  --rabbit-host worker

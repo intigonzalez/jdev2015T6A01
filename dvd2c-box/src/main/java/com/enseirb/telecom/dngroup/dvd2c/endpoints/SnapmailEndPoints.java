@@ -111,6 +111,7 @@ public class SnapmailEndPoints extends HttpServlet {
 					+ "&scope=https://www.googleapis.com/auth/gmail.compose"
 					+ "&state=" + actorID
 					+ "&access_type=offline"
+					+ "&approval_prompt=force"
 					)).build();
 		case "microsoft":
 			return Response.seeOther(new URI(
@@ -166,7 +167,8 @@ if(actorID.contains("@gmail.com")){
 				+ "&code=" + code
 				+ "&redirect_uri=" + redirectUri
 				+ "&grant_type=authorization_code"
-				+ "&access_type=offline";
+				+ "&access_type=offline"
+				+ "&approval_prompt=force";
 		
 		response = targetGoogle
 				.request()
