@@ -184,7 +184,12 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		// If infected send an email to the sender
 		Clamav_report += "------------------------------------\nClamAV Antivirus is an open source antivirus engine for detecting trojans, viruses,malware & other malicious threats\n------------------------------------";
 		if (mail_infected){
-			sendClamavReport("smtp.gmail.com", from, Clamav_report);
+			try {
+				sendClamavReport("smtp.gmail.com", from, Clamav_report);
+			} catch (MessagingException e) {
+				
+				e.printStackTrace();
+			}
 			mail_infected = false;
 		}
 		Clamav_report = "\n----------- ClamAV -----------------\n----------- SCAN SUMMARY -----------\n";
