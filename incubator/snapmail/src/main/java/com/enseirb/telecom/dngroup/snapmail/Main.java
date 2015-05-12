@@ -68,16 +68,16 @@ public class Main {
 //Cliconf for hard coded values
 	interface CliConf {
 
-		@Option(shortName="h", longName = "mediahome_host", defaultValue = "localhost")
+		@Option(shortName="h", longName = "mediahome_host", defaultToNull=true)
 		public String getMediaHomeHost();
 
-		@Option(shortName="p", longName = "mediahome_port", defaultValue = "9998")
+		@Option(shortName="p", longName = "mediahome_port", defaultToNull=true)
 		public String getMediaHomePort();
 
-		@Option(shortName="c", longName = "clamav_host", defaultValue = "127.0.0.1")
+		@Option(shortName="c", longName = "clamav_host", defaultToNull=true)
 		public String getClamAVHost();
 		
-		@Option(shortName="v", longName = "clamav_port", defaultValue = "3310")
+		@Option(shortName="v", longName = "clamav_port", defaultToNull=true)
 		public String getClamAVPort();
 		
 		@Option(longName = "publicAddr", description = "Public IP address", defaultToNull=true)
@@ -162,7 +162,6 @@ public class Main {
 		try {
 			CliConf cliconf = CliFactory.parseArguments(
 					CliConf.class, args);
-			CliConfSingleton.clamav_host = cliconf.getMediaHomeHost();
 		} catch (ArgumentValidationException e1) {
 			
 
