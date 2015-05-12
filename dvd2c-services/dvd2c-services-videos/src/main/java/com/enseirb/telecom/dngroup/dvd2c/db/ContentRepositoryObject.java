@@ -2,16 +2,17 @@ package com.enseirb.telecom.dngroup.dvd2c.db;
 
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Comment;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.model.Metadata;
 
-@Document(collection="ContentRepositoryObject")
+@Entity
 public class ContentRepositoryObject {
 	@Id
+	@Column(unique = true)
 	String id;
 
 	String name;
@@ -21,8 +22,8 @@ public class ContentRepositoryObject {
 	String link;
 	String previewLink;
 	String status;
-	List<Comment> comment;
-	List<String> metadata;
+//	List<Comment> comment;
+//	List<String> metadata;
 
 
 
@@ -39,8 +40,8 @@ public class ContentRepositoryObject {
 		this.link = link;
 		this.previewLink = previewLink;
 		this.status = status;
-		this.comment = comment;
-		this.metadata = metadata;
+//		this.comment = comment;
+//		this.metadata = metadata;
 	}
 
 	public ContentRepositoryObject(Content content) {
@@ -52,24 +53,24 @@ public class ContentRepositoryObject {
 		link = content.getLink();
 		previewLink = content.getPreviewLink();
 		status = content.getStatus();
-		this.comment = content.getComment();
-		this.metadata = content.getMetadata();
+//		this.comment = content.getComment();
+//		this.metadata = content.getMetadata();
 	
 	}
 
-	/**
-	 * @return the metadata
-	 */
-	public List<String> getMetadata() {
-		return metadata;
-	}
-
-	/**
-	 * @param metadata the metadata to set
-	 */
-	public void setMetadata(List<String> metadata) {
-		this.metadata = metadata;
-	}
+//	/**
+//	 * @return the metadata
+//	 */
+//	public List<String> getMetadata() {
+//		return metadata;
+//	}
+//
+//	/**
+//	 * @param metadata the metadata to set
+//	 */
+//	public void setMetadata(List<String> metadata) {
+//		this.metadata = metadata;
+//	}
 
 	/**
 	 * @param actorID the actorID to set
@@ -122,13 +123,13 @@ public class ContentRepositoryObject {
 		this.link = link;
 	}
 
-	public List<Comment> getComment() {
-		return comment;
-	}
-
-	public void setComment(List<Comment> comment) {
-		this.comment = comment;
-	}
+//	public List<Comment> getComment() {
+//		return comment;
+//	}
+//
+//	public void setComment(List<Comment> comment) {
+//		this.comment = comment;
+//	}
 
 
 	public String getPreviewLink() {
@@ -155,8 +156,8 @@ public class ContentRepositoryObject {
 		content.setPreviewLink(this.getPreviewLink());
 		content.setUnixTime(this.getUnixTime());
 		content.setStatus(this.getStatus());
-		content.getComment().addAll(this.getComment());
-		content.getMetadata().addAll(this.getMetadata());
+//		content.getComment().addAll(this.getComment());
+//		content.getMetadata().addAll(this.getMetadata());
 		return content;
 	}
 

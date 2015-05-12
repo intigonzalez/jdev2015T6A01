@@ -3,15 +3,14 @@ package com.enseirb.telecom.dngroup.dvd2c.db;
 import java.util.List;
 
 import javax.persistence.Entity;
-
-import org.springframework.data.annotation.Id;
+import javax.persistence.Id;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 
 @Entity
 public class RelationshipRepositoryObject {
 
-	@javax.persistence.Id
+	@Id
 	String iD;
 	String userId;
 	String actorID;
@@ -20,7 +19,8 @@ public class RelationshipRepositoryObject {
 	String pubKey;
 	Integer aprouve;
 	Long unixTime;
-	List<String> role;
+	
+//	List<String> role;
 
 	public RelationshipRepositoryObject() {
 	}
@@ -37,7 +37,7 @@ public class RelationshipRepositoryObject {
 		this.pubKey = pubKey;
 		this.aprouve = aprouve;
 		this.unixTime = unixTime;
-		this.role = role;
+//		this.role = role;
 
 	}
 
@@ -53,7 +53,7 @@ public class RelationshipRepositoryObject {
 		this.pubKey = pubKey;
 		this.aprouve = aprouve;
 		this.unixTime = unixTime;
-		this.role = role;
+//		this.role = role;
 
 	}
 
@@ -66,7 +66,7 @@ public class RelationshipRepositoryObject {
 		this.pubKey = relation.getPubKey();
 		this.aprouve = relation.getAprouve();
 		this.unixTime = relation.getUnixTime();
-		this.role = relation.getRole();
+//		this.role = relation.getRole();
 
 	}
 
@@ -81,17 +81,17 @@ public class RelationshipRepositoryObject {
 	/**
 	 * @return the role
 	 */
-	public List<String> getRole() {
-		return role;
-	}
+//	public List<String> getRole() {
+//		return role;
+//	}
 
 	/**
 	 * @param role
 	 *            the role to set
 	 */
-	public void setRole(List<String> role) {
-		this.role = role;
-	}
+//	public void setRole(List<String> role) {
+//		this.role = role;
+//	}
 
 	public String getUserId() {
 		return userId;
@@ -159,7 +159,7 @@ public class RelationshipRepositoryObject {
 		relation.setPubKey(pubKey);
 		relation.setUnixTime(unixTime);
 		relation.setAprouve(aprouve);
-		relation.getRole().addAll(role);
+//		relation.getRole().addAll(role);
 		return relation;
 
 	}

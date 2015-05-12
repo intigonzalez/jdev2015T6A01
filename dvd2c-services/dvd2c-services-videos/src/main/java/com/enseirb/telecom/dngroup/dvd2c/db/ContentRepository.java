@@ -1,5 +1,8 @@
 package com.enseirb.telecom.dngroup.dvd2c.db;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public interface ContentRepository extends org.springframework.data.repository.CrudRepository<ContentRepositoryObject, String>{
 
 //	/**

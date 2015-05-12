@@ -193,11 +193,11 @@ public class UserEndPoints extends HttpServlet {
 		// modify the user, check if the user has changed his email address, and
 		// check the ability of the new email address
 		if (user.getUserID().equals(userIDFromPath)
-				|| uManager.userExistOnLocal(user.getUserID()) == false) {
+				&& uManager.userExistOnLocal(user.getUserID()) == true) {
 			uManager.saveUserOnServer(user);
 			return Response.status(200).build();
 		} else {
-			return Response.status(409).build();
+			return Response.status(Status.NOT_FOUND).build();
 		}
 
 	}

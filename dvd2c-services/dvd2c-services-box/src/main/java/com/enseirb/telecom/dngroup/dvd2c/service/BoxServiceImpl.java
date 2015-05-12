@@ -187,5 +187,33 @@ public class BoxServiceImpl implements BoxService {
 	public void sendGoogleCode(String actorID, Box box, String code) throws IOException {
 				requetBoxService.sendOauthORH(actorID, box, code);
 	}
+	
+	// RBAC: This class is only for central we don't want this here
+//		@Override
+//		public List<User> getUserFromName(String firstname) {
+//			// DB: need to change
+//			Iterable<UserRepositoryOldObject> userIterable = userRepository.findAll();
+//			UserRepositoryOldObject userRepo = null;
+//			List<User> listUser = new ArrayList<User>();
+	//
+//			if (userIterable == null)
+//				return listUser;
+//			else {
+//				Iterator<UserRepositoryOldObject> iterator = userIterable.iterator();
+	//
+//				while (iterator.hasNext()) {
+//					userRepo = iterator.next();
+	//
+//					try {
+//						if (userRepo.getFirstname().equalsIgnoreCase(firstname))
+//							listUser.add(userRepo.toUser());
+//					} catch (NullPointerException e) {
+//						LOGGER.error("this user have not firstname {}",
+//								userRepo.getUserID());
+//					}
+//				}
+//				return listUser;
+//			}
+//		}
 
 }

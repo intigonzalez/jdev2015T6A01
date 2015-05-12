@@ -318,34 +318,35 @@ public class ContentServiceImpl implements ContentService {
 				if ((contentRepositoryObject.getActorID() != null)
 						&& (contentRepositoryObject.getActorID().equals(userID))) {
 					// For each group the relation belongs to
-					for (int i = 0; i < relation.getRole().size(); i++) {
-						if (contentRepositoryObject.getMetadata() != null) {
-							if (contentRepositoryObject.getMetadata().size() == 0) {
-
-								break search;
-							}
-						}
-						for (int j = 0; j < contentRepositoryObject
-								.getMetadata().size(); j++) {
-
-							if (relation
-									.getRole()
-									.get(i)
-									.equals(contentRepositoryObject
-											.getMetadata().get(j))) {
-								contentRepositoryObject.getMetadata().clear();
-								contentRepositoryObject
-										.setLink(CliConfSingleton.publicAddr
-												+ contentRepositoryObject
-														.getLink());
-								listContent.add(contentRepositoryObject
-										.toContent());
-								break search;
-							} else {
-								LOGGER.debug("Group is not the same. ");
-							}
-						}
-					}
+					//RBAC: fix
+//					for (int i = 0; i < relation.getRole().size(); i++) {
+//						if (contentRepositoryObject.getMetadata() != null) {
+//							if (contentRepositoryObject.getMetadata().size() == 0) {
+//
+//								break search;
+//							}
+//						}
+//						for (int j = 0; j < contentRepositoryObject
+//								.getMetadata().size(); j++) {
+//
+//							if (relation
+//									.getRole()
+//									.get(i)
+//									.equals(contentRepositoryObject
+//											.getMetadata().get(j))) {
+//								contentRepositoryObject.getMetadata().clear();
+//								contentRepositoryObject
+//										.setLink(CliConfSingleton.publicAddr
+//												+ contentRepositoryObject
+//														.getLink());
+//								listContent.add(contentRepositoryObject
+//										.toContent());
+//								break search;
+//							} else {
+//								LOGGER.debug("Group is not the same. ");
+//							}
+//						}
+//					}
 				}
 			}
 		} catch (Exception e) {

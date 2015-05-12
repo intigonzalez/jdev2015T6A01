@@ -19,8 +19,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan("com.spr")
-@EnableJpaRepositories("com.enseirb.telecom.dngroup.dvd2c.db")
-class ApplicationConfig {
+@EnableJpaRepositories("com.enseirb.telecom.dngroup.dvd2c")
+class MySQLConfiguration {
 
 	private static final String PROPERTY_NAME_DATABASE_DRIVER = "com.mysql.jdbc.Driver";
 	private static final String PROPERTY_NAME_DATABASE_PASSWORD = "mediahome";
@@ -29,7 +29,7 @@ class ApplicationConfig {
 
 	private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "hibernate.dialect";
 	private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "hibernate.show_sql";
-	private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "com.enseirb.telecom.dngroup.dvd2c.db";
+	private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "com.enseirb.telecom.dngroup.dvd2c";
 
 
 

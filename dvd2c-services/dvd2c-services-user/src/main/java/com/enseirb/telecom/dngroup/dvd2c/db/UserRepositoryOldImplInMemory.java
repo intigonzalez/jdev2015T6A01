@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import com.enseirb.telecom.dngroup.dvd2c.db.mock.CrudRepositoryMock;
 
 
-public class UserRepositoryImplInMemory extends
-		CrudRepositoryMock<UserRepositoryObject> implements UserRepository {
+public class UserRepositoryOldImplInMemory extends
+		CrudRepositoryMock<UserRepositoryOldObject> implements UserRepositoryOld {
 
 	@Inject
 	BoxRepository boxrepo;
@@ -16,7 +16,7 @@ public class UserRepositoryImplInMemory extends
 	
 
 	@Override
-	protected String getID(UserRepositoryObject t) {
+	protected String getID(UserRepositoryOldObject t) {
 		return t.userID;
 	}
 

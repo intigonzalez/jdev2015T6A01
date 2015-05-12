@@ -16,8 +16,8 @@ import org.springframework.stereotype.Service;
 import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryObject;
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryObject;
+import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOld;
+import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOldObject;
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
@@ -43,7 +43,7 @@ public class RelationServiceImpl implements RelationService {
 	RelationshipRepository relationshipDatabase;
 	
 	@Inject
-	UserRepository userRepo;
+	UserRepositoryOld userRepo;
 	
 	@Inject
 	RequestUserService rus ;
@@ -98,7 +98,7 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public User getMe(String userID) {
-		UserRepositoryObject user = userRepo.findOne(userID);
+		UserRepositoryOldObject user = userRepo.findOne(userID);
 
 		if (user == null) {
 			return null;
@@ -189,7 +189,7 @@ public class RelationServiceImpl implements RelationService {
 		relation.setAprouve(1);
 
 		// Prepare the relation for the "UserAsked"
-		UserRepositoryObject uro = userRepo.findOne(userID);
+		UserRepositoryOldObject uro = userRepo.findOne(userID);
 		if (uro != null) {
 			User userWhoAsked = userRepo.findOne(userID).toUser();
 			Relation relation2 = new Relation();

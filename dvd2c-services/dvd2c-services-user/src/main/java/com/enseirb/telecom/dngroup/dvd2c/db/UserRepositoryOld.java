@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 
 //import java.io.Serializable;
 @Repository
-public interface UserRepository
+public interface UserRepositoryOld
 		extends
-		CrudRepository<UserRepositoryObject, String> {
+		CrudRepository<UserRepositoryOldObject, String> {
 	
 
 

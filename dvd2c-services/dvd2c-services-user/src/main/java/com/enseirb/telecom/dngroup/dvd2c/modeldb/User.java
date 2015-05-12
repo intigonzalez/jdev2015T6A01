@@ -1,7 +1,9 @@
 package com.enseirb.telecom.dngroup.dvd2c.modeldb;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
+
 import java.util.Date;
 
 
@@ -67,7 +69,6 @@ public class User extends Actor implements Serializable {
 	public User() {
 	}
 
-	
 
 	public String getAuthenticationToken() {
 		return this.authenticationToken;
@@ -191,6 +192,6 @@ public class User extends Actor implements Serializable {
 		this.status = status;
 	}
 
-	
+
 
 }

@@ -30,7 +30,7 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepository;
+import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOld;
 import com.enseirb.telecom.dngroup.dvd2c.endpoints.BoxEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;

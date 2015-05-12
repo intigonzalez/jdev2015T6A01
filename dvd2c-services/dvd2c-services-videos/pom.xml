@@ -66,9 +66,9 @@
 			<artifactId>tika-core</artifactId>
 			<version>1.7</version>
 		</dependency>
-		<dependency>
+			<dependency>
 			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-mongodb</artifactId>
+			<artifactId>spring-data-jpa</artifactId>
 		</dependency>
 
 		<dependency>
