@@ -225,7 +225,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		} else if(username.contains("@gmail.com")){
 			session = Session.getInstance(properties);
 		} else{
-			outlookConnect(session, properties, tr, token);
+			tr=outlookConnect(session, properties, tr, token);
 		}
 
 		try {
