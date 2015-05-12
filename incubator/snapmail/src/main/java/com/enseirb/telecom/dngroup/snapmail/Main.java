@@ -79,7 +79,10 @@ public class Main {
 		@Option(shortName="v", longName = "clamav_port", defaultValue = "3310")
 		public String getClamAVPort();
 		
-		@Option(longName = "centralURL", description = "URL of the central server")
+		@Option(longName = "publicAddr", description = "Public IP address", defaultToNull=true)
+		String getPublicAddr();
+
+		@Option(longName = "centralURL", description = "URL of the central server", defaultToNull=true)
 		String getCentralUrl();
 		
 		@Option(longName = "google_clientID", description = "google clientID for Oauth2")
@@ -173,8 +176,8 @@ static void getParametreFromFile() {
 	try {
 		FileInputStream in = new FileInputStream(aPPath);
 		ApplicationContext.properties.load(in);
-		if (CliConfSingleton.mediahome_host == null)
-			CliConfSingleton.mediahome_host = ApplicationContext.getProperties()
+		if (CliConfSingleton.publicAddr == null)
+			CliConfSingleton.publicAddr = ApplicationContext.getProperties()
 					.getProperty("publicAddr");
 		if (CliConfSingleton.centralURL == null)
 			CliConfSingleton.centralURL = ApplicationContext.getProperties()
@@ -191,6 +194,9 @@ static void getParametreFromFile() {
 		if (CliConfSingleton.yahoo_clientsecret == null)
 			CliConfSingleton.yahoo_clientsecret = ApplicationContext.getProperties()
 					.getProperty("yahoo_clientsecret");
+		if (CliConfSingleton.clamav_host == null)
+			CliConfSingleton.clamav_host = ApplicationContext.getProperties()
+					.getProperty("clamavHost");
 		in.close();
 		CliConfSingleton.defaultValue();
 	} catch (FileNotFoundException e1) {

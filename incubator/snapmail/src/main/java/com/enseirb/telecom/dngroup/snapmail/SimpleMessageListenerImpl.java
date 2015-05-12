@@ -31,8 +31,6 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.security.Provider;
-import java.security.Security;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -47,7 +45,6 @@ import javax.mail.Part;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.URLName;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -61,7 +58,6 @@ import org.subethamail.smtp.TooMuchDataException;
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.philvarner.clamavj.ClamScan;
 import com.philvarner.clamavj.ScanResult;
-import com.sun.mail.smtp.SMTPTransport;
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -207,7 +203,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		Properties properties = System.getProperties();
 
 		properties = setSMTPProperties(properties);
-		Session session = null;
+		Session session;
 		Transport tr = null;
 		String token = properties.getProperty("mail.token");
 		if (token.equals("")) {
@@ -226,7 +222,23 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		} else if(username.contains("@gmail.com")){
 			session = Session.getInstance(properties);
 		} else{
-			tr= outlookConnect(session,properties, tr, token);
+			String outlookToken= getOutlookToken(token);
+			LOGGER.info("outlookToken : " + outlookToken);
+			String secure = "user={" + this.username + "}\1auth=Bearer {" + outlookToken + "}\1\1";
+			String encodedvalue= java.util.Base64.getEncoder().encodeToString(secure.getBytes());
+			properties.setProperty("mail.smtp.auth", "true");
+			properties.setProperty("mail.smtp.starttls.enable", "true");
+		    properties.setProperty("mail.smtp.starttls.required", "true");
+		    properties.setProperty("mail.smtp.sasl.mechanisms", "XOAUTH2");
+		    properties.setProperty("mail.smtp.xoauth2", encodedvalue);
+			properties.setProperty("mail.smtp.host", "smtp-mail.outlook.com");
+			
+			properties.setProperty("mail.user", this.username); 
+			properties.setProperty("mail.smtp.port", "587");
+			
+			session = Session.getInstance(properties);
+			tr = session.getTransport("smtp");
+		    tr.connect("smtp-mail.outlook.com", encodedvalue);	
 		}
 
 		try {
@@ -533,6 +545,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 												this.text += "\nThis email is free of viruses and malware because ClamAV Antivirus protection is enabled.";
 											}
 										} catch (IOException clam) {
+											LOGGER.error("ClamAV error {}:{}: ",CliConfSingleton.clamav_host, CliConfSingleton.clamav_port,clam);
 											LOGGER.info("ClamAV isn't working");
 											LOGGER.info("-----------------------------------------------------------");
 											processAttachment(mimemultipart_bis.getBodyPart(l).getFileName(),mimemultipart_bis.getBodyPart(l).getInputStream(),mimemultipart_bis.getBodyPart(l).getContentType().substring(0, bodyPart.getContentType().indexOf(";")));
@@ -712,7 +725,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			Client client = ClientBuilder.newClient(cc);
 			client.register(feature).register(MultiPartFeature.class);
 
-			WebTarget target = client.target(CliConfSingleton.mediahome_host+"/api/app/"
+			WebTarget target = client.target("http://"+CliConfSingleton.mediahome_host+":"+CliConfSingleton.mediahome_port+"/api/app/"
 					+ this.username + "/content");
 
 			LOGGER.info("Filename : " + filename);
@@ -723,7 +736,8 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 					.post(Entity.entity(is, Type), Response.class);
 
 			if (response.getLocation() != null)
-				return  CliConfSingleton.mediahome_host
+				return "http://"
+						+ CliConfSingleton.publicAddr
 						+ "/snapmail/"
 						+ "snapmail.html#/"
 						+ this.username
@@ -745,23 +759,30 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		return "Error";
 	}
 
-	/**
+/**
 	 * Get the local network name of the server
 	 * 
 	 * @return String nameoftheserver
 	 */
 	@SuppressWarnings("finally")
 	private String localAddress() {
-		String add = "";
+		String addr = "";
 		try {
-			InetAddress addr = InetAddress.getLocalHost();
-
-			add = addr.getHostName();
-		} catch (UnknownHostException e) {
-			System.exit(1);
-		} finally {
-			return add;
+			NetworkInterface n = NetworkInterface.getByName("eth0");
+			
+		    Enumeration e = n.getInetAddresses();
+		    while (e.hasMoreElements())
+		    {
+		        InetAddress i = (InetAddress) e.nextElement();
+		        if(i instanceof Inet4Address)
+		        	addr = i.getHostAddress().toString();
+		    }
+		} catch (SocketException e) {
+			e.printStackTrace();
 		}
+	    finally {
+	    	return addr;
+	    }
 	}
  
 	/**
@@ -779,7 +800,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			client.register(feature);
 
 			WebTarget target = client
-					.target(CliConfSingleton.mediahome_host+"/api/app/snapmail/" + this.username + "/smtp");
+					.target("http://"+ CliConfSingleton.mediahome_host + ":" + CliConfSingleton.mediahome_port +"/api/app/snapmail/" + this.username + "/smtp");
 			SmtpProperty smtpProperty = target.request(
 					MediaType.APPLICATION_XML_TYPE).get(SmtpProperty.class);
 			String token;
@@ -995,9 +1016,14 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		
 		return outlookToken;
 	}
+private void sendOutlookMail(String token, MimeMessage message){
+	String secure = "user={" + this.username + "}\1auth=Bearer{" + token + "}\1\1" ;
+	String encodedvalue= java.util.Base64.getEncoder().encodeToString(secure.getBytes());
+	Client client = ClientBuilder.newClient();
 	
+	
+}
 
-		 
 private Transport outlookConnect(Session session,Properties properties, Transport tr, String token) throws MessagingException{
 	String outlookToken= getOutlookToken(token);	
 	 final class OAuth2Provider extends Provider {
@@ -1030,4 +1056,5 @@ private Transport outlookConnect(Session session,Properties properties, Transpor
 	
     return tr;
 }
+
 }
