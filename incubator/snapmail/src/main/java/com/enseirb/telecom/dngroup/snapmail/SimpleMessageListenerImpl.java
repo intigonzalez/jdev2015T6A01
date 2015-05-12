@@ -206,7 +206,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		Properties properties = System.getProperties();
 
 		properties = setSMTPProperties(properties);
-		Session session;
+		Session session = null;
 		Transport tr = null;
 		String token = properties.getProperty("mail.token");
 		if (token.equals("")) {
@@ -225,23 +225,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		} else if(username.contains("@gmail.com")){
 			session = Session.getInstance(properties);
 		} else{
-			String outlookToken= getOutlookToken(token);
-			LOGGER.info("outlookToken : " + outlookToken);
-			String secure = "user={" + this.username + "}\1auth=Bearer {" + outlookToken + "}\1\1";
-			String encodedvalue= java.util.Base64.getEncoder().encodeToString(secure.getBytes());
-			properties.setProperty("mail.smtp.auth", "true");
-			properties.setProperty("mail.smtp.starttls.enable", "true");
-		    properties.setProperty("mail.smtp.starttls.required", "true");
-		    properties.setProperty("mail.smtp.sasl.mechanisms", "XOAUTH2");
-		    properties.setProperty("mail.smtp.xoauth2", encodedvalue);
-			properties.setProperty("mail.smtp.host", "smtp-mail.outlook.com");
-			
-			properties.setProperty("mail.user", this.username); 
-			properties.setProperty("mail.smtp.port", "587");
-			
-			session = Session.getInstance(properties);
-			tr = session.getTransport("smtp");
-		    tr.connect("smtp-mail.outlook.com", encodedvalue);	
+			outlookConnect(session, properties, tr, token);
 		}
 
 		try {
