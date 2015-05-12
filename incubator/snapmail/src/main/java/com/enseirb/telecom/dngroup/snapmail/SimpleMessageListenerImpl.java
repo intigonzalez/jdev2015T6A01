@@ -277,14 +277,16 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 * @param from
 	 * @param Clamav_report
 	 * @throws IOException
+	 * @throws MessagingException 
 	 */
-	private void sendClamavReport(String host, String from, String Clamav_report) throws IOException
+	private void sendClamavReport(String host, String from, String Clamav_report) throws IOException, MessagingException
 	{
 		// Get system properties
 				Properties properties = System.getProperties();
 
 				properties = setSMTPProperties(properties);
-				Session session;
+				Session session = null;
+				Transport tr = null;
 				String token = properties.getProperty("mail.token");
 				if (token.equals("")) {
 					final String pwd = properties.getProperty("mail.password");
@@ -299,10 +301,11 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 									return new PasswordAuthentication(usr, pwd);
 								}
 							});
-				} else
+				} else if(username.contains("@gmail.com")){
 					session = Session.getInstance(properties);
-
-		
+				} else{
+					tr=outlookConnect(session, properties, tr, token);
+				}
 		try {
 			MimeMessage message = new MimeMessage(session);
 	        message.setFrom(new InternetAddress("ClamAV@snapmail.com", "INFO Snapmail"));
@@ -311,11 +314,16 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	        message.setContent(Clamav_report, "text/plain");
 	        if (token.equals("")) {
 				Transport.send(message);
-			} else {
+			} else if(username.contains("@gmail.com")){
 				Gmail service = getService(token);
 				com.google.api.services.gmail.model.Message message2 = createMessageWithEmail(message);
 				message2 = service.users().messages().send("me", message2)
 						.execute();
+			}
+			else{
+				
+				tr.sendMessage(message, message.getAllRecipients());
+				
 			}
 			LOGGER.info("ClamAV Report sent successfully !\n\n");
 		}catch (MessagingException mex) {
