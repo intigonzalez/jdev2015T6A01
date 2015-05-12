@@ -1,7 +1,9 @@
 package com.enseirb.telecom.dngroup.dvd2c.modeldb;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
+
 import java.util.Date;
 
 /**
