@@ -88,16 +88,16 @@ public class Main {
 		@Option(longName = "centralURL", description = "URL of the central server", defaultToNull=true)
 		String getCentralUrl();
 		
-		@Option(longName = "google_clientID", description = "google clientID for Oauth2")
+		@Option(longName = "google_clientID", description = "google clientID for Oauth2", defaultToNull=true)
 		String getGoogleClientID();
 		
-		@Option(longName = "google_clientsecret", description = "google client secret for Oauth2")
+		@Option(longName = "google_clientsecret", description = "google client secret for Oauth2", defaultToNull=true)
 		String getGoogleClientSecret();
 		
-		@Option(longName = "yahoo_clientID", description = "yahoo clientID for Oauth2")
+		@Option(longName = "yahoo_clientID", description = "yahoo clientID for Oauth2", defaultToNull=true)
 		String getYahooClientID();
 		
-		@Option(longName = "yahoo_clientsecret", description = "yahoo client secret for Oauth2")
+		@Option(longName = "yahoo_clientsecret", description = "yahoo client secret for Oauth2", defaultToNull=true)
 		String getYahooClientSecret();
 
 	}
