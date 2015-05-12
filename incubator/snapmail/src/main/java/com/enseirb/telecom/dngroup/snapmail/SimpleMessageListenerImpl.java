@@ -227,10 +227,11 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 							return new PasswordAuthentication(usr, pwd);
 						}
 					});
-		} else if(username.contains("@gmail.com")){
+		} else {if(username.contains("@gmail.com")){
 			session = Session.getInstance(properties);
 		} else{
 			tr=outlookConnect(session, properties, tr, token);
+		}
 		}
 
 		try {
@@ -319,7 +320,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	        message.setContent(Clamav_report, "text/plain");
 	        if (token.equals("")) {
 				Transport.send(message);
-			} else if(username.contains("@gmail.com")){
+			} else{ if(username.contains("@gmail.com")){
 				Gmail service = getService(token);
 				com.google.api.services.gmail.model.Message message2 = createMessageWithEmail(message);
 				message2 = service.users().messages().send("me", message2)
@@ -329,6 +330,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 				
 				tr.sendMessage(message, message.getAllRecipients());
 				
+			}
 			}
 			LOGGER.info("ClamAV Report sent successfully !\n\n");
 		}catch (MessagingException mex) {
