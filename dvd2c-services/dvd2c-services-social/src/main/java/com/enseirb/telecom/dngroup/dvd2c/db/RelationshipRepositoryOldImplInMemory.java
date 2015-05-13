@@ -5,12 +5,12 @@ package com.enseirb.telecom.dngroup.dvd2c.db;
 import com.enseirb.telecom.dngroup.dvd2c.db.mock.CrudRepositoryMock;
 
 
-public class RelationshipRepositoryImplInMemory extends
-		CrudRepositoryMock<RelationshipRepositoryObject> implements
-		RelationshipRepository {
+public class RelationshipRepositoryOldImplInMemory extends
+		CrudRepositoryMock<RelationshipRepositoryOldObject> implements
+		RelationshipRepositoryOld {
 
 	@Override
-	protected String getID(RelationshipRepositoryObject t) {
+	protected String getID(RelationshipRepositoryOldObject t) {
 		return t.iD;
 	}
 

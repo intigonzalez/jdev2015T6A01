@@ -8,6 +8,6 @@ import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
 
 //import java.io.Serializable;
 @Repository
-public interface GroupRepository extends CrudRepository<Group, String> {
+public interface GroupRepository extends CrudRepository<Group, Integer> {
 
 }

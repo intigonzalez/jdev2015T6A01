@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryObject;
+import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryOld;
+import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryOldObject;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOld;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOldObject;
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
@@ -43,7 +43,7 @@ public class RelationServiceImpl implements RelationService {
 	RelationshipRepository relationshipDatabase;
 	
 	@Inject
-	UserRepositoryOld userRepo;
+	UserRepository userRepo;
 	
 	@Inject
 	RequestUserService rus ;
@@ -60,7 +60,7 @@ public class RelationServiceImpl implements RelationService {
 
 		RequestRelationService rrs = new RequestRelationServiceImpl();
 
-		for (RelationshipRepositoryObject rro : relationshipDatabase.findAll()) {
+		for (RelationshipRepositoryOldObject rro : relationshipDatabase.findAll()) {
 
 			if (rro.getUserId().equals(userID)) {
 
@@ -74,7 +74,7 @@ public class RelationServiceImpl implements RelationService {
 							userID + relationUpdate.getUserID()).toRelation();
 					relationIntoDb.setFirstname(relationUpdate.getFirstname());
 					relationIntoDb.setSurname(relationUpdate.getSurname());
-					relationshipDatabase.save(new RelationshipRepositoryObject(
+					relationshipDatabase.save(new RelationshipRepositoryOldObject(
 							userID, relationIntoDb));
 				} catch (NoSuchBoxException e) {
 					LOGGER.warn("All users should have a box, ignoring");
@@ -87,7 +87,7 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public Relation getRelation(String userID, String actorID) throws NoSuchRelationException {
-		RelationshipRepositoryObject relation = relationshipDatabase.findOne(
+		RelationshipRepositoryOldObject relation = relationshipDatabase.findOne(
 				userID+ actorID);
 		if (relation == null) {
 			throw new NoSuchRelationException();
@@ -116,11 +116,11 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public List<Relation> getListRelation(final String userID) {
 		List<Relation> listRelation = new ArrayList<Relation>();
-		Iterable<RelationshipRepositoryObject> relation = relationshipDatabase
+		Iterable<RelationshipRepositoryOldObject> relation = relationshipDatabase
 				.findAll();
-		Iterator<RelationshipRepositoryObject> itr = relation.iterator();
+		Iterator<RelationshipRepositoryOldObject> itr = relation.iterator();
 		while (itr.hasNext()) {
-			RelationshipRepositoryObject relationshipRepositoryObject = itr
+			RelationshipRepositoryOldObject relationshipRepositoryObject = itr
 					.next();
 			if (relationshipRepositoryObject.getUserId().equals(userID)) {
 
@@ -204,7 +204,7 @@ public class RelationServiceImpl implements RelationService {
 			relation2.getRole().add(role.getRoleId());
 			if (!fromBox) {
 				if (userRepo.exists(relation.getActorID())) {
-					relationshipDatabase.save(new RelationshipRepositoryObject(
+					relationshipDatabase.save(new RelationshipRepositoryOldObject(
 							relation.getActorID(), relation2));
 				} else {
 
@@ -229,7 +229,7 @@ public class RelationServiceImpl implements RelationService {
 				relation.setAprouve(2);
 			}
 			return relationshipDatabase.save(
-					new RelationshipRepositoryObject(userID, relation))
+					new RelationshipRepositoryOldObject(userID, relation))
 					.toRelation();
 		} else {
 			throw new NoSuchUserException();
@@ -252,7 +252,7 @@ public class RelationServiceImpl implements RelationService {
 				Relation relation2 = relationshipDatabase.findOne(
 						relation.getActorID()+ userID).toRelation();
 				relation2.setAprouve(3);
-				relationshipDatabase.save(new RelationshipRepositoryObject(
+				relationshipDatabase.save(new RelationshipRepositoryOldObject(
 						relation.getActorID(), relation2));
 			} else {
 				RequestRelationService rss = new RequestRelationServiceImpl();
@@ -281,7 +281,7 @@ public class RelationServiceImpl implements RelationService {
 			relationIntoDb.getRole().clear();
 			relationIntoDb.getRole().addAll(relation.getRole());
 		}
-		relationshipDatabase.save(new RelationshipRepositoryObject(userID,
+		relationshipDatabase.save(new RelationshipRepositoryOldObject(userID,
 				relationIntoDb));
 		return;
 	}
@@ -292,7 +292,7 @@ public class RelationServiceImpl implements RelationService {
 				relationId).toRelation();
 		if (relationIntoDb.getAprouve() == 1) {
 			relationIntoDb.setAprouve(3);
-			relationshipDatabase.save(new RelationshipRepositoryObject(userId,
+			relationshipDatabase.save(new RelationshipRepositoryOldObject(userId,
 					relationIntoDb));
 		} else {
 			LOGGER.error("Something has been changed...");

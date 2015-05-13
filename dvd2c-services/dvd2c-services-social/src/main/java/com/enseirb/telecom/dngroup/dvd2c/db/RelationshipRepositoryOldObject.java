@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 
 @Entity
-public class RelationshipRepositoryObject {
+public class RelationshipRepositoryOldObject {
 
 	@Id
 	String iD;
@@ -22,10 +22,10 @@ public class RelationshipRepositoryObject {
 	
 //	List<String> role;
 
-	public RelationshipRepositoryObject() {
+	public RelationshipRepositoryOldObject() {
 	}
 
-	public RelationshipRepositoryObject(String iD, String userId,
+	public RelationshipRepositoryOldObject(String iD, String userId,
 			String actorID, String firstname, String surname, String pubKey,
 			Integer aprouve, Long unixTime, List<String> role) {
 		super();
@@ -41,7 +41,7 @@ public class RelationshipRepositoryObject {
 
 	}
 
-	public RelationshipRepositoryObject(String userId, String actorID,
+	public RelationshipRepositoryOldObject(String userId, String actorID,
 			String firstname, String surname, String pubKey, Integer aprouve,
 			Long unixTime, List<String> role) {
 		super();
@@ -57,7 +57,7 @@ public class RelationshipRepositoryObject {
 
 	}
 
-	public RelationshipRepositoryObject(String userId, Relation relation) {
+	public RelationshipRepositoryOldObject(String userId, Relation relation) {
 		this.iD = userId + relation.getActorID();
 		this.userId = userId;
 		this.actorID = relation.getActorID();
