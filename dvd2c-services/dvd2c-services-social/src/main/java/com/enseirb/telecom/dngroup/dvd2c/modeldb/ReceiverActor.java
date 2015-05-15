@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import model.Contact;
+
 import java.util.Date;
 import java.util.List;
 
@@ -12,10 +14,10 @@ import java.util.List;
  * 
  */
 @Entity
-@Table(name = "actors")
-@NamedQuery(name = "Actor.findAll", query = "SELECT a FROM Actor a")
+@Table(name = "receiver_actor")
+@NamedQuery(name = "ReceiverActor.findAll", query = "SELECT a FROM ReceiverActor a")
 @Inheritance(strategy=InheritanceType.JOINED)
-public class Actor extends DBObject implements Serializable {
+public class ReceiverActor extends DBObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -25,8 +27,7 @@ public class Actor extends DBObject implements Serializable {
 	@Column(name = "activity_object_id")
 	private int activityObjectId;
 
-
-
+	
 	private String email;
 
 	@Column(name = "logo_content_type")
@@ -43,9 +44,7 @@ public class Actor extends DBObject implements Serializable {
 	private Date logoUpdatedAt;
 
 	private String firstname;
-
 	private String surname;
-	
 
 	@Column(name = "notification_settings")
 	private String notificationSettings;
@@ -56,16 +55,11 @@ public class Actor extends DBObject implements Serializable {
 	@Column(name = "subject_type")
 	private String subjectType;
 
-	
+	@OneToMany(mappedBy="receiveractor")
+	private List<Contact> contacts;
 
-	@ManyToMany
-	@JoinTable(name = "ACTOR_GROUPS", joinColumns = { @JoinColumn(name = "ACTOR_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "GROUP_ID", referencedColumnName = "ID") })
-	private List<Group> groups;
 
-	@OneToOne(mappedBy = "actor")
-	private Profile profile;
-
-	public Actor() {
+	public ReceiverActor() {
 	}
 
 	public Integer getId() {
@@ -83,6 +77,7 @@ public class Actor extends DBObject implements Serializable {
 	public void setActivityObjectId(int activityObjectId) {
 		this.activityObjectId = activityObjectId;
 	}
+
 
 
 	public String getEmail() {
@@ -125,12 +120,30 @@ public class Actor extends DBObject implements Serializable {
 		this.logoUpdatedAt = logoUpdatedAt;
 	}
 
+
+
 	public String getFirstname() {
-		return this.firstname;
+		return firstname;
 	}
 
-	public void setFirstname(String name) {
-		this.firstname = name;
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public List<Contact> getContacts() {
+		return contacts;
+	}
+
+	public void setContacts(List<Contact> contacts) {
+		this.contacts = contacts;
 	}
 
 	public String getNotificationSettings() {
@@ -158,28 +171,5 @@ public class Actor extends DBObject implements Serializable {
 	}
 
 
-	public List<Group> getGroups() {
-		return this.groups;
-	}
-
-	public void setGroups(List<Group> groups) {
-		this.groups = groups;
-	}
-
-	public Profile getProfile() {
-		return this.profile;
-	}
-
-	public void setProfiles(Profile profile) {
-		this.profile = profile;
-	}
-
-	public String getSurname() {
-		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
 
 }

@@ -21,16 +21,23 @@ import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOldObject;
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
-import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchRelationException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchStatusException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
+import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
-import com.enseirb.telecom.dngroup.dvd2c.model.Role;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.Contact;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.ReceiverActor;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.Relation;
+import com.enseirb.telecom.dngroup.dvd2c.repository.ContactRepository;
+import com.enseirb.telecom.dngroup.dvd2c.repository.ReceiverActorRepository;
+import com.enseirb.telecom.dngroup.dvd2c.repository.RelationRepository;
+import com.enseirb.telecom.dngroup.dvd2c.repository.UserRepository;
+import com.enseirb.telecom.dngroup.dvd2c.request.RequestRelationService;
+import com.enseirb.telecom.dngroup.dvd2c.request.RequestRelationServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestContentServiceImpl;
-import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestRelationService;
-import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestRelationServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserServiceImpl;
 
@@ -39,19 +46,32 @@ public class RelationServiceImpl implements RelationService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RelationServiceImpl.class);
 
+	// @Inject
+	// RelationRepository relationRepository;
+
 	@Inject
-	RelationshipRepository relationshipDatabase;
+	ContactRepository contactRepository;
+
+	@Inject
+	ReceiverActorRepository rar;
+
+	@Inject
+	AccountService accountService;
 	
 	@Inject
-	UserRepository userRepo;
-	
+	RelationRepository relationRepository;
+
 	@Inject
-	RequestUserService rus ;
-	
-	@Inject RequestContentService requestContentService;
+	RequestRelationService rrs;
+
+	@Inject
+	RequestUserService rus;
+
+	@Inject
+	RequestContentService requestContentService;
 
 	public boolean RelationExist(String UserID, String actorID) {
-		return relationshipDatabase.exists(UserID+actorID);
+		return (contactRepository.findContact(UserID, actorID) != null);
 	}
 
 	@Override
@@ -60,7 +80,7 @@ public class RelationServiceImpl implements RelationService {
 
 		RequestRelationService rrs = new RequestRelationServiceImpl();
 
-		for (RelationshipRepositoryOldObject rro : relationshipDatabase.findAll()) {
+		for (Contact rro : contactRepository.findByOwner(userID)) {
 
 			if (rro.getUserId().equals(userID)) {
 
@@ -70,12 +90,13 @@ public class RelationServiceImpl implements RelationService {
 					// Box boxRelation = requestServ.getBox(rro.getActorID());
 
 					User relationUpdate = rrs.get(userID, rro.getActorID());
-					Relation relationIntoDb = relationshipDatabase.findOne(
+					Relation relationIntoDb = relationRepository.findOne(
 							userID + relationUpdate.getUserID()).toRelation();
 					relationIntoDb.setFirstname(relationUpdate.getFirstname());
 					relationIntoDb.setSurname(relationUpdate.getSurname());
-					relationshipDatabase.save(new RelationshipRepositoryOldObject(
-							userID, relationIntoDb));
+					relationRepository
+							.save(new RelationshipRepositoryOldObject(userID,
+									relationIntoDb));
 				} catch (NoSuchBoxException e) {
 					LOGGER.warn("All users should have a box, ignoring");
 				}
@@ -85,176 +106,244 @@ public class RelationServiceImpl implements RelationService {
 		rrs.close();
 	}
 
+	// //RBAC: CHANGE TO USER SERVICE
+	// @Override
+	// public User getContactInformation(String userID) {
+	// UserRepositoryOldObject user = userRepo.findOne(userID);
+	//
+	// if (user == null) {
+	// return null;
+	// } else {
+	// User userComplet = user.toUser();
+	// User userReturn = new User();
+	// userReturn.setFirstname(userComplet.getFirstname());
+	// userReturn.setSurname(userComplet.getSurname());
+	// userReturn.setUserID(userComplet.getUserID());
+	// return userReturn;
+	// }
+	//
+	// }
+
 	@Override
-	public Relation getRelation(String userID, String actorID) throws NoSuchRelationException {
-		RelationshipRepositoryOldObject relation = relationshipDatabase.findOne(
-				userID+ actorID);
-		if (relation == null) {
-			throw new NoSuchRelationException();
-		} else {
-			return relation.toRelation();
+	public ContactXSD getRelation(String ownerID, String relationID)
+			throws NoSuchContactException {
+		try {
+			Contact contact = contactRepository
+					.findContact(ownerID, relationID);
+
+			ContactXSD relation = toContactXSD(contact);
+
+			return relation;
+		} catch (Exception e) {
+			throw new NoSuchContactException();
 		}
 	}
 
-	@Override
-	public User getMe(String userID) {
-		UserRepositoryOldObject user = userRepo.findOne(userID);
-
-		if (user == null) {
-			return null;
-		} else {
-			User userComplet = user.toUser();
-			User userReturn = new User();
-			userReturn.setFirstname(userComplet.getFirstname());
-			userReturn.setSurname(userComplet.getSurname());
-			userReturn.setUserID(userComplet.getUserID());
-			return userReturn;
-		}
-
+	/**
+	 * @param contact
+	 * @return
+	 */
+	private ContactXSD toContactXSD(Contact contact) {
+		ReceiverActor receiverActor = contact.getReceiverActor();
+		ContactXSD contactXSD = new ContactXSD();
+		contactXSD.setActorID(receiverActor.getEmail());
+		contactXSD.setAprouve(contact.getStatus());
+		contactXSD.setFirstname(receiverActor.getFirstname());
+		contactXSD.setSurname(receiverActor.getSurname());
+		return contactXSD;
 	}
 
 	@Override
-	public List<Relation> getListRelation(final String userID) {
-		List<Relation> listRelation = new ArrayList<Relation>();
-		Iterable<RelationshipRepositoryOldObject> relation = relationshipDatabase
-				.findAll();
-		Iterator<RelationshipRepositoryOldObject> itr = relation.iterator();
-		while (itr.hasNext()) {
-			RelationshipRepositoryOldObject relationshipRepositoryObject = itr
-					.next();
-			if (relationshipRepositoryObject.getUserId().equals(userID)) {
-
-				listRelation.add(relationshipRepositoryObject.toRelation());
-			}
+	public List<ContactXSD> getListContact(String userID) {
+		List<ContactXSD> listContactXSD = new ArrayList<ContactXSD>();
+		List<Contact> contacts = contactRepository.findByOwner(userID);
+		for (Contact contact : contacts) {
+			listContactXSD.add(toContactXSD(contact));
 		}
-
-		return listRelation;
+		return listContactXSD;
 	}
 
-	@Override
-	public List<Relation> getListRelation(String userID, Role roleIDfromUser) {
-
-		List<Relation> listRelation = getListRelation(userID);
-		List<Relation> listRelation2 = new ArrayList<Relation>();
-		for (int i = 0; i < listRelation.size(); i++) {
-			List<String> roles = listRelation.get(i).getRole();
-			
-			for (String role : roles) {
-				if (role.equals(roleIDfromUser.getRoleId())) {
-					listRelation2.add(listRelation.get(i));
-				}
-			}
-
-		}
-
-		return listRelation2;
-
-	}
+	// //RBAC: Never use
+	// @Override
+	// public List<Relation> getListRelation(String userID, Role roleIDfromUser)
+	// {
+	//
+	// List<Relation> listRelation = getListRelation(userID);
+	// List<Relation> listRelation2 = new ArrayList<Relation>();
+	// for (int i = 0; i < listRelation.size(); i++) {
+	// List<String> roles = listRelation.get(i).getRole();
+	//
+	// for (String role : roles) {
+	// if (role.equals(roleIDfromUser.getRoleId())) {
+	// listRelation2.add(listRelation.get(i));
+	// }
+	// }
+	//
+	// }
+	//
+	// return listRelation2;
+	//
+	// }
 
 	@Override
 	public void createDefaultRelation(String userIDFromPath,
 			String relationIDString, Boolean fromBox)
 			throws NoSuchUserException {
-		Role role = new Role();
-		role.setRoleId("public");
-		
-		Relation relation = new Relation();
-		relation.setActorID(relationIDString);
-		relation.setAprouve(1);
-		relation.getRole().add(role.getRoleId());
-		createRelation(userIDFromPath, relation, fromBox);
+		// Relation relation = new Relation();
+		// relation.setName("public");
+		//
+		// Contact contact =new Contact();
+		// contact.setOwnerId(ownerMail);
+		// ReceiverActor receiverActor = new ReceiverActor();
+		// receiverActor.setEmail(contactMail);
+		// contact.setReceiveractor(receiverActor);
+		// RoleXSD role = new RoleXSD();
+		// role.setRole("public");
 
 	}
 
 	@Override
-	public Relation createRelation(String userID, Relation relation,
-			Boolean fromBox) throws NoSuchUserException {
+	public ContactXSD createRelation(String userIDFromPath,
+			String relationIDString, Boolean fromBox)
+			throws NoSuchUserException {
 		/*
 		 * Check the content, add a state 1 to the approuve value Check the user
 		 * really exists from the central server Send a request to the right box
 		 * to say it add as a friend
 		 */
-		User user = new User();
-		
-		try {
-			user = rus.get(relation.getActorID());
-			if (user == null) {
-				throw new NoSuchUserException();
-			}
-		} catch (IOException e) {
-			LOGGER.error("get user fail", e);
-		}
-		relation.setFirstname(user.getFirstname());
-		relation.setSurname(user.getSurname());
-		relation.setAprouve(1);
 
-		// Prepare the relation for the "UserAsked"
-		UserRepositoryOldObject uro = userRepo.findOne(userID);
-		if (uro != null) {
-			User userWhoAsked = userRepo.findOne(userID).toUser();
-			Relation relation2 = new Relation();
-			relation2.setActorID(userWhoAsked.getUserID());
-			relation2.setFirstname(userWhoAsked.getFirstname());
-			relation2.setSurname(userWhoAsked.getSurname());
-			relation2.setPubKey(userWhoAsked.getPubKey());
-			relation2.setAprouve(2);
-			relation2.setUnixTime(relation.getUnixTime());
-			Role role = new Role();
-			role.setRoleId("public");
-			relation2.getRole().add(role.getRoleId());
-			if (!fromBox) {
-				if (userRepo.exists(relation.getActorID())) {
-					relationshipDatabase.save(new RelationshipRepositoryOldObject(
-							relation.getActorID(), relation2));
-				} else {
-
-					RequestRelationService rss = new RequestRelationServiceImpl();
-					try {
-						rss.updateRelationORH(relation2, relation);
-					} catch (IOException e) {
-						LOGGER.error(
-								"Error during create the relation  betewen {} and {}",
-								relation2, relation, e);
-						e.printStackTrace();
-					} catch (NoSuchBoxException e) {
-						LOGGER.error(
-								"Error during create the relation  betewen {} and {} box not found",
-								relation2, relation, e);
-					}
-					// Send a request to the right box with the profile of
-					// userID
-					rss.close();
-				}
-			} else {
-				relation.setAprouve(2);
-			}
-			return relationshipDatabase.save(
-					new RelationshipRepositoryOldObject(userID, relation))
-					.toRelation();
-		} else {
+		User user;
+		if ((user = accountService.getUserOnLocal(userIDFromPath)) == null) {
 			throw new NoSuchUserException();
 		}
 
+		ReceiverActor receiverActor;
+		if ((receiverActor = rar.findByEmail(relationIDString)) == null) {
+			// verify if is local relation
+			User receiverUser;
+			if ((receiverUser = accountService.getUserOnLocal(relationIDString)) == null) {
+				receiverUser = rus.get(relationIDString);
+			}
+			receiverActor.setEmail(receiverUser.getUserID());
+			receiverActor.setFirstname(receiverUser.getFirstname());
+			receiverActor.setSurname(receiverUser.getSurname());
+		}
+
+		Contact c = new Contact();
+		c.setOwnerId(userIDFromPath);
+		c.setReceiverActor(receiverActor);
+		if (fromBox)
+			c.setStatus(2);
+		else
+			c.setStatus(1);
+
+		if (!fromBox) {
+			User receiverActor1;
+			if ((receiverActor1 = accountService
+					.getUserOnLocal(relationIDString)) != null) {
+				createRelation(relationIDString, relationIDString, true);
+			} else {
+				receiverActor1 = rus.get(relationIDString);
+				ContactXSD contact = new ContactXSD();
+				contact.setActorID(user.getUserID());
+				contact.setAprouve(2);
+				contact.setFirstname(user.getFirstname());
+				contact.setSurname(user.getSurname());
+				rrs.updateRelationORH(contact, userIDFromPath);
+			}
+		}
+		contactRepository.save(c);
+		ContactXSD contactXSD = new ContactXSD();
+		contactXSD.setActorID(c.getReceiverActor().getEmail());
+		contactXSD.setAprouve(c.getStatus());
+		contactXSD.setFirstname(c.getReceiverActor().getFirstname());
+		contactXSD.setSurname(c.getReceiverActor().getSurname());
+		return contactXSD;
+		// User user;
+		// try {
+		// user = rus.get(contactXSD.getActorID());
+		// if (user == null) {
+		// throw new NoSuchUserException();
+		// }
+		// } catch (IOException e) {
+		// LOGGER.error("get user fail", e);
+		// }
+		// contactXSD.setFirstname(user.getFirstname());
+		// contactXSD.setSurname(user.getSurname());
+		// contactXSD.setAprouve(1);
+		//
+		// // Prepare the relation for the "UserAsked"
+		// com.enseirb.telecom.dngroup.dvd2c.modeldb.User uro = userRepo
+		// .findByEmail(userID);
+		// if (uro == null) {
+		// throw new NoSuchUserException();
+		// } else {
+		// User userWhoAsked = userRepo.findOne(userID).toUser();
+		// Relation relation2 = new Relation();
+		// relation2.setActorID(userWhoAsked.getUserID());
+		// relation2.setFirstname(userWhoAsked.getFirstname());
+		// relation2.setSurname(userWhoAsked.getSurname());
+		// relation2.setPubKey(userWhoAsked.getPubKey());
+		// relation2.setAprouve(2);
+		// relation2.setUnixTime(contactXSD.getUnixTime());
+		// Role role = new Role();
+		// role.setRoleId("public");
+		// relation2.getRole().add(role.getRoleId());
+		// if (!fromBox) {
+		// if (userRepo.exists(contactXSD.getActorID())) {
+		// relationRepository
+		// .save(new RelationshipRepositoryOldObject(
+		// contactXSD.getActorID(), relation2));
+		// } else {
+		//
+		// RequestRelationService rss = new RequestRelationServiceImpl();
+		// try {
+		// rss.updateRelationORH(relation2, contactXSD.get);
+		// } catch (IOException e) {
+		// LOGGER.error(
+		// "Error during create the relation  betewen {} and {}",
+		// relation2, contactXSD, e);
+		// e.printStackTrace();
+		// } catch (NoSuchBoxException e) {
+		// LOGGER.error(
+		// "Error during create the relation  betewen {} and {} box not found",
+		// relation2, contactXSD, e);
+		// }
+		// // Send a request to the right box with the profile of
+		// // userID
+		// rss.close();
+		// }
+		// } else {
+		// contactXSD.setAprouve(2);
+		// }
+		// return relationRepository.save(
+		// new RelationshipRepositoryOldObject(userID, contactXSD))
+		// .toRelation();
+		// }
+		//
 	}
 
 	@Override
-	public void saveRelation(String userID, Relation relation) {
+	public void saveRelation(String userID, ContactXSD relation) {
 		// Here, the user is only allowed to edit the approve value if the
 		// current value is = 2
-		Relation relationIntoDb = relationshipDatabase.findOne(userID+
-				relation.getActorID()).toRelation();
-		if (relationIntoDb.getAprouve() != relation.getAprouve()
-				&& relationIntoDb.getAprouve() == 2
-				&& relation.getAprouve() == 3) {
-			relationIntoDb.setAprouve(3);
+		Contact contact;
+		if ((contact = contactRepository.findContact(userID,
+				relation.getActorID())) == null) {
+			throw new NoRelationException();
+		}
 
-			if (userRepo.exists(relation.getActorID())) {
-				Relation relation2 = relationshipDatabase.findOne(
-						relation.getActorID()+ userID).toRelation();
-				relation2.setAprouve(3);
-				relationshipDatabase.save(new RelationshipRepositoryOldObject(
-						relation.getActorID(), relation2));
-			} else {
+		if (contact.getStatus() != relation.getAprouve()
+				&& contact.getStatus() == 2 && relation.getAprouve() == 3) {
+			contact.setStatus(3);
+			
+			Contact contact2;
+			if ((contact2 = contactRepository.findContact(relation.getActorID(),
+					userID)) != null) {
+				contact2.setStatus(3);
+				contactRepository.save(contact2);
+			}
+			 else {
 				RequestRelationService rss = new RequestRelationServiceImpl();
 				try {
 					rss.setAprouveRelationORH(userID, relation.getActorID());
@@ -276,24 +365,28 @@ public class RelationServiceImpl implements RelationService {
 			}
 
 		}
-		// Or, the user can edit the group his/her relationshis is in.
-		if (!relationIntoDb.getRole().equals(relation.getRole())) {
-			relationIntoDb.getRole().clear();
-			relationIntoDb.getRole().addAll(relation.getRole());
+		// Or, the user can edit the group his/her relationship is in.
+		if (!contact.getRelations().equals(relation.getRole())) {
+			contact.getRelations().clear();
+			for (String role : relation.getRole()) {
+				
+				List<Relation> relations;
+				if ((relations = relationRepository.findByName(role)) != null);
+				contact.getRelations().addAll(relation.getRole());
+			}
+			
 		}
-		relationshipDatabase.save(new RelationshipRepositoryOldObject(userID,
-				relationIntoDb));
+		relationRepository.save(new RelationshipRepositoryOldObject(userID,
+				contact));
 		return;
 	}
 
 	@Override
 	public void setAprouveBox(String userId, String relationId) {
-		Relation relationIntoDb = relationshipDatabase.findOne(userId+
-				relationId).toRelation();
-		if (relationIntoDb.getAprouve() == 1) {
-			relationIntoDb.setAprouve(3);
-			relationshipDatabase.save(new RelationshipRepositoryOldObject(userId,
-					relationIntoDb));
+		Contact contact = contactRepository.findContact(userId, relationId);
+		if (contact.getStatus() == 1) {
+			contact.setStatus(3);
+			contactRepository.save(contact);
 		} else {
 			LOGGER.error("Something has been changed...");
 			throw new WebApplicationException(Status.FORBIDDEN);
@@ -304,8 +397,6 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public List<Content> getAllContent(String userID, String relationID) {
 		try {
-
-			
 
 			List<Content> listContent = requestContentService.get(userID,
 					relationID);
@@ -330,38 +421,54 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public void deleteRelationBox(String userId, String relationId) {
-		if (userRepo.exists(userId)) {
-			relationshipDatabase.delete(userId+ relationId);
+		Contact contact;
+		if ((contact = contactRepository.findContact(userId, relationId)) != null) {
+			contactRepository.delete(contact);
+		} else {
+			throw new NoRelationException();
 		}
 
 	}
 
 	@Override
-	public void deleteRelation(String userID, String actorID) {
-		if (userRepo.exists(actorID)) {
-			relationshipDatabase.delete(actorID+ userID);
+	public void deleteRelation(String actorID, String contactId) {
+		Contact contact;
+		if ((contact = contactRepository.findContact(contactId, actorID)) != null) {
+			contactRepository.delete(contact);
 
 		} else {
 			RequestRelationService rss = new RequestRelationServiceImpl();
 			try {
-				rss.deleteRelationORH(userID, actorID);
+				rss.deleteRelationORH(actorID, contactId);
 			} catch (IOException e) {
 				LOGGER.error(
 						"Can not delete a relation betewen {} and {} Error IO",
-						userID, actorID, e);
+						actorID, contactId, e);
 			} catch (NoSuchUserException e) {
 				LOGGER.debug(
 						"Can not delete a relation betewen {} and {} Error user not found (already delete ???)",
-						userID, actorID, e);
+						actorID, contactId, e);
 			} catch (NoSuchBoxException e) {
 				LOGGER.error(
 						"Can not delete a relation betewen {} and {} box of the first not found",
-						userID, actorID, e);
+						actorID, contactId, e);
 			}
 			rss.close();
 		}
-		relationshipDatabase.delete(userID+ actorID);
+		deleteRelationBox(actorID, contactId);
 
 	}
+
+	// @Override
+	// public void saveRelation(String userID, ContactXSD relation) {
+	// // TODO Auto-generated method stub
+	//
+	// }
+	//
+	// @Override
+	// public User getContactInformation(String userID) {
+	// // TODO Auto-generated method stub
+	// return null;
+	// }
 
 }

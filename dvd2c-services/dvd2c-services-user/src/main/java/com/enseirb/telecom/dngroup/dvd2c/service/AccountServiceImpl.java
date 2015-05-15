@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepository;
+import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOldObject;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.repository.ActorRepository;
@@ -49,6 +50,22 @@ public class AccountServiceImpl implements AccountService {
 		}
 		return exist;
 	}
+	
+	@Override
+	public User getContactInformation(String userID) {
+		 com.enseirb.telecom.dngroup.dvd2c.modeldb.User user = userRepository.findByEmail(userID);
+
+		if (user == null) {
+			return null;
+		} else {
+			User userReturn = new User();
+			userReturn.setFirstname(user.getFirstname());
+			userReturn.setSurname(user.getSurname());
+			userReturn.setUserID(user.getEmail());
+			return userReturn;
+		}
+
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -80,7 +97,7 @@ public class AccountServiceImpl implements AccountService {
 		} else {
 			User userXsd = new User();
 			userXsd.setUserID(user.getEmail());
-			userXsd.setFirstname(user.getName());
+			userXsd.setFirstname(user.getFirstname());
 			userXsd.setPassword(user.getEncryptedPassword());
 			userXsd.setSurname("");
 			userXsd.setBoxID(CliConfSingleton.boxID);
@@ -184,7 +201,7 @@ public class AccountServiceImpl implements AccountService {
 		
 		com.enseirb.telecom.dngroup.dvd2c.modeldb.User u = new com.enseirb.telecom.dngroup.dvd2c.modeldb.User();
 		u.setEmail(user.getUserID());
-		u.setName(user.getFirstname());
+		u.setFirstname(user.getFirstname());
 		u.setEncryptedPassword(user.getPassword());
 		u = userRepository.save(u);
 		return user;
@@ -216,7 +233,7 @@ public class AccountServiceImpl implements AccountService {
 		com.enseirb.telecom.dngroup.dvd2c.modeldb.User u = new com.enseirb.telecom.dngroup.dvd2c.modeldb.User();
 		u.setId(userRepository.findByEmail(user.getUserID()).getId());
 		u.setEmail(user.getUserID());
-		u.setName(user.getFirstname());
+		u.setFirstname(user.getFirstname());
 		u.setEncryptedPassword(user.getPassword());
 		
 		userRepository.save(u);

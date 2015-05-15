@@ -1,4 +1,4 @@
-package com.enseirb.telecom.dngroup.dvd2c.service.request;
+package com.enseirb.telecom.dngroup.dvd2c.request;
 
 import java.io.IOException;
 
@@ -12,16 +12,20 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
+import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
+import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
+import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
+import com.sun.research.ws.wadl.Link;
 
 public class RequestRelationServiceImpl implements RequestRelationService {
 	private static final Logger LOGGER = LoggerFactory
@@ -33,6 +37,15 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	public RequestRelationServiceImpl() {
 
 	}
+
+//	@Override
+//	public User getUserLocal(String relationIDString) {
+//		UriBuilder builder = UriBuilder
+//	            .fromPath(CliConfSingleton.appHostName)
+//	            .scheme("http")
+//	            .path("/api/app/"+ relationIDString).port(CliConfSingleton.appPort);
+//		WebTarget target = client.target(builder);
+//	}
 
 	@Override
 	public User get(String UserID, String UserToGet) throws IOException,
@@ -48,21 +61,20 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	}
 
 	@Override
-	public void updateRelationORH(Relation relationOfRequest,
-			Relation relationToRequest) throws IOException, NoSuchBoxException {
+	public void updateRelationORH(ContactXSD relationOfRequest,
+			String relationID) throws IOException, NoSuchBoxException {
 		Box boxRelation;
 		try {
-			boxRelation = requestServ.getBoxByUserIDORH(relationToRequest
-					.getActorID());
+			boxRelation = requestServ.getBoxByUserIDORH(relationID);
 		} catch (Exception e) {
 			LOGGER.error(
 					"Error while fetching Box information for relation {}",
-					relationToRequest.getActorID());
+					relationID);
 			throw new IOException(
 					"Can not conect to the server : Box information not fetched from CentralServer");
 		}
 		String requestUrl = boxRelation.getIp() + "/api/app/"
-				+ relationToRequest.getActorID() + "/relation/frombox";
+				+ relationID + "/relation/frombox";
 		LOGGER.debug("Request : {}", requestUrl);
 		WebTarget target = client.target(requestUrl);
 
@@ -130,7 +142,7 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 		Box boxRelation = requestServ.getBoxByUserIDORH(actorIDOfRelation);
 		WebTarget target = client.target(boxRelation.getIp()
 				+ "/api/box/relation/" + actorIDOfRelation + "/" + userID);
-		Relation relation = new Relation();
+		ContactXSD relation = new ContactXSD();
 		Response response = null;
 		try {
 			response = target.request(MediaType.APPLICATION_XML_TYPE).put(

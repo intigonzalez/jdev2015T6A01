@@ -23,10 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchRelationException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
+import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 
@@ -58,7 +58,7 @@ public class RelationEndPoints {
 	public User getMeFRH(@PathParam("userID") String userIDFromPath,
 			@PathParam("username") String relationIDFromPath) {
 		if (rManager.RelationExist(userIDFromPath, relationIDFromPath) == true) {
-			return rManager.getMe(userIDFromPath);
+			return rManager.getContactInformation(userIDFromPath);
 		} else {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
@@ -77,11 +77,11 @@ public class RelationEndPoints {
 	@GET
 	@Path("{relationID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Relation getRelation(@PathParam("userID") String userIDFromPath,
+	public ContactXSD getRelation(@PathParam("userID") String userIDFromPath,
 			@PathParam("relationID") String relationIDFromPath) {
 		try {
 			return rManager.getRelation(userIDFromPath, relationIDFromPath);
-		} catch (NoSuchRelationException e) {
+		} catch (NoSuchContactException e) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
@@ -104,7 +104,7 @@ public class RelationEndPoints {
 		// TODO: need to change beacause the content of one user doit etre
 		// recupre directement aupré de la ressource utilisateur
 
-		Relation relation;
+		ContactXSD relation;
 		try {
 			relation = rManager.getRelation(userID, relationID);
 
@@ -113,7 +113,7 @@ public class RelationEndPoints {
 			else {
 				throw new WebApplicationException(Status.FORBIDDEN);
 			}
-		} catch (NoSuchRelationException e) {
+		} catch (NoSuchContactException e) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
@@ -129,10 +129,10 @@ public class RelationEndPoints {
 	@RolesAllowed("other")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<Relation> getListRelation(
+	public List<ContactXSD> getListRelation(
 			@PathParam("userID") String userIDFromPath) {
 
-		return rManager.getListRelation(userIDFromPath);
+		return rManager.getListContact(userIDFromPath);
 
 	}
 
@@ -151,7 +151,7 @@ public class RelationEndPoints {
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response oldpostFriend(@PathParam("userID") String userIDFromPath,
-			Relation relationID) throws URISyntaxException {
+			ContactXSD relationID) throws URISyntaxException {
 		return postFriend2(userIDFromPath, relationID.getActorID());
 	}
 
@@ -200,14 +200,14 @@ public class RelationEndPoints {
 	@Path("frombox")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postFriendFromBox(
-			@PathParam("userID") String userIDFromPath, Relation relation)
+			@PathParam("userID") String userIDFromPath, ContactXSD relation)
 			throws URISyntaxException {
 		LOGGER.debug("add a relation from box between {} and {} ",
 				userIDFromPath, relation.getActorID());
 
 		if (rManager.RelationExist(userIDFromPath, relation.getActorID()) == false) {
 			try {
-				rManager.createRelation(userIDFromPath, relation, true);
+				rManager.createRelation(userIDFromPath, relation.getActorID(), true);
 			} catch (NoSuchUserException e) {
 				throw new WebApplicationException(Status.NOT_FOUND);
 			}
@@ -224,7 +224,7 @@ public class RelationEndPoints {
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putFriend(@PathParam("userID") String userIDFromPath,
-			@PathParam("username") String friendActorID, Relation relation) {
+			@PathParam("username") String friendActorID, ContactXSD relation) {
 		// need to verify the friend and after this modifies the friend
 		if (relation.getActorID() == null) {
 			relation.setActorID(friendActorID);

@@ -3,11 +3,10 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 import java.io.IOException;
 import java.util.List;
 
-import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchRelationException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
+import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
-import com.enseirb.telecom.dngroup.dvd2c.model.Role;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public interface RelationService {
@@ -25,24 +24,24 @@ public interface RelationService {
 	 * @param userID the main relation
 	 * @param relationID the id of relation
 	 * @return the relation
-	 * @throws NoSuchRelationException 
+	 * @throws NoSuchContactException 
 	 */
-	public abstract Relation getRelation(String userID, String relationID) throws NoSuchRelationException;
+	public abstract ContactXSD getRelation(String userID, String relationID) throws NoSuchContactException;
 
 	/**
 	 * get the list of relation from a user
 	 * @param userID to get relation
 	 * @return the list of relation
 	 */
-	public abstract List<Relation> getListRelation(String userID);
+	public abstract List<ContactXSD> getListContact(String userID);
 
-	/**
-	 * get the list of relation of a group from a user
-	 * @param userID to get relation
-	 * @param roleID the group to get
-	 * @return the list of relation
-	 */
-	public abstract List<Relation> getListRelation(String userID, Role roleID);
+//	/**
+//	 * get the list of relation of a group from a user
+//	 * @param userID to get relation
+//	 * @param roleID the group to get
+//	 * @return the list of relation
+//	 */
+//	public abstract List<ContactXSD> getListRelation(String userID, Role roleID);
 
 	/**
 	 * get all content of the first user to the seconde user
@@ -56,13 +55,15 @@ public interface RelationService {
 	 *  create a relation between userID and the relation
 	 *  and send a request to create the relation on the other box
 	 * @param userID of the box
-	 * @param relation the second user
+	 * @param relationID the second user
 	 * @param fromBox if the request is from the box
 	 * @return the relation
 	 * @throws NoSuchUserException
 	 */
-	public abstract Relation createRelation(String userID, Relation relation, Boolean fromBox)
-			throws NoSuchUserException;
+	public abstract ContactXSD createRelation(String userID, String relationID,
+			Boolean fromBox) throws NoSuchUserException;
+
+	
 
 	/**
 	 * update a relation between the user 
@@ -70,7 +71,7 @@ public interface RelationService {
 	 * @param userID of the box
 	 * @param relation the other
 	 */
-	public abstract void saveRelation(String userID, Relation relation);
+	public abstract void saveRelation(String userID, ContactXSD relation);
 
 	/**
 	 * delete a relation 
@@ -97,7 +98,7 @@ public interface RelationService {
 	 * @param userID
 	 * @return
 	 */
-	public abstract User getMe(String userID);
+	public abstract User getContactInformation(String userID);
 
 	/**
 	 * Update relation list for metaData send getMe to all relation

@@ -1,10 +1,10 @@
-package com.enseirb.telecom.dngroup.dvd2c.service.request;
+package com.enseirb.telecom.dngroup.dvd2c.request;
 
 import java.io.IOException;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
-import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
+import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public interface RequestRelationService {
@@ -36,7 +36,7 @@ public interface RequestRelationService {
      * @throws IOException host is not reachable
      * @throws NoSuchBoxException no box found
      */
-    public abstract void updateRelationORH(Relation relationOfRequest, Relation relationToRequest) throws IOException, NoSuchBoxException;
+    public abstract void updateRelationORH(ContactXSD relationOfRequest, String relationID ) throws IOException, NoSuchBoxException;
 
     /**
      * delete a Relation on remote host
@@ -62,4 +62,13 @@ public interface RequestRelationService {
      * @throws NoSuchUserException 
      */
     public abstract void setAprouveRelationORH(String userID, String actorIDOfRelation) throws IOException, NoSuchBoxException, NoSuchUserException;
+
+	
+
+//	/**
+//	 * get user information from userservice
+//	 * @param relationIDString
+//	 * @return
+//	 */
+//	public abstract User getUserLocal(String relationIDString);
 }

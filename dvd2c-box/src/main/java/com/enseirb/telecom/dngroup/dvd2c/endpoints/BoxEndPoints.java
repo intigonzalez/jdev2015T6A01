@@ -23,11 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
-import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchRelationException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
+import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.Contact;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
@@ -137,7 +139,7 @@ public class BoxEndPoints {
 
 			rManager.setAprouveBox(userId, relationId);
 			return Response.status(Status.ACCEPTED).build();
-		} catch (NoSuchRelationException e) {
+		} catch (NoSuchContactException e) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
 	}
@@ -202,7 +204,7 @@ public class BoxEndPoints {
 		LOGGER.debug("Receive Request to get list content from {}", relationID);
 		try {
 
-			Relation relation;
+			ContactXSD relation;
 
 			relation = rManager.getRelation(userID, relationID);
 
@@ -211,7 +213,7 @@ public class BoxEndPoints {
 					.getAllContent(userID, relation);
 			return listContent;
 
-		} catch (NoSuchRelationException e) {
+		} catch (NoSuchContactException e) {
 			throw new WebApplicationException(Status.NOT_ACCEPTABLE);
 		}
 
