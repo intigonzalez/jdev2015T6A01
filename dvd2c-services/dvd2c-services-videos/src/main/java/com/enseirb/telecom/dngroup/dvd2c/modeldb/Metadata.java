@@ -23,9 +23,9 @@ public class Metadata extends DBObject implements Serializable {
 
 	private String metadata;
 
-	//bi-directional many-to-one association to ActivityMetadata
-	@OneToMany(mappedBy="metadata")
-	private List<ActivityMetadata> activityMetadata;
+	@ManyToMany
+	@JoinTable(name = "ACTIVITYOBJECT_METADATA", joinColumns = { @JoinColumn(name = "ACTIVITYOBJECT_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "ACTOR_ID", referencedColumnName = "ID") })
+	private List<ActivityObject> activityObjects;
 
 	public Metadata() {
 	}
@@ -45,27 +45,14 @@ public class Metadata extends DBObject implements Serializable {
 	public void setMetadata(String metadata) {
 		this.metadata = metadata;
 	}
-
-	public List<ActivityMetadata> getActivityMetadata() {
-		return this.activityMetadata;
+	
+	public List<ActivityObject> getActivityObjects() {
+		return this.activityObjects;
 	}
 
-	public void setActivityMetadata(List<ActivityMetadata> activityMetadata) {
-		this.activityMetadata = activityMetadata;
+	public void setActivityObjects(List<ActivityObject> activityObjects) {
+		this.activityObjects = activityObjects;
 	}
 
-	public ActivityMetadata addActivityMetadata(ActivityMetadata activityMetadata) {
-		getActivityMetadata().add(activityMetadata);
-		activityMetadata.setMetadata(this);
-
-		return activityMetadata;
-	}
-
-	public ActivityMetadata removeActivityMetadata(ActivityMetadata activityMetadata) {
-		getActivityMetadata().remove(activityMetadata);
-		activityMetadata.setMetadata(null);
-
-		return activityMetadata;
-	}
 
 }

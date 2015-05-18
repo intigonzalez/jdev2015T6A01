@@ -3,7 +3,6 @@
 	<persistence-unit name="dvd2c-services-videos">
 		<class>com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryObject</class>
 		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.ActivityAction</class>
-		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.ActivityMetadata</class>
 		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.ActivityObjectProperty</class>
 		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.ActivityObject</class>
 		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Comment</class>

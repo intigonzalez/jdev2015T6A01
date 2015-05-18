@@ -50,6 +50,10 @@ public class ActivityObject extends DBObject implements Serializable {
 	//bi-directional many-to-one association to ActivityObjectProperty
 	@OneToMany(mappedBy="activityObject2")
 	private List<ActivityObjectProperty> activityObjectProperties2;
+	
+	@ManyToMany
+	@JoinTable(name = "ACTIVITYOBJECT_METADATA", joinColumns = { @JoinColumn(name = "METADATA_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "ACTIVITYOBJECT_ID", referencedColumnName = "ID") })
+	private List<Metadata> metadatas;
 
 	public ActivityObject() {
 	}
@@ -166,6 +170,14 @@ public class ActivityObject extends DBObject implements Serializable {
 		activityObjectProperties2.setActivityObject2(null);
 
 		return activityObjectProperties2;
+	}
+	
+	public List<Metadata> getMetadatas() {
+		return metadatas;
+	}
+
+	public void setMetadatas(List<Metadata> metadatas) {
+		this.metadatas = metadatas;
 	}
 
 }
