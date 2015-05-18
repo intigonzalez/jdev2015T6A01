@@ -21,14 +21,14 @@ import javax.ws.rs.core.Response.Status;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
-import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
+import com.enseirb.telecom.dngroup.dvd2c.service.CentralService;
 
 // The Java class will be hosted at the URI path "/app/account"
 @Path("app/account")
 public class UserEndPoints {
 
 	@Inject
-	AccountService uManager;
+	CentralService uManager;
 
 	@GET
 	@Path("{userID}")

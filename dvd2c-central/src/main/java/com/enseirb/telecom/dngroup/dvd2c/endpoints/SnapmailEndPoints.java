@@ -17,8 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
-import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
-import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
+import com.enseirb.telecom.dngroup.dvd2c.service.CentralService;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
@@ -29,9 +28,8 @@ public class SnapmailEndPoints {
 			.getLogger(SnapmailEndPoints.class);
 
 	@Inject
-	BoxService boxManager;
-	@Inject
-	AccountService uManager;
+	CentralService boxManager;
+
 
 	/**
 	 * state=actorID
@@ -45,7 +43,7 @@ public class SnapmailEndPoints {
 			@QueryParam("code") String code) {
 		User actor;
 		try {
-			actor = uManager.getUserOnLocal(actorID);
+			actor = boxManager.getUserOnLocal(actorID);
 
 			Box box = boxManager.getBoxOnLocal(actor.getBoxID());
 			boxManager.sendGoogleCode(actorID,box,code);

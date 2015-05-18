@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -177,12 +178,14 @@ public class AccountServiceImpl implements AccountService {
 
 		// Spring: fixme
 		try {
+			UUID uuid = UUID.randomUUID();
 			
 			User userRestric = new User();
 			userRestric.setBoxID(CliConfSingleton.boxID);
 			userRestric.setFirstname(user.getFirstname());
 			userRestric.setSurname(user.getSurname());
 			userRestric.setUserID(user.getUserID());
+			userRestric.setUuid(uuid.toString());
 			requetUserService.createUserORH(userRestric);
 
 			return createUserOnLocal(user);

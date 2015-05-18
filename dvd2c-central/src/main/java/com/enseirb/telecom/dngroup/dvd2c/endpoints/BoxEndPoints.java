@@ -21,17 +21,15 @@ import javax.ws.rs.core.Response.Status;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
-import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
-import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
+import com.enseirb.telecom.dngroup.dvd2c.service.CentralService;
 
 // The Java class will be hosted at the URI path "/myresource"
 @Path("app/box")
 public class BoxEndPoints {
 
 	@Inject
-	BoxService boxManager;
-	@Inject
-	AccountService uManager ;
+	CentralService boxManager;
+
 
 	/**
 	 * Get List of box
@@ -72,7 +70,7 @@ public class BoxEndPoints {
 	@Produces(MediaType.APPLICATION_XML)
 	public List<User> getUserFromIP(@PathParam("boxIp") String ip) {
 		List<Box> listBox = boxManager.getBoxListFromIP(ip);
-		return uManager.getUsersFromListBoxes(listBox);
+		return boxManager.getUsersFromListBoxes(listBox);
 
 	}
 

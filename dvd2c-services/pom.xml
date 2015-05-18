@@ -18,5 +18,6 @@
     <module>dvd2c-services-box</module>
     <module>dvd2c-services-social</module>
     <module>dvd2c-services-commons</module>
+    <module>dvd2c-services-central</module>
   </modules>
 </project>
