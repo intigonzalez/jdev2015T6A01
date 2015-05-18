@@ -45,10 +45,6 @@ public class Event extends ActivityObject implements Serializable {
 	@Column(name="start_date")
 	private Date startDate;
 
-	//bi-directional many-to-one association to Room
-	@ManyToOne
-	private Room room;
-
 	//bi-directional many-to-one association to ActivityObject
 	@ManyToOne
 	@JoinColumn(name="activity_object_id")
@@ -127,14 +123,6 @@ public class Event extends ActivityObject implements Serializable {
 
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
-	}
-
-	public Room getRoom() {
-		return this.room;
-	}
-
-	public void setRoom(Room room) {
-		this.room = room;
 	}
 
 	public ActivityObject getActivityObject() {
