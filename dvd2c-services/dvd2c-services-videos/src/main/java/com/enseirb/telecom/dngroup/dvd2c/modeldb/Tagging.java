@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
-import java.util.Date;
-
 
 /**
  * The persistent class for the taggings database table.
@@ -22,10 +20,6 @@ public class Tagging extends DBObject implements Serializable {
 	private Integer id;
 
 	private String context;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="created_at")
-	private Date createdAt;
 
 	@Column(name="tag_id")
 	private int tagId;
@@ -59,14 +53,6 @@ public class Tagging extends DBObject implements Serializable {
 
 	public void setContext(String context) {
 		this.context = context;
-	}
-
-	public Date getCreatedAt() {
-		return this.createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
 	}
 
 	public int getTagId() {
