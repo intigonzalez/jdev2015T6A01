@@ -30,7 +30,7 @@ public class QueueConsumerAppImp implements QueueConsumerApp {
 	 * @see com.enseirb.telecom.dngroup.dvd2c.QueueConumerApp#getQueueMessage(java.lang.String, com.enseirb.telecom.dngroup.dvd2c.service.ContentService)
 	 */
 	@Override
-	public void getQueueMessage(String queue,ContentService contentService) throws IOException,
+	public void getQueueMessage(String queue,final ContentService contentService) throws IOException,
 			InterruptedException {
 		final String QUEUE_NAME = queue;
 

@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
-import model.Contact;
 
 import java.util.Date;
 import java.util.List;
@@ -55,7 +54,7 @@ public class ReceiverActor extends DBObject implements Serializable {
 	@Column(name = "subject_type")
 	private String subjectType;
 
-	@OneToMany(mappedBy="receiveractor")
+	@OneToMany(mappedBy="receiverActor")
 	private List<Contact> contacts;
 
 

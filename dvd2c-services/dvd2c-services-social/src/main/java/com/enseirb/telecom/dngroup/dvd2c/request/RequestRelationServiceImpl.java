@@ -16,6 +16,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.ApplicationContext;
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
@@ -27,6 +28,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 import com.sun.research.ws.wadl.Link;
 
+@Service
 public class RequestRelationServiceImpl implements RequestRelationService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RequestRelationServiceImpl.class);
@@ -34,6 +36,7 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	private Client client;
 	@Inject 
 	private RequestUserService requestServ;
+	
 	public RequestRelationServiceImpl() {
 
 	}

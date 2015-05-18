@@ -99,7 +99,7 @@ public class AccountServiceImpl implements AccountService {
 			userXsd.setUserID(user.getEmail());
 			userXsd.setFirstname(user.getFirstname());
 			userXsd.setPassword(user.getEncryptedPassword());
-			userXsd.setSurname("");
+			userXsd.setSurname(user.getSurname());
 			userXsd.setBoxID(CliConfSingleton.boxID);
 			return userXsd;
 		}
@@ -202,6 +202,7 @@ public class AccountServiceImpl implements AccountService {
 		com.enseirb.telecom.dngroup.dvd2c.modeldb.User u = new com.enseirb.telecom.dngroup.dvd2c.modeldb.User();
 		u.setEmail(user.getUserID());
 		u.setFirstname(user.getFirstname());
+		u.setSurname(user.getSurname());
 		u.setEncryptedPassword(user.getPassword());
 		u = userRepository.save(u);
 		return user;

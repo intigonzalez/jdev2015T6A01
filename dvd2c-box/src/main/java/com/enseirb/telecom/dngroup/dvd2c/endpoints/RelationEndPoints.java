@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -23,11 +24,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
+import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 
 //import com.enseirb.telecom.s9.Relation;
@@ -40,11 +44,14 @@ public class RelationEndPoints {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RelationEndPoints.class);
 
-	@Autowired
-	protected RelationService rManager = null;
+	@Inject
+	protected RelationService rManager;
+
+	@Inject
+	protected AccountService aService;
 
 	/**
-	 * get user for remote host
+	 * get user for a remote host
 	 * 
 	 * @param userIDFromPath
 	 *            the userID to get information
@@ -58,7 +65,7 @@ public class RelationEndPoints {
 	public User getMeFRH(@PathParam("userID") String userIDFromPath,
 			@PathParam("username") String relationIDFromPath) {
 		if (rManager.RelationExist(userIDFromPath, relationIDFromPath) == true) {
-			return rManager.getContactInformation(userIDFromPath);
+			return aService.getContactInformation(userIDFromPath);
 		} else {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
@@ -207,8 +214,13 @@ public class RelationEndPoints {
 
 		if (rManager.RelationExist(userIDFromPath, relation.getActorID()) == false) {
 			try {
-				rManager.createRelation(userIDFromPath, relation.getActorID(), true);
+				rManager.createRelation(userIDFromPath, relation.getActorID(),
+						true);
 			} catch (NoSuchUserException e) {
+				throw new WebApplicationException(Status.NOT_FOUND);
+			} catch (IOException e) {
+				throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+			} catch (NoSuchBoxException e) {
 				throw new WebApplicationException(Status.NOT_FOUND);
 			}
 			// NHE that the answer we expect from a post (see location header)
@@ -224,14 +236,18 @@ public class RelationEndPoints {
 	@Path("{username}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putFriend(@PathParam("userID") String userIDFromPath,
-			@PathParam("username") String friendActorID, ContactXSD relation) {
+			@PathParam("username") String friendActorID, ContactXSD contact) {
 		// need to verify the friend and after this modifies the friend
-		if (relation.getActorID() == null) {
-			relation.setActorID(friendActorID);
+		if (contact.getActorID() == null) {
+			contact.setActorID(friendActorID);
 		}
-		if (relation.getActorID().equals(friendActorID)) {
-			if (rManager.RelationExist(userIDFromPath, relation.getActorID())) {
-				rManager.saveRelation(userIDFromPath, relation);
+		if (contact.getActorID().equals(friendActorID)) {
+			if (rManager.RelationExist(userIDFromPath, contact.getActorID())) {
+				try {
+					rManager.saveRelation(userIDFromPath, contact);
+				} catch (NoRelationException e) {
+					throw new WebApplicationException(404);
+				}
 				return Response.status(200).build();
 			} else {
 				return Response.status(404).build();
@@ -282,7 +298,20 @@ public class RelationEndPoints {
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteFriend(@PathParam("userID") String userIDFromPath,
 			@PathParam("username") String relationIDFromPath) {
-		rManager.deleteRelation(userIDFromPath, relationIDFromPath);
+		try {
+			rManager.deleteRelation(userIDFromPath, relationIDFromPath);
+		} catch (NoSuchUserException e) {
+			LOGGER.info("no user {} or no contact {} found", userIDFromPath,
+					relationIDFromPath);
+			return Response.status(404).build();
+		} catch (NoSuchBoxException e) {
+			LOGGER.info("no box found for your contact {}", relationIDFromPath);
+			return Response.status(404).build();
+		} catch (NoRelationException e) {
+			LOGGER.info("no relation found between{} {}", userIDFromPath,
+					relationIDFromPath);
+			return Response.status(404).build();
+		}
 		return Response.status(200).build();
 	}
 }

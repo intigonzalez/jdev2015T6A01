@@ -3,6 +3,8 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 import java.io.IOException;
 import java.util.List;
 
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
@@ -59,9 +61,11 @@ public interface RelationService {
 	 * @param fromBox if the request is from the box
 	 * @return the relation
 	 * @throws NoSuchUserException
+	 * @throws IOException 
+	 * @throws NoSuchBoxException 
 	 */
 	public abstract ContactXSD createRelation(String userID, String relationID,
-			Boolean fromBox) throws NoSuchUserException;
+			Boolean fromBox) throws NoSuchUserException, IOException, NoSuchBoxException;
 
 	
 
@@ -70,15 +74,19 @@ public interface RelationService {
 	 * this service verify the status
 	 * @param userID of the box
 	 * @param relation the other
+	 * @throws NoRelationException 
 	 */
-	public abstract void saveRelation(String userID, ContactXSD relation);
+	public abstract void saveRelation(String userID, ContactXSD relation) throws NoRelationException;
 
 	/**
 	 * delete a relation 
 	 * @param userID the user of the box
 	 * @param relationID the other user
+	 * @throws NoSuchUserException 
+	 * @throws NoSuchBoxException 
+	 * @throws NoRelationException 
 	 */
-	public abstract void deleteRelation(String userID, String relationID);
+	public abstract void deleteRelation(String userID, String relationID) throws NoSuchUserException, NoSuchBoxException, NoRelationException;
 
 	/**
 	 *  create a relation between userID and the relation
@@ -92,13 +100,14 @@ public interface RelationService {
 	public abstract void createDefaultRelation(String userIDFromPath, String relationID,
 			Boolean fromBox) throws NoSuchUserException;
 
-	/**
-	 * get the more information on this box for metaData of a other box
-	 * OTHER BOX SERVICE
-	 * @param userID
-	 * @return
-	 */
-	public abstract User getContactInformation(String userID);
+	//RBAC: GO TO USER SERVICE
+//	/**
+//	 * get the more information on this box for metaData of a other box
+//	 * OTHER BOX SERVICE
+//	 * @param userID
+//	 * @return
+//	 */
+//	public abstract User getContactInformation(String userID);
 
 	/**
 	 * Update relation list for metaData send getMe to all relation
@@ -120,6 +129,7 @@ public interface RelationService {
 	 * delete a relation on the other box
 	 * @param userId
 	 * @param relationId
+	 * @throws NoRelationException 
 	 */
-	public abstract void deleteRelationBox(String userId, String relationId);
+	public abstract void deleteRelationBox(String userId, String relationId) throws NoRelationException;
 }

@@ -22,11 +22,11 @@ import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOldObject;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
-import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchStatusException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.Actor;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Contact;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ReceiverActor;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Relation;
@@ -57,7 +57,7 @@ public class RelationServiceImpl implements RelationService {
 
 	@Inject
 	AccountService accountService;
-	
+
 	@Inject
 	RelationRepository relationRepository;
 
@@ -69,9 +69,14 @@ public class RelationServiceImpl implements RelationService {
 
 	@Inject
 	RequestContentService requestContentService;
+	
+	@Inject
+	private ReceiverActorRepository receiverActorRepository;
 
 	public boolean RelationExist(String UserID, String actorID) {
-		return (contactRepository.findContact(UserID, actorID) != null);
+//		ReceiverActor a = receiverActorRepository.findByEmail(actorID);
+		Contact c = contactRepository.findContact(UserID, actorID);
+		return ( c!= null);
 	}
 
 	@Override
@@ -82,24 +87,14 @@ public class RelationServiceImpl implements RelationService {
 
 		for (Contact rro : contactRepository.findByOwner(userID)) {
 
-			if (rro.getUserId().equals(userID)) {
-
-				LOGGER.debug("{}", rro.getActorID());
-
-				try {
-					// Box boxRelation = requestServ.getBox(rro.getActorID());
-
-					User relationUpdate = rrs.get(userID, rro.getActorID());
-					Relation relationIntoDb = relationRepository.findOne(
-							userID + relationUpdate.getUserID()).toRelation();
-					relationIntoDb.setFirstname(relationUpdate.getFirstname());
-					relationIntoDb.setSurname(relationUpdate.getSurname());
-					relationRepository
-							.save(new RelationshipRepositoryOldObject(userID,
-									relationIntoDb));
-				} catch (NoSuchBoxException e) {
-					LOGGER.warn("All users should have a box, ignoring");
-				}
+			try {
+				User relationUpdate = rrs.get(userID, rro.getReceiverActor().getEmail());
+				ReceiverActor relationIntoDb = receiverActorRepository.findByEmail(rro.getReceiverActor().getEmail());
+				relationIntoDb.setFirstname(relationUpdate.getFirstname());
+				relationIntoDb.setSurname(relationUpdate.getSurname());
+				receiverActorRepository.save(relationIntoDb);
+			} catch (NoSuchBoxException e) {
+				LOGGER.warn("All users should have a box, ignoring");
 
 			}
 		}
@@ -205,7 +200,7 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public ContactXSD createRelation(String userIDFromPath,
 			String relationIDString, Boolean fromBox)
-			throws NoSuchUserException {
+			throws NoSuchUserException, IOException, NoSuchBoxException {
 		/*
 		 * Check the content, add a state 1 to the approuve value Check the user
 		 * really exists from the central server Send a request to the right box
@@ -324,7 +319,8 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public void saveRelation(String userID, ContactXSD relation) {
+	public void saveRelation(String userID, ContactXSD relation)
+			throws NoRelationException {
 		// Here, the user is only allowed to edit the approve value if the
 		// current value is = 2
 		Contact contact;
@@ -336,14 +332,13 @@ public class RelationServiceImpl implements RelationService {
 		if (contact.getStatus() != relation.getAprouve()
 				&& contact.getStatus() == 2 && relation.getAprouve() == 3) {
 			contact.setStatus(3);
-			
+
 			Contact contact2;
-			if ((contact2 = contactRepository.findContact(relation.getActorID(),
-					userID)) != null) {
+			if ((contact2 = contactRepository.findContact(
+					relation.getActorID(), userID)) != null) {
 				contact2.setStatus(3);
 				contactRepository.save(contact2);
-			}
-			 else {
+			} else {
 				RequestRelationService rss = new RequestRelationServiceImpl();
 				try {
 					rss.setAprouveRelationORH(userID, relation.getActorID());
@@ -369,15 +364,16 @@ public class RelationServiceImpl implements RelationService {
 		if (!contact.getRelations().equals(relation.getRole())) {
 			contact.getRelations().clear();
 			for (String role : relation.getRole()) {
-				
-				List<Relation> relations;
-				if ((relations = relationRepository.findByName(role)) != null);
-				contact.getRelations().addAll(relation.getRole());
+				// RBAC: NEED TO FIX THIS
+
+				Relation relation2;
+				if ((relation2 = relationRepository.findByName(role, userID)) != null)
+
+					contact.getRelations().add(relation2);
 			}
-			
+
 		}
-		relationRepository.save(new RelationshipRepositoryOldObject(userID,
-				contact));
+		contactRepository.save(contact);
 		return;
 	}
 
@@ -420,7 +416,8 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public void deleteRelationBox(String userId, String relationId) {
+	public void deleteRelationBox(String userId, String relationId)
+			throws NoRelationException {
 		Contact contact;
 		if ((contact = contactRepository.findContact(userId, relationId)) != null) {
 			contactRepository.delete(contact);
@@ -431,8 +428,10 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public void deleteRelation(String actorID, String contactId) {
+	public void deleteRelation(String actorID, String contactId)
+			throws NoSuchUserException, NoSuchBoxException, NoRelationException {
 		Contact contact;
+
 		if ((contact = contactRepository.findContact(contactId, actorID)) != null) {
 			contactRepository.delete(contact);
 
@@ -448,27 +447,20 @@ public class RelationServiceImpl implements RelationService {
 				LOGGER.debug(
 						"Can not delete a relation betewen {} and {} Error user not found (already delete ???)",
 						actorID, contactId, e);
+				throw e;
 			} catch (NoSuchBoxException e) {
 				LOGGER.error(
 						"Can not delete a relation betewen {} and {} box of the first not found",
 						actorID, contactId, e);
+				throw e;
 			}
 			rss.close();
 		}
+
 		deleteRelationBox(actorID, contactId);
 
 	}
 
-	// @Override
-	// public void saveRelation(String userID, ContactXSD relation) {
-	// // TODO Auto-generated method stub
-	//
-	// }
-	//
-	// @Override
-	// public User getContactInformation(String userID) {
-	// // TODO Auto-generated method stub
-	// return null;
-	// }
+
 
 }

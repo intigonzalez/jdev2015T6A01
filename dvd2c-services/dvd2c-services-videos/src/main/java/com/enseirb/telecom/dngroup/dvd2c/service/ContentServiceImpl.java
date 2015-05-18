@@ -26,8 +26,8 @@ import org.springframework.stereotype.Service;
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryObject;
+import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.model.Task;
 import com.enseirb.telecom.dngroup.dvd2c.utils.FileService;
 import com.google.common.base.Throwables;
@@ -302,7 +302,7 @@ public class ContentServiceImpl implements ContentService {
 
 	}
 
-	public List<Content> getAllContent(String userID, Relation relation) {
+	public List<Content> getAllContent(String userID, ContactXSD relation) {
 		// List that will be return.
 		List<Content> listContent = new ArrayList<Content>();
 

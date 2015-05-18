@@ -92,6 +92,9 @@ public class RequestUserServiceImpl implements RequestUserService {
 			break;
 		case CONFLICT:
 			throw new SuchUserException();
+		case NOT_FOUND:
+			//DB: actual return 
+			throw new SuchUserException();
 		default:
 			throw new IOException("Can not conect to the server :"
 					+ response.getStatus());

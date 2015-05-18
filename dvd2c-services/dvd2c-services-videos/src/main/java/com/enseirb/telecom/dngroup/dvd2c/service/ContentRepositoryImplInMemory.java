@@ -17,7 +17,7 @@ public class ContentRepositoryImplInMemory extends
 		ContentRepository {
 
 	
-	public List<ContentRepositoryObject> findAllFromUser(String userID) {
+	public List<ContentRepositoryObject> findAllFromUser(final String userID) {
 		return Lists.newArrayList(Iterables.filter(this.findAll(),
 				new Predicate<ContentRepositoryObject>() {
 

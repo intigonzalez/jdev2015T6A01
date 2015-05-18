@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
+import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 
 @Entity
 public class RelationshipRepositoryOldObject {
@@ -57,7 +57,7 @@ public class RelationshipRepositoryOldObject {
 
 	}
 
-	public RelationshipRepositoryOldObject(String userId, Relation relation) {
+	public RelationshipRepositoryOldObject(String userId, ContactXSD relation) {
 		this.iD = userId + relation.getActorID();
 		this.userId = userId;
 		this.actorID = relation.getActorID();
@@ -151,8 +151,8 @@ public class RelationshipRepositoryOldObject {
 		this.unixTime = unixTime;
 	}
 
-	public Relation toRelation() {
-		Relation relation = new Relation();
+	public ContactXSD toRelation() {
+		ContactXSD relation = new ContactXSD();
 		relation.setActorID(actorID);
 		relation.setFirstname(firstname);
 		relation.setSurname(surname);

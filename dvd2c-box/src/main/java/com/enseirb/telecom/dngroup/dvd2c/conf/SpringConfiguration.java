@@ -25,7 +25,8 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 @ComponentScan(basePackages = { "com.enseirb.telecom.dngroup.dvd2c.filter",
 		"com.enseirb.telecom.dngroup.dvd2c.db",
 		"com.enseirb.telecom.dngroup.dvd2c.conf",
-		"com.enseirb.telecom.dngroup.dvd2c.service" })
+		"com.enseirb.telecom.dngroup.dvd2c.service",
+		"com.enseirb.telecom.dngroup.dvd2c"})
 @EnableJpaRepositories("com.enseirb.telecom.dngroup.dvd2c.db")
 @EnableTransactionManagement
 public class SpringConfiguration {

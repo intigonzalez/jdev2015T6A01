@@ -22,14 +22,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
-import com.enseirb.telecom.dngroup.dvd2c.modeldb.Contact;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
@@ -180,7 +179,12 @@ public class BoxEndPoints {
 		LOGGER.debug("try to delete a relation from a other box {} and {}",
 				userId, relationId);
 
-		rManager.deleteRelationBox(userId, relationId);
+		try {
+			rManager.deleteRelationBox(userId, relationId);
+		} catch (NoRelationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return Response.status(200).build();
 	}
 

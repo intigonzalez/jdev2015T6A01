@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
-import model.Actor;
+
 
 import java.util.List;
 
