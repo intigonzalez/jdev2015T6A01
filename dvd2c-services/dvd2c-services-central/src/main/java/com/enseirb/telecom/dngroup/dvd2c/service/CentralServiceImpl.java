@@ -30,19 +30,19 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestBoxService;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestBoxServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
+
 @Service
 public class CentralServiceImpl implements CentralService {
-private static final Logger LOGGER = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(CentralServiceImpl.class);
 	@Inject
-	BoxRepository  boxRepository;
-	
+	BoxRepository boxRepository;
+
 	@Inject
-	RequestBoxService requetBoxService ;
+	RequestBoxService requetBoxService;
 
 	@Inject
 	protected UserRepository userRepository;
-	
 
 	@Inject
 	protected RequestUserService requetUserService;
@@ -81,7 +81,7 @@ private static final Logger LOGGER = LoggerFactory
 			throw new NoSuchBoxException();
 		}
 
-		LOGGER.debug("Box Found : {}",box.getBoxID());
+		LOGGER.debug("Box Found : {}", box.getBoxID());
 		return box.toBox();
 
 	}
@@ -196,20 +196,12 @@ private static final Logger LOGGER = LoggerFactory
 	}
 
 	@Override
-	public void sendGoogleCode(String actorID, Box box, String code) throws IOException {
-				requetBoxService.sendOauthORH(actorID, box, code);
+	public void sendGoogleCode(String actorID, Box box, String code)
+			throws IOException {
+		requetBoxService.sendOauthORH(actorID, box, code);
 	}
 
-	
-	
-	
-	///////////////////
-	
-	
-
-	
-
-	
+	// /////////////////
 
 	/*
 	 * (non-Javadoc)
@@ -219,9 +211,9 @@ private static final Logger LOGGER = LoggerFactory
 	 */
 	@Override
 	public boolean userExistOnLocal(String userID) {
-//		UserRepositoryObject user = userRepository.findOne(userID);
+		// UserRepositoryObject user = userRepository.findOne(userID);
 		boolean exist = userRepository.exists(userID);
-		
+
 		return exist;
 	}
 
@@ -242,14 +234,12 @@ private static final Logger LOGGER = LoggerFactory
 		}
 	}
 
-
-
 	@Override
 	public List<User> getUserFromName(String firstname) {
 		// DB: need to change
-//		UserRepositoryObject userIterable1 = userRepository.findOne("da");
-//		ArrayList<String> string = new ArrayList<String>() ;
-//				string.add("da");
+		// UserRepositoryObject userIterable1 = userRepository.findOne("da");
+		// ArrayList<String> string = new ArrayList<String>() ;
+		// string.add("da");
 		Iterable<UserRepositoryObject> userIterable = userRepository.findAll();
 		UserRepositoryObject userRepo = null;
 		List<User> listUser = new ArrayList<User>();
@@ -295,8 +285,6 @@ private static final Logger LOGGER = LoggerFactory
 
 	}
 
-	
-
 	@Override
 	public User createUserOnLocal(User user) {
 
@@ -304,14 +292,10 @@ private static final Logger LOGGER = LoggerFactory
 		return u;
 	}
 
-	
-
 	@Override
 	public void saveUserOnLocal(User user) {
 		userRepository.save(new UserRepositoryObject(user));
 	}
-
-	
 
 	public void deleteUserOnLocal(String userID) {
 		this.userRepository.delete(userID);
@@ -335,7 +319,6 @@ private static final Logger LOGGER = LoggerFactory
 	@Override
 	public List<User> getUsersFromBoxes(List<Box> listBox) {
 
-	
 		List<User> listUsersFinal = new ArrayList<User>(), listUsersOfBoxes = new ArrayList<User>();
 
 		User user;
@@ -364,6 +347,5 @@ private static final Logger LOGGER = LoggerFactory
 	public List<User> getUsersFromListBoxes(List<Box> listBox) {
 		return getUsersFromBoxes(listBox);
 	}
-
 
 }

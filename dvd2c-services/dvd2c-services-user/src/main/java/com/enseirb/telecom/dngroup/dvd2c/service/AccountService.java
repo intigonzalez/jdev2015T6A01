@@ -128,15 +128,7 @@ public interface AccountService {
 	 */
 	public abstract boolean getUserVerification(String userID, String password) throws NoSuchUserException;
 	
-	/**
-	 * get the more information on this box for metaData of a other box
-	 * OTHER BOX SERVICE
-	 * @param userID
-	 * @return
-	 */
-	public User getContactInformation(String userID);
 
-	
 
 
 }
