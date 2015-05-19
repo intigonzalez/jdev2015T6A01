@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
-import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryObject;
+import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryOld;
+import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryOldObject;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Relation;
 import com.enseirb.telecom.dngroup.dvd2c.model.Task;
@@ -43,7 +43,7 @@ public class ContentServiceImpl implements ContentService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ContentServiceImpl.class);
 	@Inject
-	ContentRepository contentDatabase;
+	ContentRepositoryOld contentDatabase;
 	@Inject
 	MessageBrokerService rabbitMq;
 
@@ -64,13 +64,13 @@ public class ContentServiceImpl implements ContentService {
 	public List<Content> getAllContentsFromUser(String userID) {
 
 		List<Content> listContent = new ArrayList<Content>();
-		Iterable<ContentRepositoryObject> contentsDb = contentDatabase
+		Iterable<ContentRepositoryOldObject> contentsDb = contentDatabase
 				.findAll();
-		Iterator<ContentRepositoryObject> itr = contentsDb.iterator();
+		Iterator<ContentRepositoryOldObject> itr = contentsDb.iterator();
 		while (itr.hasNext()) {
-			ContentRepositoryObject contentRepositoryObject = itr.next();
-			if (contentRepositoryObject.getActorID().equals(userID)) {
-				listContent.add(contentRepositoryObject.toContent());
+			ContentRepositoryOldObject contentRepositoryOldObject = itr.next();
+			if (contentRepositoryOldObject.getActorID().equals(userID)) {
+				listContent.add(contentRepositoryOldObject.toContent());
 			}
 		}
 		return listContent;
@@ -78,7 +78,7 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public Content getContent(String contentsID) throws NoContentException {
-		ContentRepositoryObject content = contentDatabase.findOne(contentsID);
+		ContentRepositoryOldObject content = contentDatabase.findOne(contentsID);
 		if (content == null) {
 			throw new NoContentException(contentsID);
 		} else {
@@ -257,14 +257,14 @@ public class ContentServiceImpl implements ContentService {
 		// authorization.setGroupID(0);
 		// authorization.getAction().add("action");
 		// content.getAuthorization().add(authorization);
-		return contentDatabase.save(new ContentRepositoryObject(content))
+		return contentDatabase.save(new ContentRepositoryOldObject(content))
 				.toContent();
 	}
 
 	@Override
 	public void saveContent(Content content) {
 		// Manage the content update. Check all informations are done !
-		contentDatabase.save(new ContentRepositoryObject(content));
+		contentDatabase.save(new ContentRepositoryOldObject(content));
 	}
 
 	// save uploaded file to new location
@@ -307,16 +307,16 @@ public class ContentServiceImpl implements ContentService {
 		List<Content> listContent = new ArrayList<Content>();
 
 		// Get all the content the UserID stores
-		Iterable<ContentRepositoryObject> content = contentDatabase.findAll();// FromUser(userID);
-		Iterator<ContentRepositoryObject> itr = content.iterator();
+		Iterable<ContentRepositoryOldObject> content = contentDatabase.findAll();// FromUser(userID);
+		Iterator<ContentRepositoryOldObject> itr = content.iterator();
 
 		try {
 			while (itr.hasNext()) { // For each content
-				ContentRepositoryObject contentRepositoryObject = itr.next();
+				ContentRepositoryOldObject contentRepositoryOldObject = itr.next();
 				search:
 
-				if ((contentRepositoryObject.getActorID() != null)
-						&& (contentRepositoryObject.getActorID().equals(userID))) {
+				if ((contentRepositoryOldObject.getActorID() != null)
+						&& (contentRepositoryOldObject.getActorID().equals(userID))) {
 					// For each group the relation belongs to
 					//RBAC: fix
 //					for (int i = 0; i < relation.getRole().size(); i++) {
@@ -358,11 +358,11 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public void updateContent(String contentsID, String status) {
-		ContentRepositoryObject c = contentDatabase.findOne(contentsID);
+		ContentRepositoryOldObject c = contentDatabase.findOne(contentsID);
 		Content content = c.toContent();
 		content.setContentsID(contentsID);
 		content.setStatus(status);
-		contentDatabase.save(new ContentRepositoryObject(content));
+		contentDatabase.save(new ContentRepositoryOldObject(content));
 	}
 
 }

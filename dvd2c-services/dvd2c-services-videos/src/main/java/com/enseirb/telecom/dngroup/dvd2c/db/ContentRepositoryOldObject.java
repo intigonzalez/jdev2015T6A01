@@ -10,7 +10,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Comment;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 
 @Entity
-public class ContentRepositoryObject {
+public class ContentRepositoryOldObject {
 	@Id
 	@Column(unique = true)
 	String id;
@@ -27,10 +27,10 @@ public class ContentRepositoryObject {
 
 
 
-	public ContentRepositoryObject() {
+	public ContentRepositoryOldObject() {
 	}
 
-	public ContentRepositoryObject(String id, String name, String type, String actorID, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<String> metadata) {
+	public ContentRepositoryOldObject(String id, String name, String type, String actorID, Long unixTime, String link, String previewLink, String status, List<Comment> comment, List<String> metadata) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -44,7 +44,7 @@ public class ContentRepositoryObject {
 //		this.metadata = metadata;
 	}
 
-	public ContentRepositoryObject(Content content) {
+	public ContentRepositoryOldObject(Content content) {
 		id = content.getContentsID();
 		name = content.getName();
 		type = content.getType();

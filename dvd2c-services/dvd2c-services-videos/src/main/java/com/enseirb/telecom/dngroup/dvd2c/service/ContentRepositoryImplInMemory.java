@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryObject;
+import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryOld;
+import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryOldObject;
 import com.enseirb.telecom.dngroup.dvd2c.db.mock.CrudRepositoryMock;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -13,16 +13,16 @@ import com.google.common.collect.Lists;
 
 
 public class ContentRepositoryImplInMemory extends
-		CrudRepositoryMock<ContentRepositoryObject> implements
-		ContentRepository {
+		CrudRepositoryMock<ContentRepositoryOldObject> implements
+		ContentRepositoryOld {
 
 	
-	public List<ContentRepositoryObject> findAllFromUser(String userID) {
+	public List<ContentRepositoryOldObject> findAllFromUser(String userID) {
 		return Lists.newArrayList(Iterables.filter(this.findAll(),
-				new Predicate<ContentRepositoryObject>() {
+				new Predicate<ContentRepositoryOldObject>() {
 
 					@Override
-					public boolean apply(ContentRepositoryObject input) {
+					public boolean apply(ContentRepositoryOldObject input) {
 						return input.getActorID().equals(userID);
 					}
 				}));
@@ -30,7 +30,7 @@ public class ContentRepositoryImplInMemory extends
 	}
 
 	@Override
-	protected String getID(ContentRepositoryObject t) {
+	protected String getID(ContentRepositoryOldObject t) {
 
 		return t.getId();
 	}
