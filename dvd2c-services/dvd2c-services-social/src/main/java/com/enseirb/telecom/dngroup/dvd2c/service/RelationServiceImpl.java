@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
@@ -73,9 +74,9 @@ public class RelationServiceImpl implements RelationService {
 	@Inject
 	private ReceiverActorRepository receiverActorRepository;
 
-	public boolean RelationExist(String UserID, String actorID) {
-//		ReceiverActor a = receiverActorRepository.findByEmail(actorID);
-		Contact c = contactRepository.findContact(UserID, actorID);
+	public boolean RelationExist(String UserID, String actorEmail) {
+//ReceiverActor a = receiverActorRepository.findByEmail(actorUUID);
+		Contact c = contactRepository.findContact(UserID,actorEmail);
 		return ( c!= null);
 	}
 
@@ -100,24 +101,6 @@ public class RelationServiceImpl implements RelationService {
 		}
 		rrs.close();
 	}
-
-	// //RBAC: CHANGE TO USER SERVICE
-	// @Override
-	// public User getContactInformation(String userID) {
-	// UserRepositoryOldObject user = userRepo.findOne(userID);
-	//
-	// if (user == null) {
-	// return null;
-	// } else {
-	// User userComplet = user.toUser();
-	// User userReturn = new User();
-	// userReturn.setFirstname(userComplet.getFirstname());
-	// userReturn.setSurname(userComplet.getSurname());
-	// userReturn.setUserID(userComplet.getUserID());
-	// return userReturn;
-	// }
-	//
-	// }
 
 	@Override
 	public ContactXSD getRelation(String ownerID, String relationID)
@@ -158,44 +141,6 @@ public class RelationServiceImpl implements RelationService {
 		return listContactXSD;
 	}
 
-	// //RBAC: Never use
-	// @Override
-	// public List<Relation> getListRelation(String userID, Role roleIDfromUser)
-	// {
-	//
-	// List<Relation> listRelation = getListRelation(userID);
-	// List<Relation> listRelation2 = new ArrayList<Relation>();
-	// for (int i = 0; i < listRelation.size(); i++) {
-	// List<String> roles = listRelation.get(i).getRole();
-	//
-	// for (String role : roles) {
-	// if (role.equals(roleIDfromUser.getRoleId())) {
-	// listRelation2.add(listRelation.get(i));
-	// }
-	// }
-	//
-	// }
-	//
-	// return listRelation2;
-	//
-	// }
-
-	@Override
-	public void createDefaultRelation(String userIDFromPath,
-			String relationIDString, Boolean fromBox)
-			throws NoSuchUserException {
-		// Relation relation = new Relation();
-		// relation.setName("public");
-		//
-		// Contact contact =new Contact();
-		// contact.setOwnerId(ownerMail);
-		// ReceiverActor receiverActor = new ReceiverActor();
-		// receiverActor.setEmail(contactMail);
-		// contact.setReceiveractor(receiverActor);
-		// RoleXSD role = new RoleXSD();
-		// role.setRole("public");
-
-	}
 
 	@Override
 	public ContactXSD createRelation(String userIDFromPath,
@@ -213,15 +158,21 @@ public class RelationServiceImpl implements RelationService {
 		}
 
 		ReceiverActor receiverActor;
+		// verify where is the relation
+		// is it already registered on box ?
 		if ((receiverActor = rar.findByEmail(relationIDString)) == null) {
-			// verify if is local relation
+			receiverActor = new ReceiverActor();
+			// is not already registered
 			User receiverUser;
+			//is it a user on the box ?
 			if ((receiverUser = accountService.getUserOnLocal(relationIDString)) == null) {
+				// is not on the box
 				receiverUser = rus.get(relationIDString);
 			}
 			receiverActor.setEmail(receiverUser.getUserID());
 			receiverActor.setFirstname(receiverUser.getFirstname());
 			receiverActor.setSurname(receiverUser.getSurname());
+			receiverActor.setId(UUID.fromString(receiverUser.getUuid()));
 		}
 
 		Contact c = new Contact();

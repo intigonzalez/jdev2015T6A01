@@ -182,10 +182,14 @@ public class RelationEndPoints {
 				relationIDString);
 		if (rManager.RelationExist(userIDFromPath, relationIDString) == false) {
 			try {
-				rManager.createDefaultRelation(userIDFromPath,
+				rManager.createRelation(userIDFromPath,
 						relationIDString, false);
 			} catch (NoSuchUserException e) {
-				throw new WebApplicationException(404);
+				throw new WebApplicationException("no such user",404);
+			} catch (IOException e) {
+				throw new WebApplicationException(e,500);
+			} catch (NoSuchBoxException e) {
+				throw new WebApplicationException("no such box",404);
 			}
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(relationIDString)).build();

@@ -88,26 +88,7 @@ public interface RelationService {
 	 */
 	public abstract void deleteRelation(String userID, String relationID) throws NoSuchUserException, NoSuchBoxException, NoRelationException;
 
-	/**
-	 *  create a relation between userID and the relation
-	 *  and send a request to create the relation on the other box
-	 * @param userID of the box
-	 * @param relationID the second user
-	 * @param fromBox if the request is from the box
-	 * @return the relation
-	 * @throws NoSuchUserException
-	 */
-	public abstract void createDefaultRelation(String userIDFromPath, String relationID,
-			Boolean fromBox) throws NoSuchUserException;
-
-	//RBAC: GO TO USER SERVICE
-//	/**
-//	 * get the more information on this box for metaData of a other box
-//	 * OTHER BOX SERVICE
-//	 * @param userID
-//	 * @return
-//	 */
-//	public abstract User getContactInformation(String userID);
+	
 
 	/**
 	 * Update relation list for metaData send getMe to all relation

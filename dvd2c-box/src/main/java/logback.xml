@@ -13,7 +13,7 @@
 
 	<logger name="com.enseirb.telecom.s9" level="DEBUG" />
 	<logger name="org.springframework" level="INFO" />
-	<logger name="org.hibernat" level="INFO" />
+	<logger name="org.hibernat" level="DEBUG" />
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />

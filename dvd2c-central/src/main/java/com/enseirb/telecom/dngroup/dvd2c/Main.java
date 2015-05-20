@@ -109,7 +109,7 @@ public class Main {
 			server.start();
 
 			LOGGER.info("Jersey app started with WADL available at {}",
-					getBaseApiURI() + "/application.wadl");
+					getBaseApiURI() + "/api/application.wadl");
 
 			// wait for the server to die before we quit
 			Thread.currentThread().join();

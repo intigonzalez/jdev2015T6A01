@@ -127,6 +127,8 @@ public interface AccountService {
 	 * @throws NoSuchUserException 
 	 */
 	public abstract boolean getUserVerification(String userID, String password) throws NoSuchUserException;
+
+	public abstract User getContactInformation(String userID);
 	
 
 

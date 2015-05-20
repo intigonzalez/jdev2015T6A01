@@ -3,6 +3,7 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -24,14 +25,14 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.CentralService;
 
 // The Java class will be hosted at the URI path "/app/account"
-@Path("app/account")
+@Path("app")
 public class UserEndPoints {
 
 	@Inject
 	CentralService uManager;
 
 	@GET
-	@Path("{userID}")
+	@Path("account/{userID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public User getUser(@PathParam("userID") String userID) {
 		try {
@@ -49,7 +50,7 @@ public class UserEndPoints {
 	 * @return a list of user
 	 */
 	@GET
-	@Path("firstname/{firstname}")
+	@Path("account/firstname/{firstname}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<User> getUserFromName(@PathParam("firstname") String firstname) {
 
@@ -59,7 +60,7 @@ public class UserEndPoints {
 	}
 
 	@GET
-	@Path("boxIX/{boxID}")
+	@Path("account/boxID/{boxID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<User> getUserFromBoxID(@PathParam("boxID") String boxID) {
 
@@ -68,7 +69,7 @@ public class UserEndPoints {
 	}
 
 	@GET
-	@Path("{userID}/box")
+	@Path("account/{userID}/box")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Box getBoxOfUser(@PathParam("userID") String userID) {
 		try {
@@ -79,9 +80,17 @@ public class UserEndPoints {
 	}
 
 	@POST
+	@Path("account/")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response creatUser(User user) throws URISyntaxException {
 		if (uManager.userExistOnLocal(user.getUserID()) == false) {
+			UUID uuid;
+			do {
+				uuid = UUID.randomUUID();
+				
+			} while (uManager.uUIDExist(uuid));
+			user.setUuid(uuid.toString());
+			
 			uManager.createUserOnLocal(user);
 			// NHE that the answer we expect from a post (see location header)
 			return Response.created(new URI(user.getUserID())).build();
@@ -99,7 +108,7 @@ public class UserEndPoints {
 	 * @return
 	 */
 	@PUT
-	@Path("{userID}")
+	@Path("account/{userID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateUser(User user,@PathParam("userID") String userID) {
 		// TODO: need to check the authentication of the user
@@ -117,7 +126,7 @@ public class UserEndPoints {
 	}
 
 	@DELETE
-	@Path("{userID}")
+	@Path("account/{userID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteUser(@PathParam("userID") String userID) {
 
@@ -129,5 +138,7 @@ public class UserEndPoints {
 		}
 
 	}
+	
+
 
 }

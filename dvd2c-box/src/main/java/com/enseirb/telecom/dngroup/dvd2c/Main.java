@@ -45,20 +45,19 @@ import com.lexicalscope.jewel.cli.Option;
 public class Main {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-	// public static final String BASE_PATH = "api";
 	private static int getPort(int defaultPort) {
 		// grab port from environment, otherwise fall back to default port 9998
 		return CliConfSingleton.appPort;
 	}
 
-	private static final String BASE_PATH = "api";
-
 	private static URI getBaseApiURI() {
 
 		return UriBuilder.fromUri(
 				"http://" + CliConfSingleton.appHostName + ":"
-						+ getPort(CliConfSingleton.appPort)).build();
+						+ CliConfSingleton.appPort).build();
 	}
+
+	private static final String BASE_PATH = "api";
 
 	/**
 	 * Main method .
@@ -72,9 +71,6 @@ public class Main {
 
 		try {
 			initConfSingleton(args);
-
-			String baseHost = CliConfSingleton.appHostName;
-			int pasePort = CliConfSingleton.appPort;
 
 			// WEB APP SETUP
 
@@ -116,7 +112,7 @@ public class Main {
 
 			// configure a network listener with our configuration
 			NetworkListener listener = new NetworkListener("grizzly2",
-					baseHost, pasePort);
+					CliConfSingleton.appHostName, CliConfSingleton.appPort);
 			server.addListener(listener);
 			StaticHttpHandler videos = new StaticHttpHandlerCORS(
 					new String[] { "/var/www/html/videos" });
@@ -143,8 +139,9 @@ public class Main {
 
 			try {
 				Client client = ClientBuilder.newClient();
-				WebTarget target = client.target(new URI("http://localhost:"
-						+ CliConfSingleton.appPort + "/api/box"));
+				WebTarget target = client.target(new URI("http://" +
+						CliConfSingleton.appHostName + ":"
+								+ CliConfSingleton.appPort + "/api/box"));
 				LOGGER.debug("Launch the request to the central : {}",
 						target.getUri());
 
@@ -157,7 +154,7 @@ public class Main {
 			}
 
 			LOGGER.info("Jersey app started with WADL available at {}",
-					getBaseApiURI() + "/application.wadl");
+					getBaseApiURI() + "/api/application.wadl");
 
 			// wait for the server to die before we quit
 			Thread.currentThread().join();

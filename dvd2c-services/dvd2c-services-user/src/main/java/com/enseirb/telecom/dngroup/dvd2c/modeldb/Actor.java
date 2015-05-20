@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The persistent class for the actors database table.
@@ -19,8 +20,8 @@ public class Actor extends DBObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer id;
+//	@GeneratedValue(strategy = GenerationType.AUTO)
+	private UUID id;
 
 	@Column(name = "activity_object_id")
 	private int activityObjectId;
@@ -68,11 +69,11 @@ public class Actor extends DBObject implements Serializable {
 	public Actor() {
 	}
 
-	public Integer getId() {
+	public UUID getId() {
 		return this.id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 

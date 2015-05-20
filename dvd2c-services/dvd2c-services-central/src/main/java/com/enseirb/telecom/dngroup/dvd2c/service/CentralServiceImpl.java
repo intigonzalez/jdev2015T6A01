@@ -18,17 +18,14 @@ import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryObject;
-import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
-import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
+import com.enseirb.telecom.dngroup.dvd2c.repository.BoxRepositoryObject;
+import com.enseirb.telecom.dngroup.dvd2c.repository.UserRepositoryObject;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestBoxService;
-import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestBoxServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 
 @Service
@@ -212,7 +209,7 @@ public class CentralServiceImpl implements CentralService {
 	@Override
 	public boolean userExistOnLocal(String userID) {
 		// UserRepositoryObject user = userRepository.findOne(userID);
-		boolean exist = userRepository.exists(userID);
+		boolean exist = (userRepository.findByEmail(userID) != null);
 
 		return exist;
 	}
@@ -226,7 +223,7 @@ public class CentralServiceImpl implements CentralService {
 	 */
 	@Override
 	public User getUserOnLocal(String email) throws NoSuchUserException {
-		UserRepositoryObject user = userRepository.findOne(email);
+		UserRepositoryObject user = userRepository.findByEmail(email);
 		if (user == null) {
 			throw new NoSuchUserException();
 		} else {
@@ -298,7 +295,8 @@ public class CentralServiceImpl implements CentralService {
 	}
 
 	public void deleteUserOnLocal(String userID) {
-		this.userRepository.delete(userID);
+
+		this.userRepository.delete(userRepository.findByEmail(userID));
 	}
 
 	@Override
@@ -306,7 +304,7 @@ public class CentralServiceImpl implements CentralService {
 
 		UserRepositoryObject userRepositoryObject;
 		try {
-			userRepositoryObject = this.userRepository.findOne(userID);
+			userRepositoryObject = this.userRepository.findByEmail(userID);
 		} catch (Exception e) {
 			throw new NoSuchUserException();
 		}
@@ -346,6 +344,12 @@ public class CentralServiceImpl implements CentralService {
 	@Override
 	public List<User> getUsersFromListBoxes(List<Box> listBox) {
 		return getUsersFromBoxes(listBox);
+	}
+
+	@Override
+	public boolean uUIDExist(UUID uuid) {
+
+		return userRepository.findOne(uuid) != null;
 	}
 
 }

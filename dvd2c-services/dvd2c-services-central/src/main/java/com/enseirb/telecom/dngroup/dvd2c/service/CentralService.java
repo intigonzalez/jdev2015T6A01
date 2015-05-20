@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
@@ -217,5 +218,7 @@ public interface CentralService {
 
 	public abstract void sendGoogleCode(String actorID, Box box, String code)
 			throws IOException;
+
+	public abstract boolean uUIDExist(UUID uuid);
 
 }
