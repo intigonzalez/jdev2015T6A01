@@ -106,7 +106,7 @@ public class RelationServiceImpl implements RelationService {
 
 			}
 		}
-		rrs.close();
+
 	}
 
 	@Override
@@ -343,7 +343,7 @@ public class RelationServiceImpl implements RelationService {
 							"Can not set aprouve {} for {} user not found",
 							userUUID, contactXSD.getActorID(), e);
 				}
-				rss.close();
+
 				// Send a request to the box to tell it the user accepts the
 				// relationship
 			}
@@ -375,13 +375,13 @@ public class RelationServiceImpl implements RelationService {
 	 */
 	private List<String> getRolesNames(List<Role> roles) {
 		List<String> roleName = new ArrayList<String>();
-//		try {
-			for (Role role : roles) {
-				roleName.add(role.getName());
-			}
-//		} catch (LazyInitializationException e) {
-//			LOGGER.error("no Role for this contact");
-//		}
+		// try {
+		for (Role role : roles) {
+			roleName.add(role.getName());
+		}
+		// } catch (LazyInitializationException e) {
+		// LOGGER.error("no Role for this contact");
+		// }
 		return roleName;
 	}
 
@@ -461,7 +461,7 @@ public class RelationServiceImpl implements RelationService {
 						actorUUID, contactUUID, e);
 				throw e;
 			}
-			rss.close();
+
 		}
 
 		deleteRelationBox(actorUUID, contactUUID);

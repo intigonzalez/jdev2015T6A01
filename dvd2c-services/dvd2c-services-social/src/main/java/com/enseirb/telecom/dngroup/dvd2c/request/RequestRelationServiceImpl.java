@@ -34,32 +34,36 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RequestRelationServiceImpl.class);
 	@Inject
-	private Client client;
-	@Inject 
-	private RequestUserService requestServ;
-	
+	protected Client client;
+	@Inject
+	protected RequestUserService requestServ;
+
 	public RequestRelationServiceImpl() {
 
 	}
 
-//	@Override
-//	public User getUserLocal(String relationIDString) {
-//		UriBuilder builder = UriBuilder
-//	            .fromPath(CliConfSingleton.appHostName)
-//	            .scheme("http")
-//	            .path("/api/app/"+ relationIDString).port(CliConfSingleton.appPort);
-//		WebTarget target = client.target(builder);
-//	}
+	// @Override
+	// public User getUserLocal(String relationIDString) {
+	// UriBuilder builder = UriBuilder
+	// .fromPath(CliConfSingleton.appHostName)
+	// .scheme("http")
+	// .path("/api/app/"+ relationIDString).port(CliConfSingleton.appPort);
+	// WebTarget target = client.target(builder);
+	// }
 
 	@Override
 	public User get(UUID UserID, UUID UserToGet) throws IOException,
 			NoSuchUserException, NoSuchBoxException {
 		Box boxRelation = requestServ.getBoxByUserUuidORH(UserToGet);
-		User userGet = new User();
-		WebTarget target = client.target(boxRelation.getIp() + "/api/app/"
-				+ UserToGet + "/relation/from/" + UserID);
-		userGet = target.request(MediaType.APPLICATION_XML_TYPE)
-				.get(User.class);
+
+		WebTarget target = client.target(UriBuilder
+				.fromPath(boxRelation.getIp()).path("api").path("app")
+				.path(UserToGet.toString()).path("relation").path("from")
+				.path(UserID.toString()).build()
+
+		);
+		User userGet = target.request(MediaType.APPLICATION_XML_TYPE).get(
+				User.class);
 
 		return userGet;
 	}
@@ -77,8 +81,8 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 			throw new IOException(
 					"Can not conect to the server : Box information not fetched from CentralServer");
 		}
-		String requestUrl = boxRelation.getIp() + "/api/app/"
-				+ relationUUID + "/relation/frombox";
+		String requestUrl = boxRelation.getIp() + "/api/app/" + relationUUID
+				+ "/relation/frombox";
 		LOGGER.debug("Request : {}", requestUrl);
 		WebTarget target = client.target(requestUrl);
 
@@ -105,15 +109,8 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	}
 
 	@Override
-	public void close() {
-		client.close();
-
-	}
-
-	@Override
-	public void deleteRelationORH(UUID relationOfRequest,
-			UUID relationToRequest) throws IOException, NoSuchUserException,
-			NoSuchBoxException {
+	public void deleteRelationORH(UUID relationOfRequest, UUID relationToRequest)
+			throws IOException, NoSuchUserException, NoSuchBoxException {
 		// Client client = ClientBuilder.newClient();
 		Box boxRelation = requestServ.getBoxByUserUuidORH(relationToRequest);
 		WebTarget target = client.target(boxRelation.getIp()
