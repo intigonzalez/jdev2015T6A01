@@ -2,7 +2,9 @@ package com.enseirb.telecom.dngroup.dvd2c.service.request;
 
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
@@ -21,7 +23,7 @@ public interface RequestUserService {
 	 * @throws IOException host is not reachable
 	 * @throws NoSuchUserException user doesn't exist on remote host 
 	 */
-	public abstract User get(String string) throws IOException, NoSuchUserException;
+	public abstract User get(UUID string) throws IOException, NoSuchUserException;
 
 	/**
 	 * Get a list of user by firstname on remote host (server normally)
@@ -34,10 +36,11 @@ public interface RequestUserService {
 	/**
 	 * post a user on remote host
 	 * @param user the user to post
+	 * @return 
 	 * @throws IOException host is not reachable
 	 * @throws SuchUserException user doesn't exist on remote host 
 	 */
-	public abstract void createUserORH(User user) throws IOException, SuchUserException;
+	public abstract URI createUserORH(User user) throws IOException, SuchUserException;
 
 	/**
 	 * update a user on remote host
@@ -53,7 +56,7 @@ public interface RequestUserService {
 	 * @throws IOException host is not reachable
 	 * @throws NoSuchUserException user doesn't exist on remote host 
 	 */
-	public abstract void deleteUserORH(String userID) throws IOException, NoSuchUserException;
+	public abstract void deleteUserORH(UUID userID) throws IOException, NoSuchUserException;
 
 	/**
 	 * Get a box with a userID on Remote host (normally server)
@@ -62,6 +65,8 @@ public interface RequestUserService {
 	 * @throws IOException the host is not reachable
 	 * @throws NoSuchBoxException no box found
 	 */
-	public abstract Box getBoxByUserIDORH(String userID) throws IOException, NoSuchBoxException;
+	public abstract Box getBoxByUserUuidORH(UUID userID) throws IOException, NoSuchBoxException;
+
+	
 
 }

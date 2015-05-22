@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Type;
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +23,7 @@ public class Actor extends DBObject implements Serializable {
 
 	@Id
 //	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Type(type="uuid-char")
 	private UUID id;
 
 	@Column(name = "activity_object_id")

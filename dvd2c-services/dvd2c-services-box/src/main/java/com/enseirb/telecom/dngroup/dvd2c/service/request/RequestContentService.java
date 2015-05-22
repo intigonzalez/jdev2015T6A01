@@ -4,6 +4,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service.request;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
@@ -24,7 +25,7 @@ public interface RequestContentService {
 	 * @throws NoSuchUserException user doesn't exist on remote host 
 	 * @throws NoSuchBoxException 
 	 */
-	public abstract List<Content> get(String userIDToGet,String userIDForm) throws IOException, NoSuchUserException, NoRelationException, NoSuchBoxException;
+	public abstract List<Content> get(UUID userIDToGet,UUID userIDForm) throws IOException, NoSuchUserException, NoRelationException, NoSuchBoxException;
 
 	
 

@@ -6,8 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
+import javax.xml.ws.WebServiceException;
 
 import jersey.repackaged.com.google.common.base.Throwables;
 
@@ -74,20 +76,26 @@ public class BoxServiceImpl implements BoxService {
 
 	}
 
-	public Box createBoxOnServer(Box box) {
+	public Box createBoxOnServer(Box box) throws IOException {
 
 		try {
 			requetBoxService.createBoxORH(box);
+			return createBoxOnLocal(box);
 		} catch (IOException e) {
 			LOGGER.error("Error during creating a box on server : ",
 					box.getBoxID(), e);
+			throw e;
+		} catch (ProcessingException e) {
+			LOGGER.error("Error can't converte the responce of the RH, RH is enable ",
+					box.getBoxID(), e);
+			throw new WebApplicationException(404);
 		}
-		return createBoxOnLocal(box);
+		
 
 	}
 
 	@Override
-	public void updateBox() {
+	public void updateBox() throws IOException {
 		Box box = new Box();
 		box.setBoxID(CliConfSingleton.boxID);
 		box.setIp(CliConfSingleton.publicAddr);

@@ -127,7 +127,7 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
 					LOGGER.debug("{}", test[2]);
 					// User is authenticated and access to his own page
 					try {
-						if (uManager.getUserOnLocal(userConnected) != null
+						if (uManager.getUserFromEmail(userConnected) != null
 								&& userConnected.equals(test[2])) {
 							auth = "account";
 						}
@@ -143,7 +143,7 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
 						LOGGER.debug("{}", test[1]);
 						// User is authenticated and access to his own page of
 						// contents
-						if (uManager.getUserOnLocal(userConnected) != null
+						if (uManager.getUserFromEmail(userConnected) != null
 								&& userConnected.equals(test[1])) {
 							auth = "other";
 						}

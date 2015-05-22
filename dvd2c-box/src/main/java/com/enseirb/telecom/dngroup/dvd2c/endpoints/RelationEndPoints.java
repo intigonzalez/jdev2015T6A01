@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoRoleException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
@@ -37,7 +39,7 @@ import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 //import com.enseirb.telecom.s9.Relation;
 
 // The Java class will be hosted at the URI path "/app/friends"
-@Path("app/{userID}/relation")
+@Path("app/{userUUID}/relation")
 // @RolesAllowed("other") //The roles must be adapted depending on the function
 // !
 public class RelationEndPoints {
@@ -55,16 +57,16 @@ public class RelationEndPoints {
 	 * 
 	 * @param userIDFromPath
 	 *            the userID to get information
-	 * @param relationIDFromPath
+	 * @param relationUUID
 	 *            the userID of request
 	 * @return a user with information
 	 */
 	@GET
-	@Path("from/{username}")
+	@Path("from/{relationUUID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public User getMeFRH(@PathParam("userID") String userIDFromPath,
-			@PathParam("username") String relationIDFromPath) {
-		if (rManager.RelationExist(userIDFromPath, relationIDFromPath) == true) {
+	public User getMeFRH(@PathParam("userUUID") UUID userIDFromPath,
+			@PathParam("relationUUID") UUID relationUUID) {
+		if (rManager.RelationExist(userIDFromPath, relationUUID) == true) {
 			return aService.getContactInformation(userIDFromPath);
 		} else {
 			throw new WebApplicationException(Status.NOT_FOUND);
@@ -76,18 +78,18 @@ public class RelationEndPoints {
 	 * 
 	 * @param userIDFromPath
 	 *            the userID of the request
-	 * @param relationIDFromPath
+	 * @param relationUUID
 	 *            the relation to get information
 	 * @return
 	 */
 	@RolesAllowed("other")
 	@GET
-	@Path("{relationID}")
+	@Path("{relationUUID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ContactXSD getRelation(@PathParam("userID") String userIDFromPath,
-			@PathParam("relationID") String relationIDFromPath) {
+	public ContactXSD getRelation(@PathParam("userUUID") UUID userIDFromPath,
+			@PathParam("relationUUID") UUID relationUUID) {
 		try {
-			return rManager.getRelation(userIDFromPath, relationIDFromPath);
+			return rManager.getRelation(userIDFromPath, relationUUID);
 		} catch (NoSuchContactException e) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
@@ -103,11 +105,11 @@ public class RelationEndPoints {
 	 * @return
 	 */
 	@GET
-	@Path("{relationID}/content")
+	@Path("{relationUUID}/content")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<Content> getRelationContents(
-			@PathParam("relationID") String relationID,
-			@PathParam("userID") String userID) {
+			@PathParam("relationUUID") UUID relationID,
+			@PathParam("userUUID") UUID userID) {
 		// TODO: need to change beacause the content of one user doit etre
 		// recupre directement aupré de la ressource utilisateur
 
@@ -137,7 +139,7 @@ public class RelationEndPoints {
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<ContactXSD> getListRelation(
-			@PathParam("userID") String userIDFromPath) {
+			@PathParam("userUUID") UUID userIDFromPath) {
 
 		return rManager.getListContact(userIDFromPath);
 
@@ -157,42 +159,48 @@ public class RelationEndPoints {
 	@Deprecated
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response oldpostFriend(@PathParam("userID") String userIDFromPath,
+	public Response oldpostFriend(@PathParam("userUUID") UUID userIDFromPath,
 			ContactXSD relationID) throws URISyntaxException {
-		return postFriend2(userIDFromPath, relationID.getActorID());
+		return postFriend2(userIDFromPath,
+				UUID.fromString(relationID.getUuid()));
 	}
 
 	/**
 	 * add relationID on database of userID
 	 * 
-	 * @param userIDFromPath
+	 * @param userUUID
 	 *            user id of dataBase
-	 * @param relationIDString
+	 * @param relationUUID
 	 *            relation to add
 	 * @return
 	 * @throws URISyntaxException
 	 */
 	@RolesAllowed("other")
 	@POST
-	@Path("{relationID}")
-	public Response postFriend2(@PathParam("userID") String userIDFromPath,
-			@PathParam("relationID") String relationIDString)
+	@Path("{relationUUID}")
+	public Response postFriend2(@PathParam("userUUID") UUID userUUID,
+			@PathParam("relationUUID") UUID relationUUID)
 			throws URISyntaxException {
-		LOGGER.debug("add a relation between {} and {} ", userIDFromPath,
-				relationIDString);
-		if (rManager.RelationExist(userIDFromPath, relationIDString) == false) {
+		LOGGER.debug("add a relation between {} and {} ", userUUID,
+				relationUUID);
+		if (rManager.RelationExist(userUUID, relationUUID) == false) {
 			try {
-				rManager.createRelation(userIDFromPath,
-						relationIDString, false);
+				ContactXSD r = rManager.createRelation(userUUID, relationUUID,
+						false);
+				// RABC: FIXE it
+				return Response
+						.created(
+								new URI("app/" + userUUID + "/relation/"
+										+ r.getUuid())).build();
 			} catch (NoSuchUserException e) {
-				throw new WebApplicationException("no such user",404);
+				throw new WebApplicationException("no such user", 404);
 			} catch (IOException e) {
-				throw new WebApplicationException(e,500);
+				throw new WebApplicationException(e, 500);
 			} catch (NoSuchBoxException e) {
-				throw new WebApplicationException("no such box",404);
+				throw new WebApplicationException("no such box", 404);
 			}
 			// NHE that the answer we expect from a post (see location header)
-			return Response.created(new URI(relationIDString)).build();
+
 		} else {
 
 			return Response.status(409).build();
@@ -210,16 +218,16 @@ public class RelationEndPoints {
 	@POST
 	@Path("frombox")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postFriendFromBox(
-			@PathParam("userID") String userIDFromPath, ContactXSD relation)
-			throws URISyntaxException {
+	public Response postFriendFromBox(@PathParam("userID") UUID userIDFromPath,
+			ContactXSD relation) throws URISyntaxException {
 		LOGGER.debug("add a relation from box between {} and {} ",
 				userIDFromPath, relation.getActorID());
 
-		if (rManager.RelationExist(userIDFromPath, relation.getActorID()) == false) {
+		if (rManager.RelationExist(userIDFromPath,
+				UUID.fromString(relation.getActorID())) == false) {
 			try {
-				rManager.createRelation(userIDFromPath, relation.getActorID(),
-						true);
+				rManager.createRelation(userIDFromPath,
+						UUID.fromString(relation.getActorID()), true);
 			} catch (NoSuchUserException e) {
 				throw new WebApplicationException(Status.NOT_FOUND);
 			} catch (IOException e) {
@@ -237,28 +245,32 @@ public class RelationEndPoints {
 
 	@PUT
 	@RolesAllowed("other")
-	@Path("{username}")
+	@Path("{relationUUID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putFriend(@PathParam("userID") String userIDFromPath,
-			@PathParam("username") String friendActorID, ContactXSD contact) {
+	public Response putFriend(@PathParam("userUUID") UUID userUUID,
+			@PathParam("relationUUID") UUID relationUUID, ContactXSD contact) {
 		// need to verify the friend and after this modifies the friend
-		if (contact.getActorID() == null) {
-			contact.setActorID(friendActorID);
-		}
-		if (contact.getActorID().equals(friendActorID)) {
-			if (rManager.RelationExist(userIDFromPath, contact.getActorID())) {
-				try {
-					rManager.saveRelation(userIDFromPath, contact);
-				} catch (NoRelationException e) {
-					throw new WebApplicationException(404);
-				}
+		try {
+			ContactXSD c = rManager.getRelation(userUUID, relationUUID);
+			contact.setUuid(c.getUuid());
+			if (contact.getUuid().equals(relationUUID.toString())) {
+				rManager.saveRelation(userUUID, contact);
 				return Response.status(200).build();
 			} else {
-				return Response.status(404).build();
+				return Response.status(Status.NOT_ACCEPTABLE).build();
 			}
-
-		} else {
-			return Response.status(Status.NOT_ACCEPTABLE).build();
+		} catch (NoSuchContactException e1) {
+			LOGGER.error("No Such Contact Exception");
+			throw new WebApplicationException("No Such Contact Exception",Status.NOT_FOUND);
+		} catch (NoRelationException e) {
+			LOGGER.error("No Such Relation Exception");
+			throw new WebApplicationException("No Such Relation Exception", 404);
+		} catch (NoSuchUserException e) {
+			LOGGER.error("No Such User Exception");
+			throw new WebApplicationException("No Such User Exception", 404);
+		} catch (NoRoleException e) {
+			LOGGER.error("No Such Role Exception");
+			throw new WebApplicationException("No Such Role Exception", 404);
 		}
 
 	}
@@ -273,7 +285,7 @@ public class RelationEndPoints {
 	@PUT
 	@RolesAllowed("other")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response updateListFriend(@PathParam("userID") String userIDFromPath) {
+	public Response updateListFriend(@PathParam("userUUID") UUID userIDFromPath) {
 		try {
 			rManager.updateRelation(userIDFromPath);
 			return Response.status(200).build();
@@ -293,27 +305,27 @@ public class RelationEndPoints {
 	 * delete a relation on this box and in the over box
 	 * 
 	 * @param userIDFromPath
-	 * @param relationIDFromPath
+	 * @param relationUUID
 	 * @return
 	 */
 	@DELETE
-	@Path("{username}")
+	@Path("{relationUUID}")
 	@RolesAllowed("other")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteFriend(@PathParam("userID") String userIDFromPath,
-			@PathParam("username") String relationIDFromPath) {
+	public Response deleteFriend(@PathParam("userUUID") UUID userIDFromPath,
+			@PathParam("relationUUID") UUID relationUUID) {
 		try {
-			rManager.deleteRelation(userIDFromPath, relationIDFromPath);
+			rManager.deleteRelation(userIDFromPath, relationUUID);
 		} catch (NoSuchUserException e) {
 			LOGGER.info("no user {} or no contact {} found", userIDFromPath,
-					relationIDFromPath);
+					relationUUID);
 			return Response.status(404).build();
 		} catch (NoSuchBoxException e) {
-			LOGGER.info("no box found for your contact {}", relationIDFromPath);
+			LOGGER.info("no box found for your contact {}", relationUUID);
 			return Response.status(404).build();
 		} catch (NoRelationException e) {
 			LOGGER.info("no relation found between{} {}", userIDFromPath,
-					relationIDFromPath);
+					relationUUID);
 			return Response.status(404).build();
 		}
 		return Response.status(200).build();

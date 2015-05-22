@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Contact;
@@ -14,9 +15,15 @@ import com.enseirb.telecom.dngroup.dvd2c.modeldb.ReceiverActor;
 @Repository
 public interface ContactRepository extends CrudRepository<Contact, Integer> {
 
-	@Query("select c from Contact c where c.ownerId = ?1 and c.receiverActor.email = ?2")
-	Contact findContact(String senderId, String a);
-	
+	@Query("select c from Contact c where c.ownerId = ?1 and c.receiverActor.id = ?2")
+	Contact findContact(UUID senderId, UUID a);
+
 	@Query("select c from Contact c where c.ownerId = ?1")
-	List<Contact> findByOwner(String senderId);
+	List<Contact> findByOwner(UUID senderId);
+
+//	@Query("select c from Contact c JOIN FETCH c.role where c.ownerId = ?1 and c.receiverActor.id = ?2")
+//	Contact findContactAndFetchRoles(UUID senderId, UUID a);
+//
+//	@Query("FROM Contact c JOIN FETCH c.role")
+//	public List<Contact> getAllUsersAndFetchRoles();
 }

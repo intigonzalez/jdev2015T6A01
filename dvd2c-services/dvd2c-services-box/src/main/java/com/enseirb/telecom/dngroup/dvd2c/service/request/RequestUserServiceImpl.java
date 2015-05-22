@@ -1,8 +1,10 @@
 package com.enseirb.telecom.dngroup.dvd2c.service.request;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
@@ -42,10 +44,10 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 
 	@Override
-	public User get(String user) throws IOException, NoSuchUserException {
+	public User get(UUID uuid) throws IOException, NoSuchUserException {
 		User userGet = new User();
 		// Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(url + user);
+		WebTarget target = client.target(url + uuid);
 		try {
 			userGet = target.request(MediaType.APPLICATION_XML_TYPE).get(
 					User.class);
@@ -80,7 +82,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 
 	@Override
-	public void createUserORH(User user) throws IOException, SuchUserException {
+	public URI createUserORH(User user) throws IOException, SuchUserException {
 		WebTarget target = client.target(url);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
 				.post(Entity.entity(user, MediaType.APPLICATION_XML),
@@ -89,7 +91,8 @@ public class RequestUserServiceImpl implements RequestUserService {
 		switch (Status.fromStatusCode(response.getStatus())) {
 		case CREATED:
 			// normal statement
-			break;
+			return response.getLocation();
+			
 		case CONFLICT:
 			throw new SuchUserException();
 		case NOT_FOUND:
@@ -131,10 +134,10 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 
 	@Override
-	public void deleteUserORH(String userID) throws IOException,
+	public void deleteUserORH(UUID uuid) throws IOException,
 			NoSuchUserException {
 		// Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(this.url + userID);
+		WebTarget target = client.target(this.url + uuid);
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE)
 				.delete();
 		switch (Status.fromStatusCode(response.getStatus())) {
@@ -156,12 +159,12 @@ public class RequestUserServiceImpl implements RequestUserService {
 		}
 	}
 
-	public Box getBoxByUserIDORH(String email) throws IOException,
+	public Box getBoxByUserUuidORH(UUID uuid) throws IOException,
 			NoSuchBoxException {
 
 		Box boxGet = new Box();
 		// Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(url + email + "/box");
+		WebTarget target = client.target(url + uuid + "/box");
 		try {
 			boxGet = target.request(MediaType.APPLICATION_XML_TYPE).get(
 					Box.class);

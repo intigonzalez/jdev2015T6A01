@@ -1,8 +1,10 @@
 package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -76,34 +78,19 @@ public class BoxEndPoints {
 	@POST
 	// @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postBox() throws SuchBoxException, URISyntaxException {
-		// add a comment
+
 		Box box = new Box();
 		box.setBoxID(CliConfSingleton.boxID);
 		box.setIp(CliConfSingleton.publicAddr);
-		// if (boxManager.boxExistOnServer(box.getBoxID()) == false) {
-		boxManager.createBoxOnServer(box);
-		return Response.created(new URI(box.getBoxID())).build();
-		// } else {
-		// return Response.status(409).build();
-		// }
+		try {
+			boxManager.createBoxOnServer(box);
+			return Response.created(new URI(box.getBoxID())).build();
+		} catch (IOException e) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		
 
-		// return Response.status(Status.SERVICE_UNAVAILABLE).build();
 	}
-
-	// @POST
-	// @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	// public Response postBox(Box box) throws URISyntaxException {
-	// // add a comment
-	//
-	// if (boxManager.boxExist(box) == false) {
-	// boxManager.createBox(box);
-	// return Response.created(new URI(box.getBoxID())).build();
-	// } else {
-	// return Response.status(409).build();
-	// }
-	//
-	// //return Response.status(Status.SERVICE_UNAVAILABLE).build();
-	// }
 
 	@PUT
 	@Path("{boxId}")
@@ -125,11 +112,10 @@ public class BoxEndPoints {
 	}
 
 	@PUT
-	@Path("relation/{userId}/{relationId}")
+	@Path("relation/{userUUID}/{relationId}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response setAprouve(@PathParam("userId") String userId,
-			@PathParam("relationId") String relationId)
-			throws URISyntaxException {
+	public Response setAprouve(@PathParam("userUUID") UUID userId,
+			@PathParam("relationId") UUID relationId) throws URISyntaxException {
 
 		LOGGER.debug("try to setAprouve a relation from a other box {} and {}",
 				userId, relationId);
@@ -152,16 +138,8 @@ public class BoxEndPoints {
 	@DELETE
 	@Path("{boxId}")
 	public Response deleteBox(@PathParam("boxId") String boxID) {
-		// need to verify user
-		// and after this delete the comment
-
-		// if (boxManager.boxExist(box) == true) {
 		boxManager.deleteBoxOnServer(boxID);
-		// NHE that the answer we expect from a post (see location header)
 		return Response.accepted().build();
-		// } else {
-		// return Response.status(409).build();
-		// }
 	}
 
 	/**
@@ -174,8 +152,8 @@ public class BoxEndPoints {
 	@DELETE
 	@Path("relation/{userId}/{relationId}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteFriend(@PathParam("userId") String userId,
-			@PathParam("relationId") String relationId) {
+	public Response deleteFriend(@PathParam("userId") UUID userId,
+			@PathParam("relationId") UUID relationId) {
 		LOGGER.debug("try to delete a relation from a other box {} and {}",
 				userId, relationId);
 
@@ -202,8 +180,8 @@ public class BoxEndPoints {
 	@Path("{userID}/content/{relationID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<Content> getLocalContentForRelation(
-			@PathParam("relationID") String relationID,
-			@PathParam("userID") String userID) {
+			@PathParam("relationID") UUID relationID,
+			@PathParam("userID") UUID userID) {
 
 		LOGGER.debug("Receive Request to get list content from {}", relationID);
 		try {
@@ -213,10 +191,11 @@ public class BoxEndPoints {
 			relation = rManager.getRelation(userID, relationID);
 
 			LOGGER.debug("Check the relation : {}", relation);
-			List<Content> listContent = uManager
-					.getAllContent(userID, relation);
-			return listContent;
-
+			// //RBAC:need to fix it after merge
+			// List<Content> listContent = uManager
+			// .getAllContent(userID, relation);
+			// return listContent;
+			return null;
 		} catch (NoSuchContactException e) {
 			throw new WebApplicationException(Status.NOT_ACCEPTABLE);
 		}

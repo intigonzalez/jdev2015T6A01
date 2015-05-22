@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Type;
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +23,7 @@ public class ReceiverActor extends DBObject implements Serializable {
 
 	@Id
 //	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Type(type="uuid-char")
 	private UUID id;
 
 	@Column(name = "activity_object_id")
@@ -54,8 +57,8 @@ public class ReceiverActor extends DBObject implements Serializable {
 	@Column(name = "subject_type")
 	private String subjectType;
 
-	@OneToMany(mappedBy="receiverActor")
-	private List<Contact> contacts;
+//	@OneToMany(mappedBy="receiverActor" ,cascade=CascadeType.PERSIST)
+//	private List<Contact> contacts;
 
 
 	public ReceiverActor() {
@@ -137,13 +140,13 @@ public class ReceiverActor extends DBObject implements Serializable {
 		this.surname = surname;
 	}
 
-	public List<Contact> getContacts() {
-		return contacts;
-	}
-
-	public void setContacts(List<Contact> contacts) {
-		this.contacts = contacts;
-	}
+//	public List<Contact> getContacts() {
+//		return contacts;
+//	}
+//
+//	public void setContacts(List<Contact> contacts) {
+//		this.contacts = contacts;
+//	}
 
 	public String getNotificationSettings() {
 		return this.notificationSettings;

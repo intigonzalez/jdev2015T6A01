@@ -1,6 +1,7 @@
 package com.enseirb.telecom.dngroup.dvd2c.request;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
@@ -51,9 +52,9 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 //	}
 
 	@Override
-	public User get(String UserID, String UserToGet) throws IOException,
+	public User get(UUID UserID, UUID UserToGet) throws IOException,
 			NoSuchUserException, NoSuchBoxException {
-		Box boxRelation = requestServ.getBoxByUserIDORH(UserToGet);
+		Box boxRelation = requestServ.getBoxByUserUuidORH(UserToGet);
 		User userGet = new User();
 		WebTarget target = client.target(boxRelation.getIp() + "/api/app/"
 				+ UserToGet + "/relation/from/" + UserID);
@@ -65,19 +66,19 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 
 	@Override
 	public void updateRelationORH(ContactXSD relationOfRequest,
-			String relationID) throws IOException, NoSuchBoxException {
+			UUID relationUUID) throws IOException, NoSuchBoxException {
 		Box boxRelation;
 		try {
-			boxRelation = requestServ.getBoxByUserIDORH(relationID);
+			boxRelation = requestServ.getBoxByUserUuidORH(relationUUID);
 		} catch (Exception e) {
 			LOGGER.error(
 					"Error while fetching Box information for relation {}",
-					relationID);
+					relationUUID);
 			throw new IOException(
 					"Can not conect to the server : Box information not fetched from CentralServer");
 		}
 		String requestUrl = boxRelation.getIp() + "/api/app/"
-				+ relationID + "/relation/frombox";
+				+ relationUUID + "/relation/frombox";
 		LOGGER.debug("Request : {}", requestUrl);
 		WebTarget target = client.target(requestUrl);
 
@@ -110,11 +111,11 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	}
 
 	@Override
-	public void deleteRelationORH(String relationOfRequest,
-			String relationToRequest) throws IOException, NoSuchUserException,
+	public void deleteRelationORH(UUID relationOfRequest,
+			UUID relationToRequest) throws IOException, NoSuchUserException,
 			NoSuchBoxException {
 		// Client client = ClientBuilder.newClient();
-		Box boxRelation = requestServ.getBoxByUserIDORH(relationToRequest);
+		Box boxRelation = requestServ.getBoxByUserUuidORH(relationToRequest);
 		WebTarget target = client.target(boxRelation.getIp()
 				+ "/api/box/relation/" + relationToRequest + "/"
 				+ relationOfRequest);
@@ -140,9 +141,9 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	}
 
 	@Override
-	public void setAprouveRelationORH(String userID, String actorIDOfRelation)
+	public void setAprouveRelationORH(UUID userID, UUID actorIDOfRelation)
 			throws IOException, NoSuchBoxException, NoSuchUserException {
-		Box boxRelation = requestServ.getBoxByUserIDORH(actorIDOfRelation);
+		Box boxRelation = requestServ.getBoxByUserUuidORH(actorIDOfRelation);
 		WebTarget target = client.target(boxRelation.getIp()
 				+ "/api/box/relation/" + actorIDOfRelation + "/" + userID);
 		ContactXSD relation = new ContactXSD();

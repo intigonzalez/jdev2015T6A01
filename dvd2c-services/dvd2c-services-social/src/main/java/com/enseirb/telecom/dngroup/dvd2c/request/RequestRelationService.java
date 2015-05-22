@@ -1,6 +1,7 @@
 package com.enseirb.telecom.dngroup.dvd2c.request;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
@@ -22,7 +23,7 @@ public interface RequestRelationService {
      *             user doesn't exist on remote host
      * @throws NoSuchBoxException
      */
-    public abstract User get(String UserID, String UserToGet) throws IOException, NoSuchUserException, NoSuchBoxException;
+    public abstract User get(UUID UserID, UUID UserToGet) throws IOException, NoSuchUserException, NoSuchBoxException;
 
     /**
      * close the connection
@@ -36,7 +37,7 @@ public interface RequestRelationService {
      * @throws IOException host is not reachable
      * @throws NoSuchBoxException no box found
      */
-    public abstract void updateRelationORH(ContactXSD relationOfRequest, String relationID ) throws IOException, NoSuchBoxException;
+    public abstract void updateRelationORH(ContactXSD relationOfRequest, UUID relationID ) throws IOException, NoSuchBoxException;
 
     /**
      * delete a Relation on remote host
@@ -50,7 +51,7 @@ public interface RequestRelationService {
      * @throws NoSuchUserException
      *             user doesn't exist on remote host
      */
-    public abstract void deleteRelationORH(String relationOfRequest, String relationToRequest) throws IOException, NoSuchUserException,
+    public abstract void deleteRelationORH(UUID relationOfRequest, UUID relationToRequest) throws IOException, NoSuchUserException,
 	    NoSuchBoxException;
 
     /**
@@ -61,7 +62,7 @@ public interface RequestRelationService {
      * @throws IOException 
      * @throws NoSuchUserException 
      */
-    public abstract void setAprouveRelationORH(String userID, String actorIDOfRelation) throws IOException, NoSuchBoxException, NoSuchUserException;
+    public abstract void setAprouveRelationORH(UUID userID, UUID actorIDOfRelation) throws IOException, NoSuchBoxException, NoSuchUserException;
 
 	
 

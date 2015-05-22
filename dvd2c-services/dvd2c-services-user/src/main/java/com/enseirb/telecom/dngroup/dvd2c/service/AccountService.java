@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
@@ -12,25 +13,27 @@ public interface AccountService {
 
 	/** 
 	 * Verify if the user exist on central server and in local
-	 * @param userID to verify
+	 * @param userUUID to verify
 	 * @return return true if the user exist
 	 */
-	public abstract boolean userExistOnServer(String userID);
+	public abstract boolean userExistOnServer(UUID userUUID);
 	
 	/** 
 	 * Verify if the user exist on local
-	 * @param userID to verify
+	 * @param userUUID to verify
 	 * @return return true if the user exist
 	 */
-	public abstract boolean userExistOnLocal(String userID);
+	public abstract boolean userExistOnLocal(UUID userUUID);
 
 	/**
 	 * get a user from local
-	 * @param userID the user to get
+	 * @param userUUID the user to get
 	 * @return the user
 	 * @throws NoSuchUserException 
 	 */
-	public abstract User getUserOnLocal(String userID) throws NoSuchUserException;
+	public abstract User getUserFromUUID(UUID userUUID) throws NoSuchUserException;
+
+
 
 	/**
 	 * get user by firstname form server
@@ -70,14 +73,16 @@ public interface AccountService {
 	/**
 	 * delete a user on server and on local
 	 * @param userID the user to delete
+	 * @throws NoSuchUserException 
+	 * @throws IOException 
 	 */
-	public abstract void deleteUserOnServer(String userID);
+	public abstract void deleteUserOnServer(UUID userID) throws IOException, NoSuchUserException;
 	
 	/**
 	 * delete a user on local
 	 * @param userID the user to delete
 	 */
-	public abstract void deleteUserOnLocal(String userID);
+	public abstract void deleteUserOnLocal(UUID userID);
 	
 //	/**
 //	 * Get the list of users who have the same firstname on local
@@ -121,14 +126,17 @@ public interface AccountService {
 
 	/**
 	 * Verification if the password is equal 
-	 * @param userID to get a true password
+	 * 
+	 * @param userName to get a true password
 	 * @param password the password to test
 	 * @return true if is equal
 	 * @throws NoSuchUserException 
 	 */
-	public abstract boolean getUserVerification(String userID, String password) throws NoSuchUserException;
+	public abstract boolean getUserVerification(String userName, String password) throws NoSuchUserException;
 
-	public abstract User getContactInformation(String userID);
+	public abstract User getContactInformation(UUID userID);
+
+	public abstract User getUserFromEmail(String userID) throws NoSuchUserException;
 	
 
 

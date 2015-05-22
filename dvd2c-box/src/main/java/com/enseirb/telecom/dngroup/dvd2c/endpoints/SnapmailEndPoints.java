@@ -61,7 +61,7 @@ public class SnapmailEndPoints extends HttpServlet {
 	public SmtpProperty getUserSmtpProperty(@PathParam("actorID") String actorIDFromPath){
 		try {
 			SmtpProperty smtpProperty = new SmtpProperty();
-			User user = uManager.getUserOnLocal(actorIDFromPath);		
+			User user = uManager.getUserFromEmail(actorIDFromPath);		
 			smtpProperty.setHost(user.getSmtpHost());
 			smtpProperty.setPort(user.getSmtpPort());
 			smtpProperty.setUsername(user.getSmtpUsername());
@@ -85,7 +85,7 @@ public class SnapmailEndPoints extends HttpServlet {
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateUserSmtpProperty(SmtpProperty smtpProperty, @PathParam("actorID") String actorIDFromPath) {
 		try {
-			User user = uManager.getUserOnLocal(actorIDFromPath);
+			User user = uManager.getUserFromEmail(actorIDFromPath);
 			
 			user.setSmtpHost(smtpProperty.getHost());
 			user.setSmtpPort(smtpProperty.getPort());
@@ -207,7 +207,7 @@ if(actorID.contains("@gmail.com")){
 			Response responsePut;
 		if (token.equals("")==false){	
 			try {
-				User user = uManager.getUserOnLocal(actorID);
+				User user = uManager.getUserFromEmail(actorID);
 				
 				user.setSmtpHost("");
 				user.setSmtpPort("");

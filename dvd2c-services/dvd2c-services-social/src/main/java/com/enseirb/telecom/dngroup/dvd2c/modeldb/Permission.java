@@ -19,6 +19,7 @@ public class Permission extends DBObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
 	private String action;
@@ -28,7 +29,7 @@ public class Permission extends DBObject implements Serializable {
 	//bi-directional many-to-many association to Relation
 	@ManyToMany
 	@JoinColumn(name="id")
-	private List<Relation> relations;
+	private List<Role> relations;
 
 	public Permission() {
 	}
@@ -57,11 +58,11 @@ public class Permission extends DBObject implements Serializable {
 		this.object = object;
 	}
 
-	public List<Relation> getRelations() {
+	public List<Role> getRelations() {
 		return this.relations;
 	}
 
-	public void setRelations(List<Relation> relations) {
+	public void setRelations(List<Role> relations) {
 		this.relations = relations;
 	}
 

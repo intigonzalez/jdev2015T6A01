@@ -38,8 +38,9 @@ public interface BoxService {
 	 * @param box the box to create
 	 * @return the box
 	 * @throws SuchBoxException 
+	 * @throws IOException 
 	 */
-	public abstract Box createBoxOnServer(Box box) throws SuchBoxException;
+	public abstract Box createBoxOnServer(Box box) throws SuchBoxException, IOException;
 
 	/**
 	 * create a new box on local
@@ -96,8 +97,9 @@ public interface BoxService {
 
 	/**
 	 * update box with value on parameter
+	 * @throws IOException 
 	 */
-	public abstract void updateBox();
+	public abstract void updateBox() throws IOException;
 
 	public abstract void sendGoogleCode(String actorID, Box box, String code) throws IOException;
 

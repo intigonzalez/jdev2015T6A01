@@ -4,7 +4,7 @@
 	<class>com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryOldObject</class>
 	<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Contact</class>
 	<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Permission</class>
-	<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Relation</class>
+	<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Role</class>
 	<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.ReceiverActor</class>
 	</persistence-unit>
 </persistence>

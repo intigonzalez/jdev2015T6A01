@@ -1,5 +1,7 @@
 package com.enseirb.telecom.dngroup.dvd2c.conf;
 
+import java.util.Properties;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -51,15 +53,19 @@ class MySQLConfiguration {
 
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		vendorAdapter.setGenerateDdl(true);
-
+		Properties props = new Properties();
+//		props.put("hibernate.hbm2ddl.auto", "create-drop");
+		props.put("hibernate.hbm2ddl.auto", "update");
+		
+		
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setJpaVendorAdapter(vendorAdapter);
 		factory.setPackagesToScan(PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN);
 		factory.setDataSource(dataSource());
+		factory.setJpaProperties(props);
 		factory.afterPropertiesSet();
-
-		return factory.getObject();
-	}
+		
+		return factory.getObject();}
 
 	@Bean
 	public PlatformTransactionManager transactionManager() {

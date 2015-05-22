@@ -4,8 +4,11 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Type;
+
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -13,16 +16,18 @@ import java.util.List;
  * 
  */
 @Entity
-@Table(name="relations")
-@NamedQuery(name="Relation.findAll", query="SELECT r FROM Relation r")
-public class Relation extends DBObject implements Serializable {
+@Table(name="role")
+@NamedQuery(name="Role.findAll", query="SELECT r FROM Role r")
+public class Role extends DBObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
 	@Column(name="actor_id")
-	private int actorId;
+	@Type(type="uuid-char")
+	private UUID actorId;
 
 	private String ancestry;
 
@@ -38,14 +43,14 @@ public class Relation extends DBObject implements Serializable {
 
 	//bi-directional many-to-many association to Contact
 	@ManyToMany
-	@JoinColumn(name="id")
+	@Column(name = "role_contacts")
 	private List<Contact> contacts;
 
 	//bi-directional many-to-many association to Permission
 	@ManyToMany(mappedBy="relations")
 	private List<Permission> permissions;
 
-	public Relation() {
+	public Role() {
 	}
 
 	public Integer getId() {
@@ -56,11 +61,11 @@ public class Relation extends DBObject implements Serializable {
 		this.id = id;
 	}
 
-	public int getActorId() {
+	public UUID getActorId() {
 		return this.actorId;
 	}
 
-	public void setActorId(int actorId) {
+	public void setActorId(UUID actorId) {
 		this.actorId = actorId;
 	}
 

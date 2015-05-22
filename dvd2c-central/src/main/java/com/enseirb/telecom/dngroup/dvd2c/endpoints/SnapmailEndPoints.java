@@ -43,7 +43,7 @@ public class SnapmailEndPoints {
 			@QueryParam("code") String code) {
 		User actor;
 		try {
-			actor = boxManager.getUserOnLocal(actorID);
+			actor = boxManager.getUserFromEmail(actorID);
 
 			Box box = boxManager.getBoxOnLocal(actor.getBoxID());
 			boxManager.sendGoogleCode(actorID,box,code);

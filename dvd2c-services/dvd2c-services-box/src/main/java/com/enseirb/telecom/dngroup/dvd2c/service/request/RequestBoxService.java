@@ -2,6 +2,8 @@ package com.enseirb.telecom.dngroup.dvd2c.service.request;
 
 import java.io.IOException;
 
+import javax.ws.rs.ProcessingException;
+
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
@@ -24,7 +26,7 @@ public interface RequestBoxService {
 	 * @param user the user to post
 	 * @throws IOException host is not reachable
 	 */
-	public abstract void createBoxORH(Box box) throws IOException;
+	public abstract void createBoxORH(Box box) throws IOException,ProcessingException;
 
 	/**
 	 * update a box on remote host

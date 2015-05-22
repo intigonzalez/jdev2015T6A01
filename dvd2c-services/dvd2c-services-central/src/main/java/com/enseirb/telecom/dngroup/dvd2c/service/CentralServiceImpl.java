@@ -21,6 +21,7 @@ import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.repository.BoxRepositoryObject;
@@ -207,9 +208,9 @@ public class CentralServiceImpl implements CentralService {
 	 * com.enseirb.telecom.s9.service.AccountService#userExist(java.lang.String)
 	 */
 	@Override
-	public boolean userExistOnLocal(String userID) {
+	public boolean userExistOnLocal(UUID userUUID) {
 		// UserRepositoryObject user = userRepository.findOne(userID);
-		boolean exist = (userRepository.findByEmail(userID) != null);
+		boolean exist = (userRepository.findOne(userUUID) != null);
 
 		return exist;
 	}
@@ -217,13 +218,28 @@ public class CentralServiceImpl implements CentralService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.enseirb.telecom.s9.service.AccountService#getUserOnLocal(java.lang
+	 * @see com.enseirb.telecom.s9.service.AccountService#getUser(java.lang
 	 * .String)
 	 */
 	@Override
-	public User getUserOnLocal(String email) throws NoSuchUserException {
-		UserRepositoryObject user = userRepository.findByEmail(email);
+	public User getUser(UUID userUUID) throws NoSuchUserException {
+		UserRepositoryObject user = userRepository.findOne(userUUID);
+		if (user == null) {
+			throw new NoSuchUserException();
+		} else {
+			return user.toUser();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.enseirb.telecom.s9.service.AccountService#getUser(java.lang
+	 * .String)
+	 */
+	@Override
+	public User getUserFromEmail(String userEmail) throws NoSuchUserException {
+		UserRepositoryObject user = userRepository.findByEmail(userEmail);
 		if (user == null) {
 			throw new NoSuchUserException();
 		} else {
@@ -283,10 +299,21 @@ public class CentralServiceImpl implements CentralService {
 	}
 
 	@Override
-	public User createUserOnLocal(User user) {
-
-		User u = userRepository.save(new UserRepositoryObject(user)).toUser();
-		return u;
+	public User createUserOnLocal(User user) throws SuchUserException {
+	
+		if (userRepository.findByEmail(user.getUserID()) == null) {
+			UUID uuid;
+			do {
+				uuid = UUID.randomUUID();
+			} while (uUIDExist(uuid));
+			user.setUuid(uuid.toString());
+			User u = userRepository.save(new UserRepositoryObject(user))
+					.toUser();
+			return u;
+		}
+		else {
+			throw new SuchUserException();
+		}
 	}
 
 	@Override
@@ -294,17 +321,18 @@ public class CentralServiceImpl implements CentralService {
 		userRepository.save(new UserRepositoryObject(user));
 	}
 
-	public void deleteUserOnLocal(String userID) {
+	@Override
+	public void deleteUserOnLocal(UUID userID) {
 
-		this.userRepository.delete(userRepository.findByEmail(userID));
+		this.userRepository.delete(userRepository.findOne(userID));
 	}
 
 	@Override
-	public Box getBox(String userID) throws NoSuchUserException {
+	public Box getBox(UUID userID) throws NoSuchUserException {
 
 		UserRepositoryObject userRepositoryObject;
 		try {
-			userRepositoryObject = this.userRepository.findByEmail(userID);
+			userRepositoryObject = this.userRepository.findOne(userID);
 		} catch (Exception e) {
 			throw new NoSuchUserException();
 		}

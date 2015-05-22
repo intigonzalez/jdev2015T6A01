@@ -3,6 +3,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service.request;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
@@ -13,8 +14,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Service;
+
 
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.ContentEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
@@ -38,11 +39,11 @@ public class RequestContentServiceImpl implements RequestContentService {
 	}
 
 	@Override
-	public List<Content> get(String userID, String relationID)
+	public List<Content> get(UUID userID, UUID relationID)
 			throws IOException, NoSuchUserException, NoRelationException,
 			NoSuchBoxException {
 
-		Box boxRelation = requestServ.getBoxByUserIDORH(relationID);
+		Box boxRelation = requestServ.getBoxByUserUuidORH(relationID);
 
 		client = ClientBuilder.newClient();
 

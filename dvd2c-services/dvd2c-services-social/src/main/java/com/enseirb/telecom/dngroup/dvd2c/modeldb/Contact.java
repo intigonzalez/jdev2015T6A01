@@ -4,9 +4,11 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
-
+import org.hibernate.annotations.Type;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The persistent class for the contacts database table.
@@ -19,26 +21,29 @@ public class Contact extends DBObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-//	@Column(name = "inverse_id")
-//	private int inverseId;
+	// @Column(name = "inverse_id")
+	// private int inverseId;
 
 	@ManyToOne
 	@JoinColumn(name = "receiver_id")
 	private ReceiverActor receiverActor;
 
-	@Column(name = "owner_id")
-	private String ownerId;
+	@Column(name = "owner_id", length = 36)
+	@Type(type = "uuid-char")
+	private UUID ownerId;
 
 	private int status;
 
-//	@Column(name = "ties_count")
-//	private int tiesCount;
+	// @Column(name = "ties_count")
+	// private int tiesCount;
 
-	// bi-directional many-to-many association to Relation
-	@ManyToMany(mappedBy = "contacts")
-	private List<Relation> relations;
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch= FetchType.EAGER)
+	@JoinTable(name = "contact_role", joinColumns = @JoinColumn(name = "contact_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	
+	private List<Role> role;
 
 	public Contact() {
 	}
@@ -51,28 +56,28 @@ public class Contact extends DBObject implements Serializable {
 		this.id = id;
 	}
 
-//	public int getInverseId() {
-//		return this.inverseId;
-//	}
-//
-//	public void setInverseId(int inverseId) {
-//		this.inverseId = inverseId;
-//	}
-//	
-//	public int getTiesCount() {
-//		return this.tiesCount;
-//	}
-//
-//	public void setTiesCount(int tiesCount) {
-//		this.tiesCount = tiesCount;
-//	}
+	// public int getInverseId() {
+	// return this.inverseId;
+	// }
+	//
+	// public void setInverseId(int inverseId) {
+	// this.inverseId = inverseId;
+	// }
+	//
+	// public int getTiesCount() {
+	// return this.tiesCount;
+	// }
+	//
+	// public void setTiesCount(int tiesCount) {
+	// this.tiesCount = tiesCount;
+	// }
 
-	public List<Relation> getRelations() {
-		return this.relations;
+	public List<Role> getRole() {
+		return this.role;
 	}
 
-	public void setRelations(List<Relation> relations) {
-		this.relations = relations;
+	public void setRole(List<Role> role) {
+		this.role = role;
 	}
 
 	public int getStatus() {
@@ -91,11 +96,11 @@ public class Contact extends DBObject implements Serializable {
 		this.receiverActor = receiverActor;
 	}
 
-	public String getOwnerId() {
+	public UUID getOwnerId() {
 		return ownerId;
 	}
 
-	public void setOwnerId(String ownerId) {
+	public void setOwnerId(UUID ownerId) {
 		this.ownerId = ownerId;
 	}
 

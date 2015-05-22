@@ -4,43 +4,51 @@
 
 	<xs:include schemaLocation="relation.xsd"></xs:include>
 	<xs:include schemaLocation="content.xsd"></xs:include>
-	
+<!-- 	<xs:simpleType name="uuid-type"> -->
+<!-- 		<xs:restriction base="xs:string"> -->
+<!-- 			<xs:pattern value=".*" /> -->
+<!-- 		</xs:restriction> -->
+<!-- 	</xs:simpleType> -->
 	<xs:element name="user">
+
 
 		<xs:complexType>
 			<xs:sequence>
-                <xs:element name="uuid" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
-                <xs:element name="userID" type="xs:string" maxOccurs="1"
+
+				<xs:element name="uuid" type="xs:string" maxOccurs="1"
+					minOccurs="0">
+				</xs:element>
+				<xs:element name="userID" type="xs:string" maxOccurs="1"
 					minOccurs="1" />
-				<xs:element name="firstname" type="xs:string"
-					maxOccurs="1" minOccurs="0" />
-				<xs:element name="surname" type="xs:string"
-					maxOccurs="1" minOccurs="0" />
+				<xs:element name="firstname" type="xs:string" maxOccurs="1"
+					minOccurs="0" />
+				<xs:element name="surname" type="xs:string" maxOccurs="1"
+					minOccurs="0" />
 				<xs:element name="boxID" type="xs:string" maxOccurs="1"
 					minOccurs="0" />
-				<xs:element name="password" type="xs:string"
-					maxOccurs="1" minOccurs="0" />
+				<xs:element name="password" type="xs:string" maxOccurs="1"
+					minOccurs="0" />
 
 				<xs:element name="pubKey" type="xs:string" maxOccurs="1"
 					minOccurs="0" />
-				<xs:element name="privateKey" type="xs:string"
-					maxOccurs="1" minOccurs="0" />
+				<xs:element name="privateKey" type="xs:string" maxOccurs="1"
+					minOccurs="0" />
 
 				<xs:element ref="contactXSD" maxOccurs="unbounded"
 					minOccurs="0" />
 				<xs:element ref="content" maxOccurs="unbounded"
 					minOccurs="0" />
 
-				<xs:element name="smtpHost" type="xs:string"
-					maxOccurs="1" minOccurs="0" />
-				<xs:element name="smtpPort" type="xs:string"
-					maxOccurs="1" minOccurs="0" />
+				<xs:element name="smtpHost" type="xs:string" maxOccurs="1"
+					minOccurs="0" />
+				<xs:element name="smtpPort" type="xs:string" maxOccurs="1"
+					minOccurs="0" />
 				<xs:element name="smtpUsername" type="xs:string"
 					maxOccurs="1" minOccurs="0" />
 				<xs:element name="smtpPassword" type="xs:string"
 					maxOccurs="1" minOccurs="0" />
-				<xs:element name="smtpToken" type="xs:string"
-					maxOccurs="1" minOccurs="0" />
+				<xs:element name="smtpToken" type="xs:string" maxOccurs="1"
+					minOccurs="0" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

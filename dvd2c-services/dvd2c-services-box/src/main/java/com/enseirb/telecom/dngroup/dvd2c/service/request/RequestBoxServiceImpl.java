@@ -3,6 +3,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service.request;
 import java.io.IOException;
 
 import javax.inject.Inject;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -54,7 +55,7 @@ public class RequestBoxServiceImpl implements RequestBoxService {
 	}
 
 	@Override
-	public void createBoxORH(Box box) throws IOException {
+	public void createBoxORH(Box box) throws IOException,ProcessingException {
 
 		WebTarget target = client.target(url);
 		LOGGER.debug("Send request to server {}", target.getUri());

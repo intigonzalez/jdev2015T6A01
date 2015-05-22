@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -17,24 +18,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
-import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
-import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
 
 // The Java class will be hosted at the URI path "/app/account"
 
@@ -77,43 +72,55 @@ public class UserEndPoints extends HttpServlet {
 											// d'un formulaire.
 		String userID = user.getUserID().toLowerCase();
 
-		if (uManager.userExistOnLocal(userID)) {
-			User userAuth;
-			try {
-				userAuth = uManager.getUserOnLocal(userID);
-			} catch (NoSuchUserException e) {
-				throw new WebApplicationException(Status.NOT_FOUND);
-			}
-			if (user.getPassword().equals(userAuth.getPassword())) {
-				return Response
-						.ok()
-						.cookie(new NewCookie("authentication", userID, "/",
-								null, 1, "no comment", 1073741823, // maxAge max
-																	// int
-																	// value/2
-								false)).build();
-			}
-			return Response.status(403).build();
-		} else {
-			return Response.status(403).build();
+		User userAuth;
+		try {
+			userAuth = uManager.getUserFromEmail(userID);
+		} catch (NoSuchUserException e) {
+			throw new WebApplicationException(Status.NOT_FOUND);
 		}
+		if (user.getPassword().equals(userAuth.getPassword())) {
+			// maxAge max int value/2
+			return Response
+					.ok()
+					.cookie(new NewCookie("authentication", userID, "/", null,
+							1, "no comment", 1073741823, false)).build();
+		}
+		return Response.status(403).build();
 
 	}
 
 	/**
 	 * Get a user by userID
 	 * 
-	 * @param userID
+	 * @param userUUID
 	 *            the user to get
 	 * @return a user
 	 */
 	@GET
-	@Path("{userID}")
+	@Path("{userUUID}")
 	@RolesAllowed({ "account", "authenticated" })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public User getUserByID(@PathParam("userID") String userID) {
+	public User getUserByUUID(@PathParam("userUUID") UUID userUUID) {
 		try {
-			return uManager.getUserOnLocal(userID);
+			return uManager.getUserFromUUID(userUUID);
+		} catch (NoSuchUserException e) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+	}
+
+	/**
+	 * Find a list of users from their firstname on server
+	 * 
+	 * @param firstname
+	 *            the firstname to search
+	 * @return a list of user
+	 */
+	@GET
+	@Path("email/{email}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public User getUserByEmail(@PathParam("email") String email) {
+		try {
+			return uManager.getUserFromEmail(email);
 		} catch (NoSuchUserException e) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
@@ -144,34 +151,24 @@ public class UserEndPoints extends HttpServlet {
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createUser(User user) throws URISyntaxException {
-		if (uManager.userExistOnLocal(user.getUserID()) == false) {
 
-			User u;
-			try {
-				u = uManager.createUserOnServer(user);
-
-				// NHE that the answer we expect from a post (see location
-				// header)
-				return Response
-						.created(new URI(u.getUserID()))
-						.cookie(new NewCookie("authentication", u.getUserID(),
-								"/", null, 1, "no comment", 1073741823, // maxAge
-																		// max
-																		// int
-																		// value/2
-								false)).build();
-				// return Response.created(new URI(u.getUserID())).build();
-			} catch (SuchUserException e) {
-				throw new WebApplicationException("user" + user.getUserID()
-						+ "already exists on central", Status.CONFLICT);
-			} catch (IOException e) {
-				throw new WebApplicationException("error for creating user",
-						Status.INTERNAL_SERVER_ERROR);
-			}
-		} else {
+		User u;
+		try {
+			u = uManager.createUserOnServer(user);
+			// maxAge max int value/2
+			return Response
+					.created(new URI("app/account/" + u.getUuid()))
+					.cookie(new NewCookie("authentication", u.getUserID(), "/",
+							null, 1, "no comment", 1073741823, false)).build();
+			// return Response.created(new URI(u.getUserID())).build();
+		} catch (SuchUserException e) {
 			throw new WebApplicationException("user" + user.getUserID()
-					+ "already exists on your box", Status.CONFLICT);
+					+ "already exists on central", Status.CONFLICT);
+		} catch (IOException e) {
+			throw new WebApplicationException("error for creating user",
+					Status.INTERNAL_SERVER_ERROR);
 		}
+
 	}
 
 	/**
@@ -188,12 +185,12 @@ public class UserEndPoints extends HttpServlet {
 	@RolesAllowed("account")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateUser(User user,
-			@PathParam("userID") String userIDFromPath) {
+			@PathParam("userID") UUID userIDFromPath) {
 		// TODO: need to check the authentication of the user
 		// modify the user, check if the user has changed his email address, and
 		// check the ability of the new email address
 		if (user.getUserID().equals(userIDFromPath)
-				&& uManager.userExistOnLocal(user.getUserID()) == true) {
+				&& uManager.userExistOnLocal(UUID.fromString(user.getUuid())) == true) {
 			uManager.saveUserOnServer(user);
 			return Response.status(200).build();
 		} else {
@@ -213,12 +210,22 @@ public class UserEndPoints extends HttpServlet {
 	@Path("{userID}")
 	@RolesAllowed("account")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteUser(@PathParam("userID") String userID) {
+	public Response deleteUser(@PathParam("userID") UUID userID) {
 		// TODO: need to check the authentication of the user
 
 		// delete the user
-		uManager.deleteUserOnServer(userID);
-		return Response.status(200).build();
+
+		try {
+			uManager.deleteUserOnServer(userID);
+			return Response.status(200).build();
+		} catch (IOException e) {
+			LOGGER.error("Error for delete this user on server : {}", userID, e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		} catch (NoSuchUserException e) {
+			LOGGER.error("Error for delete this user (no found user) : {}",
+					userID, e);
+			return Response.status(Status.NOT_FOUND).build();
+		}
 
 	}
 }

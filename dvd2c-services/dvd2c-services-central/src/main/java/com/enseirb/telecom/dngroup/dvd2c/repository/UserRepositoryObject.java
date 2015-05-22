@@ -147,6 +147,7 @@ public class UserRepositoryObject {
 
 	public User toUser() {
 		User user = new User();
+		user.setUuid(uuid.toString());
 		user.setUserID(userEmail);
 		user.setFirstname(firstname);
 		user.setSurname(surname);

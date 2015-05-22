@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
+import org.hibernate.LazyInitializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOld;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOldObject;
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoRoleException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
@@ -29,11 +32,14 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Actor;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Contact;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.Permission;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ReceiverActor;
-import com.enseirb.telecom.dngroup.dvd2c.modeldb.Relation;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.Role;
+import com.enseirb.telecom.dngroup.dvd2c.repository.ActorRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.ContactRepository;
+import com.enseirb.telecom.dngroup.dvd2c.repository.PermissionRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.ReceiverActorRepository;
-import com.enseirb.telecom.dngroup.dvd2c.repository.RelationRepository;
+import com.enseirb.telecom.dngroup.dvd2c.repository.RoleRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.request.RequestRelationService;
 import com.enseirb.telecom.dngroup.dvd2c.request.RequestRelationServiceImpl;
@@ -54,13 +60,10 @@ public class RelationServiceImpl implements RelationService {
 	ContactRepository contactRepository;
 
 	@Inject
-	ReceiverActorRepository rar;
-
-	@Inject
 	AccountService accountService;
 
 	@Inject
-	RelationRepository relationRepository;
+	RoleRepository roleRepository;
 
 	@Inject
 	RequestRelationService rrs;
@@ -70,27 +73,31 @@ public class RelationServiceImpl implements RelationService {
 
 	@Inject
 	RequestContentService requestContentService;
-	
+
 	@Inject
 	private ReceiverActorRepository receiverActorRepository;
 
-	public boolean RelationExist(String UserID, String actorEmail) {
-//ReceiverActor a = receiverActorRepository.findByEmail(actorUUID);
-		Contact c = contactRepository.findContact(UserID,actorEmail);
-		return ( c!= null);
+	private PermissionRepository permissionRepository;
+
+	@Override
+	public boolean RelationExist(UUID UserUUID, UUID actorUUID) {
+
+		Contact c = contactRepository.findContact(UserUUID, actorUUID);
+		return (c != null);
 	}
 
 	@Override
-	public void updateRelation(String userID) throws IOException,
+	public void updateRelation(UUID UserUUID) throws IOException,
 			NoSuchUserException {
 
-		RequestRelationService rrs = new RequestRelationServiceImpl();
-
-		for (Contact rro : contactRepository.findByOwner(userID)) {
+		User user = accountService.getUserFromUUID(UserUUID);
+		for (Contact rro : contactRepository.findByOwner(UserUUID)) {
 
 			try {
-				User relationUpdate = rrs.get(userID, rro.getReceiverActor().getEmail());
-				ReceiverActor relationIntoDb = receiverActorRepository.findByEmail(rro.getReceiverActor().getEmail());
+				User relationUpdate = rrs.get(UUID.fromString(user.getUuid()),
+						rro.getReceiverActor().getId());
+				ReceiverActor relationIntoDb = receiverActorRepository
+						.findByEmail(rro.getReceiverActor().getEmail());
 				relationIntoDb.setFirstname(relationUpdate.getFirstname());
 				relationIntoDb.setSurname(relationUpdate.getSurname());
 				receiverActorRepository.save(relationIntoDb);
@@ -103,18 +110,16 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public ContactXSD getRelation(String ownerID, String relationID)
+	public ContactXSD getRelation(UUID ownerID, UUID relationID)
 			throws NoSuchContactException {
-		try {
-			Contact contact = contactRepository
-					.findContact(ownerID, relationID);
 
-			ContactXSD relation = toContactXSD(contact);
-
-			return relation;
-		} catch (Exception e) {
+		Contact contact;
+		if ((contact = contactRepository.findContact(ownerID, relationID)) == null)
 			throw new NoSuchContactException();
-		}
+		ContactXSD relation = toContactXSD(contact);
+
+		return relation;
+
 	}
 
 	/**
@@ -128,11 +133,15 @@ public class RelationServiceImpl implements RelationService {
 		contactXSD.setAprouve(contact.getStatus());
 		contactXSD.setFirstname(receiverActor.getFirstname());
 		contactXSD.setSurname(receiverActor.getSurname());
+		contactXSD.setUuid(contact.getReceiverActor().getId().toString());
+
+		contactXSD.getRole().addAll(getRolesNames(contact.getRole()));
+
 		return contactXSD;
 	}
 
 	@Override
-	public List<ContactXSD> getListContact(String userID) {
+	public List<ContactXSD> getListContact(UUID userID) {
 		List<ContactXSD> listContactXSD = new ArrayList<ContactXSD>();
 		List<Contact> contacts = contactRepository.findByOwner(userID);
 		for (Contact contact : contacts) {
@@ -141,11 +150,10 @@ public class RelationServiceImpl implements RelationService {
 		return listContactXSD;
 	}
 
-
 	@Override
-	public ContactXSD createRelation(String userIDFromPath,
-			String relationIDString, Boolean fromBox)
-			throws NoSuchUserException, IOException, NoSuchBoxException {
+	public ContactXSD createRelation(UUID userUUID, UUID relationUUID,
+			Boolean fromBox) throws NoSuchUserException, IOException,
+			NoSuchBoxException {
 		/*
 		 * Check the content, add a state 1 to the approuve value Check the user
 		 * really exists from the central server Send a request to the right box
@@ -153,57 +161,85 @@ public class RelationServiceImpl implements RelationService {
 		 */
 
 		User user;
-		if ((user = accountService.getUserOnLocal(userIDFromPath)) == null) {
+		if ((user = accountService.getUserFromUUID(userUUID)) == null) {
 			throw new NoSuchUserException();
 		}
 
 		ReceiverActor receiverActor;
 		// verify where is the relation
 		// is it already registered on box ?
-		if ((receiverActor = rar.findByEmail(relationIDString)) == null) {
+		if ((receiverActor = receiverActorRepository.findOne(relationUUID)) == null) {
 			receiverActor = new ReceiverActor();
 			// is not already registered
 			User receiverUser;
-			//is it a user on the box ?
-			if ((receiverUser = accountService.getUserOnLocal(relationIDString)) == null) {
+			// is it a user on the box ?
+			if ((receiverUser = accountService.getUserFromUUID(relationUUID)) == null) {
 				// is not on the box
-				receiverUser = rus.get(relationIDString);
+				receiverUser = rus.get(relationUUID);
 			}
 			receiverActor.setEmail(receiverUser.getUserID());
 			receiverActor.setFirstname(receiverUser.getFirstname());
 			receiverActor.setSurname(receiverUser.getSurname());
 			receiverActor.setId(UUID.fromString(receiverUser.getUuid()));
+			receiverActorRepository.save(receiverActor);
 		}
 
-		Contact c = new Contact();
-		c.setOwnerId(userIDFromPath);
-		c.setReceiverActor(receiverActor);
+		Contact contact2 = new Contact();
+		contact2.setOwnerId(UUID.fromString(user.getUuid()));
+		contact2.setReceiverActor(receiverActor);
 		if (fromBox)
-			c.setStatus(2);
+			contact2.setStatus(2);
 		else
-			c.setStatus(1);
+			contact2.setStatus(1);
+
+		// set public relation
+		Role relation;
+		if ((relation = roleRepository.findByName("Public",
+				UUID.fromString(user.getUuid()))) == null) {
+
+			/*
+			 * init public relation for the user
+			 */
+
+			relation = new Role();
+			relation.setActorId(UUID.fromString(user.getUuid()));
+			relation.setName("Public");
+			// relation.setContacts(Arrays.asList(contact2));
+			/*
+			 * init permission
+			 */
+			Permission permission = new Permission();
+			permission.setAction("Read");
+			permission.setObject("Public");
+			permission.setRelations(Arrays.asList(relation));
+			relation.setPermissions(Arrays.asList(permission));
+			roleRepository.save(relation);
+		}
+		contact2.setRole(Arrays.asList(relation));
 
 		if (!fromBox) {
-			User receiverActor1;
-			if ((receiverActor1 = accountService
-					.getUserOnLocal(relationIDString)) != null) {
-				createRelation(relationIDString, relationIDString, true);
+			// User receiverActor1;
+			if ((accountService.getUserFromUUID(relationUUID)) != null) {
+				createRelation(receiverActor.getId(),
+						UUID.fromString((user.getUuid())), true);
 			} else {
-				receiverActor1 = rus.get(relationIDString);
+				// receiverActor1 = rus.get(relationIDString);
 				ContactXSD contact = new ContactXSD();
 				contact.setActorID(user.getUserID());
 				contact.setAprouve(2);
 				contact.setFirstname(user.getFirstname());
 				contact.setSurname(user.getSurname());
-				rrs.updateRelationORH(contact, userIDFromPath);
+				rrs.updateRelationORH(contact, relationUUID);
 			}
+
 		}
-		contactRepository.save(c);
+		contactRepository.save(contact2);
 		ContactXSD contactXSD = new ContactXSD();
-		contactXSD.setActorID(c.getReceiverActor().getEmail());
-		contactXSD.setAprouve(c.getStatus());
-		contactXSD.setFirstname(c.getReceiverActor().getFirstname());
-		contactXSD.setSurname(c.getReceiverActor().getSurname());
+		contactXSD.setActorID(contact2.getReceiverActor().getEmail());
+		contactXSD.setAprouve(contact2.getStatus());
+		contactXSD.setFirstname(contact2.getReceiverActor().getFirstname());
+		contactXSD.setSurname(contact2.getReceiverActor().getSurname());
+		contactXSD.setUuid(contact2.getReceiverActor().getId().toString());
 		return contactXSD;
 		// User user;
 		// try {
@@ -270,40 +306,42 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public void saveRelation(String userID, ContactXSD relation)
-			throws NoRelationException {
+	public void saveRelation(UUID userUUID, ContactXSD contactXSD)
+			throws NoRelationException, NoSuchUserException, NoRoleException {
 		// Here, the user is only allowed to edit the approve value if the
 		// current value is = 2
+		User user = accountService.getUserFromUUID(userUUID);
 		Contact contact;
-		if ((contact = contactRepository.findContact(userID,
-				relation.getActorID())) == null) {
+		if ((contact = contactRepository.findContact(userUUID,
+				UUID.fromString(contactXSD.getUuid()))) == null) {
 			throw new NoRelationException();
 		}
 
-		if (contact.getStatus() != relation.getAprouve()
-				&& contact.getStatus() == 2 && relation.getAprouve() == 3) {
+		if (contact.getStatus() != contactXSD.getAprouve()
+				&& contact.getStatus() == 2 && contactXSD.getAprouve() == 3) {
 			contact.setStatus(3);
 
 			Contact contact2;
 			if ((contact2 = contactRepository.findContact(
-					relation.getActorID(), userID)) != null) {
+					UUID.fromString(contactXSD.getUuid()), userUUID)) != null) {
 				contact2.setStatus(3);
 				contactRepository.save(contact2);
 			} else {
 				RequestRelationService rss = new RequestRelationServiceImpl();
 				try {
-					rss.setAprouveRelationORH(userID, relation.getActorID());
+					rss.setAprouveRelationORH(userUUID,
+							UUID.fromString(contactXSD.getUuid()));
 				} catch (IOException e) {
 					LOGGER.error("Can not set aprouve {} for {} Error IO",
-							userID, relation.getActorID(), e);
+							userUUID, contactXSD.getActorID(), e);
 					e.printStackTrace();
 				} catch (NoSuchBoxException e) {
 					LOGGER.error("Can not set aprouve {} for {} no box found",
-							userID, relation.getActorID(), e);
+							userUUID, contactXSD.getActorID(), e);
 				} catch (NoSuchUserException e) {
 					LOGGER.error(
 							"Can not set aprouve {} for {} user not found",
-							userID, relation.getActorID(), e);
+							userUUID, contactXSD.getActorID(), e);
 				}
 				rss.close();
 				// Send a request to the box to tell it the user accepts the
@@ -312,15 +350,18 @@ public class RelationServiceImpl implements RelationService {
 
 		}
 		// Or, the user can edit the group his/her relationship is in.
-		if (!contact.getRelations().equals(relation.getRole())) {
-			contact.getRelations().clear();
-			for (String role : relation.getRole()) {
-				// RBAC: NEED TO FIX THIS
 
-				Relation relation2;
-				if ((relation2 = relationRepository.findByName(role, userID)) != null)
+		List<String> roleName = getRolesNames(contact.getRole());
+		if (!roleName.equals(contactXSD.getRole())) {
+			contact.getRole().clear();
+			for (String role : contactXSD.getRole()) {
+				Role relation2;
+				if ((relation2 = roleRepository.findByName(role,
+						contact.getOwnerId())) != null)
 
-					contact.getRelations().add(relation2);
+					contact.getRole().add(relation2);
+				else
+					throw new NoRoleException();
 			}
 
 		}
@@ -328,9 +369,25 @@ public class RelationServiceImpl implements RelationService {
 		return;
 	}
 
+	/**
+	 * @param roles
+	 * @return
+	 */
+	private List<String> getRolesNames(List<Role> roles) {
+		List<String> roleName = new ArrayList<String>();
+//		try {
+			for (Role role : roles) {
+				roleName.add(role.getName());
+			}
+//		} catch (LazyInitializationException e) {
+//			LOGGER.error("no Role for this contact");
+//		}
+		return roleName;
+	}
+
 	@Override
-	public void setAprouveBox(String userId, String relationId) {
-		Contact contact = contactRepository.findContact(userId, relationId);
+	public void setAprouveBox(UUID userUUID, UUID contactUUID) {
+		Contact contact = contactRepository.findContact(userUUID, contactUUID);
 		if (contact.getStatus() == 1) {
 			contact.setStatus(3);
 			contactRepository.save(contact);
@@ -342,35 +399,34 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public List<Content> getAllContent(String userID, String relationID) {
+	public List<Content> getAllContent(UUID userUUID, UUID relationUUID) {
 		try {
-
-			List<Content> listContent = requestContentService.get(userID,
-					relationID);
-			LOGGER.debug("Content from {} fetched ! ", relationID);
+			List<Content> listContent = requestContentService.get(userUUID,
+					relationUUID);
+			LOGGER.debug("Content from {} fetched ! ", relationUUID);
 			return listContent;
 		} catch (IOException e) {
-			LOGGER.error("Error for get all content of {}", userID, e);
+			LOGGER.error("Error for get all content of {}", userUUID, e);
 		} catch (NoSuchUserException e) {
 			LOGGER.error("Error for get all content of {} user not found",
-					userID, e);
+					userUUID, e);
 		} catch (NoSuchBoxException e) {
 			LOGGER.error("Error for get all content of {} box not found",
-					userID, e);
+					userUUID, e);
 		} catch (NoRelationException e) {
 			LOGGER.debug(
 					"Error for get all content of {} relation not found with {}",
-					userID, relationID, e);
+					userUUID, relationUUID, e);
 		}
 		return null;
 
 	}
 
 	@Override
-	public void deleteRelationBox(String userId, String relationId)
+	public void deleteRelationBox(UUID userUUId, UUID relationUUId)
 			throws NoRelationException {
 		Contact contact;
-		if ((contact = contactRepository.findContact(userId, relationId)) != null) {
+		if ((contact = contactRepository.findContact(userUUId, relationUUId)) != null) {
 			contactRepository.delete(contact);
 		} else {
 			throw new NoRelationException();
@@ -379,39 +435,37 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public void deleteRelation(String actorID, String contactId)
+	public void deleteRelation(UUID actorUUID, UUID contactUUID)
 			throws NoSuchUserException, NoSuchBoxException, NoRelationException {
 		Contact contact;
 
-		if ((contact = contactRepository.findContact(contactId, actorID)) != null) {
+		if ((contact = contactRepository.findContact(contactUUID, actorUUID)) != null) {
 			contactRepository.delete(contact);
 
 		} else {
 			RequestRelationService rss = new RequestRelationServiceImpl();
 			try {
-				rss.deleteRelationORH(actorID, contactId);
+				rss.deleteRelationORH(actorUUID, contactUUID);
 			} catch (IOException e) {
 				LOGGER.error(
 						"Can not delete a relation betewen {} and {} Error IO",
-						actorID, contactId, e);
+						actorUUID, contactUUID, e);
 			} catch (NoSuchUserException e) {
 				LOGGER.debug(
 						"Can not delete a relation betewen {} and {} Error user not found (already delete ???)",
-						actorID, contactId, e);
+						actorUUID, contactUUID, e);
 				throw e;
 			} catch (NoSuchBoxException e) {
 				LOGGER.error(
 						"Can not delete a relation betewen {} and {} box of the first not found",
-						actorID, contactId, e);
+						actorUUID, contactUUID, e);
 				throw e;
 			}
 			rss.close();
 		}
 
-		deleteRelationBox(actorID, contactId);
+		deleteRelationBox(actorUUID, contactUUID);
 
 	}
-
-
 
 }

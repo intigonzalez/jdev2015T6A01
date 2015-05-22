@@ -31,7 +31,6 @@ public interface CentralService {
 	 */
 	public abstract boolean boxExistOnLocal(String boxID);
 
-
 	/**
 	 * Get a box by a boxID
 	 * 
@@ -125,6 +124,27 @@ public interface CentralService {
 	public abstract void updateBox();
 
 	/**
+	 * get a user from local
+	 * 
+	 * @param userID
+	 *            the user to get
+	 * @return the user
+	 * @throws NoSuchUserException
+	 */
+	public abstract User getUser(UUID userID) throws NoSuchUserException;
+
+	/**
+	 * get a user from local
+	 * 
+	 * @param userEmail
+	 *            the user to get
+	 * @return the user
+	 * @throws NoSuchUserException
+	 */
+	public abstract User getUserFromEmail(String userEmail)
+			throws NoSuchUserException;
+
+	/**
 	 * Get the list of users who have the same firstname on local SERVER
 	 * SERVICES
 	 * 
@@ -151,7 +171,7 @@ public interface CentralService {
 	 * @return a box with lot information
 	 * @throws NoSuchUserException
 	 */
-	public abstract Box getBox(String userID) throws NoSuchUserException;
+	public abstract Box getBox(UUID userID) throws NoSuchUserException;
 
 	/**
 	 * get all user of boxes
@@ -178,18 +198,7 @@ public interface CentralService {
 	 *            to verify
 	 * @return return true if the user exist
 	 */
-	public abstract boolean userExistOnLocal(String userID);
-
-	/**
-	 * get a user from local
-	 * 
-	 * @param userID
-	 *            the user to get
-	 * @return the user
-	 * @throws NoSuchUserException
-	 */
-	public abstract User getUserOnLocal(String userID)
-			throws NoSuchUserException;
+	public abstract boolean userExistOnLocal(UUID userID);
 
 	/**
 	 * create user on local
@@ -197,8 +206,9 @@ public interface CentralService {
 	 * @param user
 	 *            to create
 	 * @return the user
+	 * @throws SuchUserException 
 	 */
-	public abstract User createUserOnLocal(User user);
+	public abstract User createUserOnLocal(User user) throws SuchUserException;
 
 	/**
 	 * modify user on local
@@ -214,7 +224,7 @@ public interface CentralService {
 	 * @param userID
 	 *            the user to delete
 	 */
-	public abstract void deleteUserOnLocal(String userID);
+	public abstract void deleteUserOnLocal(UUID userID);
 
 	public abstract void sendGoogleCode(String actorID, Box box, String code)
 			throws IOException;
