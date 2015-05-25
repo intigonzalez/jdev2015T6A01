@@ -9,7 +9,6 @@
 		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Document</class>
 		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Event</class>
 		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Link</class>
-		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Metadata</class>
 		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Post</class>
 		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Tagging</class>
 		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Tag</class>

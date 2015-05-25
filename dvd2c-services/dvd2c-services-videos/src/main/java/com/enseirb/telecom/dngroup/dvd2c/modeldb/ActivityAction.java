@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
-import java.util.Date;
-
 
 /**
  * The persistent class for the activity_actions database table.
@@ -26,19 +24,11 @@ public class ActivityAction extends DBObject implements Serializable {
 
 	private byte author;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="created_at")
-	private Date createdAt;
-
 	private byte follow;
 
 	private byte like;
 
 	private byte owner;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="updated_at")
-	private Date updatedAt;
 
 	@Column(name="user_author")
 	private byte userAuthor;
@@ -75,14 +65,6 @@ public class ActivityAction extends DBObject implements Serializable {
 		this.author = author;
 	}
 
-	public Date getCreatedAt() {
-		return this.createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
 	public byte getFollow() {
 		return this.follow;
 	}
@@ -105,14 +87,6 @@ public class ActivityAction extends DBObject implements Serializable {
 
 	public void setOwner(byte owner) {
 		this.owner = owner;
-	}
-
-	public Date getUpdatedAt() {
-		return this.updatedAt;
-	}
-
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
 	}
 
 	public byte getUserAuthor() {

@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
-import java.util.Date;
 import java.util.List;
 
 
@@ -23,10 +22,6 @@ public class ActivityObject extends DBObject implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="created_at")
-	private Date createdAt;
-
 	@Lob
 	private String description;
 
@@ -34,10 +29,6 @@ public class ActivityObject extends DBObject implements Serializable {
 	private String objectType;
 
 	private String title;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="updated_at")
-	private Date updatedAt;
 
 	//bi-directional many-to-one association to ActivityAction
 	@OneToMany(mappedBy="activityObject")
@@ -51,10 +42,6 @@ public class ActivityObject extends DBObject implements Serializable {
 	@OneToMany(mappedBy="activityObject2")
 	private List<ActivityObjectProperty> activityObjectProperties2;
 	
-	@ManyToMany
-	@JoinTable(name = "ACTIVITYOBJECT_METADATA", joinColumns = { @JoinColumn(name = "METADATA_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "ACTIVITYOBJECT_ID", referencedColumnName = "ID") })
-	private List<Metadata> metadatas;
-
 	public ActivityObject() {
 	}
 
@@ -64,14 +51,6 @@ public class ActivityObject extends DBObject implements Serializable {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public Date getCreatedAt() {
-		return this.createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
 	}
 
 	public String getDescription() {
@@ -96,14 +75,6 @@ public class ActivityObject extends DBObject implements Serializable {
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	public Date getUpdatedAt() {
-		return this.updatedAt;
-	}
-
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
 	}
 
 	public List<ActivityAction> getActivityActions() {
@@ -172,12 +143,4 @@ public class ActivityObject extends DBObject implements Serializable {
 		return activityObjectProperties2;
 	}
 	
-	public List<Metadata> getMetadatas() {
-		return metadatas;
-	}
-
-	public void setMetadatas(List<Metadata> metadatas) {
-		this.metadatas = metadatas;
-	}
-
 }
