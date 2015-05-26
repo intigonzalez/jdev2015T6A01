@@ -1,3 +1,4 @@
+package com.enseirb.telecom.dngroup.dvd2c.db;
 //package com.enseirb.telecom.dngroup.dvd2c.db;
 //
 //import java.io.IOException;
@@ -22,11 +23,11 @@
 //import com.mongodb.MongoClient;
 //import com.mongodb.WriteResult;
 //
-//public class ContentRepositoryMongo implements ContentRepository {
+//public class ContentRepositoryMongo implements ContentRepositoryOld {
 //	private static final Logger LOGGER = LoggerFactory.getLogger(ContentRepositoryMongo.class);
 //
 //	@Override
-//	public <S extends ContentRepositoryObject> S save(S entity) {
+//	public <S extends ContentRepositoryOldObject> S save(S entity) {
 //		if (exists(entity.getId())) {
 //			delete(entity);
 //		}
@@ -55,7 +56,7 @@
 //	 * @param entity
 //	 * @return entity
 //	 */
-////	public <S extends ContentRepositoryObject> S update(S entity) {
+////	public <S extends ContentRepositoryOldObject> S update(S entity) {
 ////
 ////		MongoClient mongoClient;
 ////		try {
@@ -165,13 +166,13 @@
 ////	}
 //
 //	@Override
-//	public <S extends ContentRepositoryObject> Iterable<S> save(
+//	public <S extends ContentRepositoryOldObject> Iterable<S> save(
 //			Iterable<S> entities) {
 //		throw new RuntimeException("not yet invented");
 //	}
 //
 //	@Override
-//	public ContentRepositoryObject findOne(String id) {
+//	public ContentRepositoryOldObject findOne(String id) {
 //		try {
 //			MongoClient mongoClient = DbInit.connect();
 //			DBCollection db = mongoClient.getDB("mediahome").getCollection(
@@ -179,12 +180,12 @@
 //
 //			BasicDBObject query = new BasicDBObject("id", id);
 //			DBCursor cursor = db.find(query);
-//			ContentRepositoryObject content = null;
+//			ContentRepositoryOldObject content = null;
 //			ObjectMapper mapper = new ObjectMapper();
 //			if (cursor.hasNext()) {
 //				try {
 //					content = mapper.readValue(cursor.next().toString(),
-//							ContentRepositoryObject.class);
+//							ContentRepositoryOldObject.class);
 //				} catch (IOException e) {
 //					LOGGER.error("Connection to database failed",e);
 //
@@ -226,9 +227,9 @@
 //	}
 //
 //	@Override
-//	public Iterable<ContentRepositoryObject> findAll() {
+//	public Iterable<ContentRepositoryOldObject> findAll() {
 //		// Iterable <UserRepositoryObject> listOfAllUsers = null;
-//		List<ContentRepositoryObject> listOfAllContent = new ArrayList<ContentRepositoryObject>();
+//		List<ContentRepositoryOldObject> listOfAllContent = new ArrayList<ContentRepositoryOldObject>();
 //
 //		try {
 //			MongoClient mongoClient = DbInit.connect();
@@ -236,14 +237,14 @@
 //			DBCollection dbUsers = db.getCollection("contents");
 //
 //			ObjectMapper mapper = new ObjectMapper();
-//			ContentRepositoryObject content = null;
+//			ContentRepositoryOldObject content = null;
 //
 //			DBCursor cursor = dbUsers.find();
 //
 //			while (cursor.hasNext()) {
 //				try {
 //					content = mapper.readValue(cursor.next().toString(),
-//							ContentRepositoryObject.class);
+//							ContentRepositoryOldObject.class);
 //				} catch (IOException e) {
 //				
 //					LOGGER.error("User Mapping failed ! ",e);
@@ -261,7 +262,7 @@
 //	}
 //
 //	@Override
-//	public Iterable<ContentRepositoryObject> findAll(Iterable<String> ids) {
+//	public Iterable<ContentRepositoryOldObject> findAll(Iterable<String> ids) {
 //		throw new RuntimeException("not yet invented");
 //	}
 //
@@ -287,8 +288,8 @@
 //	}
 //
 //	
-//	public List<ContentRepositoryObject> findAllFromUser(String userID) {
-//		List<ContentRepositoryObject> list = new ArrayList<ContentRepositoryObject>();
+//	public List<ContentRepositoryOldObject> findAllFromUser(String userID) {
+//		List<ContentRepositoryOldObject> list = new ArrayList<ContentRepositoryOldObject>();
 //
 //		try {
 //			MongoClient mongoClient = DbInit.connect();
@@ -297,14 +298,14 @@
 //			BasicDBObject query = new BasicDBObject("actorID", userID);
 //
 //			ObjectMapper mapper = new ObjectMapper();
-//			ContentRepositoryObject content = null;
+//			ContentRepositoryOldObject content = null;
 //
 //			DBCursor cursor = dbContents.find(query);
 //
 //			while (cursor.hasNext()) {
 //				try {
 //					content = mapper.readValue(cursor.next().toString(),
-//							ContentRepositoryObject.class);
+//							ContentRepositoryOldObject.class);
 //				} catch (JsonMappingException e) {
 //					LOGGER.error("Can not cast json",e);
 //				}
@@ -336,7 +337,7 @@
 //	}
 //
 //	@Override
-//	public void delete(ContentRepositoryObject entity) {
+//	public void delete(ContentRepositoryOldObject entity) {
 //
 //		try {
 //			MongoClient mongoClient = DbInit.connect();
@@ -353,7 +354,7 @@
 //	}
 //
 //	@Override
-//	public void delete(Iterable<? extends ContentRepositoryObject> entities) {
+//	public void delete(Iterable<? extends ContentRepositoryOldObject> entities) {
 //		throw new RuntimeException("not yet invented");
 //	}
 //
