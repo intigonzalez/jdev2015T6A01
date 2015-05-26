@@ -264,13 +264,14 @@ public class RelationEndPoints {
 			throw new WebApplicationException("No Such Contact Exception",Status.NOT_FOUND);
 		} catch (NoRelationException e) {
 			LOGGER.error("No Such Relation Exception");
-			throw new WebApplicationException("No Such Relation Exception", 404);
+			throw new WebApplicationException("No Such Relation Exception", Status.NOT_FOUND);
 		} catch (NoSuchUserException e) {
 			LOGGER.error("No Such User Exception");
-			throw new WebApplicationException("No Such User Exception", 404);
+			throw new WebApplicationException("No Such User Exception",e, Status.NOT_FOUND);
 		} catch (NoRoleException e) {
 			LOGGER.error("No Such Role Exception");
-			throw new WebApplicationException("No Such Role Exception", 404);
+//			throw new WebApplicationException(Response.status(404).build());
+			throw new WebApplicationException("No Such Role Exception",e, Status.NOT_FOUND);
 		}
 
 	}

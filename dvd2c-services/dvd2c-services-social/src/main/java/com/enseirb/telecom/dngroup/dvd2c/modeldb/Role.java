@@ -1,14 +1,20 @@
 package com.enseirb.telecom.dngroup.dvd2c.modeldb;
 
 import java.io.Serializable;
-
-import javax.persistence.*;
-
-import org.hibernate.annotations.Type;
-
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
 
 
 /**
@@ -49,6 +55,9 @@ public class Role extends DBObject implements Serializable {
 	//bi-directional many-to-many association to Permission
 	@ManyToMany(mappedBy="relations")
 	private List<Permission> permissions;
+	
+	@OneToMany(mappedBy="role")
+	private List<ActivityObjectAudience> activityObjectAudiences;
 
 	public Role() {
 	}

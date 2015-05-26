@@ -3,7 +3,6 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,16 +10,10 @@ import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
-import org.hibernate.LazyInitializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryOld;
-import com.enseirb.telecom.dngroup.dvd2c.db.RelationshipRepositoryOldObject;
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOld;
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOldObject;
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRoleException;
@@ -30,23 +23,18 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
-import com.enseirb.telecom.dngroup.dvd2c.modeldb.Actor;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Contact;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Permission;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ReceiverActor;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Role;
-import com.enseirb.telecom.dngroup.dvd2c.repository.ActorRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.ContactRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.PermissionRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.ReceiverActorRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.RoleRepository;
-import com.enseirb.telecom.dngroup.dvd2c.repository.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.request.RequestRelationService;
 import com.enseirb.telecom.dngroup.dvd2c.request.RequestRelationServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestContentService;
-import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestContentServiceImpl;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
-import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserServiceImpl;
 
 @Service
 public class RelationServiceImpl implements RelationService {
@@ -193,29 +181,11 @@ public class RelationServiceImpl implements RelationService {
 			contact2.setStatus(1);
 
 		// set public relation
-		Role relation;
-		if ((relation = roleRepository.findByName("Public",
-				UUID.fromString(user.getUuid()))) == null) {
+		Role role;
 
-			/*
-			 * init public relation for the user
-			 */
+		role = initRolesAndGetPublic(user);
 
-			relation = new Role();
-			relation.setActorId(UUID.fromString(user.getUuid()));
-			relation.setName("Public");
-			// relation.setContacts(Arrays.asList(contact2));
-			/*
-			 * init permission
-			 */
-			Permission permission = new Permission();
-			permission.setAction("Read");
-			permission.setObject("Public");
-			permission.setRelations(Arrays.asList(relation));
-			relation.setPermissions(Arrays.asList(permission));
-			roleRepository.save(relation);
-		}
-		contact2.setRole(Arrays.asList(relation));
+		contact2.setRole(Arrays.asList(role));
 
 		if (!fromBox) {
 			// User receiverActor1;
@@ -303,6 +273,90 @@ public class RelationServiceImpl implements RelationService {
 		// .toRelation();
 		// }
 		//
+	}
+
+	/**
+	 * init public, Family, Friends and Pro relation for the user (if not
+	 * already exist)
+	 * 
+	 * @param user to add the role
+	 * @return the public role
+	 */
+	private Role initRolesAndGetPublic(User user) {
+		//
+		Role roleFamily;
+		if ((roleFamily = roleRepository.findByName("Public",
+				UUID.fromString(user.getUuid()))) == null) {
+
+			roleFamily = new Role();
+			roleFamily.setActorId(UUID.fromString(user.getUuid()));
+			roleFamily.setName("Public");
+
+			// init permission
+			Permission permission = new Permission("Read", "Family",
+					Arrays.asList(roleFamily));
+			Permission permission2 = new Permission("Comment", "Friends",
+					Arrays.asList(roleFamily));
+			Permission permission3 = new Permission("Post", "Friends",
+					Arrays.asList(roleFamily));
+			roleFamily.setPermissions(Arrays.asList(permission,permission2,permission3));
+			roleRepository.save(roleFamily);
+
+			roleRepository.save(roleFamily);
+		}
+		Role roleFriends;
+		if ((roleFriends = roleRepository.findByName("Public",
+				UUID.fromString(user.getUuid()))) == null) {
+
+			roleFriends = new Role();
+			roleFriends.setActorId(UUID.fromString(user.getUuid()));
+			roleFriends.setName("Public");
+
+			// init permission
+			Permission permission = new Permission("Read", "Friends",
+					Arrays.asList(roleFriends));
+			Permission permission2 = new Permission("Comment", "Friends",
+					Arrays.asList(roleFriends));
+			Permission permission3 = new Permission("Post", "Friends",
+					Arrays.asList(roleFriends));
+			roleFriends.setPermissions(Arrays.asList(permission,permission2,permission3));
+			roleRepository.save(roleFriends);
+		}Role rolePro;
+		if ((rolePro = roleRepository.findByName("Public",
+				UUID.fromString(user.getUuid()))) == null) {
+
+			rolePro = new Role();
+			rolePro.setActorId(UUID.fromString(user.getUuid()));
+			rolePro.setName("Public");
+
+			// init permission
+			Permission permission = new Permission("Read", "Pro",
+					Arrays.asList(rolePro));
+			Permission permission2 = new Permission("Comment", "Pro",
+					Arrays.asList(rolePro));
+			Permission permission3 = new Permission("Post", "Pro",
+					Arrays.asList(rolePro));
+			rolePro.setPermissions(Arrays.asList(permission,permission2,permission3));
+
+			roleRepository.save(rolePro);
+		}
+		Role rolePublic;
+		if ((rolePublic = roleRepository.findByName("Public",
+				UUID.fromString(user.getUuid()))) == null) {
+
+			rolePublic = new Role();
+			rolePublic.setActorId(UUID.fromString(user.getUuid()));
+			rolePublic.setName("Public");
+
+			// init permission
+			Permission permission = new Permission("Read", "Public",
+					Arrays.asList(rolePublic));
+			rolePublic.setPermissions(Arrays.asList(permission));
+
+			roleRepository.save(rolePublic);
+		}
+
+		return rolePublic;
 	}
 
 	@Override
