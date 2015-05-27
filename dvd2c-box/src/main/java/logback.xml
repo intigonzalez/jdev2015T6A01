@@ -12,10 +12,11 @@
 	</appender>
 
 	<logger name="com.enseirb.telecom.s9" level="DEBUG" />
+	<!-- INFO -->
 	<logger name="org.springframework" level="INFO" />
 	<logger name="org.hibernat" level="DEBUG" />
 
-	<root level="INFO">
+	<root level="DEBUG">
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>

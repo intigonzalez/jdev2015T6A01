@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.DelegatingFilterProxy;
 
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepository;
 import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOld;
@@ -91,6 +92,10 @@ public class Main {
 							ContextLoader.CONFIG_LOCATION_PARAM,
 							com.enseirb.telecom.dngroup.dvd2c.conf.SpringConfiguration.class
 									.getName());
+			webappContext.addFilter("springSecurityFilterChain", new DelegatingFilterProxy("springSecurityFilterChain"))
+            .addMappingForUrlPatterns(null, false, "/*");
+		
+			
 			// attache the jersey servlet to this context
 			ServletRegistration jerseyServlet = webappContext.addServlet(
 					"jersey-servlet", ServletContainer.class);
@@ -102,9 +107,10 @@ public class Main {
 							com.enseirb.telecom.dngroup.dvd2c.conf.RestConfiguration.class
 									.getName());
 
+			
 			// finally, map it to the path
 			jerseyServlet.addMapping("/" + BASE_PATH + "/*");
-
+		
 			// add mapping for static resources
 
 			// start a vanilla server
@@ -119,7 +125,7 @@ public class Main {
 
 			// set disable cache
 			videos.setFileCacheEnabled(false);
-
+			
 			server.getServerConfiguration().addHttpHandler(videos, "/videos");
 
 			// server.getServerConfiguration().addHttpHandler(
@@ -139,9 +145,9 @@ public class Main {
 
 			try {
 				Client client = ClientBuilder.newClient();
-				WebTarget target = client.target(new URI("http://" +
-						CliConfSingleton.appHostName + ":"
-								+ CliConfSingleton.appPort + "/api/box"));
+				WebTarget target = client.target(new URI("http://"
+						+ CliConfSingleton.appHostName + ":"
+						+ CliConfSingleton.appPort + "/api/box"));
 				LOGGER.debug("Launch the request to the central : {}",
 						target.getUri());
 

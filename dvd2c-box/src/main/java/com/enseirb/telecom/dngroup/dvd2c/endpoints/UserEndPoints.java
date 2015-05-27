@@ -25,6 +25,9 @@ import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
@@ -33,6 +36,7 @@ import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 
 // The Java class will be hosted at the URI path "/app/account"
 
+@Component
 @Path("app/account")
 public class UserEndPoints extends HttpServlet {
 	private static final Logger LOGGER = LoggerFactory
@@ -82,7 +86,7 @@ public class UserEndPoints extends HttpServlet {
 			// maxAge max int value/2
 			return Response
 					.ok()
-					.cookie(new NewCookie("authentication", userID, "/", null,
+					.cookie(new NewCookie("authentication", userAuth.getUuid(), "/", null,
 							1, "no comment", 1073741823, false)).build();
 		}
 		return Response.status(403).build();
@@ -98,7 +102,7 @@ public class UserEndPoints extends HttpServlet {
 	 */
 	@GET
 	@Path("{userUUID}")
-	@RolesAllowed({ "account", "authenticated" })
+	@PreAuthorize("hasRole('USER')")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public User getUserByUUID(@PathParam("userUUID") UUID userUUID) {
 		try {

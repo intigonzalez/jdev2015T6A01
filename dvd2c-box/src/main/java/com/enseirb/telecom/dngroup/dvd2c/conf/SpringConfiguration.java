@@ -8,6 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
@@ -26,8 +27,8 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 		"com.enseirb.telecom.dngroup.dvd2c.db",
 		"com.enseirb.telecom.dngroup.dvd2c.conf",
 		"com.enseirb.telecom.dngroup.dvd2c.service",
+		"com.enseirb.telecom.dngroup.dvd2c.endpoints",
 		"com.enseirb.telecom.dngroup.dvd2c"})
-@EnableJpaRepositories("com.enseirb.telecom.dngroup.dvd2c.db")
 @EnableTransactionManagement
 public class SpringConfiguration {
 

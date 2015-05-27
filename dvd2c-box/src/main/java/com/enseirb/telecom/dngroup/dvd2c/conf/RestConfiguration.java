@@ -4,6 +4,7 @@ import org.glassfish.jersey.jettison.JettisonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
+import org.springframework.web.filter.DelegatingFilterProxy;
 
 import com.enseirb.telecom.dngroup.dvd2c.endpoints.BoxEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.endpoints.ContentEndPoints;
@@ -31,6 +32,8 @@ public class RestConfiguration extends ResourceConfig {
 		register(MultiPartFeature.class);
 		register(JettisonFeature.class);
 		register(RequestContextFilter.class);
+
+		
 
 	}
 }
