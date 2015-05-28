@@ -3,6 +3,7 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +28,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
@@ -45,21 +49,18 @@ public class UserEndPoints extends HttpServlet {
 	@Inject
 	protected AccountService uManager;
 
-	// // Only for tests
-	// @GET
-	// @Path("get")
-	// //@RolesAllowed("account")
-	// public Response addUser(@Context HttpHeaders headers,@Context
-	// SecurityContext context) {//@HeaderParam("cookie") String userAgent) {
-	//
-	// String userAgent = headers.getRequestHeader("cookie").get(0);
-	// LOGGER.debug("userAgent : {}",userAgent);
-	// return Response.status(200)
-	// .entity("addUser is called, userAgent : " + userAgent)
-	// .build();
-	//
-	// }
-	//
+	@Path("/user")
+	@GET()
+	public Response getUser() {
+		  Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	      String name = auth.getName(); //get logged in username
+	 
+		return Response
+				.ok("authenticated successfully!")
+				.cookie(new NewCookie("authentication", name,
+						"/", null, 1, "no comment", 1073741823, false)).build();
+	}
+
 	/**
 	 * Create the cookie on user side when the user is connected
 	 * 
@@ -86,8 +87,9 @@ public class UserEndPoints extends HttpServlet {
 			// maxAge max int value/2
 			return Response
 					.ok()
-					.cookie(new NewCookie("authentication", userAuth.getUuid(), "/", null,
-							1, "no comment", 1073741823, false)).build();
+					.cookie(new NewCookie("authentication", userAuth.getUuid(),
+							"/", null, 1, "no comment", 1073741823, false))
+					.build();
 		}
 		return Response.status(403).build();
 

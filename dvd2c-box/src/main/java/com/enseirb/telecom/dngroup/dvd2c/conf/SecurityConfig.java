@@ -9,6 +9,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+
+import com.enseirb.telecom.dngroup.dvd2c.filter.CsrfHeaderFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -48,21 +53,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	    @Override
 	    protected void configure(HttpSecurity http) throws Exception {
 	        http
+	        	.httpBasic()
+	        		.and()
 	            .authorizeRequests()
-//	                .antMatchers("/**").permitAll() 
+	                .antMatchers("/api/application.wadl").permitAll()
+	                .antMatchers("/api/app/account/").permitAll() 
 	                .anyRequest().hasAnyRole("USER")
 	                .and()
 	            .formLogin()
-	                .loginPage("/index.html")
-	                .loginProcessingUrl("/j_spring_security_check")
-	                .defaultSuccessUrl("/main.html")
-	                .failureUrl("/")
+	                .loginPage("/index.html").usernameParameter("email")
+//	                .loginProcessingUrl("/j_spring_security_check")
+//	                .defaultSuccessUrl("/main.html")
+//	                .failureUrl("/")
 	                .permitAll()
 	                .and()
 	                
 	            .logout()                                    
-	                .permitAll();
+	                .permitAll()
+	                .and()
+	            .addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
+	            	.csrf()
+	            	.csrfTokenRepository(csrfTokenRepository());
 	    }
+	    
+	    private CsrfTokenRepository csrfTokenRepository() {
+	    	  HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
+	    	  repository.setHeaderName("X-XSRF-TOKEN");
+	    	  return repository;
+	    	}
 
 
 	// @formatter:off

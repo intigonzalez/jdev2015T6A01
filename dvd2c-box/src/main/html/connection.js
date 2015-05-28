@@ -17,8 +17,14 @@ ConnectionForm.controller("mainController", function ($scope, $http) {
     };
     $scope.submitData = function (person) {
         var data = {};
+        var headers = person ? {
+			authorization : "Basic "
+					+ btoa(person.userID + ":"
+							+ person.password)} : {};
         data.user = person;
-        $http.post(PREFIX_RQ+"/api/app/account/Connect",data )
+//        +person.userID
+        $http.get(PREFIX_RQ+"/api/app/account/user/",
+				{headers : headers})
             .success(function (data, status, headers, config)
             {
                 console.log("Succeed");
