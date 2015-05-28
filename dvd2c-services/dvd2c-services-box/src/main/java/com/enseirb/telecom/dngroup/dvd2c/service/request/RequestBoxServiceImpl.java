@@ -6,12 +6,9 @@ import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -26,7 +23,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 @Service
 public class RequestBoxServiceImpl implements RequestBoxService {
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(RequestContentServiceImpl.class);
+			.getLogger(RequestBoxServiceImpl.class);
 
 	private String url = CliConfSingleton.centralURL + "/api/app/box/";
 	

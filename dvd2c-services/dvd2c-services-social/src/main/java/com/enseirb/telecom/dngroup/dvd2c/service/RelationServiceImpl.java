@@ -28,7 +28,6 @@ import com.enseirb.telecom.dngroup.dvd2c.modeldb.Permission;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ReceiverActor;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Role;
 import com.enseirb.telecom.dngroup.dvd2c.repository.ContactRepository;
-import com.enseirb.telecom.dngroup.dvd2c.repository.PermissionRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.ReceiverActorRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.RoleRepository;
 import com.enseirb.telecom.dngroup.dvd2c.request.RequestRelationService;
@@ -65,7 +64,6 @@ public class RelationServiceImpl implements RelationService {
 	@Inject
 	private ReceiverActorRepository receiverActorRepository;
 
-	private PermissionRepository permissionRepository;
 
 	@Override
 	public boolean RelationExist(UUID UserUUID, UUID actorUUID) {
@@ -364,7 +362,7 @@ public class RelationServiceImpl implements RelationService {
 			throws NoRelationException, NoSuchUserException, NoRoleException {
 		// Here, the user is only allowed to edit the approve value if the
 		// current value is = 2
-		User user = accountService.getUserFromUUID(userUUID);
+//		User user = accountService.getUserFromUUID(userUUID);
 		Contact contact;
 		if ((contact = contactRepository.findContact(userUUID,
 				UUID.fromString(contactXSD.getUuid()))) == null) {

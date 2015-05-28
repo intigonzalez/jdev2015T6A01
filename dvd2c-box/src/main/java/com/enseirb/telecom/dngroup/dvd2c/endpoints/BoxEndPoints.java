@@ -41,13 +41,13 @@ public class BoxEndPoints {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(BoxEndPoints.class);
 	@Autowired
-	protected BoxService boxManager = null;
+	protected BoxService boxManager;
 
 	@Autowired
-	protected RelationService rManager = null;
+	protected RelationService rManager;
 
 	@Autowired
-	protected ContentService uManager = null;
+	protected ContentService uManager;
 
 	/**
 	 * get box with boxID
@@ -60,12 +60,13 @@ public class BoxEndPoints {
 	@Path("id/{boxId}")
 	@Produces(MediaType.APPLICATION_XML)
 	public Box getBox(@PathParam("boxId") String boxId) {
-		try {
-			return boxManager.getBoxOnLocal(boxId);
-		} catch (NoSuchBoxException e) {
-
-			throw new WebApplicationException(Status.NOT_FOUND);
-		}
+		// try {
+		throw new WebApplicationException(Status.NOT_IMPLEMENTED);
+		// return boxManager.getBoxOnServer(boxId);
+		// } catch (NoSuchBoxException e) {
+		//
+		// throw new WebApplicationException(Status.NOT_FOUND);
+		// }
 	}
 
 	/**
@@ -88,7 +89,6 @@ public class BoxEndPoints {
 		} catch (IOException e) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		
 
 	}
 
@@ -96,19 +96,12 @@ public class BoxEndPoints {
 	@Path("{boxId}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putBox(Box box) throws URISyntaxException {
-		// need to verify user
-		// and after this modifies the comment
-
-		if (boxManager.boxExistOnLocal(box.getBoxID()) == true) {
-			boxManager.saveBoxOnLocal(box);
-			// NHE that the answer we expect from a post (see location header)
-			return Response.created(new URI(box.getBoxID())).build();
-		} else {
+		try {
+			boxManager.saveBoxOnServer(box);
+		} catch (NoSuchBoxException e) {
 			return Response.status(409).build();
 		}
-
-		// return Response.status(Status.SERVICE_UNAVAILABLE).build();
-
+		return Response.created(new URI(box.getBoxID())).build();
 	}
 
 	@PUT

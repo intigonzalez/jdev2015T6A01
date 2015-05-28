@@ -1,16 +1,10 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
-import javax.xml.ws.WebServiceException;
-
 import jersey.repackaged.com.google.common.base.Throwables;
 
 import org.slf4j.Logger;
@@ -18,28 +12,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
-import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepositoryObject;
-import com.enseirb.telecom.dngroup.dvd2c.db.CrudRepository;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestBoxService;
-import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestBoxServiceImpl;
+
 @Service
 public class BoxServiceImpl implements BoxService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(BoxServiceImpl.class);
-	@Inject
-	BoxRepository  boxDatabase;
-	
-	@Inject
-	RequestBoxService requetBoxService ;
 
-
+	@Inject
+	RequestBoxService requetBoxService;
 
 	@Override
 	public boolean boxExistOnServer(String boxID) {
-		boolean exist = boxExistOnLocal(boxID);
+		boolean exist = false;
 		try {
 			Box boxGet = requetBoxService.get(boxID);
 			if ((boxGet == null))
@@ -57,40 +44,22 @@ public class BoxServiceImpl implements BoxService {
 		return exist;
 	}
 
-	public boolean boxExistOnLocal(String boxID) {
-		return boxDatabase.exists(boxID);
-	}
-
-	public Box getBoxOnLocal(String boxID) throws NoSuchBoxException {
-
-		BoxRepositoryObject box = null;
-		box = boxDatabase.findOne(boxID);
-
-		if (box == null) {
-			LOGGER.debug("No Box Found : {}", boxID);
-			throw new NoSuchBoxException();
-		}
-
-		LOGGER.debug("Box Found : {}",box.getBoxID());
-		return box.toBox();
-
-	}
-
 	public Box createBoxOnServer(Box box) throws IOException {
 
 		try {
 			requetBoxService.createBoxORH(box);
-			return createBoxOnLocal(box);
+			// RBAC: Return the correct link
+			return box;
 		} catch (IOException e) {
 			LOGGER.error("Error during creating a box on server : ",
 					box.getBoxID(), e);
 			throw e;
 		} catch (ProcessingException e) {
-			LOGGER.error("Error can't converte the responce of the RH, RH is enable ",
+			LOGGER.error(
+					"Error can't converte the responce of the RH, RH is enable ",
 					box.getBoxID(), e);
 			throw new WebApplicationException(404);
 		}
-		
 
 	}
 
@@ -102,19 +71,12 @@ public class BoxServiceImpl implements BoxService {
 		createBoxOnServer(box);
 	}
 
-	public Box createBoxOnLocal(Box box) {
-
-		Box b = boxDatabase.save(new BoxRepositoryObject(box)).toBox();
-		return b;
-
-	}
-
 	public void saveBoxOnServer(Box box) {
 
 		try {
 
 			requetBoxService.updateBoxORH(box);
-			saveBoxOnLocal(box);
+
 		} catch (IOException e) {
 			LOGGER.error("can't save Box On Server : {}", box.getBoxID(), e);
 			throw Throwables.propagate(e);
@@ -123,10 +85,6 @@ public class BoxServiceImpl implements BoxService {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
-	}
-
-	public void saveBoxOnLocal(Box box) {
-		boxDatabase.save(new BoxRepositoryObject(box));
 	}
 
 	public void deleteBoxOnServer(String boxID) {
@@ -139,89 +97,6 @@ public class BoxServiceImpl implements BoxService {
 			LOGGER.error("box not found : {}", boxID, e);
 		}
 
-		deleteBoxOnLocal(boxID);
 	}
-
-	public void deleteBoxOnLocal(String boxID) {
-		this.boxDatabase.delete(boxID);
-
-	}
-
-	@Override
-	public List<Box> getBoxListFromIP(String ip) {
-		List<Box> listBox = getBoxesFromIP(ip);
-		return listBox;
-	}
-
-	@Override
-	public List<Box> getAllBox() {
-		Iterable<BoxRepositoryObject> boxIterable = boxDatabase.findAll();
-		List<Box> listBox = new ArrayList<Box>();
-		if (boxIterable == null)
-			return listBox;
-		else {
-			Iterator<BoxRepositoryObject> itr = boxIterable.iterator();
-			while (itr.hasNext()) {
-				BoxRepositoryObject box = itr.next();
-				listBox.add(box.toBox());
-			}
-			return listBox;
-		}
-	}
-
-	@Override
-	public List<Box> getBoxesFromIP(String ip) {
-
-		Iterable<BoxRepositoryObject> boxIterable = boxDatabase.findAll();
-		List<Box> listBox = new ArrayList<Box>();
-
-		if (boxIterable == null)
-			return listBox;
-		else {
-			Iterator<BoxRepositoryObject> itr = boxIterable.iterator();
-			while (itr.hasNext()) {
-				BoxRepositoryObject box = itr.next();
-
-				if (box.getIp().equals(ip)) {
-					listBox.add(box.toBox());
-				}
-			}
-			return listBox;
-		}
-
-	}
-
-	@Override
-	public void sendGoogleCode(String actorID, Box box, String code) throws IOException {
-				requetBoxService.sendOauthORH(actorID, box, code);
-	}
-	
-	// RBAC: This class is only for central we don't want this here
-//		@Override
-//		public List<User> getUserFromName(String firstname) {
-//			// DB: need to change
-//			Iterable<UserRepositoryOldObject> userIterable = userRepository.findAll();
-//			UserRepositoryOldObject userRepo = null;
-//			List<User> listUser = new ArrayList<User>();
-	//
-//			if (userIterable == null)
-//				return listUser;
-//			else {
-//				Iterator<UserRepositoryOldObject> iterator = userIterable.iterator();
-	//
-//				while (iterator.hasNext()) {
-//					userRepo = iterator.next();
-	//
-//					try {
-//						if (userRepo.getFirstname().equalsIgnoreCase(firstname))
-//							listUser.add(userRepo.toUser());
-//					} catch (NullPointerException e) {
-//						LOGGER.error("this user have not firstname {}",
-//								userRepo.getUserID());
-//					}
-//				}
-//				return listUser;
-//			}
-//		}
 
 }

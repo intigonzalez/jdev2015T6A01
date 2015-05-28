@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
-import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepository;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
@@ -27,8 +26,7 @@ public class AccountServiceImpl implements AccountService {
 	@Inject
 	protected UserRepository userRepository;
 	
-	@Inject
-	protected BoxRepository boxRepository;
+
 
 	@Inject
 	protected RequestUserService requetUserService;
