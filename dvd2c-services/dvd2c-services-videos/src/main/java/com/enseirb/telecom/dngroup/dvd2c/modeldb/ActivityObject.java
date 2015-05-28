@@ -22,6 +22,9 @@ public class ActivityObject extends DBObject implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
+	@Column(name="actor_id")
+	private Integer actorId;
+	
 	@Lob
 	private String description;
 
@@ -45,12 +48,20 @@ public class ActivityObject extends DBObject implements Serializable {
 	public ActivityObject() {
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public Integer getActorId() {
+		return this.actorId;
+	}
+
+	public void setActorId(Integer actorId) {
+		this.actorId = actorId;
 	}
 
 	public String getDescription() {

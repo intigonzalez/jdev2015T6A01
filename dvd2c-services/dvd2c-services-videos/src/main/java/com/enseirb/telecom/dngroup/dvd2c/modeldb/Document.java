@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import com.enseirb.telecom.dngroup.dvd2c.model.Content;
+
 
 /**
  * The persistent class for the documents database table.
@@ -18,18 +20,32 @@ public class Document extends ActivityObject implements Serializable {
 	@Column(name="file_content_type")
 	private String fileContentType;
 
-	@Column(name="file_file_name")
-	private String fileFileName;
+	@Column(name="file_link")
+	private String fileLink;
 
-	@Column(name="file_file_size")
-	private String fileFileSize;
+	@Column(name="file_preview_link")
+	private String filePreviewLink;
+
+	@Column(name="file_size")
+	private String fileSize;
 
 	@Column(name="file_processing")
-	private byte fileProcessing;
+	private String fileProcessing;
 
 	private String type;
 
 	public Document() {
+	}
+	
+	public Document(Content content) {
+		setId(Integer.valueOf(content.getContentsID()));
+		setActorId(Integer.valueOf(content.getActorID()));
+		setTitle(content.getName());
+		setType(content.getType());
+		setCreatedAt(new java.util.Date(1000 * content.getUnixTime()));
+		setFileLink(content.getLink());
+		setFilePreviewLink(content.getPreviewLink());
+		setFileProcessing(content.getStatus());
 	}
 
 	public String getFileContentType() {
@@ -40,27 +56,35 @@ public class Document extends ActivityObject implements Serializable {
 		this.fileContentType = fileContentType;
 	}
 
-	public String getFileFileName() {
-		return this.fileFileName;
+	public String getFileLink() {
+		return this.fileLink;
 	}
 
-	public void setFileFileName(String fileFileName) {
-		this.fileFileName = fileFileName;
+	public void setFileLink(String fileLink) {
+		this.fileLink = fileLink;
 	}
 
-	public String getFileFileSize() {
-		return this.fileFileSize;
+	public String getFilePreviewLink() {
+		return this.filePreviewLink;
 	}
 
-	public void setFileFileSize(String fileFileSize) {
-		this.fileFileSize = fileFileSize;
+	public void setFilePreviewLink(String filePreviewLink) {
+		this.filePreviewLink = filePreviewLink;
 	}
 
-	public byte getFileProcessing() {
+	public String getFileSize() {
+		return this.fileSize;
+	}
+
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
+	}
+
+	public String getFileProcessing() {
 		return this.fileProcessing;
 	}
 
-	public void setFileProcessing(byte fileProcessing) {
+	public void setFileProcessing(String fileProcessing) {
 		this.fileProcessing = fileProcessing;
 	}
 
@@ -71,5 +95,19 @@ public class Document extends ActivityObject implements Serializable {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	public Content toContent() {
+		Content content = new Content();
+		content.setContentsID(this.getId().toString());
+		content.setName(this.getTitle());
+		content.setType(this.getObjectType());
+		content.setActorID(this.getActorId().toString());
+		content.setUnixTime(this.getCreatedAt().getTime() / 1000);
+		content.setLink(this.getFileLink());
+		content.setPreviewLink(this.getFilePreviewLink());
+		content.setStatus(String.valueOf(this.getFileProcessing()));
+		return content;
+	}
+
 
 }
