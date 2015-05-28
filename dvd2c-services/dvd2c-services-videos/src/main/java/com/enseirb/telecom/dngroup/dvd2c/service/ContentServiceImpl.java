@@ -28,6 +28,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Task;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Document;
 import com.enseirb.telecom.dngroup.dvd2c.repository.DocumentRepository;
 import com.enseirb.telecom.dngroup.dvd2c.utils.FileService;
+import com.enseirb.telecom.dngroup.dvd2c.utils.FileService;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
@@ -44,6 +45,8 @@ public class ContentServiceImpl implements ContentService {
 	DocumentRepository documentRepository;
 	@Inject
 	MessageBrokerService rabbitMq;
+
+	 
 
 	// private RequestUserService requetUserService = new
 	// RequestUserServiceImpl();
@@ -292,7 +295,7 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public void deleteContent(String contentsID) {
-		FileService fileservice = new FileService();
+		
 		// The content then must be deleted into the folder !
 		try {
 			Integer id = Integer.valueOf(contentsID);
@@ -301,7 +304,7 @@ public class ContentServiceImpl implements ContentService {
 			String path = CliConfSingleton.contentPath + document.getFileLink();
 			LOGGER.info("remove content : {}", path);
 			try {
-				fileservice.deleteFolder(path);
+				FileService.deleteFolder(path);
 			} catch (Exception e) {
 				// XXX: ok ?
 				LOGGER.error("Removing content failed for {}", new Object[] { path, e });

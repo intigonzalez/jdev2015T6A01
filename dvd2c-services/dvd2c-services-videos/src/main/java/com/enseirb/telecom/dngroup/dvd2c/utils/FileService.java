@@ -5,14 +5,18 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-public class FileService {
+import org.springframework.stereotype.Service;
+@Service
+public class FileService  {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileService.class);
-	public void deleteFolder(String folder) throws IOException {
+	
+	
+	public static void deleteFolder(String folder) throws IOException {
 		File directory = new File(folder);
 		delete(directory);
 	}
-	private static void delete(File file) throws IOException{
+	
+	public static void delete(File file) throws IOException{
 		
 	    	if(file.isDirectory()){
 	 
