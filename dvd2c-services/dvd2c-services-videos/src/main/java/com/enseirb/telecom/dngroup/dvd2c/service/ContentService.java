@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ws.rs.core.NoContentException;
 
@@ -25,7 +26,7 @@ public interface ContentService {
 	 * @param userID of get contents
 	 * @return List<Content> 
 	 */
-	public abstract List<Content> getAllContentsFromUser(String userID);
+	public abstract List<Content> getAllContentsFromUser(UUID userID);
 	
 	/**
 	 * get more information from a contentsID

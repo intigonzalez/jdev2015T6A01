@@ -4,7 +4,10 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Type;
+
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -22,6 +25,10 @@ public class ActivityObject extends DBObject implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
+	@Column(name="actor_id")
+	@Type(type="uuid-char")
+	private UUID actorId;
+	
 	@Lob
 	private String description;
 
@@ -45,12 +52,20 @@ public class ActivityObject extends DBObject implements Serializable {
 	public ActivityObject() {
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public UUID getActorId() {
+		return this.actorId;
+	}
+
+	public void setActorId(UUID actorId) {
+		this.actorId = actorId;
 	}
 
 	public String getDescription() {

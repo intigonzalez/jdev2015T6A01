@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.rmi.server.UID;
 //import java.nio.file.Files;
 //import java.nio.file.Path;
 //import java.nio.file.StandardCopyOption;
@@ -18,17 +17,16 @@ import javax.inject.Inject;
 import javax.ws.rs.core.NoContentException;
 
 import org.apache.tika.Tika;
-import org.jvnet.hk2.config.InjectionTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
-import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryOld;
-import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryOldObject;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Task;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.Document;
+import com.enseirb.telecom.dngroup.dvd2c.repository.DocumentRepository;
 import com.enseirb.telecom.dngroup.dvd2c.utils.FileService;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
@@ -43,7 +41,7 @@ public class ContentServiceImpl implements ContentService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ContentServiceImpl.class);
 	@Inject
-	ContentRepositoryOld contentDatabase;
+	DocumentRepository documentRepository;
 	@Inject
 	MessageBrokerService rabbitMq;
 
@@ -56,33 +54,42 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public boolean contentExist(String contentsID) {
-
-		return contentDatabase.exists(contentsID);
+		try {
+			Integer id = Integer.valueOf(contentsID);
+			return documentRepository.exists(id);
+		} catch (NumberFormatException e)	 {
+			return false;
+		}
 	}
 
 	@Override
-	public List<Content> getAllContentsFromUser(String userID) {
-
+	public List<Content> getAllContentsFromUser(UUID userID) {
 		List<Content> listContent = new ArrayList<Content>();
-		Iterable<ContentRepositoryOldObject> contentsDb = contentDatabase
-				.findAll();
-		Iterator<ContentRepositoryOldObject> itr = contentsDb.iterator();
-		while (itr.hasNext()) {
-			ContentRepositoryOldObject contentRepositoryOldObject = itr.next();
-			if (contentRepositoryOldObject.getActorID().equals(userID)) {
-				listContent.add(contentRepositoryOldObject.toContent());
+
+		try {
+			
+			Iterable<Document> contentsDb = documentRepository.findAll();
+			Iterator<Document> itr = contentsDb.iterator();
+			while (itr.hasNext()) {
+				Document document = itr.next();
+				if (document.getActorId() == userID) {
+					listContent.add(document.toContent());
+				}
 			}
+		} catch (NumberFormatException e)	 {
 		}
+
 		return listContent;
 	}
 
 	@Override
 	public Content getContent(String contentsID) throws NoContentException {
-		ContentRepositoryOldObject content = contentDatabase.findOne(contentsID);
-		if (content == null) {
+		try {
+			Integer id = Integer.valueOf(contentsID);
+			Document document = documentRepository.findOne(id);
+			return document.toContent();
+		} catch (NumberFormatException e) {
 			throw new NoContentException(contentsID);
-		} else {
-			return content.toContent();
 		}
 	}
 
@@ -257,14 +264,14 @@ public class ContentServiceImpl implements ContentService {
 		// authorization.setGroupID(0);
 		// authorization.getAction().add("action");
 		// content.getAuthorization().add(authorization);
-		return contentDatabase.save(new ContentRepositoryOldObject(content))
-				.toContent();
+		documentRepository.save(new Document(content));
+		return content;
 	}
 
 	@Override
 	public void saveContent(Content content) {
 		// Manage the content update. Check all informations are done !
-		contentDatabase.save(new ContentRepositoryOldObject(content));
+		documentRepository.save(new Document(content));
 	}
 
 	// save uploaded file to new location
@@ -287,19 +294,22 @@ public class ContentServiceImpl implements ContentService {
 	public void deleteContent(String contentsID) {
 		FileService fileservice = new FileService();
 		// The content then must be deleted into the folder !
-		Content content = contentDatabase.findOne(contentsID).toContent();
-		String path = CliConfSingleton.contentPath + content.getLink();
-		LOGGER.info("remove content : {}", path);
 		try {
-			fileservice.deleteFolder(path);
-		} catch (Exception e) {
-			// XXX: ok ?
-			LOGGER.error("Removing content failed for {}", new Object[] { path,
-					e });
+			Integer id = Integer.valueOf(contentsID);
+			Document document = documentRepository.findOne(id);
+			
+			String path = CliConfSingleton.contentPath + document.getFileLink();
+			LOGGER.info("remove content : {}", path);
+			try {
+				fileservice.deleteFolder(path);
+			} catch (Exception e) {
+				// XXX: ok ?
+				LOGGER.error("Removing content failed for {}", new Object[] { path, e });
+			}
+			// Delete into database
+			documentRepository.delete(id);
+		} catch (NumberFormatException e)	 {
 		}
-		// Delete into database
-		contentDatabase.delete(contentsID);
-
 	}
 
 	public List<Content> getAllContent(String userID, ContactXSD relation) {
@@ -307,16 +317,16 @@ public class ContentServiceImpl implements ContentService {
 		List<Content> listContent = new ArrayList<Content>();
 
 		// Get all the content the UserID stores
-		Iterable<ContentRepositoryOldObject> content = contentDatabase.findAll();// FromUser(userID);
-		Iterator<ContentRepositoryOldObject> itr = content.iterator();
+		Iterable<Document> content = documentRepository.findAll();// FromUser(userID);
+		Iterator<Document> itr = content.iterator();
 
 		try {
 			while (itr.hasNext()) { // For each content
-				ContentRepositoryOldObject contentRepositoryOldObject = itr.next();
+				Document document = itr.next();
 				search:
 
-				if ((contentRepositoryOldObject.getActorID() != null)
-						&& (contentRepositoryOldObject.getActorID().equals(userID))) {
+				if ((document.getActorId() != null)
+						&& (document.getActorId().equals(userID))) {
 					// For each group the relation belongs to
 					//RBAC: fix
 //					for (int i = 0; i < relation.getRole().size(); i++) {
@@ -358,11 +368,13 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public void updateContent(String contentsID, String status) {
-		ContentRepositoryOldObject c = contentDatabase.findOne(contentsID);
-		Content content = c.toContent();
-		content.setContentsID(contentsID);
-		content.setStatus(status);
-		contentDatabase.save(new ContentRepositoryOldObject(content));
+		try {
+			Integer id = Integer.valueOf(contentsID);
+			Document document = documentRepository.findOne(id);
+			document.setFileProcessing(status);
+			documentRepository.save(document);
+		} catch (NumberFormatException e)	 {
+		}
 	}
 
 }
