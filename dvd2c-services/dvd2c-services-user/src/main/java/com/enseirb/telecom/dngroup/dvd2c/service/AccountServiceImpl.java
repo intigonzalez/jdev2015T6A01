@@ -13,14 +13,11 @@ import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOldObject;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
-import com.enseirb.telecom.dngroup.dvd2c.repository.ActorRepository;
+import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.repository.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
-import com.enseirb.telecom.dngroup.dvd2c.model.User;
-import com.enseirb.telecom.dngroup.dvd2c.modeldb.Actor;
 
 @Service
 public class AccountServiceImpl implements AccountService {

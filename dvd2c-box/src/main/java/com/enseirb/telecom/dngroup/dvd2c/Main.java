@@ -5,14 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
-import javax.inject.Inject;
 import javax.servlet.ServletRegistration;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -29,13 +26,6 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOld;
-import com.enseirb.telecom.dngroup.dvd2c.endpoints.BoxEndPoints;
-import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
-import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
-import com.enseirb.telecom.dngroup.dvd2c.service.BoxServiceImpl;
 import com.lexicalscope.jewel.cli.ArgumentValidationException;
 import com.lexicalscope.jewel.cli.CliFactory;
 import com.lexicalscope.jewel.cli.HelpRequestedException;
