@@ -36,11 +36,11 @@ public class ActivityObjectProperty extends DBObject implements Serializable {
 	public ActivityObjectProperty() {
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

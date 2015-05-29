@@ -1,10 +1,14 @@
 package com.enseirb.telecom.dngroup.dvd2c.modeldb;
 
 import java.io.Serializable;
-
-import javax.persistence.*;
-
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 /**
@@ -190,6 +194,14 @@ public class User extends Actor implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	public com.enseirb.telecom.dngroup.dvd2c.model.User toXSDUser(){
+		com.enseirb.telecom.dngroup.dvd2c.model.User userReturn = new com.enseirb.telecom.dngroup.dvd2c.model.User();
+		userReturn.setFirstname(getFirstname());
+		userReturn.setSurname(getSurname());
+		userReturn.setUserID(getEmail());
+		userReturn.setUuid(getId().toString());
+		return userReturn;
 	}
 
 

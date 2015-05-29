@@ -53,7 +53,7 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 
 	@Override
 	public User get(UUID UserID, UUID UserToGet) throws IOException,
-			NoSuchUserException, NoSuchBoxException {
+			NoSuchUserException {
 		Box boxRelation = requestServ.getBoxByUserUuidORH(UserToGet);
 
 		WebTarget target = client.target(UriBuilder

@@ -60,7 +60,7 @@ public class ContentEndPoints {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<Content> getAllContentsFromUser(
 			@PathParam("userID") String userID) {
-		List<Content> contents = cManager.getAllContentsFromUser(userID);
+		List<Content> contents = cManager.getAllContentsFromUser(UUID.fromString(userID));
 		return contents;
 	}
 

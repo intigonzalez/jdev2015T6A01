@@ -12,15 +12,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
-import com.enseirb.telecom.dngroup.dvd2c.db.BoxRepository;
-import com.enseirb.telecom.dngroup.dvd2c.db.UserRepositoryOldObject;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
-import com.enseirb.telecom.dngroup.dvd2c.repository.ActorRepository;
+import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.repository.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
-import com.enseirb.telecom.dngroup.dvd2c.model.User;
-import com.enseirb.telecom.dngroup.dvd2c.modeldb.Actor;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -31,44 +27,7 @@ public class AccountServiceImpl implements AccountService {
 	protected UserRepository userRepository;
 
 	@Inject
-	protected BoxRepository boxRepository;
-
-	@Inject
 	protected RequestUserService requetUserService;
-
-	@Override
-	public boolean userExistOnServer(UUID userID) {
-		boolean exist = userExistOnLocal(userID);
-		try {
-			User userGet = requetUserService.get(userID);
-			if (userGet == null)
-				exist = false;
-			else if (userGet.getUserID().equals(userID))
-				exist = true;
-		} catch (IOException e) {
-			LOGGER.error("Can not connect on the server : {}", userID, e);
-		} catch (NoSuchUserException e) {
-			LOGGER.debug("User not found : {}", userID);
-		}
-		return exist;
-	}
-
-	@Override
-	public User getContactInformation(UUID userID) {
-		com.enseirb.telecom.dngroup.dvd2c.modeldb.User user = userRepository
-				.findOne(userID);
-
-		if (user == null) {
-			return null;
-		} else {
-			User userReturn = new User();
-			userReturn.setFirstname(user.getFirstname());
-			userReturn.setSurname(user.getSurname());
-			userReturn.setUserID(user.getEmail());
-			return userReturn;
-		}
-
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -81,6 +40,39 @@ public class AccountServiceImpl implements AccountService {
 		boolean exist = (userRepository.findOne(userUUID) != null);
 
 		return exist;
+	}
+
+	@Override
+	public boolean userExistOnServer(UUID userID) {
+		boolean exist = userExistOnLocal(userID);
+		if (!exist) {
+			try {
+				User userGet = requetUserService.get(userID);
+				if (userGet == null)
+					exist = false;
+				else if (userGet.getUuid().equals(userID.toString()))
+					exist = true;
+			} catch (IOException e) {
+				LOGGER.error("Can not connect on the server : {}", userID, e);
+			} catch (NoSuchUserException e) {
+				LOGGER.debug("User not found : {}", userID);
+			}
+		}
+		return exist;
+	}
+
+	@Override
+	public User getContactInformation(UUID userID) throws NoSuchUserException {
+		com.enseirb.telecom.dngroup.dvd2c.modeldb.User user = userRepository
+				.findOne(userID);
+
+		if (user == null) {
+			throw new NoSuchUserException();
+		} else {
+		
+			return user.toXSDUser();
+		}
+
 	}
 
 	/*
