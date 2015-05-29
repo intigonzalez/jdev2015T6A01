@@ -11,6 +11,8 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public interface AccountService {
 
+	
+
 	/** 
 	 * Verify if the user exist on central server and in local
 	 * @param userUUID to verify
@@ -134,7 +136,7 @@ public interface AccountService {
 	 */
 	public abstract boolean getUserVerification(String userName, String password) throws NoSuchUserException;
 
-	public abstract User getContactInformation(UUID userID);
+	public abstract User getContactInformation(UUID userID) throws NoSuchUserException;
 
 	public abstract User getUserFromEmail(String userID) throws NoSuchUserException;
 	

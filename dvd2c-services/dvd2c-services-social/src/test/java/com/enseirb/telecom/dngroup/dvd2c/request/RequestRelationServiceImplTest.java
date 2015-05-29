@@ -73,12 +73,12 @@ public class RequestRelationServiceImplTest {
 			.fromString("81999c55-db91-41a1-becf-cf2d313ad09b");
 
 	@Test
-	public void testNull() throws IOException, NoSuchBoxException {
+	public void testNull() throws IOException {
 
 		try {
 
 			when(toTest.requestServ.getBoxByUserUuidORH(null)).thenThrow(
-					new NoSuchBoxException());
+					new NoSuchUserException());
 			toTest.get(null, null);
 			assertTrue("should have thrown", false);
 		} catch (NoSuchUserException e) {
@@ -88,7 +88,7 @@ public class RequestRelationServiceImplTest {
 	}
 
 	@Test
-	public void testWithData() throws IOException, NoSuchBoxException,
+	public void testWithData() throws IOException,
 			NoSuchUserException {
 
 		User user1 = new User();
@@ -115,7 +115,7 @@ public class RequestRelationServiceImplTest {
 	}
 
 	private void bootstrapRequest(String ip, User u) throws IOException,
-			NoSuchBoxException {
+			 NoSuchUserException {
 		Box boxRelation = new Box();
 		boxRelation.setIp(ip);
 

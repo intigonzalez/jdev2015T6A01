@@ -158,7 +158,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 
 	public Box getBoxByUserUuidORH(UUID uuid) throws IOException,
-			NoSuchBoxException {
+			 NoSuchUserException {
 
 		Box boxGet = new Box();
 		// Client client = ClientBuilder.newClient();
@@ -168,7 +168,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 					Box.class);
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 404)
-				throw new NoSuchBoxException();
+				throw new NoSuchUserException();
 		}
 		return boxGet;
 

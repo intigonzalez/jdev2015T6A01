@@ -63,9 +63,9 @@ public interface RequestUserService {
 	 * @param userID the userID to found the box
 	 * @return the box with addr of this
 	 * @throws IOException the host is not reachable
-	 * @throws NoSuchBoxException no box found
+	 * @throws NoSuchUserException 
 	 */
-	public abstract Box getBoxByUserUuidORH(UUID userID) throws IOException, NoSuchBoxException;
+	public abstract Box getBoxByUserUuidORH(UUID userID) throws IOException, NoSuchUserException;
 
 	
 

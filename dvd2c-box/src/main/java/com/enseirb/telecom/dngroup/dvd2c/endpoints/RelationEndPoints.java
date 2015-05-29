@@ -66,9 +66,14 @@ public class RelationEndPoints {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public User getMeFRH(@PathParam("userUUID") UUID userIDFromPath,
 			@PathParam("relationUUID") UUID relationUUID) {
-		if (rManager.RelationExist(userIDFromPath, relationUUID) == true) {
-			return aService.getContactInformation(userIDFromPath);
-		} else {
+		try {
+			if (rManager.RelationExist(userIDFromPath, relationUUID) == true) {
+
+				return aService.getContactInformation(userIDFromPath);
+			} else {
+				throw new WebApplicationException(Status.NOT_FOUND);
+			}
+		} catch (NoSuchUserException e) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 	}
@@ -261,17 +266,21 @@ public class RelationEndPoints {
 			}
 		} catch (NoSuchContactException e1) {
 			LOGGER.error("No Such Contact Exception");
-			throw new WebApplicationException("No Such Contact Exception",Status.NOT_FOUND);
+			throw new WebApplicationException("No Such Contact Exception",
+					Status.NOT_FOUND);
 		} catch (NoRelationException e) {
 			LOGGER.error("No Such Relation Exception");
-			throw new WebApplicationException("No Such Relation Exception", Status.NOT_FOUND);
+			throw new WebApplicationException("No Such Relation Exception",
+					Status.NOT_FOUND);
 		} catch (NoSuchUserException e) {
 			LOGGER.error("No Such User Exception");
-			throw new WebApplicationException("No Such User Exception",e, Status.NOT_FOUND);
+			throw new WebApplicationException("No Such User Exception", e,
+					Status.NOT_FOUND);
 		} catch (NoRoleException e) {
 			LOGGER.error("No Such Role Exception");
-//			throw new WebApplicationException(Response.status(404).build());
-			throw new WebApplicationException("No Such Role Exception",e, Status.NOT_FOUND);
+			// throw new WebApplicationException(Response.status(404).build());
+			throw new WebApplicationException("No Such Role Exception", e,
+					Status.NOT_FOUND);
 		}
 
 	}
