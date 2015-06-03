@@ -35,10 +35,11 @@ public class RequestUserServiceImpl implements RequestUserService {
 	@Inject
 	private Client client;
 	private String server = CliConfSingleton.centralURL;;
-	private String url= server + "/api/app/account/";;
+	private String url = server + "/api/app/account/";;
+
 	public RequestUserServiceImpl() {
-//
-//		client = ClientBuilder.newClient();
+		//
+		// client = ClientBuilder.newClient();
 	}
 
 	@Override
@@ -66,12 +67,15 @@ public class RequestUserServiceImpl implements RequestUserService {
 		// Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(url + "firstname/" + firstname);
 		try {
-			listUser = target.request(MediaType.APPLICATION_XML_TYPE).get(new GenericType<List<User>>(){});
+			listUser = target.request(MediaType.APPLICATION_XML_TYPE).get(
+					new GenericType<List<User>>() {
+					});
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 500) {
-				LOGGER.error("Error on remote Host : get {}",target.getUri(), e);
+				LOGGER.error("Error on remote Host : get {}", target.getUri(),
+						e);
 			} else {
-				LOGGER.error("Error for get {}",target.getUri(), e);
+				LOGGER.error("Error for get {}", target.getUri(), e);
 			}
 
 		}
@@ -79,6 +83,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 		return listUser;
 	}
 
+//	@Secured(['IS_AUTHENTICATED_ANONYMOUSLY']) 
 	@Override
 	public URI createUserORH(User user) throws IOException, SuchUserException {
 		WebTarget target = client.target(url);
@@ -90,11 +95,11 @@ public class RequestUserServiceImpl implements RequestUserService {
 		case CREATED:
 			// normal statement
 			return response.getLocation();
-			
+
 		case CONFLICT:
 			throw new SuchUserException();
 		case NOT_FOUND:
-			//DB: actual return 
+			// DB: actual return
 			throw new SuchUserException();
 		default:
 			throw new IOException("Can not conect to the server :"
@@ -104,17 +109,13 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 
 	@Override
-	public void updateUserORH(User user) throws IOException, NoSuchUserException {
+	public void updateUserORH(User user) throws IOException,
+			NoSuchUserException {
 
-		// Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(url + user.getUserID());
-		// try {
+		WebTarget target = client.target(url + user.getUuid());
 		Response response = target.request(MediaType.APPLICATION_XML_TYPE).put(
 				Entity.entity(user, MediaType.APPLICATION_XML), Response.class);
 		switch (Status.fromStatusCode(response.getStatus())) {
-		case ACCEPTED:
-			// normal statement but don't is normally not that
-			break;
 		case CREATED:
 			// normal statement
 			break;
@@ -158,7 +159,7 @@ public class RequestUserServiceImpl implements RequestUserService {
 	}
 
 	public Box getBoxByUserUuidORH(UUID uuid) throws IOException,
-			 NoSuchUserException {
+			NoSuchUserException {
 
 		Box boxGet = new Box();
 		// Client client = ClientBuilder.newClient();

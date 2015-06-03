@@ -140,8 +140,8 @@ public class AcountServiceImplTest {
 		user.setEmail("email@email.fr");
 		user.setSurname("surname");
 		when(toTest.userRepository.findOne(UserUUID)).thenReturn(user);
-		com.enseirb.telecom.dngroup.dvd2c.model.User u = toTest.getContactInformation(UserUUID);
-		if (!u.getUuid().equals(UserUUID.toString())){
+		User u = toTest.getContactInformation(UserUUID);
+		if (!u.getId().equals(UserUUID)){
 			assertTrue(false);
 		}
 	}

@@ -39,7 +39,7 @@ angular.module('myApp.mySnapmailprofile', ['ngRoute'])
          };
 
         this.getUser = function () {
-            $http.get(PREFIX_RQ + "/api/app/account/" + userID)
+            $http.get(PREFIX_RQ + "/api/app/account/")// + userID)
                 .success(function (data, status, headers, config) {
                     user.person = data.user;
                 })
@@ -50,7 +50,7 @@ angular.module('myApp.mySnapmailprofile', ['ngRoute'])
         this.putUser = function (person) {
             var data = {};
             data.user = person;
-            $http.put(PREFIX_RQ + "/api/app/account/" + this.person.userID, data)
+            $http.put(PREFIX_RQ + "/api/app/account/")// + this.person.userID, data)
                 .success(function (data, status, headers, config) {
                     console.log("Succeed");
                     user.class = "btn-success";

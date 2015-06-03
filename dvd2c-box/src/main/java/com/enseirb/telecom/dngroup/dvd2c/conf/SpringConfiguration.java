@@ -28,6 +28,7 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 		"com.enseirb.telecom.dngroup.dvd2c.conf",
 		"com.enseirb.telecom.dngroup.dvd2c.service",
 		"com.enseirb.telecom.dngroup.dvd2c.endpoints",
+		"com.enseirb.telecom.dngroup.dvd2c.security",
 		"com.enseirb.telecom.dngroup.dvd2c"})
 @EnableTransactionManagement
 public class SpringConfiguration {

@@ -117,5 +117,7 @@ public interface RelationService {
 	 */
 	public abstract void deleteRelationBox(UUID userUUID, UUID relationUUID) throws NoRelationException;
 
+	public abstract void creatDefaultUserRoles(UUID fromString);
+
 	
 }

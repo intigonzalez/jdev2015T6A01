@@ -3,7 +3,6 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,22 +25,21 @@ import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
+import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 
 // The Java class will be hosted at the URI path "/app/account"
 
 @Component
-@Path("app/account")
+@Path("app")
 public class UserEndPoints extends HttpServlet {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(UserEndPoints.class);
@@ -49,16 +47,20 @@ public class UserEndPoints extends HttpServlet {
 	@Inject
 	protected AccountService uManager;
 
-	@Path("/user")
+	@Inject
+	protected RelationService rManager;
+
+	@Path("/account/user")
 	@GET()
-	public Response getUser() {
-		  Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-	      String name = auth.getName(); //get logged in username
-	 
+	public Response getverification() {
+		Authentication auth = SecurityContextHolder.getContext()
+				.getAuthentication();
+		String uuid = auth.getName(); // get logged in username
+
 		return Response
 				.ok("authenticated successfully!")
-				.cookie(new NewCookie("authentication", name,
-						"/", null, 1, "no comment", 1073741823, false)).build();
+				.cookie(new NewCookie("authentication", uuid, "/", null, 1,
+						"no comment", 1073741823, false)).build();
 	}
 
 	/**
@@ -70,28 +72,50 @@ public class UserEndPoints extends HttpServlet {
 	 * @return
 	 */
 	@POST()
-	@Path("Connect")
+	@Path("/account/Connect")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	// resultat en JSON
 	public Response getConnect(User user) { // FormParam ce sont les parametres
 											// d'un formulaire.
 		String userID = user.getUserID().toLowerCase();
 
-		User userAuth;
+		com.enseirb.telecom.dngroup.dvd2c.modeldb.User userAuth;
 		try {
-			userAuth = uManager.getUserFromEmail(userID);
+			userAuth = uManager.findUserByEmail(userID);
 		} catch (NoSuchUserException e) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		if (user.getPassword().equals(userAuth.getPassword())) {
+		if (user.getPassword().equals(userAuth.getEncryptedPassword())) {
 			// maxAge max int value/2
 			return Response
 					.ok()
-					.cookie(new NewCookie("authentication", userAuth.getUuid(),
-							"/", null, 1, "no comment", 1073741823, false))
-					.build();
+					.cookie(new NewCookie("authentication", userAuth.getId()
+							.toString(), "/", null, 1, "no comment",
+							1073741823, false)).build();
 		}
 		return Response.status(403).build();
+
+	}
+
+	/**
+	 * Get a current user
+	 * 
+	 * @return a user
+	 */
+	@GET
+	@Path("/account")
+	// @PreAuthorize("hasAnyRole('USER','User')")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public User getUser() {
+		Authentication auth = SecurityContextHolder.getContext()
+				.getAuthentication();
+		String uuid = auth.getName();
+		try {
+			return getUserByUUID(UUID.fromString(uuid));
+		} catch (java.lang.IllegalArgumentException e) {
+			LOGGER.error("No Email !!!!", uuid);
+			return getUserByEmail(uuid);
+		}
 
 	}
 
@@ -103,12 +127,12 @@ public class UserEndPoints extends HttpServlet {
 	 * @return a user
 	 */
 	@GET
-	@Path("{userUUID}")
-	@PreAuthorize("hasRole('USER')")
+	@Path("/account/{userUUID}")
+	// @PreAuthorize("hasRole('USER')")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public User getUserByUUID(@PathParam("userUUID") UUID userUUID) {
 		try {
-			return uManager.getUserFromUUID(userUUID);
+			return uManager.findUserByUUID(userUUID).toXSDUser();
 		} catch (NoSuchUserException e) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
@@ -122,11 +146,11 @@ public class UserEndPoints extends HttpServlet {
 	 * @return a list of user
 	 */
 	@GET
-	@Path("email/{email}")
+	@Path("/account/email/{email}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public User getUserByEmail(@PathParam("email") String email) {
 		try {
-			return uManager.getUserFromEmail(email);
+			return uManager.findUserByEmail(email).toXSDUser();
 		} catch (NoSuchUserException e) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
@@ -140,10 +164,10 @@ public class UserEndPoints extends HttpServlet {
 	 * @return a list of user
 	 */
 	@GET
-	@Path("firstname/{firstname}")
+	@Path("/account/firstname/{firstname}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<User> getUserByName(@PathParam("firstname") String firstname) {
-		return uManager.getUserFromNameOnServer(firstname);
+		return uManager.findUserByNameOnServer(firstname);
 	}
 
 	/**
@@ -154,17 +178,19 @@ public class UserEndPoints extends HttpServlet {
 	 * @return Status web
 	 * @throws URISyntaxException
 	 */
+	@Path("/account")
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createUser(User user) throws URISyntaxException {
 
 		User u;
 		try {
-			u = uManager.createUserOnServer(user);
+			u = uManager.createUserOnServer(user).toXSDUser();
+			rManager.creatDefaultUserRoles(UUID.fromString(u.getUuid()));
 			// maxAge max int value/2
 			return Response
 					.created(new URI("app/account/" + u.getUuid()))
-					.cookie(new NewCookie("authentication", u.getUserID(), "/",
+					.cookie(new NewCookie("authentication", u.getUuid(), "/",
 							null, 1, "no comment", 1073741823, false)).build();
 			// return Response.created(new URI(u.getUserID())).build();
 		} catch (SuchUserException e) {
@@ -178,6 +204,21 @@ public class UserEndPoints extends HttpServlet {
 	}
 
 	/**
+	 * Create a user on server and local db
+	 * 
+	 * @param user
+	 *            the user to save
+	 * @return Status web
+	 * @throws URISyntaxException
+	 */
+	@Path("/register")
+	@POST
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response createUser2(User user) throws URISyntaxException {
+		return createUser(user);
+	}
+
+	/**
 	 * Update User by userID
 	 * 
 	 * @param user
@@ -187,7 +228,7 @@ public class UserEndPoints extends HttpServlet {
 	 * @return Response
 	 */
 	@PUT
-	@Path("{userID}")
+	@Path("/account/{userID}")
 	@RolesAllowed("account")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateUser(User user,
@@ -195,14 +236,36 @@ public class UserEndPoints extends HttpServlet {
 		// TODO: need to check the authentication of the user
 		// modify the user, check if the user has changed his email address, and
 		// check the ability of the new email address
-		if (user.getUserID().equals(userIDFromPath)
+		if (user.getUuid().equals(userIDFromPath.toString())
 				&& uManager.userExistOnLocal(UUID.fromString(user.getUuid())) == true) {
-			uManager.saveUserOnServer(user);
-			return Response.status(200).build();
+			try {
+				uManager.saveUserOnServer(user);
+				return Response.status(200).build();
+			} catch (NoSuchUserException e) {
+				return Response.status(Status.NOT_FOUND).build();
+			}
 		} else {
 			return Response.status(Status.NOT_FOUND).build();
 		}
 
+	}
+
+	/**
+	 * Update the current User
+	 * 
+	 * @param user
+	 *            the user information to update
+	 * @return Response
+	 */
+	@PUT
+	@Path("/account")
+	@RolesAllowed("account")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response updateUser(User user) {
+		Authentication auth = SecurityContextHolder.getContext()
+				.getAuthentication();
+		String uuid = auth.getName();
+		return updateUser(user, UUID.fromString(uuid));
 	}
 
 	/**
@@ -213,7 +276,7 @@ public class UserEndPoints extends HttpServlet {
 	 * @return web status
 	 */
 	@DELETE
-	@Path("{userID}")
+	@Path("/account/{userID}")
 	@RolesAllowed("account")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteUser(@PathParam("userID") UUID userID) {

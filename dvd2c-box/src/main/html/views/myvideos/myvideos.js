@@ -82,6 +82,9 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
             var data = {"content" : content};
             $http.put(PREFIX_RQ+"/api/app/"+userID+"/content/"+content.contentsID,  data)
                 .success(function() {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     console.log("success");
                 })
                 .error(function() {
@@ -93,6 +96,9 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
         this.removeVideo = function(content) {
             $http.delete(PREFIX_RQ + "/api/app/" + userID + "/content/"+content.contentsID)
                 .success(function(data,status,headers,config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     var index = videos.getIndex(content);
                     if (index > -1) {
                         videos.list.splice(index, 1);

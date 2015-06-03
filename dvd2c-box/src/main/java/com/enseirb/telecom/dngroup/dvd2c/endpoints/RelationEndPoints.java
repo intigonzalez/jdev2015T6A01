@@ -23,7 +23,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRoleException;
@@ -69,7 +68,7 @@ public class RelationEndPoints {
 		try {
 			if (rManager.RelationExist(userIDFromPath, relationUUID) == true) {
 
-				return aService.getContactInformation(userIDFromPath);
+				return aService.getContactInformation(userIDFromPath).toXSDUser();
 			} else {
 				throw new WebApplicationException(Status.NOT_FOUND);
 			}

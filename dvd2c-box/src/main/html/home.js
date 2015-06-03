@@ -17,35 +17,55 @@ function getCookie(cname) {
 }
 
 function userAuth() {
-	if (getCookie("authentication") == "") {
-		window.location.replace("/");
-	}
+	console.log("Cookie : "+getCookie("JSESSIONID"));
+	 if (getCookie("JSESSIONID") == "") {
+		 console.log("Cookie : "+getCookie("JSESSIONID"));
+//	 window.location.replace("/");
+	 }
 
 }
 
-angular
-		.module('myApp.index', [ngRoute])
+angular.module('myApp.index', [ 'ngRoute' ]) .controller('IndexController', [ '$http', function($http, localStorageService) {
+	this.cookie = getCookie("authentication");
+	// $scope.Cookie = getCookie("authentication");
+	this.logout = function() {
 
-		.controller(
-				'IndexController',
-				[ function() {
-					this.cookie = getCookie("authentication");
-					// $scope.Cookie = getCookie("authentication");
-					this.logout = function() {
-						document.cookie = "authentication=; expires=Thu, 01 Jan 2000 00:00:00 GMT";
+		// logout from the server
+		$http.post('api/logout')
 
-						$http.post('logout', {}).success(function() {
-							$rootScope.authenticated = false;
-							$location.path("/");
-						}).error(function(data) {
-							$rootScope.authenticated = false;
-						});
-						
-						window.location.replace("/");
-					}
+		.success(function(response) {
+			document.cookie = "JSESSIONID=; expires=-1";
+			// to get a new csrf token call the api
+			$http.get('api/app/account')
+			.success(function(data, status, headers, config) {
+				if (headers('Content-Type').indexOf("text/html")==0) {
+					window.location.replace("/");
+				} 
+			});
+			
+			// window.location.replace("/");
+			return response;
+		});
+	}
+} ]);
 
-					// this.theCookie = function() {
-					// console.log(getCookie("authentication"));
-					// var cookie = getCookie("authentication");
-					// }
-				} ]);
+//myApp.factory('redirectInterceptor', ['$location', '$q', function($location, $q) {
+//    return function(promise) {
+//        promise.then(
+//            function(response) {
+//                if (typeof response.data === 'string') {
+//                    if (response.data.indexOf instanceof Function &&
+//                        response.data.indexOf('<html id="ng-app" ng-app="loginApp">') != -1) {
+//                        $location.path("/logout");
+//                        window.location = url + "logout"; // just in case
+//                    }
+//                }
+//                return response;
+//            },
+//            function(response) {
+//                return $q.reject(response);
+//            }
+//        );
+//        return promise;
+//    };
+//}]);

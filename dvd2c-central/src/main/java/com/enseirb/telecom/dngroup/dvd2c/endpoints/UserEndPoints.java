@@ -104,7 +104,7 @@ public class UserEndPoints {
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateUser(User user, @PathParam("userID") UUID userID) {
 		// TODO: need to check the authentication of the user
-		if (!user.getUserID().equals(userID)) {
+		if (!user.getUuid().equals(userID.toString())) {
 			return Response.status(Status.NOT_ACCEPTABLE).build();
 		}
 		// modify the user

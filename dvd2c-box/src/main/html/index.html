@@ -42,9 +42,9 @@
 							<!--  Password -->
 							<input class="form-control" placeholder="Password"
 								ng-model="person.password" type="password"> <br>
-							<!--   csrf  -->
-<!-- 							<input type="hidden" name="${_csrf.parameterName}" -->
-<!-- 								value="${_csrf.token}" /> -->
+								<input class="form-control" placeholder="rememberMe"
+								ng-model="person.rememberMe" type="checkbox"> Remember <br>
+					
 
 							<div class="form-group">
 								<button ng-click="submitData(person)" class="btn btn-block"

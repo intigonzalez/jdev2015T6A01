@@ -6,6 +6,8 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.Type;
 
+import com.enseirb.telecom.dngroup.dvd2c.model.User;
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -17,19 +19,17 @@ import java.util.UUID;
 @Entity
 @Table(name = "actors")
 @NamedQuery(name = "Actor.findAll", query = "SELECT a FROM Actor a")
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Actor extends DBObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-//	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Type(type="uuid-char")
+	// @GeneratedValue(strategy = GenerationType.AUTO)
+	@Type(type = "uuid-char")
 	private UUID id;
 
 	@Column(name = "activity_object_id")
 	private int activityObjectId;
-
-
 
 	private String email;
 
@@ -49,7 +49,6 @@ public class Actor extends DBObject implements Serializable {
 	private String firstname;
 
 	private String surname;
-	
 
 	@Column(name = "notification_settings")
 	private String notificationSettings;
@@ -60,8 +59,6 @@ public class Actor extends DBObject implements Serializable {
 	@Column(name = "subject_type")
 	private String subjectType;
 
-	
-
 	@ManyToMany
 	@JoinTable(name = "ACTOR_GROUPS", joinColumns = { @JoinColumn(name = "ACTOR_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "GROUP_ID", referencedColumnName = "ID") })
 	private List<Group> groups;
@@ -70,6 +67,16 @@ public class Actor extends DBObject implements Serializable {
 	private Profile profile;
 
 	public Actor() {
+	}
+
+	public Actor(User user) {
+		
+		
+			this.firstname = user.getFirstname();
+			this.surname = user.getSurname();
+			this.email = user.getUserID();
+			this.id = UUID.fromString(user.getUuid());
+		
 	}
 
 	public UUID getId() {
@@ -87,7 +94,6 @@ public class Actor extends DBObject implements Serializable {
 	public void setActivityObjectId(int activityObjectId) {
 		this.activityObjectId = activityObjectId;
 	}
-
 
 	public String getEmail() {
 		return this.email;
@@ -160,7 +166,6 @@ public class Actor extends DBObject implements Serializable {
 	public void setSubjectType(String subjectType) {
 		this.subjectType = subjectType;
 	}
-
 
 	public List<Group> getGroups() {
 		return this.groups;

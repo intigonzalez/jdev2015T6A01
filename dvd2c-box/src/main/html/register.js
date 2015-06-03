@@ -10,7 +10,7 @@ RegisterForm.controller("mainController", function ($scope, $http) {
     $scope.submitData = function (person) {
         var data = {};
         data.user = person;
-        $http.post(PREFIX_RQ+"/api/app/account/",data )
+        $http.post(PREFIX_RQ+"/api/app/register/",data )
             .success(function (data, status, headers, config)
             {
                 console.log("Succeed");
@@ -46,6 +46,6 @@ RegisterForm.controller("mainController", function ($scope, $http) {
     });
 
     // End of js part for validating the form inputs
-
+    
 
 });

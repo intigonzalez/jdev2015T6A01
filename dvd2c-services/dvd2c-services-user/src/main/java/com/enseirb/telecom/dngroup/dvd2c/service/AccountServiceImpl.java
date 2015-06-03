@@ -14,9 +14,10 @@ import org.springframework.stereotype.Service;
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
-import com.enseirb.telecom.dngroup.dvd2c.model.User;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
 import com.enseirb.telecom.dngroup.dvd2c.repository.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
+import com.google.common.base.Strings;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -29,6 +30,7 @@ public class AccountServiceImpl implements AccountService {
 	@Inject
 	protected RequestUserService requetUserService;
 
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -47,10 +49,8 @@ public class AccountServiceImpl implements AccountService {
 		boolean exist = userExistOnLocal(userID);
 		if (!exist) {
 			try {
-				User userGet = requetUserService.get(userID);
-				if (userGet == null)
-					exist = false;
-				else if (userGet.getUuid().equals(userID.toString()))
+				User userGet = new User(requetUserService.get(userID));
+				if (userGet.getId().equals(userID))
 					exist = true;
 			} catch (IOException e) {
 				LOGGER.error("Can not connect on the server : {}", userID, e);
@@ -69,8 +69,8 @@ public class AccountServiceImpl implements AccountService {
 		if (user == null) {
 			throw new NoSuchUserException();
 		} else {
-		
-			return user.toXSDUser();
+
+			return user;
 		}
 
 	}
@@ -83,31 +83,30 @@ public class AccountServiceImpl implements AccountService {
 	 * .String)
 	 */
 	@Override
-	public User getUserFromUUID(UUID userUUID) throws NoSuchUserException {
-		com.enseirb.telecom.dngroup.dvd2c.modeldb.User user = userRepository
-				.findOne(userUUID);
+	public User findUserByUUID(UUID userUUID) throws NoSuchUserException {
+		User user = userRepository.findOne(userUUID);
 
 		if (user == null) {
 			throw new NoSuchUserException();
 		} else {
-			User userXsd = new User();
-			userXsd.setUserID(user.getEmail());
-			userXsd.setFirstname(user.getFirstname());
-			userXsd.setPassword(user.getEncryptedPassword());
-			userXsd.setSurname(user.getSurname());
-			userXsd.setBoxID(CliConfSingleton.boxID);
-			userXsd.setUuid(user.getId().toString());
-			return userXsd;
+			// User userXsd = new User();
+			// userXsd.setUserID(user.getEmail());
+			// userXsd.setFirstname(user.getFirstname());
+			// userXsd.setPassword(user.getEncryptedPassword());
+			// userXsd.setSurname(user.getSurname());
+			// userXsd.setBoxID(CliConfSingleton.boxID);
+			// userXsd.setUuid(user.getId().toString());
+			return user;
 		}
 	}
 
 	@Override
-	public User getUserFromEmail(String userID) throws NoSuchUserException {
+	public User findUserByEmail(String userID) throws NoSuchUserException {
 		com.enseirb.telecom.dngroup.dvd2c.modeldb.User user;
 		if ((user = userRepository.findByEmail(userID)) == null) {
 			throw new NoSuchUserException();
 		}
-		return getUserFromUUID(user.getId());
+		return findUserByUUID(user.getId());
 	}
 
 	/*
@@ -118,7 +117,8 @@ public class AccountServiceImpl implements AccountService {
 	 * telecom.s9.User)
 	 */
 	@Override
-	public List<User> getUserFromNameOnServer(String firstname) {
+	public List<com.enseirb.telecom.dngroup.dvd2c.model.User> findUserByNameOnServer(
+			String firstname) {
 		try {
 			return requetUserService.getUserFromName(firstname);
 		} catch (IOException e) {
@@ -180,13 +180,14 @@ public class AccountServiceImpl implements AccountService {
 	// }
 
 	@Override
-	public User createUserOnServer(User user) throws SuchUserException,
-			IOException {
+	public User createUserOnServer(
+			com.enseirb.telecom.dngroup.dvd2c.model.User user)
+			throws SuchUserException, IOException {
 
 		// Spring: fixme
 		try {
 
-			User userRestric = new User();
+			com.enseirb.telecom.dngroup.dvd2c.model.User userRestric = new com.enseirb.telecom.dngroup.dvd2c.model.User();
 			userRestric.setBoxID(CliConfSingleton.boxID);
 			userRestric.setFirstname(user.getFirstname());
 			userRestric.setSurname(user.getSurname());
@@ -196,7 +197,7 @@ public class AccountServiceImpl implements AccountService {
 			String path = uri.getPath();
 			String uuidStr = path.substring(path.lastIndexOf('/') + 1);
 			user.setUuid(uuidStr);
-			return createUserOnLocal(user);
+			return (createUserOnLocal(new User(user)));
 
 		} catch (IOException e) {
 			LOGGER.debug("error during creating user on server : {} ",
@@ -211,48 +212,34 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public User createUserOnLocal(User user) {
-
-		com.enseirb.telecom.dngroup.dvd2c.modeldb.User u = new com.enseirb.telecom.dngroup.dvd2c.modeldb.User();
-		u.setEmail(user.getUserID());
-		u.setFirstname(user.getFirstname());
-		u.setSurname(user.getSurname());
-		u.setEncryptedPassword(user.getPassword());
-		u.setId(UUID.fromString(user.getUuid()));
-		u = userRepository.save(u);
-		return user;
+		
+		User user2 = userRepository.save(user);
+		return user2;
 	}
 
 	@Override
-	public void saveUserOnServer(User user) {
+	public void saveUserOnServer(
+			com.enseirb.telecom.dngroup.dvd2c.model.User user) throws NoSuchUserException {
 		try {
-			User userRestric = new User();
-			userRestric.setBoxID(CliConfSingleton.boxID);
-			userRestric.setFirstname(user.getFirstname());
-			userRestric.setSurname(user.getSurname());
-			userRestric.setUserID(user.getUserID());
-			userRestric.setUuid(user.getUuid());
-			requetUserService.updateUserORH(userRestric);
-
-			saveUserOnLocal(user);
+			User userdb = new User(user);
+			user.setPassword(null);
+			requetUserService.updateUserORH(user);
+			if (Strings.isNullOrEmpty(userdb.getEncryptedPassword()))
+				userdb.setEncryptedPassword(null);
+			saveUserOnLocal(userdb);
 		} catch (IOException e) {
 			LOGGER.error("Error for Update this user on server : {}",
 					user.getBoxID(), e);
 		} catch (NoSuchUserException e) {
 			LOGGER.error("Error for Update this user (no found user) : {}",
 					user.getBoxID(), e);
+			throw e;
 		}
 	}
 
 	@Override
 	public void saveUserOnLocal(User user) {
-		com.enseirb.telecom.dngroup.dvd2c.modeldb.User u = userRepository
-				.findByEmail(user.getUserID());
-		u.setEmail(user.getUserID());
-		u.setFirstname(user.getFirstname());
-		u.setSurname(user.getSurname());
-		u.setEncryptedPassword(user.getPassword());
-
-		userRepository.save(u);
+		userRepository.save(user);
 	}
 
 	@Override
@@ -271,59 +258,11 @@ public class AccountServiceImpl implements AccountService {
 		userRepository.delete(u);
 	}
 
-	// @Override
-	// public Box getBox(String userID) throws NoSuchUserException {
-	//
-	// UserRepositoryOldObject userRepositoryObject;
-	// try {
-	// userRepositoryObject = this.userRepository.findOne(userID);
-	// } catch (Exception e) {
-	// throw new NoSuchUserException();
-	// }
-	// String boxID = userRepositoryObject.getBoxID();
-	// BoxRepositoryObject boxRepositoryObject = boxRepository.findOne(boxID);
-	// return boxRepositoryObject.toBox();
-	//
-	// }
-	//
-	// @Override
-	// public List<User> getUsersFromBoxes(List<Box> listBox) {
-	//
-	// AccountService uManager = this;
-	// List<User> listUsersFinal = new ArrayList<User>(), listUsersOfBoxes = new
-	// ArrayList<User>();
-	//
-	// User user;
-	// Box box = new Box();
-	// List<Box> boxes = listBox;
-	//
-	// Iterator<Box> itrBoxes = boxes.iterator();
-	// while (itrBoxes.hasNext()) {
-	//
-	// box = itrBoxes.next();
-	// listUsersOfBoxes = uManager.getUserFromBoxID(box.getBoxID());
-	//
-	// Iterator<User> itrUsers = listUsersOfBoxes.iterator();
-	//
-	// while (itrUsers.hasNext()) {
-	//
-	// user = itrUsers.next();
-	// listUsersFinal.add(user);
-	// }
-	// }
-	//
-	// return listUsersFinal;
-	// }
-	//
-	// @Override
-	// public List<User> getUsersFromListBoxes(List<Box> listBox) {
-	// return getUsersFromBoxes(listBox);
-	// }
 
 	@Override
 	public boolean getUserVerification(String userUUID, String password)
 			throws NoSuchUserException {
-		if (password.equals(getUserFromEmail(userUUID).getPassword())) {
+		if (password.equals(findUserByEmail(userUUID).getEncryptedPassword())) {
 			return true;
 		}
 		return false;

@@ -28,12 +28,11 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.SmtpProperty;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
-import com.enseirb.telecom.dngroup.dvd2c.service.AccountServiceImpl;
-import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 
 // The Java class will be hosted at the URI path "/"
 
@@ -61,7 +60,7 @@ public class SnapmailEndPoints extends HttpServlet {
 	public SmtpProperty getUserSmtpProperty(@PathParam("actorID") String actorIDFromPath){
 		try {
 			SmtpProperty smtpProperty = new SmtpProperty();
-			User user = uManager.getUserFromEmail(actorIDFromPath);		
+			User user = uManager.findUserByEmail(actorIDFromPath).toXSDUser();		
 			smtpProperty.setHost(user.getSmtpHost());
 			smtpProperty.setPort(user.getSmtpPort());
 			smtpProperty.setUsername(user.getSmtpUsername());
@@ -85,7 +84,7 @@ public class SnapmailEndPoints extends HttpServlet {
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateUserSmtpProperty(SmtpProperty smtpProperty, @PathParam("actorID") String actorIDFromPath) {
 		try {
-			User user = uManager.getUserFromEmail(actorIDFromPath);
+			User user = uManager.findUserByEmail(actorIDFromPath).toXSDUser();
 			
 			user.setSmtpHost(smtpProperty.getHost());
 			user.setSmtpPort(smtpProperty.getPort());
@@ -207,7 +206,7 @@ if(actorID.contains("@gmail.com")){
 			Response responsePut;
 		if (token.equals("")==false){	
 			try {
-				User user = uManager.getUserFromEmail(actorID);
+				User user = uManager.findUserByEmail(actorID).toXSDUser();
 				
 				user.setSmtpHost("");
 				user.setSmtpPort("");

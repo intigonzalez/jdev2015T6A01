@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
-  <artifactId>dvd2c-services</artifactId>
-  <packaging>pom</packaging>
-  <parent>
-    <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
-    <artifactId>dvd2c-parent</artifactId>
-    <version>0.6.0-SNAPSHOT</version>
-  </parent>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-  <modules>
-    <module>dvd2c-services-videos</module>
-    <module>dvd2c-services-user</module>
-    <module>dvd2c-services-box</module>
-    <module>dvd2c-services-social</module>
-    <module>dvd2c-services-commons</module>
-    <module>dvd2c-services-central</module>
-  </modules>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
+	<artifactId>dvd2c-services</artifactId>
+	<packaging>pom</packaging>
+	<parent>
+		<groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
+		<artifactId>dvd2c-parent</artifactId>
+		<version>0.6.0-SNAPSHOT</version>
+	</parent>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<modules>
+		<module>dvd2c-services-videos</module>
+		<module>dvd2c-services-user</module>
+		<module>dvd2c-services-box</module>
+		<module>dvd2c-services-social</module>
+		<module>dvd2c-services-commons</module>
+		<module>dvd2c-services-central</module>
+	</modules>
 </project>

@@ -22,11 +22,11 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Contact;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Permission;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ReceiverActor;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Role;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
 import com.enseirb.telecom.dngroup.dvd2c.repository.ContactRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.ReceiverActorRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.RoleRepository;
@@ -39,7 +39,7 @@ import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 public class RelationServiceImpl implements RelationService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RelationServiceImpl.class);
-
+	public static String TYPE = "Social";
 	// @Inject
 	// RelationRepository relationRepository;
 
@@ -64,7 +64,6 @@ public class RelationServiceImpl implements RelationService {
 	@Inject
 	private ReceiverActorRepository receiverActorRepository;
 
-
 	@Override
 	public boolean RelationExist(UUID UserUUID, UUID actorUUID) {
 
@@ -76,12 +75,11 @@ public class RelationServiceImpl implements RelationService {
 	public void updateRelation(UUID UserUUID) throws IOException,
 			NoSuchUserException {
 
-		User user = accountService.getUserFromUUID(UserUUID);
 		for (Contact rro : contactRepository.findByOwner(UserUUID)) {
 
 			try {
-				User relationUpdate = rrs.get(UUID.fromString(user.getUuid()),
-						rro.getReceiverActor().getId());
+				User relationUpdate = new User(rrs.get(UserUUID, rro
+						.getReceiverActor().getId()));
 				ReceiverActor relationIntoDb = receiverActorRepository
 						.findByEmail(rro.getReceiverActor().getEmail());
 				relationIntoDb.setFirstname(relationUpdate.getFirstname());
@@ -89,6 +87,9 @@ public class RelationServiceImpl implements RelationService {
 				receiverActorRepository.save(relationIntoDb);
 			} catch (NoSuchBoxException e) {
 				LOGGER.warn("All users should have a box, ignoring");
+
+			} catch (NullPointerException e) {
+				LOGGER.error("user of not found");
 
 			}
 		}
@@ -147,7 +148,7 @@ public class RelationServiceImpl implements RelationService {
 		 */
 
 		User user;
-		if ((user = accountService.getUserFromUUID(userUUID)) == null) {
+		if ((user = accountService.findUserByUUID(userUUID)) == null) {
 			throw new NoSuchUserException();
 		}
 
@@ -159,19 +160,20 @@ public class RelationServiceImpl implements RelationService {
 			// is not already registered
 			User receiverUser;
 			// is it a user on the box ?
-			if ((receiverUser = accountService.getUserFromUUID(relationUUID)) == null) {
+			if ((receiverUser = accountService.findUserByUUID(relationUUID)) == null) {
 				// is not on the box
-				receiverUser = rus.get(relationUUID);
+
+				try {
+					receiverUser = new User(rus.get(relationUUID));
+				} catch (NoSuchUserException e) {
+					LOGGER.error("user not found :", relationUUID);
+				}
 			}
-			receiverActor.setEmail(receiverUser.getUserID());
-			receiverActor.setFirstname(receiverUser.getFirstname());
-			receiverActor.setSurname(receiverUser.getSurname());
-			receiverActor.setId(UUID.fromString(receiverUser.getUuid()));
 			receiverActorRepository.save(receiverActor);
 		}
 
 		Contact contact2 = new Contact();
-		contact2.setOwnerId(UUID.fromString(user.getUuid()));
+		contact2.setOwnerId(user.getId());
 		contact2.setReceiverActor(receiverActor);
 		if (fromBox)
 			contact2.setStatus(2);
@@ -187,13 +189,12 @@ public class RelationServiceImpl implements RelationService {
 
 		if (!fromBox) {
 			// User receiverActor1;
-			if ((accountService.getUserFromUUID(relationUUID)) != null) {
-				createRelation(receiverActor.getId(),
-						UUID.fromString((user.getUuid())), true);
+			if ((accountService.findUserByUUID(relationUUID)) != null) {
+				createRelation(receiverActor.getId(), (user.getId()), true);
 			} else {
 				// receiverActor1 = rus.get(relationIDString);
 				ContactXSD contact = new ContactXSD();
-				contact.setActorID(user.getUserID());
+				contact.setActorID(user.getId().toString());
 				contact.setAprouve(2);
 				contact.setFirstname(user.getFirstname());
 				contact.setSurname(user.getSurname());
@@ -277,18 +278,20 @@ public class RelationServiceImpl implements RelationService {
 	 * init public, Family, Friends and Pro relation for the user (if not
 	 * already exist)
 	 * 
-	 * @param user to add the role
+	 * @param user
+	 *            to add the role
 	 * @return the public role
 	 */
 	private Role initRolesAndGetPublic(User user) {
 		//
 		Role roleFamily;
-		if ((roleFamily = roleRepository.findByName("Public",
-				UUID.fromString(user.getUuid()))) == null) {
+		if ((roleFamily = roleRepository.findByName("Public", user.getId(),
+				TYPE)) == null) {
 
 			roleFamily = new Role();
-			roleFamily.setActorId(UUID.fromString(user.getUuid()));
+			roleFamily.setActorId(user.getId());
 			roleFamily.setName("Public");
+			roleFamily.setType(TYPE);
 
 			// init permission
 			Permission permission = new Permission("Read", "Family",
@@ -297,19 +300,19 @@ public class RelationServiceImpl implements RelationService {
 					Arrays.asList(roleFamily));
 			Permission permission3 = new Permission("Post", "Friends",
 					Arrays.asList(roleFamily));
-			roleFamily.setPermissions(Arrays.asList(permission,permission2,permission3));
-			roleRepository.save(roleFamily);
+			roleFamily.setPermissions(Arrays.asList(permission, permission2,
+					permission3));
 
 			roleRepository.save(roleFamily);
 		}
 		Role roleFriends;
-		if ((roleFriends = roleRepository.findByName("Public",
-				UUID.fromString(user.getUuid()))) == null) {
+		if ((roleFriends = roleRepository.findByName("Public", user.getId(),
+				TYPE)) == null) {
 
 			roleFriends = new Role();
-			roleFriends.setActorId(UUID.fromString(user.getUuid()));
+			roleFriends.setActorId(user.getId());
 			roleFriends.setName("Public");
-
+			roleFriends.setType(TYPE);
 			// init permission
 			Permission permission = new Permission("Read", "Friends",
 					Arrays.asList(roleFriends));
@@ -317,16 +320,17 @@ public class RelationServiceImpl implements RelationService {
 					Arrays.asList(roleFriends));
 			Permission permission3 = new Permission("Post", "Friends",
 					Arrays.asList(roleFriends));
-			roleFriends.setPermissions(Arrays.asList(permission,permission2,permission3));
+			roleFriends.setPermissions(Arrays.asList(permission, permission2,
+					permission3));
 			roleRepository.save(roleFriends);
-		}Role rolePro;
-		if ((rolePro = roleRepository.findByName("Public",
-				UUID.fromString(user.getUuid()))) == null) {
+		}
+		Role rolePro;
+		if ((rolePro = roleRepository.findByName("Public", user.getId(), TYPE)) == null) {
 
 			rolePro = new Role();
-			rolePro.setActorId(UUID.fromString(user.getUuid()));
+			rolePro.setActorId(user.getId());
 			rolePro.setName("Public");
-
+			rolePro.setType(TYPE);
 			// init permission
 			Permission permission = new Permission("Read", "Pro",
 					Arrays.asList(rolePro));
@@ -334,18 +338,19 @@ public class RelationServiceImpl implements RelationService {
 					Arrays.asList(rolePro));
 			Permission permission3 = new Permission("Post", "Pro",
 					Arrays.asList(rolePro));
-			rolePro.setPermissions(Arrays.asList(permission,permission2,permission3));
+			rolePro.setPermissions(Arrays.asList(permission, permission2,
+					permission3));
 
 			roleRepository.save(rolePro);
 		}
 		Role rolePublic;
-		if ((rolePublic = roleRepository.findByName("Public",
-				UUID.fromString(user.getUuid()))) == null) {
+		if ((rolePublic = roleRepository.findByName("Public", user.getId(),
+				TYPE)) == null) {
 
 			rolePublic = new Role();
-			rolePublic.setActorId(UUID.fromString(user.getUuid()));
+			rolePublic.setActorId(user.getId());
 			rolePublic.setName("Public");
-
+			rolePublic.setType(TYPE);
 			// init permission
 			Permission permission = new Permission("Read", "Public",
 					Arrays.asList(rolePublic));
@@ -362,7 +367,7 @@ public class RelationServiceImpl implements RelationService {
 			throws NoRelationException, NoSuchUserException, NoRoleException {
 		// Here, the user is only allowed to edit the approve value if the
 		// current value is = 2
-//		User user = accountService.getUserFromUUID(userUUID);
+		// User user = accountService.getUserFromUUID(userUUID);
 		Contact contact;
 		if ((contact = contactRepository.findContact(userUUID,
 				UUID.fromString(contactXSD.getUuid()))) == null) {
@@ -409,7 +414,7 @@ public class RelationServiceImpl implements RelationService {
 			for (String role : contactXSD.getRole()) {
 				Role relation2;
 				if ((relation2 = roleRepository.findByName(role,
-						contact.getOwnerId())) != null)
+						contact.getOwnerId(), TYPE)) != null)
 
 					contact.getRole().add(relation2);
 				else
@@ -518,6 +523,30 @@ public class RelationServiceImpl implements RelationService {
 
 		deleteRelationBox(actorUUID, contactUUID);
 
+	}
+
+	@Override
+	public void creatDefaultUserRoles(UUID userId) {
+		Role roleUser;
+		if ((roleUser = roleRepository.findByName("USER", userId, "Box")) == null) {
+
+			roleUser = new Role();
+			roleUser.setActorId(userId);
+			roleUser.setName("Public");
+			roleUser.setType(TYPE);
+			// init permission
+			Permission permission = new Permission("Read", "Pro",
+					Arrays.asList(roleUser));
+			Permission permission2 = new Permission("Comment", "Pro",
+					Arrays.asList(roleUser));
+			Permission permission3 = new Permission("Post", "Pro",
+					Arrays.asList(roleUser));
+			roleUser.setPermissions(Arrays.asList(permission, permission2,
+					permission3));
+
+			roleRepository.save(roleUser);
+		}
+		
 	}
 
 }

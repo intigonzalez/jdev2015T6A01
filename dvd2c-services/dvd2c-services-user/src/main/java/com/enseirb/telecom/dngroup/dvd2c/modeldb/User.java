@@ -10,69 +10,70 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-
 /**
  * The persistent class for the users database table.
  * 
  */
 @Entity
-@Table(name="users")
-@NamedQuery(name="User.findAll", query="SELECT u FROM User u")
+@Table(name = "users")
+@NamedQuery(name = "User.findAll", query = "SELECT u FROM User u")
 public class User extends Actor implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	
-	@Column(name="authentication_token")
+	@Column(name = "authentication_token")
 	private String authenticationToken;
 
-	@Column(name="chat_enabled")
+	@Column(name = "chat_enabled")
 	private byte chatEnabled;
 
 	private byte connected;
 
-	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="current_sign_in_at")
+	@Column(name = "current_sign_in_at")
 	private Date currentSignInAt;
 
-	@Column(name="current_sign_in_ip")
+	@Column(name = "current_sign_in_ip")
 	private String currentSignInIp;
 
-	@Column(name="encrypted_password")
+	@Column(name = "encrypted_password")
 	private String encryptedPassword;
 
 	private String language;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="last_sign_in_at")
+	@Column(name = "last_sign_in_at")
 	private Date lastSignInAt;
 
-	@Column(name="last_sign_in_ip")
+	@Column(name = "last_sign_in_ip")
 	private String lastSignInIp;
 
-	@Column(name="password_salt")
+	@Column(name = "password_salt")
 	private String passwordSalt;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="remember_created_at")
+	@Column(name = "remember_created_at")
 	private Date rememberCreatedAt;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="reset_password_sent_at")
+	@Column(name = "reset_password_sent_at")
 	private Date resetPasswordSentAt;
 
-	@Column(name="reset_password_token")
+	@Column(name = "reset_password_token")
 	private String resetPasswordToken;
 
-	@Column(name="sign_in_count")
+	@Column(name = "sign_in_count")
 	private int signInCount;
 
 	private String status;
 
-	
 	public User() {
 	}
 
+	public User(com.enseirb.telecom.dngroup.dvd2c.model.User user) {
+		super(user);
+		this.encryptedPassword = user.getPassword();
+
+	}
 
 	public String getAuthenticationToken() {
 		return this.authenticationToken;
@@ -97,8 +98,6 @@ public class User extends Actor implements Serializable {
 	public void setConnected(byte connected) {
 		this.connected = connected;
 	}
-
-	
 
 	public Date getCurrentSignInAt() {
 		return this.currentSignInAt;
@@ -195,7 +194,8 @@ public class User extends Actor implements Serializable {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public com.enseirb.telecom.dngroup.dvd2c.model.User toXSDUser(){
+
+	public com.enseirb.telecom.dngroup.dvd2c.model.User toXSDUser() {
 		com.enseirb.telecom.dngroup.dvd2c.model.User userReturn = new com.enseirb.telecom.dngroup.dvd2c.model.User();
 		userReturn.setFirstname(getFirstname());
 		userReturn.setSurname(getSurname());
@@ -203,7 +203,5 @@ public class User extends Actor implements Serializable {
 		userReturn.setUuid(getId().toString());
 		return userReturn;
 	}
-
-
 
 }

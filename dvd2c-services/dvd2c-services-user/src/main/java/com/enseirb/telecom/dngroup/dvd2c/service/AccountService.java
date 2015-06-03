@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
-import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.User;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
+
 
 public interface AccountService {
 
@@ -29,20 +29,27 @@ public interface AccountService {
 
 	/**
 	 * get a user from local
-	 * @param userUUID the user to get
+	 * @param userUUID the user id to get
 	 * @return the user
 	 * @throws NoSuchUserException 
 	 */
-	public abstract User getUserFromUUID(UUID userUUID) throws NoSuchUserException;
+	public abstract User findUserByUUID(UUID userUUID) throws NoSuchUserException;
 
 
+	/**
+	 * get a user from local
+	 * @param userID the user mail to get
+	 * @return the user
+	 * @throws NoSuchUserException 
+	 */
+	public abstract User findUserByEmail(String userID) throws NoSuchUserException;
 
 	/**
 	 * get user by firstname form server
 	 * @param firstname to get list
 	 * @return
 	 */
-	public abstract List<User> getUserFromNameOnServer(String firstname);
+	public abstract List<com.enseirb.telecom.dngroup.dvd2c.model.User> findUserByNameOnServer(String firstname);
 
 	/**
 	 *  create user on server and after in local
@@ -51,7 +58,7 @@ public interface AccountService {
 	 * @throws SuchUserException 
 	 * @throws IOException 
 	 */
-	public abstract User createUserOnServer(User user) throws SuchUserException, IOException;
+	public abstract User createUserOnServer(com.enseirb.telecom.dngroup.dvd2c.model.User user) throws SuchUserException, IOException;
 	
 	/**
 	 *  create user on local
@@ -63,8 +70,9 @@ public interface AccountService {
 	/**
 	 * modify user on server and on local
 	 * @param user to modify
+	 * @throws NoSuchUserException 
 	 */
-	public abstract void saveUserOnServer(User user);
+	public abstract void saveUserOnServer(com.enseirb.telecom.dngroup.dvd2c.model.User user) throws NoSuchUserException;
 	
 	/**
 	 * modify user on local
@@ -137,8 +145,6 @@ public interface AccountService {
 	public abstract boolean getUserVerification(String userName, String password) throws NoSuchUserException;
 
 	public abstract User getContactInformation(UUID userID) throws NoSuchUserException;
-
-	public abstract User getUserFromEmail(String userID) throws NoSuchUserException;
 	
 
 
