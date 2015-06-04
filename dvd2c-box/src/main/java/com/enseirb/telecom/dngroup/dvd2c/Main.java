@@ -1,5 +1,6 @@
 package com.enseirb.telecom.dngroup.dvd2c;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.grizzly.servlet.WebappContext;
+import org.glassfish.grizzly.utils.ArraySet;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,10 +84,10 @@ public class Main {
 							ContextLoader.CONFIG_LOCATION_PARAM,
 							com.enseirb.telecom.dngroup.dvd2c.conf.SpringConfiguration.class
 									.getName());
-			webappContext.addFilter("springSecurityFilterChain", new DelegatingFilterProxy("springSecurityFilterChain"))
-            .addMappingForUrlPatterns(null, false, "/*");
-		
-			
+			webappContext.addFilter("springSecurityFilterChain",
+					new DelegatingFilterProxy("springSecurityFilterChain"))
+					.addMappingForUrlPatterns(null, false, "/*");
+
 			// attache the jersey servlet to this context
 			ServletRegistration jerseyServlet = webappContext.addServlet(
 					"jersey-servlet", ServletContainer.class);
@@ -97,10 +99,9 @@ public class Main {
 							com.enseirb.telecom.dngroup.dvd2c.conf.RestConfiguration.class
 									.getName());
 
-			
 			// finally, map it to the path
 			jerseyServlet.addMapping("/" + BASE_PATH + "/*");
-		
+
 			// add mapping for static resources
 
 			// start a vanilla server
@@ -115,7 +116,7 @@ public class Main {
 
 			// set disable cache
 			videos.setFileCacheEnabled(false);
-			
+
 			server.getServerConfiguration().addHttpHandler(videos, "/videos");
 
 			// server.getServerConfiguration().addHttpHandler(
@@ -126,8 +127,18 @@ public class Main {
 					"/pictures");
 			server.getServerConfiguration().addHttpHandler(
 					new StaticHttpHandler("/var/www/html/cloud"), "/cloud");
+
+			CLStaticHttpHandler mainClStaticHttpHandler = new CLStaticHttpHandler(
+					Main.class.getClassLoader(), "/");
+			
+			
+	
+		
+			
+		
 			server.getServerConfiguration().addHttpHandler(
-					new CLStaticHttpHandler(Main.class.getClassLoader(), "/"));
+					mainClStaticHttpHandler);
+			
 
 			// finally, deploy the webapp
 			webappContext.deploy(server);
