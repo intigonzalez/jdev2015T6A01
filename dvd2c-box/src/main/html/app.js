@@ -39,8 +39,7 @@ angular.module('myApp', [
     'myApp.mycloud',
     'myApp.friends',
     'myApp.friendSearch',
-    'myApp.newvideo',
-    'myApp.sharedwithme'
+    'myApp.newvideo'
 ]).
     config(['$routeProvider', function ($routeProvider) {
         $routeProvider.otherwise({redirectTo: '/home'});

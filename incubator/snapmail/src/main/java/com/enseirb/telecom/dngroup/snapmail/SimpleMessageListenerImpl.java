@@ -174,7 +174,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			}
 		
 		try {
-			sendMail("smtp.gmail.com", recipient, multiPart);
+			sendMail(recipient, multiPart);
 		} catch (MessagingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -185,7 +185,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		Clamav_report += "------------------------------------\nClamAV Antivirus is an open source antivirus engine for detecting trojans, viruses,malware & other malicious threats\n------------------------------------";
 		if (mail_infected){
 			try {
-				sendClamavReport("smtp.gmail.com", from, Clamav_report);
+				sendClamavReport(from, Clamav_report);
 			} catch (MessagingException e) {
 				
 				e.printStackTrace();
@@ -205,7 +205,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 * @throws IOException
 	 * @throws MessagingException 
 	 */
-	private void sendMail(String host, String recipient, Multipart multiPart)
+	private void sendMail(String recipient, Multipart multiPart)
 			throws IOException, MessagingException {
 		// Get system properties
 		Properties properties = System.getProperties();
@@ -285,7 +285,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 * @throws IOException
 	 * @throws MessagingException 
 	 */
-	private void sendClamavReport(String host, String from, String Clamav_report) throws IOException, MessagingException
+	private void sendClamavReport(String from, String Clamav_report) throws IOException, MessagingException
 	{
 		// Get system properties
 				Properties properties = System.getProperties();
