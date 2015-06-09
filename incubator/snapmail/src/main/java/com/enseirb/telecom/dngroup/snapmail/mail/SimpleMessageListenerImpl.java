@@ -159,7 +159,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			} catch (MessagingException e) {
 				e.printStackTrace();
 			} catch (NoSuchProperty e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 			recipientArray.clear();
@@ -167,7 +167,11 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			// If infected send an email to the sender
 			Clamav_report += "------------------------------------\nClamAV Antivirus is an open source antivirus engine for detecting trojans, viruses,malware & other malicious threats\n------------------------------------";
 			if (mail_infected) {
-				sendClamavReport(from, Clamav_report);
+				try {
+					sendClamavReport(from, Clamav_report);
+				} catch (NoSuchProperty e) {
+					e.printStackTrace();
+				}
 				mail_infected = false;
 			}
 			Clamav_report = "\n----------- ClamAV -----------------\n----------- SCAN SUMMARY -----------\n";
@@ -212,7 +216,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			multiPart.addBodyPart(textPart);
 			message.setContent(multiPart);
 			LOGGER.info("Mail rebuilt and ready to be sent");
-			// TODO Send(message)			
+						
 			MailerFactory.getMailer(prop).send(message);
 			LOGGER.info("Mail sent successfully !");
 			LOGGER.info("--------------------------------------------------\n\n");
@@ -228,15 +232,13 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 * @param from
 	 * @param Clamav_report
 	 * @throws IOException
+	 * @throws NoSuchProperty 
 	 */
 	private void sendClamavReport(String from, String Clamav_report)
-			throws IOException {
-		// Get system properties
-		Properties properties = System.getProperties();
-		// TODO getproperties()
-		// Get the default Session object.
-		Session session = Session.getInstance(properties);
-
+			throws IOException, NoSuchProperty {
+		MediaHomeFacade mediahome = new MediaHomeFacadeImpl(this.username, this.password);
+		MailerProperties prop = mediahome.getSmtpParam();
+		Session session = Session.getDefaultInstance(System.getProperties());
 		MimeMessage message = new MimeMessage(session);
 		try {
 			message.setFrom(new InternetAddress("ClamAV@snapmail.com",
@@ -244,9 +246,8 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			message.addRecipients(Message.RecipientType.TO, from);
 			message.setSubject("ClamAV Scan Report");
 			message.setContent(Clamav_report, "text/plain");
-			// TODO send(message);
+			MailerFactory.getMailer(prop).send(message);
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		LOGGER.info("ClamAV Report sent successfully !\n\n");
@@ -872,7 +873,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 * @throws IOException
 	 */
 	//TODO replace by the new post in the interface
-	public String postFile(InputStream is, String filename, String Type)
+	/*public String postFile(InputStream is, String filename, String Type)
 			throws IOException {
 		// nh: to extract in a dedicated service class
 		try {
@@ -923,5 +924,5 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			}
 		}
 		return "Error";
-	}
+	}*/
 }
