@@ -138,7 +138,8 @@ public class UserEndPoints extends HttpServlet {
 	@PUT
 	@Path("{userID}/properties/{propertyGroupName}")
 	@RolesAllowed({ "account", "authenticated" })
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response postUserProps(PropertyGroups propertyGroups, @PathParam("userID") String userID, @PathParam("propertyGroupName") String propertyGroupName) {
 		uManager.setPropertiesForUser(userID, propertyGroupName, propertyGroups);
 		return Response.status(200).build();

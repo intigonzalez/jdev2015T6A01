@@ -76,13 +76,19 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public Content getContent(String contentsID) throws NoContentException {
+	public Content getContent(String contentsID) /*throws NoContentException*/ {
 		ContentRepositoryObject content = contentDatabase.findOne(contentsID);
+		if (content == null) {
+			return null;
+		} else {
+			return content.toContent();
+		}
+		/*ContentRepositoryObject content = contentDatabase.findOne(contentsID);
 		if (content == null) {
 			throw new NoContentException(contentsID);
 		} else {
 			return content.toContent();
-		}
+		}*/
 	}
 
 	@Override
@@ -333,7 +339,7 @@ public class ContentServiceImpl implements ContentService {
 								.getMetadata().size(); j++) {
 
 							if (relation.getRoleID().get(i) == contentRepositoryObject
-									.getMetadata().get(j)) {
+									.getMetadata().indexOf(j)) {
 								contentRepositoryObject.getMetadata().clear();
 								contentRepositoryObject
 										.setLink(CliConfSingleton.publicAddr

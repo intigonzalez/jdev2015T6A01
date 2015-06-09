@@ -11,7 +11,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
     .controller('ProfileCtrl',[function() {
 
     }])
-    .controller('ProfileController', ['$http', function ($http) {
+    .controller('ProfileController', ['$http','$location', function ($http, $location) {
 
         var user = this;
         user.smtp = {};
@@ -36,7 +36,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
         
         this.openOauth = function (service) {
         	user.service=service;
-     	   return "/api/oauth/" + user.person.userID + "/" + service;
+     	   return "http://" + $location.host() + ":9997/api/oauth/" + user.person.userID + "/" + service;
          };
 
         this.getUser = function () {
@@ -68,39 +68,68 @@ angular.module('myApp.myprofile', ['ngRoute'])
         	$http.get(PREFIX_RQ + "/api/app/account/" + userID)
             .success(function (data, status, headers, config)
             {
-            	for(var i = 0, l = data.user.propertyGroups.length; i < l; i++) {
-            		var e = data.user.propertyGroups[i];
-            		console.log("e: "+i);
-            		console.log(e);
-            		console.log(e.name);
-            		console.log(e.name == "snapmail")
-            		if(e.name == "snapmail") {
-            			console.log("OK")
-            			for(var j = 0, m = e.props.length; j < m; j++) {
+            	var json=JSON.parse(angular.toJson(data));
+            	var l=json.user.propertyGroups.length;
+            	if(l==undefined){
+            		l=0;
+            		var e = json.user.propertyGroups;
+            		if(e.props.length==undefined){
+            			var p = e.props;
+            			user.smtp[p.key] = p.value;
+            		}
+            		else{
+            			for(var j = 0; j < e.props.length; j++) {
             				var p = e.props[j];
             				console.log("p: "+j);
                     		console.log(p);
             				user.smtp[p.key] = p.value;
             			}
-            			break;
             		}
+                }
+            	else{
+	            	for(var i = 0; i <= l ; i++) {
+	            		var e = json.user.propertyGroups[i];
+	            		console.log("e: "+i);
+	            		console.log(e);
+	            		console.log(e.name);
+	            		console.log(e.name == "snapmail")
+	            		if(e.name == "snapmail") {
+	            			console.log("OK")
+	            			if(e.props.length==undefined){
+	                			var p = e.props;
+	                			user.smtp[p.key] = p.value;
+	                		}
+	                		else{
+	                			for(var j = 0; j < e.props.length; j++) {
+	                				var p = e.props[j];
+	                				console.log("p: "+j);
+	                        		console.log(p);
+	                				user.smtp[p.key] = p.value;
+	                			}
+	                		}
+	            			break;
+	            		}
+	            	}
             	}
+            	//var json=JSON.parse(angular.toJson(data));
+            	//user.smtp[json.user.propertyGroups.props.key]=json.user.propertyGroups.props.value;
+            	//user.smtp[json.user.propertyGroups.props[0].key]=json.user.propertyGroups.props[0].key;
             	console.log(user.smtp)
-            	if (user.smtp.hasOwnProperty("username") && user.smtp.username != "" && user.smtp.username !=  && user.smtp.hasOwnProperty("host") && user.smtp.host != "" && user.smtp.hasOwnProperty("port") && user.smtp.port != "" && user.smtp.hasOwnProperty("password") && user.smtp.password != "")
+            	if (user.smtp.hasOwnProperty("username") && user.smtp.username != "" && user.smtp.username != undefined && user.smtp.hasOwnProperty("host") && user.smtp.host != "" && user.smtp.host != undefined && user.smtp.hasOwnProperty("port") && user.smtp.port != "" && user.smtp.port != undefined && user.smtp.hasOwnProperty("password") && user.smtp.password != "" && user.smtp.password != undefined)
             	{
-            		user.smtpManualSettings = true;
+            		user.smtpManualSettings = true;1
                 	user.smtpTab = 1;
                 	console.log("view 1");
             	}
-            	else if (user.smtp.hasOwnProperty("google") && user.smtp.google != "") {
+            	else if (user.smtp.hasOwnProperty("google") && user.smtp.google != "" && user.smtp.google != undefined) {
             		user.smtpTab = 2;
             	console.log("view 2");
             	}
-            	else if (user.smtp.hasOwnProperty("yahoo") && user.yahoo != "") {
+            	else if (user.smtp.hasOwnProperty("yahoo") && user.smtp.yahoo != "" && user.smtp.yahoo != undefined) {
             		user.smtpTab = 3;
             	console.log("view 3");
             	}
-            	else if (user.smtp.hasOwnProperty("microsoft") && user.microsoft != "") {
+            	else if (user.smtp.hasOwnProperty("microsoft") && user.smtp.microsoft != "" && user.smtp.microsoft != undefined) {
             		user.smtpTab = 4;
             	console.log("view 4");
             	}

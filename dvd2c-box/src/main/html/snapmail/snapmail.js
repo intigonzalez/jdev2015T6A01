@@ -20,10 +20,11 @@ app.config(function($routeProvider) {
 app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$routeParams', '$location', function ($scope, $timeout, $window, $http, $routeParams, $location) {
 	$http.get(PREFIX_RQ + "/api/app/" + $routeParams.sender + "/content/" + $routeParams.id)
 	.success(function (data, status, headers, config) {
-		$scope.content = data.content;
-		$scope.contentID = data.content.contentsID;
-		$scope.sender = data.content.actorID;
-		$scope.type = data.content.type;
+		var json = JSON.parse(angular.toJson(data));
+		$scope.content = json.content;
+		$scope.contentID = json.content.contentsID;
+		$scope.sender = json.content.actorID;
+		$scope.type = json.content.type;
 	})
 	.error(function (data, status, headers, config) {
 		$scope.type = null;

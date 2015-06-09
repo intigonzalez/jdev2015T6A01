@@ -142,7 +142,7 @@
 			    			</div>
 		    			</div>
 			    	</div>
-			    	<button class="btn btn-success" ng-click="user.openOauth(); user.setSMTPTab(6)">Connect with OAuth</button>
+			    	<button class="btn btn-success" ng-click="user.smtp.host='';user.smtp.port='';user.smtp.username='';user.smtp.password='';user.putSmtp(user.smtp); user.setSMTPTab(7)">Delete parameters</button>
 		    	</div>
 		    	
 		    	<!-- Vue 2 - Google -->

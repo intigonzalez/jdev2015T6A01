@@ -10,13 +10,13 @@ import com.enseirb.telecom.dngroup.snapmail.mail.impl.SMTPProperties;
 public abstract class MailerFactory {
 	
 	public static Mailer getMailer(MailerProperties mailerProperties){
-		if(mailerProperties.getClass().isInstance(SMTPProperties.class))
+		if(mailerProperties instanceof SMTPProperties)
 			return new SMTPMailer((SMTPProperties) mailerProperties);
 
-		else if(mailerProperties.getClass().isInstance(GoogleMailProperties.class))
+		else if(mailerProperties instanceof GoogleMailProperties)
 			return new GoogleMailer((GoogleMailProperties) mailerProperties);
 
-		else if(mailerProperties.getClass().isInstance(MicrosoftMailProperties.class))
+		else if(mailerProperties instanceof MicrosoftMailProperties)
 			return new MicrosoftMailer((MicrosoftMailProperties) mailerProperties);
 			
 		else

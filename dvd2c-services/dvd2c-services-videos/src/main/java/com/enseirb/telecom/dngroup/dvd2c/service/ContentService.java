@@ -33,7 +33,7 @@ public interface ContentService {
 	 * @return Content 
 	 * @throws NoContentException 
 	 */
-	public abstract Content getContent(String contentsID) throws NoContentException;
+	public abstract Content getContent(String contentsID) /*throws NoContentException*/;
 
 	/**
 	 * send a new file (video actually) on box

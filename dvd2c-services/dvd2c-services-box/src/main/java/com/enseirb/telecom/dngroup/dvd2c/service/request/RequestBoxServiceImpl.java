@@ -142,7 +142,7 @@ public class RequestBoxServiceImpl implements RequestBoxService {
 			throws IOException {
 
 		try {
-			WebTarget target = client.target(box.getIp() + "/api/oauth/" + actorID);
+			WebTarget target = client.target(box.getIp().replace("9998", "9997") + "/api/oauth/" + actorID);
 			LOGGER.debug("Send request to server {}", target.getUri());
 
 			Response response = target.request().post(

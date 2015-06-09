@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Metadata;
+import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -122,10 +123,10 @@ public class ContentRepositoryMongo implements ContentRepository {
 			if (entity.getMetadata() != null) {try {
 				// need to verify
 					
-					List<Integer> metadatas = entity.getMetadata();
+					List<PropertyGroups> metadatas = entity.getMetadata();
 												
 					List<Object> entityDBList = new BasicDBList();
-					for (Integer metadata : metadatas) {
+					for (PropertyGroups metadata : metadatas) {
 					
 					    DBObject userDBObject = new BasicDBObject();
 					    try {

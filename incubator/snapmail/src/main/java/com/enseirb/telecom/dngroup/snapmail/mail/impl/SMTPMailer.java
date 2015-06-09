@@ -36,7 +36,7 @@ public class SMTPMailer implements Mailer{
 		properties.setProperty("mail.smtp.port", port);
 		Session session =null;
 		session = Session.getInstance(properties, null);
-		session.setDebug(true);
+		//session.setDebug(true);
 		Transport tr = null;
 		try {
 			tr = session.getTransport("smtp");

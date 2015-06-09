@@ -69,7 +69,7 @@ public MediaHomeFacadeImpl(String username,String password){
 
 			if (response.getLocation() != null) {
 				target = client.target(CliConfSingleton.mediahome_host+"/api/app/"+username+"/content/"+response.getLocation().toString().split("/content/")[1]);
-				Content content = target.request().get(Content.class);
+				Content content = target.request(MediaType.APPLICATION_XML_TYPE).get(Content.class);
 				
 				PropertyGroups originGroups = new PropertyGroups();
 				originGroups.setName("origin");
@@ -95,7 +95,7 @@ public MediaHomeFacadeImpl(String username,String password){
 				
 				content.getMetadata().add(recipientsGroups);
 				
-				Response r = target.request().put(Entity.entity(content, MediaType.APPLICATION_JSON));
+				Response r = target.request().put(Entity.entity(content, MediaType.APPLICATION_XML));
 						
 				return  CliConfSingleton.mediahome_host
 						+ "/snapmail/"

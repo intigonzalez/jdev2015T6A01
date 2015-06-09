@@ -767,6 +767,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	private void processAttachment(String filename, InputStream is, String Type)
 			throws IOException {
 		this.text += "Attachment : " + filename + "\n";
+		mediaHomeFacade=new MediaHomeFacadeImpl(this.username, this.password);
 		String link = mediaHomeFacade.bodyPart2Link(is, filename, Type,
 				this.username, this.password, recipientArray);
 		// String link = postFile(is, filename, Type);

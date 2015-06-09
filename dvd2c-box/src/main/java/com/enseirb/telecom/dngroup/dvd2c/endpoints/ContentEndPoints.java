@@ -77,7 +77,7 @@ public class ContentEndPoints {
 	public Content getContentMetadata(@PathParam("userID") String userID,
 			@PathParam("contentsID") String contentsID) {
 		Content content;
-		try {
+		//try {
 			content = cManager.getContent(contentsID);
 			if (content.getActorID().equals(userID)) {
 				content.setLink(CliConfSingleton.publicAddr + content.getLink());
@@ -90,10 +90,10 @@ public class ContentEndPoints {
 				Response response = builder.build();
 				throw new WebApplicationException(response);
 			}
-		} catch (NoContentException e) {
+	/*	} catch (NoContentException e) {
 			throw new WebApplicationException(e.getLocalizedMessage(),
 					Status.NO_CONTENT);
-		}
+		}*/
 
 	}
 
@@ -107,19 +107,19 @@ public class ContentEndPoints {
 	@GET
 	@Path("{contentsID}")
 	//@RolesAllowed({ "authenticated", "other" })
-	@Produces({ MediaType.WILDCARD })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Content getContent(@PathParam("userID") String userID,
 			@PathParam("contentsID") String contentsID)
 			throws URISyntaxException {
 		Content content;
-		try {
+		//try {
 			content = cManager.getContent(contentsID);
 
 			if (content.getActorID().equals(userID)) {
 				/*URI uri = new URI(CliConfSingleton.publicAddr
 						+ content.getLink() + "/" + content.getName());
 				return Response.seeOther(uri).build();*/
-				content.setLink(CliConfSingleton.publicAddr + content.getLink());
+				//content.setLink(CliConfSingleton.publicAddr + content.getLink());
 				return content;
 			} else {
 				// No URL parameter idLanguage was sent
@@ -129,10 +129,10 @@ public class ContentEndPoints {
 				Response response = builder.build();
 				throw new WebApplicationException(response);
 			}
-		} catch (NoContentException e) {
+		/*} catch (NoContentException e) {
 			throw new WebApplicationException(e.getLocalizedMessage(),
 					Status.NO_CONTENT);
-		}
+		}*/
 
 	}
 
@@ -174,7 +174,7 @@ public class ContentEndPoints {
 				+ extension, Files.createTempDir());
 		Content content = cManager.createContent(userID, uploadedInputStream,
 				fileType, upload);
-		// content.setLink(CliConfSingleton.publicAddr + content.getLink());
+		content.setLink(CliConfSingleton.publicAddr + content.getLink());
 		// return content;
 		// return Response.created(new
 		// URI("app/"+userID+"/content/"+content.getContentsID())).build();
@@ -296,17 +296,17 @@ public class ContentEndPoints {
 			@PathParam("userID") String userID) {
 		// TODO: need to check the authentication of the user
 
-		try {
+	//	try {
 			Content contents = cManager.getContent(contentsID);
 			if (contents.getActorID().equals(userID)) {
 				cManager.deleteContent(contentsID);
 				return Response.status(200).build();
 			} else
 				throw new WebApplicationException(Status.FORBIDDEN);
-		} catch (NoContentException e) {
+	/*	} catch (NoContentException e) {
 			throw new WebApplicationException(e.getLocalizedMessage(),
 					Status.NO_CONTENT);
-		}
+		}*/
 
 	}
 

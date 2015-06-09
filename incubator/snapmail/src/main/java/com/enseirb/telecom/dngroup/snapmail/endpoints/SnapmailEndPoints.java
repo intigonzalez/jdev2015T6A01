@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.snapmail.endpoints;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import javax.servlet.http.HttpServlet;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -14,12 +15,17 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.glassfish.jersey.media.multipart.MultiPart;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.enseirb.telecom.dngroup.dvd2c.model.Property;
+import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
+import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.snapmail.cli.CliConfSingleton;
 
 // The Java class will be hosted at the URI path "/"
@@ -35,7 +41,6 @@ public class SnapmailEndPoints extends HttpServlet {
 	private static final String Microsoftclient_ID = "000000004C14F710";
 	private static final String Microsoftclient_secret = "nYBtVB-xkEUnVp3gZdkIMHu4DcAeGZPh";
 	private static final String redirectUri = CliConfSingleton.centralURL.toString() + "/api/oauth";
-	private static final String redirectUritest = "http://mathias.homeb.tv:9999/api/oauth"; 
 	
 	
 	/**
@@ -104,6 +109,11 @@ public class SnapmailEndPoints extends HttpServlet {
 		Client client = ClientBuilder.newClient();
 		String response="";
 		String data;
+		PropertyGroups properties = new PropertyGroups();
+		properties.setName("properties");
+		
+		Property property = new Property();
+		
 		
 // Send token request to google		
 if(actorID.contains("@gmail.com")){
@@ -121,6 +131,7 @@ if(actorID.contains("@gmail.com")){
 				.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
 		LOGGER.info(response.toString());
 		
+		property.setKey("google");
 // Send token request to Yahoo		
 /*}else if(actorID.contains("@yahoo."))
 {
@@ -156,6 +167,8 @@ if(actorID.contains("@gmail.com")){
 			.request()
 			.post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED), String.class);
 	LOGGER.info(response.toString());
+	
+	property.setKey("microsoft");
 }
 // get the refresh token
 		JSONObject json;
@@ -172,26 +185,32 @@ if(actorID.contains("@gmail.com")){
 			// save the token
 			Response responsePut = null;
 		if (token.equals("")==false){	
-			/*try {
-				User user = uManager.getUserOnLocal(actorID);
+			
 				
-				user.setSmtpHost("");
-				user.setSmtpPort("");
-				user.setSmtpUsername("");
-				user.setSmtpPassword("");
-				user.setSmtpToken(token);
-				
-				uManager.saveUserOnServer(user);
-				
-				responsePut =Response.status(200).build();
-			} catch (NoSuchUserException e) {
-				throw new WebApplicationException(Status.NOT_FOUND);
-			}*/
+			Client client1 = ClientBuilder.newClient();
+			
+			property.setValue(token);
+			properties.getProps().add(property);
+
+			WebTarget target = client1.target(CliConfSingleton.mediahome_host + "/api/app/account/" + actorID + "/properties/snapmail");
+			Response response1 = target.request(MediaType.APPLICATION_XML_TYPE).cookie("authentication", actorID).put(Entity.entity(properties, MediaType.APPLICATION_XML),Response.class);
+		
+			responsePut =response1;
+			
+			
 		}
 		else{
 			responsePut=Response.status(500).build();
 		}
 		return responsePut;
 		}
+	}
+	protected User getUser(String username) {
+		Client client = ClientBuilder.newClient();
+		
+
+		WebTarget target = client.target(CliConfSingleton.mediahome_host + "/api/app/account/" + username);
+		User user = target.request(MediaType.APPLICATION_XML_TYPE).cookie("authentication", username).get(User.class);
+		return user;
 	}
 }
