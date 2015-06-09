@@ -54,7 +54,7 @@ RUN MP4Box -version
 # ~~~~ Clone repo ~~~~
 
 
-RUN wget http://jenkins.homeb.tv:8080/job/vhg-adaptation-worker/lastSuccessfulBuild/artifact/dist/vhg_adaptation_worker-0.1-py2.7.egg
+ADD http://jenkins.homeb.tv:8080/job/vhg-adaptation-worker/lastSuccessfulBuild/artifact/dist/vhg_adaptation_worker-0.1-py2.7.egg vhg_adaptation_worker-0.1-py2.7.egg
 RUN easy_install vhg_adaptation_worker-0.1-py2.7.egg
 EXPOSE 5672
 ENTRYPOINT service rabbitmq-server restart && celery -A adaptation.commons worker --loglevel=info --concurrency=1

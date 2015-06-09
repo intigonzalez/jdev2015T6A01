@@ -42,15 +42,6 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 
 	}
 
-	// @Override
-	// public User getUserLocal(String relationIDString) {
-	// UriBuilder builder = UriBuilder
-	// .fromPath(CliConfSingleton.appHostName)
-	// .scheme("http")
-	// .path("/api/app/"+ relationIDString).port(CliConfSingleton.appPort);
-	// WebTarget target = client.target(builder);
-	// }
-
 	@Override
 	public User get(UUID UserID, UUID UserToGet) throws IOException,
 			NoSuchUserException {

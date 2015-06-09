@@ -88,8 +88,7 @@ public class RequestRelationServiceImplTest {
 	}
 
 	@Test
-	public void testWithData() throws IOException,
-			NoSuchUserException {
+	public void testWithData() throws IOException, NoSuchUserException {
 
 		User user1 = new User();
 		user1.setFirstname("nicolas");
@@ -115,7 +114,7 @@ public class RequestRelationServiceImplTest {
 	}
 
 	private void bootstrapRequest(String ip, User u) throws IOException,
-			 NoSuchUserException {
+			NoSuchUserException {
 		Box boxRelation = new Box();
 		boxRelation.setIp(ip);
 
