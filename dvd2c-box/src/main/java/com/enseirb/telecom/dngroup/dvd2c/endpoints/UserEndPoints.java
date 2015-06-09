@@ -226,15 +226,17 @@ public class UserEndPoints extends HttpServlet {
 	 * @return Response
 	 */
 	@PUT
-	@Path("/account/{userID}")
+	@Path("/account")
 	@RolesAllowed("account")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response updateUser(User user,
-			@PathParam("userID") UUID userIDFromPath) {
+	public Response updateUser(User user) {
+		Authentication auth = SecurityContextHolder.getContext()
+				.getAuthentication();
+		String uuid = auth.getName();
 		// TODO: need to check the authentication of the user
 		// modify the user, check if the user has changed his email address, and
 		// check the ability of the new email address
-		if (user.getUuid().equals(userIDFromPath.toString())
+		if (user.getUuid().equals(uuid.toString())
 				&& uManager.userExistOnLocal(UUID.fromString(user.getUuid())) == true) {
 			try {
 				uManager.saveUserOnServer(user);
@@ -248,23 +250,6 @@ public class UserEndPoints extends HttpServlet {
 
 	}
 
-	/**
-	 * Update the current User
-	 * 
-	 * @param user
-	 *            the user information to update
-	 * @return Response
-	 */
-	@PUT
-	@Path("/account")
-	@RolesAllowed("account")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response updateUser(User user) {
-		Authentication auth = SecurityContextHolder.getContext()
-				.getAuthentication();
-		String uuid = auth.getName();
-		return updateUser(user, UUID.fromString(uuid));
-	}
 
 	/**
 	 * Delete the user with userID

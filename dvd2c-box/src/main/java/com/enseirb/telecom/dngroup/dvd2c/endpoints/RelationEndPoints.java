@@ -72,7 +72,8 @@ public class RelationEndPoints {
 		try {
 			if (rManager.RelationExist(UUID.fromString(uuid), relationUUID) == true) {
 
-				return aService.getContactInformation(UUID.fromString(uuid)).toXSDUser();
+				return aService.getContactInformation(UUID.fromString(uuid))
+						.toXSDUser();
 			} else {
 				throw new WebApplicationException(Status.NOT_FOUND);
 			}
@@ -98,7 +99,8 @@ public class RelationEndPoints {
 		String uuid = SecurityContextHolder.getContext().getAuthentication()
 				.getName();
 		try {
-			return rManager.getContact(UUID.fromString(uuid), relationUUID).toContactXSD();
+			return rManager.getContact(UUID.fromString(uuid), relationUUID)
+					.toContactXSD();
 		} catch (NoSuchContactException e) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
@@ -125,10 +127,12 @@ public class RelationEndPoints {
 
 		ContactXSD relation;
 		try {
-			relation = rManager.getContact(UUID.fromString(uuid), relationID).toContactXSD();
+			relation = rManager.getContact(UUID.fromString(uuid), relationID)
+					.toContactXSD();
 
 			if (relation.getAprouve() == 3)
-				return rManager.getAllContent(UUID.fromString(uuid), relationID);
+				return rManager
+						.getAllContent(UUID.fromString(uuid), relationID);
 			else {
 				throw new WebApplicationException(Status.FORBIDDEN);
 			}
@@ -154,7 +158,7 @@ public class RelationEndPoints {
 		List<ContactXSD> listContactXSD = new ArrayList<ContactXSD>();
 		List<Contact> contacts = rManager.getListContact(UUID.fromString(uuid));
 		for (Contact contact : contacts) {
-			
+
 			listContactXSD.add(contact.toContactXSD());
 		}
 		return listContactXSD;
@@ -177,7 +181,7 @@ public class RelationEndPoints {
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response oldpostFriend(ContactXSD relationID)
 			throws URISyntaxException {
-		
+
 		LOGGER.warn("maybe this fonction don't work");
 		return postFriend2(UUID.fromString(relationID.getUuid()));
 		// return postFriend2(UUID.fromString(uuid),
@@ -225,43 +229,7 @@ public class RelationEndPoints {
 		}
 	}
 
-	/**
-	 * add relation on database of userID from this relation
-	 * 
-	 * @param uuid
-	 * @param relation
-	 * @return
-	 * @throws URISyntaxException
-	 */
-	@POST
-	@Path("frombox")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postFriendFromBox(ContactXSD relation)
-			throws URISyntaxException {
-		String uuid = SecurityContextHolder.getContext().getAuthentication()
-				.getName();
-		LOGGER.debug("add a relation from box between {} and {} ", uuid,
-				relation.getActorID());
 
-		if (rManager.RelationExist(UUID.fromString(uuid),
-				UUID.fromString(relation.getActorID())) == false) {
-			try {
-				rManager.createRelation(UUID.fromString(uuid),
-						UUID.fromString(relation.getActorID()), true);
-			} catch (NoSuchUserException e) {
-				throw new WebApplicationException(Status.NOT_FOUND);
-			} catch (IOException e) {
-				throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-			} catch (NoSuchBoxException e) {
-				throw new WebApplicationException(Status.NOT_FOUND);
-			}
-			// NHE that the answer we expect from a post (see location header)
-			return Response.created(new URI(relation.getActorID())).build();
-		} else {
-
-			return Response.status(Status.CONFLICT).build();
-		}
-	}
 
 	@PUT
 	@RolesAllowed("other")
@@ -273,9 +241,9 @@ public class RelationEndPoints {
 				.getName();
 		// need to verify the friend and after this modifies the friend
 		try {
-			ContactXSD c = rManager.getContact(UUID.fromString(uuid),
-					relationUUID).toContactXSD();
-			contact.setUuid(c.getUuid());
+			// ContactXSD c = rManager.getContact(UUID.fromString(uuid),
+			// relationUUID).toContactXSD();
+			// contact.setUuid(c.getUuid());
 			if (contact.getUuid().equals(relationUUID.toString())) {
 				rManager.saveRelation(UUID.fromString(uuid), contact);
 				return Response.status(200).build();

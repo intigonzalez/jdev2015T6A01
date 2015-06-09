@@ -81,8 +81,8 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 			throw new IOException(
 					"Can not conect to the server : Box information not fetched from CentralServer");
 		}
-		String requestUrl = boxRelation.getIp() + "/api/app/" + relationUUID
-				+ "/relation/frombox";
+		String requestUrl = boxRelation.getIp() + "/api/box/" + relationUUID
+				+ "/relationfrombox";
 		LOGGER.debug("Request : {}", requestUrl);
 		WebTarget target = client.target(requestUrl);
 

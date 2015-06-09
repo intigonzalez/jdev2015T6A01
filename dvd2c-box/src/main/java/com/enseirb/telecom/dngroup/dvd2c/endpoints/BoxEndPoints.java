@@ -29,6 +29,7 @@ import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
@@ -204,6 +205,44 @@ public class BoxEndPoints {
 		// throw new WebApplicationException(Status.NOT_ACCEPTABLE);
 		// }
 
+	}
+
+	/**
+	 * add relation on database of userID from this relation
+	 * 
+	 * @param uuid
+	 * @param relation
+	 * @return
+	 * @throws URISyntaxException
+	 */
+	@POST
+	@Path("{actorUUID}/relationfrombox")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response postFriendFromBox(@PathParam("actorUUID") UUID uuid,
+			ContactXSD relation) throws URISyntaxException {
+		// String uuid = SecurityContextHolder.getContext().getAuthentication()
+		// .getName();
+		LOGGER.debug("add a relation from box between {} and {} ", uuid,
+				relation.getActorID());
+
+		if (rManager
+				.RelationExist(uuid, UUID.fromString(relation.getActorID())) == false) {
+			try {
+				rManager.createRelation(uuid,
+						UUID.fromString(relation.getActorID()), true);
+			} catch (NoSuchUserException e) {
+				throw new WebApplicationException(Status.NOT_FOUND);
+			} catch (IOException e) {
+				throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+			} catch (NoSuchBoxException e) {
+				throw new WebApplicationException(Status.NOT_FOUND);
+			}
+			// NHE that the answer we expect from a post (see location header)
+			return Response.created(new URI(relation.getActorID())).build();
+		} else {
+
+			return Response.status(Status.CONFLICT).build();
+		}
 	}
 
 }

@@ -99,9 +99,10 @@ public interface RelationService {
 	 * @throws NoRelationException
 	 * @throws NoSuchUserException
 	 * @throws NoRoleException
+	 * @throws NoSuchContactException 
 	 */
 	public abstract void saveRelation(UUID userUUID, ContactXSD relation)
-			throws NoRelationException, NoSuchUserException, NoRoleException;
+			throws NoRelationException, NoSuchUserException, NoRoleException, NoSuchContactException;
 
 	/**
 	 * delete a relation

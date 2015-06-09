@@ -367,14 +367,14 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public void saveRelation(UUID userUUID, ContactXSD contactXSD)
-			throws NoRelationException, NoSuchUserException, NoRoleException {
+			throws NoSuchUserException, NoRoleException, NoSuchContactException {
 		// Here, the user is only allowed to edit the approve value if the
 		// current value is = 2
 		// User user = accountService.getUserFromUUID(userUUID);
 		Contact contact;
 		if ((contact = contactRepository.findContact(userUUID,
 				UUID.fromString(contactXSD.getUuid()))) == null) {
-			throw new NoRelationException();
+			throw new NoSuchContactException();
 		}
 
 		if (contact.getStatus() != contactXSD.getAprouve()
@@ -414,14 +414,20 @@ public class RelationServiceImpl implements RelationService {
 		List<String> roleName = Contact.getRolesNames(contact.getRole());
 		if (!roleName.equals(contactXSD.getRole())) {
 			contact.getRole().clear();
-			for (String role : contactXSD.getRole()) {
-				Role relation2;
-				if ((relation2 = roleRepository.findByName(role,
+			for (String roleStr : contactXSD.getRole()) {
+				Role role;
+				if ((role = roleRepository.findByName(roleStr,
 						contact.getOwnerId(), TYPE)) != null)
 
-					contact.getRole().add(relation2);
-				else
-					throw new NoRoleException();
+					contact.getRole().add(role);
+				else {
+					role = new Role();
+					role.setActorId(contact.getOwnerId());
+					role.setName(roleStr);
+					role.setType(TYPE);
+					roleRepository.save(role);
+				}
+				// throw new NoRoleException();
 			}
 
 		}
@@ -606,16 +612,17 @@ public class RelationServiceImpl implements RelationService {
 		try {
 			Contact c = getContact(actorUUID, contactUUID);
 			roles = c.getRole();
-			
-			if (roles.size()==0){
+
+			if (roles.size() == 0) {
 				Role role;
-				if ((role = roleRepository.findByName("Public", actorUUID, TYPE)) == null) {
+				if ((role = roleRepository
+						.findByName("Public", actorUUID, TYPE)) == null) {
 					LOGGER.error("this user {} a not role Public", actorUUID);
 				}
 				roles.add(role);
 			}
 			for (Role role : roles) {
-				LOGGER.debug("role = {}",role);
+				LOGGER.debug("role = {}", role);
 			}
 		} catch (NoSuchContactException e) {
 			Role role;
