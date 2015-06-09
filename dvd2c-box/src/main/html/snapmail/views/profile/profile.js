@@ -35,12 +35,15 @@ angular.module('myApp.mySnapmailprofile', ['ngRoute'])
         };
         
         this.openOauth = function (service) {
-     	   return "/api/oauth/" + user.person.userID + "/" + service;
+     	   return "/api/oauth/" + service;
          };
 
         this.getUser = function () {
             $http.get(PREFIX_RQ + "/api/app/account/")// + userID)
                 .success(function (data, status, headers, config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     user.person = data.user;
                 })
                 .error(function (data, status, headers, config) {
@@ -52,6 +55,9 @@ angular.module('myApp.mySnapmailprofile', ['ngRoute'])
             data.user = person;
             $http.put(PREFIX_RQ + "/api/app/account/")// + this.person.userID, data)
                 .success(function (data, status, headers, config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     console.log("Succeed");
                     user.class = "btn-success";
                 })
@@ -63,9 +69,11 @@ angular.module('myApp.mySnapmailprofile', ['ngRoute'])
         
         this.getSmtp = function ()
         {
-        	$http.get(PREFIX_RQ + "/api/app/snapmail/" + userID + "/smtp")
+        	$http.get(PREFIX_RQ + "/api/app/snapmail/smtp")
             .success(function (data, status, headers, config)
-            {
+            {if (headers('Content-Type').indexOf("text/html")==0) {
+				window.location.replace("/");
+			} 
                 user.smtp = data.smtpProperty;
                 if (user.smtp.hasOwnProperty("token") && user.smtp.token != "")
                 	user.smtpTab = 1;
@@ -95,6 +103,9 @@ angular.module('myApp.mySnapmailprofile', ['ngRoute'])
             console.log(smtp);
             $http.put(PREFIX_RQ + "/api/app/snapmail/" + this.person.userID + "/smtp", data)
                 .success(function (data, status, headers, config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     console.log("Succeed");
                     user.class = "btn-success";
                 })

@@ -7,43 +7,44 @@ import javax.persistence.*;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 
-
 /**
  * The persistent class for the documents database table.
  * 
  */
 @Entity
-@Table(name="documents")
-@NamedQuery(name="Document.findAll", query="SELECT d FROM Document d")
+@Table(name = "documents")
+@NamedQuery(name = "Document.findAll", query = "SELECT d FROM Document d")
 public class Document extends ActivityObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name="file_content_type")
+	@Column(name = "file_content_type")
 	private String fileContentType;
 
-	@Column(name="file_link")
+	@Column(name = "file_link")
 	private String fileLink;
 
-	@Column(name="file_preview_link")
+	@Column(name = "file_preview_link")
 	private String filePreviewLink;
 
-	@Column(name="file_size")
+	@Column(name = "file_size")
 	private String fileSize;
 
-	@Column(name="file_processing")
+	@Column(name = "file_processing")
 	private String fileProcessing;
 
 	private String type;
 
 	public Document() {
 	}
-	
+
 	public Document(Content content) {
-		setId(Integer.valueOf(content.getContentsID()));
+		if (content.getContentsID() != null)
+			setId(Integer.valueOf(content.getContentsID()));
 		setActorId(UUID.fromString(content.getActorID()));
 		setTitle(content.getName());
 		setType(content.getType());
-		setCreatedAt(new java.util.Date(1000 * content.getUnixTime()));
+		if (content.getUnixTime() != null)
+			setCreatedAt(new java.util.Date(1000 * content.getUnixTime()));
 		setFileLink(content.getLink());
 		setFilePreviewLink(content.getPreviewLink());
 		setFileProcessing(content.getStatus());
@@ -96,19 +97,20 @@ public class Document extends ActivityObject implements Serializable {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+
 	public Content toContent() {
 		Content content = new Content();
-		content.setContentsID(this.getId().toString());
+		content.setContentsID(this.getId());
 		content.setName(this.getTitle());
 		content.setType(this.getObjectType());
 		content.setActorID(this.getActorId().toString());
-		content.setUnixTime(this.getCreatedAt().getTime() / 1000);
+		if (getCreatedAt() != null)
+			content.setUnixTime(this.getCreatedAt().getTime() / 1000);
 		content.setLink(this.getFileLink());
 		content.setPreviewLink(this.getFilePreviewLink());
-		content.setStatus(String.valueOf(this.getFileProcessing()));
+		content.setStatus(this.getFileProcessing());
+		
 		return content;
 	}
-
 
 }

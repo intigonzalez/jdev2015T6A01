@@ -31,20 +31,25 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
+import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 import com.google.common.io.Files;
 
 // The Java class will be hosted at the URI path "/app/content"
-@Path("app/{userID}/content")
+@Path("app/content")
 public class ContentEndPoints {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ContentEndPoints.class);
 
 	@Inject
 	protected ContentService cManager;
+
+	@Inject
+	protected RelationService rManager;
 
 	// ContentService uManager = new ContentServiceImpl(
 	// new ContentRepositoryMongo(), new RabbitMQServer());
@@ -58,9 +63,16 @@ public class ContentEndPoints {
 	@GET
 	@RolesAllowed("other")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<Content> getAllContentsFromUser(
-			@PathParam("userID") String userID) {
-		List<Content> contents = cManager.getAllContentsFromUser(UUID.fromString(userID));
+	public List<Content> getAllContentsFromUser() {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
+
+		List<Content> contents = cManager.getAllContentsFromUser(UUID
+				.fromString(uuid));
+		for (Content content : contents) {
+			rManager.getContentRole(content);
+		}
+		
 		return contents;
 	}
 
@@ -74,12 +86,14 @@ public class ContentEndPoints {
 	@Path("{contentsID}/metadata")
 	@RolesAllowed({ "authenticated", "other" })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Content getContentMetadata(@PathParam("userID") String userID,
-			@PathParam("contentsID") String contentsID) {
+	public Content getContentMetadata(@PathParam("contentsID") Integer contentsID) {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
+
 		Content content;
 		try {
 			content = cManager.getContent(contentsID);
-			if (content.getActorID().equals(userID)) {
+			if (content.getActorID().equals(uuid)) {
 				content.setLink(CliConfSingleton.publicAddr + content.getLink());
 				return content;
 			} else {
@@ -108,14 +122,15 @@ public class ContentEndPoints {
 	@Path("{contentsID}")
 	@RolesAllowed({ "authenticated", "other" })
 	@Produces({ MediaType.WILDCARD })
-	public Response getContent(@PathParam("userID") String userID,
-			@PathParam("contentsID") String contentsID)
+	public Response getContent(@PathParam("contentsID") Integer contentsID)
 			throws URISyntaxException {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
 		Content content;
 		try {
 			content = cManager.getContent(contentsID);
 
-			if (content.getActorID().equals(userID)) {
+			if (content.getActorID().equals(uuid)) {
 				URI uri = new URI(CliConfSingleton.publicAddr
 						+ content.getLink() + "/" + content.getName());
 				return Response.seeOther(uri).build();
@@ -155,30 +170,33 @@ public class ContentEndPoints {
 	@POST
 	@RolesAllowed({ "other", "authenticated" })
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response postContent(@PathParam("userID") String userID,
+	public Response postContent(
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail,
 			@FormDataParam("file") FormDataBodyPart body)
 			throws URISyntaxException, IOException {
+//		String uuid = SecurityContextHolder.getContext().getAuthentication()
+//				.getName();
 
 		String fileName = fileDetail.getFileName();
-		LOGGER.info("New file {}", fileDetail);
-		String extension = Files.getFileExtension(fileName);
-		MediaType fileMediaType = body.getMediaType();
-		String fileTypeTemp = fileMediaType.toString();
-		String[] fileType = fileTypeTemp.split("/");
-
-		File upload = File.createTempFile(UUID.randomUUID().toString(), "."
-				+ extension, Files.createTempDir());
-		Content content = cManager.createContent(userID, uploadedInputStream,
-				fileType, upload);
-		// content.setLink(CliConfSingleton.publicAddr + content.getLink());
-		// return content;
-		// return Response.created(new
-		// URI("app/"+userID+"/content/"+content.getContentsID())).build();
-		return Response.created(
-				new URI(CliConfSingleton.publicAddr + "/api/app/" + userID
-						+ "/content/" + content.getContentsID())).build();
+//		LOGGER.info("New file {}", fileDetail);
+//		String extension = Files.getFileExtension(fileName);
+//		MediaType fileMediaType = body.getMediaType();
+//		String fileTypeTemp = fileMediaType.toString();
+//		String[] fileType = fileTypeTemp.split("/");
+//
+//		File upload = File.createTempFile(UUID.randomUUID().toString(), "."
+//				+ extension, Files.createTempDir());
+//		Content content = cManager.createContent(uuid, uploadedInputStream,
+//				fileType, upload);
+//		// content.setLink(CliConfSingleton.publicAddr + content.getLink());
+//		// return content;
+//		// return Response.created(new
+//		// URI("app/content/"+content.getContentsID())).build();
+//		return Response.created(
+//				new URI(CliConfSingleton.publicAddr + "/api/app/content/"
+//						+ content.getContentsID())).build();
+		return postContent2(uploadedInputStream, fileName);
 
 	}
 
@@ -197,24 +215,24 @@ public class ContentEndPoints {
 	@POST
 	@RolesAllowed({ "other", "authenticated" })
 	@Consumes(MediaType.WILDCARD)
-	public Response postContent2(@PathParam("userID") String userID,
-			InputStream iS,
+	public Response postContent2(InputStream iS,
 			@HeaderParam("Content-Disposition") String contentDisposition)
 			throws URISyntaxException, IOException {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
 
 		LOGGER.debug("New local upload, Content-Disposition : "
 				+ contentDisposition);
 		try {
-			Content content = cManager.createContent(userID, iS,
+			Content content = cManager.createContent(uuid, iS,
 					contentDisposition);
 			content.setLink(CliConfSingleton.publicAddr + content.getLink());
 
 			LOGGER.debug("Content created :" + CliConfSingleton.publicAddr
-					+ "/api/app/" + userID + "/content/"
-					+ content.getContentsID());
+					+ "/api/app/content/" + content.getContentsID());
 			return Response.created(
-					new URI(CliConfSingleton.publicAddr + "/api/app/" + userID
-							+ "/content/" + content.getContentsID())).build();
+					new URI(CliConfSingleton.publicAddr + "/api/app/content/"
+							+ content.getContentsID())).build();
 		} catch (IOException | SecurityException e) {
 			throw e;
 		}
@@ -267,16 +285,24 @@ public class ContentEndPoints {
 	@Path("{contentsID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putContent(Content content,
-			@PathParam("contentsID") String contentsID) {
+			@PathParam("contentsID") Integer contentsID) {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
+		if (!content.getActorID().equals(uuid)) {
+			return Response.status(Status.FORBIDDEN).build();
+		}
+
 		// TODO: need to check the authentication of the user
 		content.setContentsID(contentsID);
 		// modify the content
 		if (cManager.contentExist(content.getContentsID()) == true) {
 			cManager.saveContent(content);
+			rManager.setContentRole(content);
 			return Response.status(200).build();
 		} else {
 			return Response.status(409).build();
 		}
+
 	}
 
 	/**
@@ -290,13 +316,13 @@ public class ContentEndPoints {
 	@RolesAllowed("other")
 	@Path("{contentsID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteContent(@PathParam("contentsID") String contentsID,
-			@PathParam("userID") String userID) {
-		// TODO: need to check the authentication of the user
+	public Response deleteContent(@PathParam("contentsID") Integer contentsID) {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
 
 		try {
 			Content contents = cManager.getContent(contentsID);
-			if (contents.getActorID().equals(userID)) {
+			if (contents.getActorID().equals(uuid)) {
 				cManager.deleteContent(contentsID);
 				return Response.status(200).build();
 			} else

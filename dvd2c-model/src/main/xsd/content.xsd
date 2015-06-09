@@ -7,7 +7,7 @@
 	<xs:element name="content">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="contentsID" type="xs:string"
+				<xs:element name="contentsID" type="xs:int"
 					maxOccurs="1" minOccurs="0">
 				</xs:element>
 				<xs:element name="name" type="xs:string" maxOccurs="1"
@@ -27,7 +27,7 @@
 				<xs:element name="status" type="xs:string" maxOccurs="1"
 					minOccurs="0">
 				</xs:element>
-				<xs:element name="coment" type="xs:string" maxOccurs="1"
+				<xs:element name="detail" type="xs:string" maxOccurs="1"
 					minOccurs="0">
 				</xs:element>
 				<xs:element name="type" type="xs:string" maxOccurs="1"
@@ -38,7 +38,7 @@
 				</xs:element>
 
 
-				<xs:element name="metadata" type="xs:int" maxOccurs="unbounded" minOccurs="0"></xs:element>
+				<xs:element name="metadata" type="xs:string" maxOccurs="unbounded" minOccurs="0"></xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

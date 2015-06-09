@@ -33,14 +33,17 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
 
         videos.list = [];
         videos.roles = [
-            {"roleID":"0" , "roleName":"public", "info":"Seen by all your relations"},
-            {"roleID":"1" , "roleName":"Family", "info":"Seen by all your family only"},
-            {"roleID":"2" , "roleName":"Friends", "info":"Seen by all your friends only"},
-            {"roleID":"3" , "roleName":"Pro", "info":"Seen by all your professional contacts"},
+            {"roleID":"Public" , "roleName":"public", "info":"Seen by all your relations"},
+            {"roleID":"Family" , "roleName":"Family", "info":"Seen by all your family only"},
+            {"roleID":"Friends" , "roleName":"Friends", "info":"Seen by all your friends only"},
+            {"roleID":"Pro" , "roleName":"Pro", "info":"Seen by all your professional contacts"},
         ];  //List of role
         this.getVideos = function() {
-            $http.get(PREFIX_RQ + "/api/app/" + userID + "/content")
+            $http.get(PREFIX_RQ + "/api/app/content")
                 .success(function (data, status, headers, config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     if ( data.contents !== "" ) {
                         if (angular.isArray(data.contents.content) == false) {
                         	if(data.contents.content.type === "video")
@@ -80,8 +83,11 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
         // **** Function to update a content
         this.updateContent = function(content) {
             var data = {"content" : content};
-            $http.put(PREFIX_RQ+"/api/app/"+userID+"/content/"+content.contentsID,  data)
+            $http.put(PREFIX_RQ+"/api/app/content/"+content.contentsID,  data)
                 .success(function() {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                 	if (headers('Content-Type').indexOf("text/html")==0) {
     					window.location.replace("/");
     				} 
@@ -94,7 +100,7 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
 
         // ***** Remove a video *****
         this.removeVideo = function(content) {
-            $http.delete(PREFIX_RQ + "/api/app/" + userID + "/content/"+content.contentsID)
+            $http.delete(PREFIX_RQ + "/api/app/content/"+content.contentsID)
                 .success(function(data,status,headers,config) {
                 	if (headers('Content-Type').indexOf("text/html")==0) {
     					window.location.replace("/");

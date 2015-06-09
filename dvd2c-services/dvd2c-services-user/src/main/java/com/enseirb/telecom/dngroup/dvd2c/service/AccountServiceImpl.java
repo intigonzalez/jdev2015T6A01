@@ -30,7 +30,6 @@ public class AccountServiceImpl implements AccountService {
 	@Inject
 	protected RequestUserService requetUserService;
 
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -212,20 +211,20 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public User createUserOnLocal(User user) {
-		
+
 		User user2 = userRepository.save(user);
 		return user2;
 	}
 
 	@Override
 	public void saveUserOnServer(
-			com.enseirb.telecom.dngroup.dvd2c.model.User user) throws NoSuchUserException {
+			com.enseirb.telecom.dngroup.dvd2c.model.User user)
+			throws NoSuchUserException {
 		try {
 			User userdb = new User(user);
 			user.setPassword(null);
 			requetUserService.updateUserORH(user);
-			if (Strings.isNullOrEmpty(userdb.getEncryptedPassword()))
-				userdb.setEncryptedPassword(null);
+
 			saveUserOnLocal(userdb);
 		} catch (IOException e) {
 			LOGGER.error("Error for Update this user on server : {}",
@@ -239,7 +238,14 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public void saveUserOnLocal(User user) {
-		userRepository.save(user);
+		User u = userRepository.findOne(user.getId());
+		if (!Strings.isNullOrEmpty(user.getEmail()))
+			u.setEmail(user.getEmail());
+		if (!Strings.isNullOrEmpty(user.getFirstname()))
+			u.setFirstname(user.getFirstname());
+		if (!Strings.isNullOrEmpty(user.getSurname()))
+			u.setSurname(user.getSurname());
+		userRepository.save(u);
 	}
 
 	@Override
@@ -257,7 +263,6 @@ public class AccountServiceImpl implements AccountService {
 				.findOne(userUUID);
 		userRepository.delete(u);
 	}
-
 
 	@Override
 	public boolean getUserVerification(String userUUID, String password)

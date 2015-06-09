@@ -17,7 +17,7 @@ angular.module('myApp.newvideo', ['ngRoute', 'angularFileUpload'])
     .controller('NewVideoController', ['$scope', 'FileUploader', function($scope, FileUploader) {
 
         var uploader = $scope.uploader = new FileUploader({
-            url: '/api/app/'+userID+'/content'
+            url: '/api/app/content'
         });
 
         // FILTERS

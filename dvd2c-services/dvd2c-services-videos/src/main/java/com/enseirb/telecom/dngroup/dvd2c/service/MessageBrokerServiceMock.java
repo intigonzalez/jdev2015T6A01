@@ -14,7 +14,7 @@ public class MessageBrokerServiceMock implements MessageBrokerService {
 			.getLogger(MessageBrokerServiceMock.class);
 
 	@Override
-	public void addTask(String task, String id)
+	public void addTask(String task, Integer id)
 			throws UnsupportedEncodingException, IOException {
 		LOGGER.warn("Not implemented, nobody will ever perform this task!");
 

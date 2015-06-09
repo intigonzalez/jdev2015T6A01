@@ -9,7 +9,7 @@
 	<xs:element name="contactXSD">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="uuid" type="xs:string" maxOccurs="1"
+				<xs:element name="uuid" type="xs:string" maxOccurs="1" 
 					minOccurs="0"></xs:element>
 				<xs:element name="actorID" type="xs:string" maxOccurs="1"
 					minOccurs="1" />

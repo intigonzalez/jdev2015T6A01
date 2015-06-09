@@ -3,6 +3,7 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Base64;
+import java.util.UUID;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -27,6 +28,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
@@ -54,13 +56,14 @@ public class SnapmailEndPoints extends HttpServlet {
 	 * @return a collection of smtp property
 	 */
 	@GET
-	@Path("app/snapmail/{actorID}/smtp")
+	@Path("app/snapmail/smtp")
 	@RolesAllowed({ "account", "authenticated" })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public SmtpProperty getUserSmtpProperty(@PathParam("actorID") String actorIDFromPath){
+	public SmtpProperty getUserSmtpProperty(){
+		String uuid = SecurityContextHolder.getContext().getAuthentication().getName();
 		try {
 			SmtpProperty smtpProperty = new SmtpProperty();
-			User user = uManager.findUserByEmail(actorIDFromPath).toXSDUser();		
+			User user = uManager.findUserByUUID(UUID.fromString(uuid)).toXSDUser();		
 			smtpProperty.setHost(user.getSmtpHost());
 			smtpProperty.setPort(user.getSmtpPort());
 			smtpProperty.setUsername(user.getSmtpUsername());
@@ -82,9 +85,10 @@ public class SnapmailEndPoints extends HttpServlet {
 	@Path("app/snapmail/{actorID}/smtp")
 	@RolesAllowed("account")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response updateUserSmtpProperty(SmtpProperty smtpProperty, @PathParam("actorID") String actorIDFromPath) {
+	public Response updateUserSmtpProperty(SmtpProperty smtpProperty) {
+		String uuid = SecurityContextHolder.getContext().getAuthentication().getName();
 		try {
-			User user = uManager.findUserByEmail(actorIDFromPath).toXSDUser();
+			User user = uManager.findUserByEmail(uuid).toXSDUser();
 			
 			user.setSmtpHost(smtpProperty.getHost());
 			user.setSmtpPort(smtpProperty.getPort());
@@ -108,7 +112,8 @@ public class SnapmailEndPoints extends HttpServlet {
 	 */
 	@GET
 	@Path("oauth/{actorID}/{service}")
-	public Response getOauthredirect(@PathParam("actorID") String actorID, @PathParam("service") String service) throws URISyntaxException {
+	public Response getOauthredirect( @PathParam("service") String service) throws URISyntaxException {
+		String uuid = SecurityContextHolder.getContext().getAuthentication().getName();
 		switch(service) {
 		case "google":
 			return Response.seeOther(new URI(
@@ -117,7 +122,7 @@ public class SnapmailEndPoints extends HttpServlet {
 					+ "&client_id=" + Googleclient_ID
 					+ "&redirect_uri=" + redirectUri
 					+ "&scope=https://www.googleapis.com/auth/gmail.compose"
-					+ "&state=" + actorID
+					+ "&state=" + uuid
 					+ "&access_type=offline"
 					)).build();
 		case "yahoo":
@@ -126,7 +131,7 @@ public class SnapmailEndPoints extends HttpServlet {
 					+ "?response_type=code"
 					+ "&client_id=" + Yahooclient_ID
 					+ "&redirect_uri=" + redirectUri.replace(":9999","").replace(":8080", "")// Because yahoo refuse Uri with port
-					+ "&state=" + actorID
+					+ "&state=" + uuid
 					)).build();
 		default:
 			return Response.status(404).build();
@@ -140,15 +145,16 @@ public class SnapmailEndPoints extends HttpServlet {
 	 * @param code
 	 * @throw URISyntaxException
 	 * @return an error if google or yahoo don't give a token, a "ok" if the token is saved
+	 * @throws NoSuchUserException 
 	 */
-	
 	@POST
 	@Path("oauth/{actorID}")
 	@Consumes("text/plain")
 	@SuppressWarnings("finally")
-	public Response postOauth(@PathParam("actorID") String actorID, String code) throws URISyntaxException {
-		
-		
+	public Response postOauth(String code) throws URISyntaxException, NoSuchUserException {
+		String uuid = SecurityContextHolder.getContext().getAuthentication().getName();
+		com.enseirb.telecom.dngroup.dvd2c.modeldb.User actor = uManager.findUserByUUID(UUID.fromString(uuid));
+		String actorID = actor.getEmail();
 		Client client = ClientBuilder.newClient();
 		String response="";
 		String data;

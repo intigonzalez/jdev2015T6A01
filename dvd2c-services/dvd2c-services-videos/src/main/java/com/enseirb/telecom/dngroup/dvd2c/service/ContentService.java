@@ -16,10 +16,10 @@ public interface ContentService {
 	
 	/**
 	 * Verify if content exist on box and on server
-	 * @param contentsID to verify
+	 * @param integer to verify
 	 * @return
 	 */
-	public abstract boolean contentExist(String contentsID);
+	public abstract boolean contentExist(Integer integer);
 
 	/**
 	 * get all contents from userID
@@ -34,16 +34,16 @@ public interface ContentService {
 	 * @return Content 
 	 * @throws NoContentException 
 	 */
-	public abstract Content getContent(String contentsID) throws NoContentException;
+	public abstract Content getContent(Integer contentsID) throws NoContentException;
 
-	/**
-	 * send a new file (video actually) on box
-	 * @param content
-	 * @param srcfile
-	 * @param id
-	 * @return
-	 */
-	public abstract Content createContent(Content content, String srcfile, String id) throws IOException;
+//	/**
+//	 * send a new file (video actually) on box
+//	 * @param content
+//	 * @param srcfile
+//	 * @param id
+//	 * @return
+//	 */
+//	public abstract Content createContent(Content content, String srcfile) throws IOException;
 
 	/**
 	 * update Content 
@@ -56,7 +56,7 @@ public interface ContentService {
 	 * delete a contents id
 	 * @param contentsID to delete
 	 */
-	public abstract void deleteContent(String contentsID);
+	public abstract void deleteContent(Integer contentsID);
 
 //	/**
 //	 * save uploaded file to new location
@@ -84,10 +84,12 @@ public interface ContentService {
 	 */
 	public abstract void updateContent(String contentsID, String status);
 
-	public abstract Content createContent(String userID,
-			InputStream uploadedInputStream, String[] fileType, File upload) throws IOException;
-
+//	public abstract Content createContent(String userID,
+//			InputStream uploadedInputStream, String[] fileType, File upload) throws IOException;
+//
 	public abstract Content createContent(String userID,
 			InputStream uploadedInputStream, String contentDisposition) throws IOException;
+
+	
 
 }

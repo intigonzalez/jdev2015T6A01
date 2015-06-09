@@ -14,7 +14,26 @@ RegisterForm.controller("mainController", function ($scope, $http) {
             .success(function (data, status, headers, config)
             {
                 console.log("Succeed");
-                window.location.replace("/home.html");
+//                window.location.replace("/index.html");
+                
+                var data = 'j_username=' + encodeURIComponent(person.userID)
+				+ '&j_password=' + encodeURIComponent(person.password)
+//				+ '&remember-me=' + person.rememberMe 
+				+ '&submit=Login';
+				return $http.post('api/authentication', data, {
+					headers : {
+						'Content-Type' : 'application/x-www-form-urlencoded'
+					}
+				}).success(function(response) {
+					
+					window.location.replace("/home.html");
+					return response;
+				}).error(function(response) {
+					console.log("Failed");
+					errorConnection=false;
+				});
+                
+                
             })
             .error(function (data, status, headers, config)
             {

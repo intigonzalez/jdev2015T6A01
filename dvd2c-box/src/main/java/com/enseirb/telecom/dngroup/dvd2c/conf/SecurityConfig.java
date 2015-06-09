@@ -34,6 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 			.authorizeRequests()
 			.antMatchers("/api/application.wadl","/api/app/register/").permitAll()
+			.antMatchers("/api/box/**").permitAll()
 			.anyRequest().authenticated()
 		.and()
 			.formLogin()

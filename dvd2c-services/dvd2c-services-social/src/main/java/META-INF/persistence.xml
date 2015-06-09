@@ -5,6 +5,6 @@
 	<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Permission</class>
 	<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Role</class>
 	<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.ReceiverActor</class>
-	<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.ActivityObjectAudience</class>
+	<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.ActivityObjectExtand</class>
 	</persistence-unit>
 </persistence>

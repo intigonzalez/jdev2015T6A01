@@ -28,8 +28,11 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
         $scope.FriendProfileController = {}; // use to give all the items to the other controller
         $scope.FriendProfileController.getVideoContent = function(friend) {
             $scope.FriendProfileController.videos = []; // object to store videos
-            $http.get(PREFIX_RQ+"/api/app/"+userID+"/relation/"+friend.actorID +"/content")
+            $http.get(PREFIX_RQ+"/api/app/relation/"+friend.uuid +"/content")
                 .success(function(data, status, headers, config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     if ( data.contents !== "" ) {
                         if (angular.isArray(data.contents.content) == false) {
                             $scope.FriendProfileController.videos.push(data.contents.content);
@@ -102,9 +105,12 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
 
         // *****************  Get RoleList****************
         this.getRoleList = function() {
-            $http.get(PREFIX_RQ+"/api/app/"+userID+"/role")
+            $http.get(PREFIX_RQ+"/api/app/role")
                 .success(function(data, status, headers, config) {
-                    if ( data.relations !== "" ) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
+                    if ( data.contactXSDs !== "" ) {
                         if (angular.isArray(data.listRoles.roles) == false) {
                             friends.listRoles.push(data.listRoles.roles);
                         }
@@ -139,14 +145,17 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
         // *****************  Get FriendList ****************
         
         this.getFriendList = function() {
-            $http.get(PREFIX_RQ+"/api/app/"+userID+"/relation")
+            $http.get(PREFIX_RQ+"/api/app/relation")
                 .success(function(data, status, headers, config) {
-                    if ( data.relations !== "" ) {
-                        if (angular.isArray(data.relations.relation) == false) {
-                            friends.list.push(data.relations.relation);
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
+                    if ( data.contactXSDs !== "" ) {
+                        if (angular.isArray(data.contactXSDs.contactXSD) == false) {
+                            friends.list.push(data.contactXSDs.contactXSD);
                         }
                         else {
-                            friends.list = data.relations.relation;
+                            friends.list = data.contactXSDs.contactXSD;
                         }
                     }
                     //console.log(friends.list);
@@ -170,9 +179,12 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
 
         // **** Function to update a friend with PUT Request
         this.updateRelation = function(friend) {
-            var data = {"relation" : friend};
-            $http.put(PREFIX_RQ+"/api/app/"+userID+"/relation/"+friend.actorID, data)
+            var data = {"contactXSD" : friend};
+            $http.put(PREFIX_RQ+"/api/app/relation/"+friend.uuid, data)
                 .success(function() {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     console.log("success");
                 })
                 .error(function() {
@@ -203,8 +215,11 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
         // ********  Add a Friend to the friendList **********
         $scope.addRelation = function(friend_userID) {
 
-            $http.post(PREFIX_RQ + "/api/app/" + userID + "/relation/"+friend_userID)
+            $http.post(PREFIX_RQ + "/api/app/relation/"+friend_userID)
                 .success(function (data, status, headers, config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     console.log("Succeed");
                     // Friend Added successfully
                     friends.addFriendSuccess = 'success';
@@ -222,8 +237,11 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
 
         // ***** Remove a friend *****
         this.removeRelation = function(friend) {
-            $http.delete(PREFIX_RQ + "/api/app/" + userID + "/relation/"+friend.actorID)
+            $http.delete(PREFIX_RQ + "/api/app/relation/"+friend.actorID)
                 .success(function(data,status,headers,config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     var index = friends.getIndex(friend);
                     if (index > -1) {
                         friends.list.splice(index, 1);

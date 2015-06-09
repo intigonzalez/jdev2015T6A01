@@ -4,26 +4,28 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
-
 
 /**
  * The persistent class for the relations database table.
  * 
  */
 @Entity
-@Table(name="role")
-@NamedQuery(name="Role.findAll", query="SELECT r FROM Role r")
+@Table(name = "role")
+@NamedQuery(name = "Role.findAll", query = "SELECT r FROM Role r")
 public class Role extends DBObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -31,35 +33,45 @@ public class Role extends DBObject implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@Column(name="actor_id")
-	@Type(type="uuid-char")
+	@Column(name = "actor_id")
+	@Type(type = "uuid-char")
 	private UUID actorId;
 
 	private String ancestry;
 
 	private String name;
 
-	@Column(name="receiver_type")
+	@Column(name = "receiver_type")
 	private String receiverType;
 
-	@Column(name="sender_type")
+	@Column(name = "sender_type")
 	private String senderType;
 
 	private String type;
 
-	//bi-directional many-to-many association to Contact
-	@ManyToMany
-	@Column(name = "role_contacts")
+	// bi-directional many-to-many association to Contact
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(name = "role_contacts", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "contact_id"))
 	private List<Contact> contacts;
 
-	//bi-directional many-to-many association to Permission
-	@ManyToMany(mappedBy="relations")
+	// bi-directional many-to-many association to Permission
+	@ManyToMany(mappedBy = "relations")
 	private List<Permission> permissions;
-	
-	@OneToMany(mappedBy="role")
-	private List<ActivityObjectAudience> activityObjectAudiences;
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(name = "activity_object_audiences", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "activityObjectExtand_id"))
+	private List<ActivityObjectExtand> activityObjectExtand;
 
 	public Role() {
+	}
+
+	public List<ActivityObjectExtand> getActivityObjectExtand() {
+		return activityObjectExtand;
+	}
+
+	public void setActivityObjectExtand(
+			List<ActivityObjectExtand> activityObjectExtand) {
+		this.activityObjectExtand = activityObjectExtand;
 	}
 
 	public Integer getId() {
@@ -124,6 +136,10 @@ public class Role extends DBObject implements Serializable {
 
 	public void setContacts(List<Contact> contacts) {
 		this.contacts = contacts;
+	}
+
+	public void addContact(Contact contacts) {
+		this.contacts.add(contacts);
 	}
 
 	public List<Permission> getPermissions() {

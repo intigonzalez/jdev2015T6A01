@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
-	<xs:include schemaLocation="relation.xsd"></xs:include>
+	<xs:include schemaLocation="contact.xsd"></xs:include>
 	<xs:include schemaLocation="content.xsd"></xs:include>
 <!-- 	<xs:simpleType name="uuid-type"> -->
 <!-- 		<xs:restriction base="xs:string"> -->

@@ -28,7 +28,6 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Task;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Document;
 import com.enseirb.telecom.dngroup.dvd2c.repository.DocumentRepository;
 import com.enseirb.telecom.dngroup.dvd2c.utils.FileService;
-import com.enseirb.telecom.dngroup.dvd2c.utils.FileService;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
@@ -46,8 +45,6 @@ public class ContentServiceImpl implements ContentService {
 	@Inject
 	MessageBrokerService rabbitMq;
 
-	 
-
 	// private RequestUserService requetUserService = new
 	// RequestUserServiceImpl();
 
@@ -56,11 +53,11 @@ public class ContentServiceImpl implements ContentService {
 	// }
 
 	@Override
-	public boolean contentExist(String contentsID) {
+	public boolean contentExist(Integer contentsID) {
 		try {
 			Integer id = Integer.valueOf(contentsID);
 			return documentRepository.exists(id);
-		} catch (NumberFormatException e)	 {
+		} catch (NumberFormatException e) {
 			return false;
 		}
 	}
@@ -68,58 +65,47 @@ public class ContentServiceImpl implements ContentService {
 	@Override
 	public List<Content> getAllContentsFromUser(UUID userID) {
 		List<Content> listContent = new ArrayList<Content>();
-
 		try {
-			
-			Iterable<Document> contentsDb = documentRepository.findAll();
-			Iterator<Document> itr = contentsDb.iterator();
-			while (itr.hasNext()) {
-				Document document = itr.next();
-				if (document.getActorId() == userID) {
-					listContent.add(document.toContent());
-				}
+			Iterable<Document> contentsDb = documentRepository
+					.findByActorUUID(userID);
+			for (Document document : contentsDb) {
+				listContent.add(document.toContent());
 			}
-		} catch (NumberFormatException e)	 {
+		} catch (NumberFormatException e) {
+			LOGGER.error("NumberFormatException", e);
 		}
-
 		return listContent;
 	}
 
 	@Override
-	public Content getContent(String contentsID) throws NoContentException {
-		try {
-			Integer id = Integer.valueOf(contentsID);
-			Document document = documentRepository.findOne(id);
-			return document.toContent();
-		} catch (NumberFormatException e) {
-			throw new NoContentException(contentsID);
-		}
+	public Content getContent(Integer contentsID) throws NoContentException {
+		Document document = documentRepository.findOne(contentsID);
+		return document.toContent();
 	}
 
-	@Override
-	public Content createContent(String userID,
-			InputStream uploadedInputStream, String[] fileType, File upload)
-			throws IOException {
-		LOGGER.debug("New file write on system {}", upload.getAbsolutePath());
-		writeToFile(uploadedInputStream, upload);
-		LOGGER.debug("New file uploaded with the type {}", fileType[0]);
-		Content content = new Content();
-		content.setName(upload.getName());
-		content.setActorID(userID);
-		content.setStatus("In progress");
-		content.setType(fileType[0]);
-		UUID uuid = UUID.randomUUID();
-		content.setContentsID(uuid.toString().replace("-", ""));
-		String link = "/videos/" + userID + "/" + uuid.toString();
-		content.setLink(link);
-		long unixTime = System.currentTimeMillis() / 1000L;
-		content.setUnixTime(unixTime);
-
-		content = createContent(content, upload.getAbsolutePath(),
-				content.getContentsID());
-		return content;
-	}
-
+	// @Override
+	// public Content createContent(String userID,
+	// InputStream uploadedInputStream, String[] fileType, File upload)
+	// throws IOException {
+	// LOGGER.debug("New file write on system {}", upload.getAbsolutePath());
+	// writeToFile(uploadedInputStream, upload);
+	// LOGGER.debug("New file uploaded with the type {}", fileType[0]);
+	// Content content = new Content();
+	// content.setName(upload.getName());
+	// content.setActorID(userID);
+	// content.setStatus("In progress");
+	// content.setType(fileType[0]);
+	// UUID uuid = UUID.randomUUID();
+	// // content.setContentsID(uuid.toString().replace("-", ""));
+	// String link = "/videos/" + uuid.toString();
+	// content.setLink(link);
+	// long unixTime = System.currentTimeMillis() / 1000L;
+	// content.setUnixTime(unixTime);
+	//
+	// content = createContent(content, upload.getAbsolutePath());
+	// return content;
+	// }
+	//
 	@Override
 	public Content createContent(String userID,
 			InputStream uploadedInputStream, String contentDisposition)
@@ -161,19 +147,19 @@ public class ContentServiceImpl implements ContentService {
 		content.setName(filename);
 		content.setActorID(userID);
 		content.setType(fileType);
-		content.setContentsID(uuid.toString().replace("-", ""));
+		// content.setContentsID(uuid.toString().replace("-", ""));
 		content.setStatus("In progress");
 
 		switch (fileType) {
 		case "video":
-			link = "/videos/" + userID + "/" + uuid.toString();
+			link = "/videos/" + uuid.toString();
 			break;
 		case "image":
-			link = "/pictures/" + userID + "/" + uuid.toString();
+			link = "/pictures/" + uuid.toString();
 			content.setStatus("success");
 			break;
 		default:
-			link = "/cloud/" + userID + "/" + uuid.toString();
+			link = "/cloud/" + uuid.toString();
 			content.setStatus("success");
 			break;
 		}
@@ -197,8 +183,7 @@ public class ContentServiceImpl implements ContentService {
 		try {
 			Files.move(tempFile, newFile);
 			LOGGER.debug("File moved");
-			content = createContent(content, newFile.getAbsolutePath(),
-					content.getContentsID());
+			content = createContent(content, newFile.getAbsolutePath());
 			return content;
 		} catch (IOException e) {
 			LOGGER.error("Can not create the file are you corect right ?");
@@ -207,16 +192,16 @@ public class ContentServiceImpl implements ContentService {
 
 	}
 
-	@Override
-	public Content createContent(Content content, String srcfile, String id)
+	
+	protected Content createContent(Content content, String srcfile)
 			throws IOException {
-
+		Document d = documentRepository.save(new Document(content));
 		switch (content.getType()) {
 		case "video":
 			try {
 				Task task = new Task();
 				task.setTask("adaptation.commons.ddo");
-				task.setId(id);
+				task.setId(d.getId());
 				task.getArgs().add(srcfile);
 				task.getArgs().add(content.getLink());
 
@@ -239,7 +224,7 @@ public class ContentServiceImpl implements ContentService {
 			try {
 				Task task = new Task();
 				task.setTask("adaptation.commons.image_processing");
-				task.setId(id);
+				task.setId(d.getId());
 				task.getArgs().add(srcfile);
 				task.getArgs().add(content.getLink());
 
@@ -267,8 +252,8 @@ public class ContentServiceImpl implements ContentService {
 		// authorization.setGroupID(0);
 		// authorization.getAction().add("action");
 		// content.getAuthorization().add(authorization);
-		documentRepository.save(new Document(content));
-		return content;
+
+		return d.toContent();
 	}
 
 	@Override
@@ -294,25 +279,24 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public void deleteContent(String contentsID) {
-		
+	public void deleteContent(Integer contentsID) {
+
 		// The content then must be deleted into the folder !
+
+		Document document = documentRepository.findOne(contentsID);
+
+		String path = CliConfSingleton.contentPath + document.getFileLink();
+		LOGGER.info("remove content : {}", path);
 		try {
-			Integer id = Integer.valueOf(contentsID);
-			Document document = documentRepository.findOne(id);
-			
-			String path = CliConfSingleton.contentPath + document.getFileLink();
-			LOGGER.info("remove content : {}", path);
-			try {
-				FileService.deleteFolder(path);
-			} catch (Exception e) {
-				// XXX: ok ?
-				LOGGER.error("Removing content failed for {}", new Object[] { path, e });
-			}
-			// Delete into database
-			documentRepository.delete(id);
-		} catch (NumberFormatException e)	 {
+			FileService.deleteFolder(path);
+		} catch (Exception e) {
+			// XXX: ok ?
+			LOGGER.error("Removing content failed for {}", new Object[] { path,
+					e });
 		}
+		// Delete into database
+		documentRepository.delete(contentsID);
+
 	}
 
 	public List<Content> getAllContent(String userID, ContactXSD relation) {
@@ -331,35 +315,35 @@ public class ContentServiceImpl implements ContentService {
 				if ((document.getActorId() != null)
 						&& (document.getActorId().equals(userID))) {
 					// For each group the relation belongs to
-					//RBAC: fix
-//					for (int i = 0; i < relation.getRole().size(); i++) {
-//						if (contentRepositoryObject.getMetadata() != null) {
-//							if (contentRepositoryObject.getMetadata().size() == 0) {
-//
-//								break search;
-//							}
-//						}
-//						for (int j = 0; j < contentRepositoryObject
-//								.getMetadata().size(); j++) {
-//
-//							if (relation
-//									.getRole()
-//									.get(i)
-//									.equals(contentRepositoryObject
-//											.getMetadata().get(j))) {
-//								contentRepositoryObject.getMetadata().clear();
-//								contentRepositoryObject
-//										.setLink(CliConfSingleton.publicAddr
-//												+ contentRepositoryObject
-//														.getLink());
-//								listContent.add(contentRepositoryObject
-//										.toContent());
-//								break search;
-//							} else {
-//								LOGGER.debug("Group is not the same. ");
-//							}
-//						}
-//					}
+					// RBAC: fix
+					// for (int i = 0; i < relation.getRole().size(); i++) {
+					// if (contentRepositoryObject.getMetadata() != null) {
+					// if (contentRepositoryObject.getMetadata().size() == 0) {
+					//
+					// break search;
+					// }
+					// }
+					// for (int j = 0; j < contentRepositoryObject
+					// .getMetadata().size(); j++) {
+					//
+					// if (relation
+					// .getRole()
+					// .get(i)
+					// .equals(contentRepositoryObject
+					// .getMetadata().get(j))) {
+					// contentRepositoryObject.getMetadata().clear();
+					// contentRepositoryObject
+					// .setLink(CliConfSingleton.publicAddr
+					// + contentRepositoryObject
+					// .getLink());
+					// listContent.add(contentRepositoryObject
+					// .toContent());
+					// break search;
+					// } else {
+					// LOGGER.debug("Group is not the same. ");
+					// }
+					// }
+					// }
 				}
 			}
 		} catch (Exception e) {
@@ -376,7 +360,7 @@ public class ContentServiceImpl implements ContentService {
 			Document document = documentRepository.findOne(id);
 			document.setFileProcessing(status);
 			documentRepository.save(document);
-		} catch (NumberFormatException e)	 {
+		} catch (NumberFormatException e) {
 		}
 	}
 

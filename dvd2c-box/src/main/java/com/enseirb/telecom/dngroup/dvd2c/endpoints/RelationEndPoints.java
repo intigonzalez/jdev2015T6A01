@@ -3,6 +3,7 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,6 +24,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRoleException;
@@ -32,13 +34,14 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.Contact;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 
 //import com.enseirb.telecom.s9.Relation;
 
 // The Java class will be hosted at the URI path "/app/friends"
-@Path("app/{userUUID}/relation")
+@Path("app/relation")
 // @RolesAllowed("other") //The roles must be adapted depending on the function
 // !
 public class RelationEndPoints {
@@ -54,7 +57,7 @@ public class RelationEndPoints {
 	/**
 	 * get user for a remote host
 	 * 
-	 * @param userIDFromPath
+	 * @param uuid
 	 *            the userID to get information
 	 * @param relationUUID
 	 *            the userID of request
@@ -63,12 +66,13 @@ public class RelationEndPoints {
 	@GET
 	@Path("from/{relationUUID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public User getMeFRH(@PathParam("userUUID") UUID userIDFromPath,
-			@PathParam("relationUUID") UUID relationUUID) {
+	public User getMeFRH(@PathParam("relationUUID") UUID relationUUID) {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
 		try {
-			if (rManager.RelationExist(userIDFromPath, relationUUID) == true) {
+			if (rManager.RelationExist(UUID.fromString(uuid), relationUUID) == true) {
 
-				return aService.getContactInformation(userIDFromPath).toXSDUser();
+				return aService.getContactInformation(UUID.fromString(uuid)).toXSDUser();
 			} else {
 				throw new WebApplicationException(Status.NOT_FOUND);
 			}
@@ -80,7 +84,7 @@ public class RelationEndPoints {
 	/**
 	 * Get relation information
 	 * 
-	 * @param userIDFromPath
+	 * @param uuid
 	 *            the userID of the request
 	 * @param relationUUID
 	 *            the relation to get information
@@ -90,10 +94,11 @@ public class RelationEndPoints {
 	@GET
 	@Path("{relationUUID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ContactXSD getRelation(@PathParam("userUUID") UUID userIDFromPath,
-			@PathParam("relationUUID") UUID relationUUID) {
+	public ContactXSD getRelation(@PathParam("relationUUID") UUID relationUUID) {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
 		try {
-			return rManager.getRelation(userIDFromPath, relationUUID);
+			return rManager.getContact(UUID.fromString(uuid), relationUUID).toContactXSD();
 		} catch (NoSuchContactException e) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
@@ -112,17 +117,18 @@ public class RelationEndPoints {
 	@Path("{relationUUID}/content")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<Content> getRelationContents(
-			@PathParam("relationUUID") UUID relationID,
-			@PathParam("userUUID") UUID userID) {
+			@PathParam("relationUUID") UUID relationID) {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
 		// TODO: need to change beacause the content of one user doit etre
 		// recupre directement aupré de la ressource utilisateur
 
 		ContactXSD relation;
 		try {
-			relation = rManager.getRelation(userID, relationID);
+			relation = rManager.getContact(UUID.fromString(uuid), relationID).toContactXSD();
 
 			if (relation.getAprouve() == 3)
-				return rManager.getAllContent(userID, relationID);
+				return rManager.getAllContent(UUID.fromString(uuid), relationID);
 			else {
 				throw new WebApplicationException(Status.FORBIDDEN);
 			}
@@ -135,17 +141,23 @@ public class RelationEndPoints {
 	/**
 	 * Get the list of relation of the userID
 	 * 
-	 * @param userIDFromPath
+	 * @param uuid
 	 *            The userID to get list of relation
 	 * @return the list of relation
 	 */
 	@RolesAllowed("other")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<ContactXSD> getListRelation(
-			@PathParam("userUUID") UUID userIDFromPath) {
-
-		return rManager.getListContact(userIDFromPath);
+	public List<ContactXSD> getListRelation() {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
+		List<ContactXSD> listContactXSD = new ArrayList<ContactXSD>();
+		List<Contact> contacts = rManager.getListContact(UUID.fromString(uuid));
+		for (Contact contact : contacts) {
+			
+			listContactXSD.add(contact.toContactXSD());
+		}
+		return listContactXSD;
 
 	}
 
@@ -153,7 +165,7 @@ public class RelationEndPoints {
 	 * add relation on database of userID
 	 * 
 	 * @Deprecated
-	 * @param userIDFromPath
+	 * @param uuid
 	 *            the userID root
 	 * @param relationID
 	 *            the relation to add at userID
@@ -163,10 +175,13 @@ public class RelationEndPoints {
 	@Deprecated
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response oldpostFriend(@PathParam("userUUID") UUID userIDFromPath,
-			ContactXSD relationID) throws URISyntaxException {
-		return postFriend2(userIDFromPath,
-				UUID.fromString(relationID.getUuid()));
+	public Response oldpostFriend(ContactXSD relationID)
+			throws URISyntaxException {
+		
+		LOGGER.warn("maybe this fonction don't work");
+		return postFriend2(UUID.fromString(relationID.getUuid()));
+		// return postFriend2(UUID.fromString(uuid),
+		// UUID.fromString(relationID.getUuid()));
 	}
 
 	/**
@@ -182,20 +197,19 @@ public class RelationEndPoints {
 	@RolesAllowed("other")
 	@POST
 	@Path("{relationUUID}")
-	public Response postFriend2(@PathParam("userUUID") UUID userUUID,
-			@PathParam("relationUUID") UUID relationUUID)
+	public Response postFriend2(@PathParam("relationUUID") UUID relationUUID)
 			throws URISyntaxException {
-		LOGGER.debug("add a relation between {} and {} ", userUUID,
-				relationUUID);
-		if (rManager.RelationExist(userUUID, relationUUID) == false) {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
+		LOGGER.debug("add a relation between {} and {} ", uuid, relationUUID);
+		if (rManager.RelationExist(UUID.fromString(uuid), relationUUID) == false) {
 			try {
-				ContactXSD r = rManager.createRelation(userUUID, relationUUID,
-						false);
+				ContactXSD r = rManager.createRelation(UUID.fromString(uuid),
+						relationUUID, false);
 				// RABC: FIXE it
-				return Response
-						.created(
-								new URI("app/" + userUUID + "/relation/"
-										+ r.getUuid())).build();
+				return Response.created(
+						new URI("app/" + uuid + "/relation/" + r.getUuid()))
+						.build();
 			} catch (NoSuchUserException e) {
 				throw new WebApplicationException("no such user", 404);
 			} catch (IOException e) {
@@ -214,7 +228,7 @@ public class RelationEndPoints {
 	/**
 	 * add relation on database of userID from this relation
 	 * 
-	 * @param userIDFromPath
+	 * @param uuid
 	 * @param relation
 	 * @return
 	 * @throws URISyntaxException
@@ -222,15 +236,17 @@ public class RelationEndPoints {
 	@POST
 	@Path("frombox")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postFriendFromBox(@PathParam("userID") UUID userIDFromPath,
-			ContactXSD relation) throws URISyntaxException {
-		LOGGER.debug("add a relation from box between {} and {} ",
-				userIDFromPath, relation.getActorID());
+	public Response postFriendFromBox(ContactXSD relation)
+			throws URISyntaxException {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
+		LOGGER.debug("add a relation from box between {} and {} ", uuid,
+				relation.getActorID());
 
-		if (rManager.RelationExist(userIDFromPath,
+		if (rManager.RelationExist(UUID.fromString(uuid),
 				UUID.fromString(relation.getActorID())) == false) {
 			try {
-				rManager.createRelation(userIDFromPath,
+				rManager.createRelation(UUID.fromString(uuid),
 						UUID.fromString(relation.getActorID()), true);
 			} catch (NoSuchUserException e) {
 				throw new WebApplicationException(Status.NOT_FOUND);
@@ -251,14 +267,17 @@ public class RelationEndPoints {
 	@RolesAllowed("other")
 	@Path("{relationUUID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putFriend(@PathParam("userUUID") UUID userUUID,
-			@PathParam("relationUUID") UUID relationUUID, ContactXSD contact) {
+	public Response putFriend(@PathParam("relationUUID") UUID relationUUID,
+			ContactXSD contact) {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
 		// need to verify the friend and after this modifies the friend
 		try {
-			ContactXSD c = rManager.getRelation(userUUID, relationUUID);
+			ContactXSD c = rManager.getContact(UUID.fromString(uuid),
+					relationUUID).toContactXSD();
 			contact.setUuid(c.getUuid());
 			if (contact.getUuid().equals(relationUUID.toString())) {
-				rManager.saveRelation(userUUID, contact);
+				rManager.saveRelation(UUID.fromString(uuid), contact);
 				return Response.status(200).build();
 			} else {
 				return Response.status(Status.NOT_ACCEPTABLE).build();
@@ -287,22 +306,24 @@ public class RelationEndPoints {
 	/**
 	 * Update the list of friend of UserID Update information of each user
 	 * 
-	 * @param userIDFromPath
+	 * @param uuid
 	 *            the userID to update relation
 	 * @return webstatus
 	 */
 	@PUT
 	@RolesAllowed("other")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response updateListFriend(@PathParam("userUUID") UUID userIDFromPath) {
+	public Response updateListFriend() {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
 		try {
-			rManager.updateRelation(userIDFromPath);
+			rManager.updateRelation(UUID.fromString(uuid));
 			return Response.status(200).build();
 		} catch (IOException e) {
 			LOGGER.error("Updating fail can not connect", e);
 			return Response.status(403).build();
 		} catch (NoSuchUserException e) {
-			LOGGER.error("Updating fail no user {}", userIDFromPath, e);
+			LOGGER.error("Updating fail no user {}", uuid, e);
 			return Response.status(403).build();
 		} catch (Exception e) {
 			LOGGER.error("Updating fail", e);
@@ -313,7 +334,7 @@ public class RelationEndPoints {
 	/**
 	 * delete a relation on this box and in the over box
 	 * 
-	 * @param userIDFromPath
+	 * @param uuid
 	 * @param relationUUID
 	 * @return
 	 */
@@ -321,20 +342,19 @@ public class RelationEndPoints {
 	@Path("{relationUUID}")
 	@RolesAllowed("other")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteFriend(@PathParam("userUUID") UUID userIDFromPath,
-			@PathParam("relationUUID") UUID relationUUID) {
+	public Response deleteFriend(@PathParam("relationUUID") UUID relationUUID) {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
 		try {
-			rManager.deleteRelation(userIDFromPath, relationUUID);
+			rManager.deleteRelation(UUID.fromString(uuid), relationUUID);
 		} catch (NoSuchUserException e) {
-			LOGGER.info("no user {} or no contact {} found", userIDFromPath,
-					relationUUID);
+			LOGGER.info("no user {} or no contact {} found", uuid, relationUUID);
 			return Response.status(404).build();
 		} catch (NoSuchBoxException e) {
 			LOGGER.info("no box found for your contact {}", relationUUID);
 			return Response.status(404).build();
 		} catch (NoRelationException e) {
-			LOGGER.info("no relation found between{} {}", userIDFromPath,
-					relationUUID);
+			LOGGER.info("no relation found between{} {}", uuid, relationUUID);
 			return Response.status(404).build();
 		}
 		return Response.status(200).build();

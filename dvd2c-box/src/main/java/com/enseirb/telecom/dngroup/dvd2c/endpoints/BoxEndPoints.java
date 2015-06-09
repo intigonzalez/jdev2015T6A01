@@ -3,6 +3,7 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +17,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NoContentException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -31,6 +33,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.ActivityObjectExtand;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
@@ -47,7 +50,7 @@ public class BoxEndPoints {
 	protected RelationService rManager;
 
 	@Autowired
-	protected ContentService uManager;
+	protected ContentService cManager;
 
 	/**
 	 * get box with boxID
@@ -113,7 +116,7 @@ public class BoxEndPoints {
 		LOGGER.debug("try to setAprouve a relation from a other box {} and {}",
 				userId, relationId);
 		try {
-			rManager.getRelation(userId, relationId);
+			rManager.getContact(userId, relationId);
 
 			rManager.setAprouveBox(userId, relationId);
 			return Response.status(Status.ACCEPTED).build();
@@ -143,7 +146,7 @@ public class BoxEndPoints {
 	 * @return
 	 */
 	@DELETE
-	@Path("relation/{userId}/{relationId}")
+	@Path("relation/{relationId}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteFriend(@PathParam("userId") UUID userId,
 			@PathParam("relationId") UUID relationId) {
@@ -152,46 +155,54 @@ public class BoxEndPoints {
 
 		try {
 			rManager.deleteRelationBox(userId, relationId);
+			return Response.status(200).build();
 		} catch (NoRelationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return Response.status(404).build();
 		}
-		return Response.status(200).build();
+
 	}
 
 	/**
 	 * This endpoint is used by a box, to get the content of one of its
 	 * relations.
 	 * 
-	 * @param relationID
+	 * @param contactUUID
 	 *            : remote user (the relation)
-	 * @param userID
+	 * @param actorUUID
 	 *            : local user (the one who stores content)
 	 * @return
+	 * @throws NoContentException
 	 */
 	@GET
-	@Path("{userID}/content/{relationID}")
+	@Path("{actorUUID}/content/{contactUUID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<Content> getLocalContentForRelation(
-			@PathParam("relationID") UUID relationID,
-			@PathParam("userID") UUID userID) {
+			@PathParam("contactUUID") UUID contactUUID,
+			@PathParam("actorUUID") UUID actorUUID) throws NoContentException {
 
-		LOGGER.debug("Receive Request to get list content from {}", relationID);
-		try {
+		LOGGER.debug("Receive Request to get list content from {}", contactUUID);
+		// try {
 
-			ContactXSD relation;
+		// ContactXSD relation;
+		// relation = rManager.getRelation(actorUUID, contactUUID);
 
-			relation = rManager.getRelation(userID, relationID);
-
-			LOGGER.debug("Check the relation : {}", relation);
-			// //RBAC:need to fix it after merge
-			// List<Content> listContent = uManager
-			// .getAllContent(userID, relation);
-			// return listContent;
-			return null;
-		} catch (NoSuchContactException e) {
-			throw new WebApplicationException(Status.NOT_ACCEPTABLE);
+		LOGGER.debug("Check contact {} and get content of {}", contactUUID,
+				actorUUID);
+		List<Content> content = new ArrayList<Content>();
+		List<ActivityObjectExtand> a = rManager.getActivityForContact(
+				actorUUID, contactUUID);
+		for (ActivityObjectExtand activityObjectExtand : a) {
+			content.add(cManager.getContent(activityObjectExtand.getId()));
 		}
+
+		// //RBAC:need to fix it after merge
+		// List<Content> listContent = uManager
+		// .getAllContent(userID, relation);
+		// return listContent;
+		return content;
+		// } catch (NoSuchContactException e) {
+		// throw new WebApplicationException(Status.NOT_ACCEPTABLE);
+		// }
 
 	}
 

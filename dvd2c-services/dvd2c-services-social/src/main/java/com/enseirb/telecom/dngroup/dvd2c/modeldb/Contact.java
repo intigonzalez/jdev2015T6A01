@@ -7,6 +7,9 @@ import javax.persistence.*;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,10 +43,10 @@ public class Contact extends DBObject implements Serializable {
 	// @Column(name = "ties_count")
 	// private int tiesCount;
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch= FetchType.EAGER)
+//	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "contact_role", joinColumns = @JoinColumn(name = "contact_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-	
-	private List<Role> role;
+	private List<Role> roles;
 
 	public Contact() {
 	}
@@ -73,11 +76,11 @@ public class Contact extends DBObject implements Serializable {
 	// }
 
 	public List<Role> getRole() {
-		return this.role;
+		return this.roles;
 	}
 
 	public void setRole(List<Role> role) {
-		this.role = role;
+		this.roles = role;
 	}
 
 	public int getStatus() {
@@ -102,6 +105,36 @@ public class Contact extends DBObject implements Serializable {
 
 	public void setOwnerId(UUID ownerId) {
 		this.ownerId = ownerId;
+	}
+
+	/**
+	 * @param contact
+	 * @return
+	 */
+	public ContactXSD toContactXSD() {
+		ReceiverActor receiverActor = getReceiverActor();
+		ContactXSD contactXSD = new ContactXSD();
+		contactXSD.setActorID(receiverActor.getEmail());
+		contactXSD.setAprouve(getStatus());
+		contactXSD.setFirstname(receiverActor.getFirstname());
+		contactXSD.setSurname(receiverActor.getSurname());
+		contactXSD.setUuid(receiverActor.getId().toString());
+
+		contactXSD.getRole().addAll(getRolesNames(getRole()));
+
+		return contactXSD;
+	}
+
+	/**
+	 * @param roles
+	 * @return
+	 */
+	public static List<String> getRolesNames(List<Role> roles) {
+		List<String> roleName = new ArrayList<String>();
+		for (Role role : roles) {
+			roleName.add(role.getName());
+		}
+		return roleName;
 	}
 
 }

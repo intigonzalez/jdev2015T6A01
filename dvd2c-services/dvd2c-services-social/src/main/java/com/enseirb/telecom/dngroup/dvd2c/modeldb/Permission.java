@@ -31,10 +31,9 @@ public class Permission extends DBObject implements Serializable {
 	@JoinColumn(name="id")
 	private List<Role> relations;
 
-	public Permission(String action,String object,List<Role> relations) {
+	public Permission(String action,String object) {
 		this.action=action;
 		this.object=object;
-		this.relations=relations;
 	}
 	
 	public Permission() {

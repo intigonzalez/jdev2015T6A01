@@ -70,7 +70,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
         
         this.getSmtp = function ()
         {
-        	$http.get(PREFIX_RQ + "/api/app/snapmail/" + userID + "/smtp")
+        	$http.get(PREFIX_RQ + "/api/app/snapmail/smtp")
             .success(function (data, status, headers, config)
             {
             	if (headers('Content-Type').indexOf("text/html")==0) {

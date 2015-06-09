@@ -20,6 +20,9 @@ app.config(function($routeProvider) {
 app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$routeParams', '$location', function ($scope, $timeout, $window, $http, $routeParams, $location) {
 	$http.get(PREFIX_RQ + "/api/app/" + $routeParams.sender + "/content/" + $routeParams.id)
 	.success(function (data, status, headers, config) {
+		if (headers('Content-Type').indexOf("text/html")==0) {
+			window.location.replace("/");
+		} 
 		$scope.content = data.content;
 		$scope.contentID = data.content.contentsID;
 		$scope.sender = data.content.actorID;

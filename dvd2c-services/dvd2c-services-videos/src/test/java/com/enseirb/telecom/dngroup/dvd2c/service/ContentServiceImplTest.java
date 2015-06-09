@@ -73,14 +73,14 @@ public class ContentServiceImplTest {
 	}
 	@Test
 	public void testNotInteger() throws IOException {
-		boolean b = toTest.contentExist("e");
+		boolean b = toTest.contentExist(-1);
 		assertTrue(!b);
 
 	}
 	@Test
 	public void testFound() throws IOException {
 		when(toTest.documentRepository.exists(2)).thenReturn(true );
-		boolean b = toTest.contentExist("2");
+		boolean b = toTest.contentExist(2);
 		assertTrue(b);
 
 	}

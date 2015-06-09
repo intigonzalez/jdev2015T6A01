@@ -53,9 +53,7 @@ public class UserEndPoints extends HttpServlet {
 	@Path("/account/user")
 	@GET()
 	public Response getverification() {
-		Authentication auth = SecurityContextHolder.getContext()
-				.getAuthentication();
-		String uuid = auth.getName(); // get logged in username
+		String uuid = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		return Response
 				.ok("authenticated successfully!")

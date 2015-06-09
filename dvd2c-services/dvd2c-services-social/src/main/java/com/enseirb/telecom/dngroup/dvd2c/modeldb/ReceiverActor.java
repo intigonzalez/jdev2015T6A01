@@ -172,6 +172,14 @@ public class ReceiverActor extends DBObject implements Serializable {
 		this.subjectType = subjectType;
 	}
 
+	public void fromUser(User receiverUser) {
+		this.setSurname(receiverUser.getSurname());
+		this.setFirstname(receiverUser.getFirstname());
+		this.setEmail(receiverUser.getEmail());
+		this.setId(receiverUser.getId());
+		
+	}
+
 
 
 }

@@ -20,14 +20,17 @@ angular.module('myApp.mypictures', ['ngRoute', 'ui.bootstrap'])
 
         pictures.list = [];
         pictures.roles = [
-            {"roleID":"0" , "roleName":"public", "info":"Seen by all your relations"},
-            {"roleID":"1" , "roleName":"Family", "info":"Seen by all your family only"},
-            {"roleID":"2" , "roleName":"Friends", "info":"Seen by all your friends only"},
-            {"roleID":"3" , "roleName":"Pro", "info":"Seen by all your professional contacts"},
-        ];  //List of role
+                        {"roleID":"Public" , "roleName":"public", "info":"Seen by all your relations"},
+                        {"roleID":"Family" , "roleName":"Family", "info":"Seen by all your family only"},
+                        {"roleID":"Friends" , "roleName":"Friends", "info":"Seen by all your friends only"},
+                        {"roleID":"Pro" , "roleName":"Pro", "info":"Seen by all your professional contacts"},
+     ];  //List of role
         this.getPictures = function() {
-            $http.get(PREFIX_RQ + "/api/app/" + userID + "/content")
+            $http.get(PREFIX_RQ + "/api/app/content")
                 .success(function (data, status, headers, config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     if ( data.contents !== "" ) {
                         if (angular.isArray(data.contents.content) == false) {
                         	if(data.contents.content.type === "image")
@@ -67,8 +70,11 @@ angular.module('myApp.mypictures', ['ngRoute', 'ui.bootstrap'])
         // **** Function to update a content
         this.updateContent = function(content) {
             var data = {"content" : content};
-            $http.put(PREFIX_RQ+"/api/app/"+userID+"/content/"+content.contentsID,  data)
+            $http.put(PREFIX_RQ+"/api/app/content/"+content.contentsID,  data)
                 .success(function() {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     console.log("success");
                 })
                 .error(function() {
@@ -78,8 +84,11 @@ angular.module('myApp.mypictures', ['ngRoute', 'ui.bootstrap'])
 
         // ***** Remove a picture *****
         this.removePicture = function(content) {
-            $http.delete(PREFIX_RQ + "/api/app/" + userID + "/content/"+content.contentsID)
+            $http.delete(PREFIX_RQ + "/api/app/content/"+content.contentsID)
                 .success(function(data,status,headers,config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     var index = pictures.getIndex(content);
                     if (index > -1) {
                         pictures.list.splice(index, 1);

@@ -20,14 +20,17 @@ angular.module('myApp.mycloud', ['ngRoute', 'ui.bootstrap'])
 
         documents.list = [];
         documents.roles = [
-            {"roleID":"0" , "roleName":"public", "info":"Seen by all your relations"},
-            {"roleID":"1" , "roleName":"Family", "info":"Seen by all your family only"},
-            {"roleID":"2" , "roleName":"Friends", "info":"Seen by all your friends only"},
-            {"roleID":"3" , "roleName":"Pro", "info":"Seen by all your professional contacts"},
-        ];  //List of role
+            {"roleID":"Public" 	, "roleName":"public"	, "info":"Seen by all your relations"},
+            {"roleID":"Family" 	, "roleName":"Family"	, "info":"Seen by all your family only"},
+            {"roleID":"Friends" , "roleName":"Friends"	, "info":"Seen by all your friends only"},
+            {"roleID":"Pro" 	, "roleName":"Pro"		, "info":"Seen by all your professional contacts"},
+        ];  // List of role
         this.getDocuments = function() {
-            $http.get(PREFIX_RQ + "/api/app/" + userID + "/content")
+            $http.get(PREFIX_RQ + "/api/app/content")
                 .success(function (data, status, headers, config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     if ( data.contents !== "" ) {
                         if (angular.isArray(data.contents.content) == false) {
                         	if(data.contents.content.type != "image" && data.contents.content.type != "video")
@@ -67,8 +70,11 @@ angular.module('myApp.mycloud', ['ngRoute', 'ui.bootstrap'])
         // **** Function to update a content
         this.updateContent = function(content) {
             var data = {"content" : content};
-            $http.put(PREFIX_RQ+"/api/app/"+userID+"/content/"+content.contentsID,  data)
+            $http.put(PREFIX_RQ+"/api/app/content/"+content.contentsID,  data)
                 .success(function() {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     console.log("success");
                 })
                 .error(function() {
@@ -78,8 +84,11 @@ angular.module('myApp.mycloud', ['ngRoute', 'ui.bootstrap'])
 
         // ***** Remove a document *****
         this.removeDocument = function(content) {
-            $http.delete(PREFIX_RQ + "/api/app/" + userID + "/content/"+content.contentsID)
+            $http.delete(PREFIX_RQ + "/api/app/content/"+content.contentsID)
                 .success(function(data,status,headers,config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     var index = documents.getIndex(content);
                     if (index > -1) {
                         documents.list.splice(index, 1);
@@ -126,21 +135,21 @@ angular.module('myApp.mycloud', ['ngRoute', 'ui.bootstrap'])
         $scope.roles = angular.copy(roles);
         if (document.metadata === undefined) {
         } else {
-            if ( angular.isArray(document.metadata.roleID) ) {
-                angular.forEach(document.metadata.roleID, function (id) {
+            if ( angular.isArray(document.metadata) ) {
+                angular.forEach(document.metadata, function (id) {
                     var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", id);
                     $scope.roles[index].value = true;
                 });
             }
             else {
-                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", document.roleID);
+                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", document.metadata);
                 $scope.roles[index].value=true;
             }
         }
-        //console.log(roles);
+        // console.log(roles);
 
         $scope.ok = function () {
-            //console.log($scope.roles);
+            // console.log($scope.roles);
             document.metadata= [];
             angular.forEach($scope.roles, function(role) {
                 if (role.value == true) {

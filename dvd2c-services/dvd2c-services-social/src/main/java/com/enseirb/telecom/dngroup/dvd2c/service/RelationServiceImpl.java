@@ -22,12 +22,15 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.ActivityObjectExtand;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Contact;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Permission;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ReceiverActor;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Role;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
+import com.enseirb.telecom.dngroup.dvd2c.repository.ActivityObjectAudienceRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.ContactRepository;
+import com.enseirb.telecom.dngroup.dvd2c.repository.PermissionRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.ReceiverActorRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.RoleRepository;
 import com.enseirb.telecom.dngroup.dvd2c.request.RequestRelationService;
@@ -62,7 +65,13 @@ public class RelationServiceImpl implements RelationService {
 	RequestContentService requestContentService;
 
 	@Inject
+	ActivityObjectAudienceRepository activityObjectExtandRepo;
+
+	@Inject
 	private ReceiverActorRepository receiverActorRepository;
+
+	@Inject
+	private PermissionRepository permissionRepository;
 
 	@Override
 	public boolean RelationExist(UUID UserUUID, UUID actorUUID) {
@@ -97,44 +106,23 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public ContactXSD getRelation(UUID ownerID, UUID relationID)
+	public Contact getContact(UUID ownerID, UUID contactID)
 			throws NoSuchContactException {
 
 		Contact contact;
-		if ((contact = contactRepository.findContact(ownerID, relationID)) == null)
+		if ((contact = contactRepository.findContact(ownerID, contactID)) == null)
 			throw new NoSuchContactException();
-		ContactXSD relation = toContactXSD(contact);
 
-		return relation;
+		return contact;
 
-	}
-
-	/**
-	 * @param contact
-	 * @return
-	 */
-	private ContactXSD toContactXSD(Contact contact) {
-		ReceiverActor receiverActor = contact.getReceiverActor();
-		ContactXSD contactXSD = new ContactXSD();
-		contactXSD.setActorID(receiverActor.getEmail());
-		contactXSD.setAprouve(contact.getStatus());
-		contactXSD.setFirstname(receiverActor.getFirstname());
-		contactXSD.setSurname(receiverActor.getSurname());
-		contactXSD.setUuid(contact.getReceiverActor().getId().toString());
-
-		contactXSD.getRole().addAll(getRolesNames(contact.getRole()));
-
-		return contactXSD;
 	}
 
 	@Override
-	public List<ContactXSD> getListContact(UUID userID) {
-		List<ContactXSD> listContactXSD = new ArrayList<ContactXSD>();
+	public List<Contact> getListContact(UUID userID) {
+
 		List<Contact> contacts = contactRepository.findByOwner(userID);
-		for (Contact contact : contacts) {
-			listContactXSD.add(toContactXSD(contact));
-		}
-		return listContactXSD;
+
+		return contacts;
 	}
 
 	@Override
@@ -146,6 +134,12 @@ public class RelationServiceImpl implements RelationService {
 		 * really exists from the central server Send a request to the right box
 		 * to say it add as a friend
 		 */
+
+		if (RelationExist(userUUID, relationUUID)) {
+			LOGGER.debug("relation allredy existing between {} and {}",
+					userUUID, relationUUID);
+			throw new WebApplicationException(Status.CONFLICT);
+		}
 
 		User user;
 		if ((user = accountService.findUserByUUID(userUUID)) == null) {
@@ -168,7 +162,9 @@ public class RelationServiceImpl implements RelationService {
 				} catch (NoSuchUserException e) {
 					LOGGER.error("user not found :", relationUUID);
 				}
+
 			}
+			receiverActor.fromUser(receiverUser);
 			receiverActorRepository.save(receiverActor);
 		}
 
@@ -183,9 +179,12 @@ public class RelationServiceImpl implements RelationService {
 		// set public relation
 		Role role;
 
-		role = initRolesAndGetPublic(user);
+		if ((role = roleRepository.findByName("Public", user.getId(), TYPE)) == null) {
+			LOGGER.error("this user {} a not role Public", user.getId());
+		}
 
-		contact2.setRole(Arrays.asList(role));
+		// contact2.setRole(Arrays.asList(role));
+		role.addContact(contact2);
 
 		if (!fromBox) {
 			// User receiverActor1;
@@ -203,6 +202,8 @@ public class RelationServiceImpl implements RelationService {
 
 		}
 		contactRepository.save(contact2);
+		roleRepository.save(role);
+
 		ContactXSD contactXSD = new ContactXSD();
 		contactXSD.setActorID(contact2.getReceiverActor().getEmail());
 		contactXSD.setAprouve(contact2.getStatus());
@@ -278,83 +279,85 @@ public class RelationServiceImpl implements RelationService {
 	 * init public, Family, Friends and Pro relation for the user (if not
 	 * already exist)
 	 * 
-	 * @param user
+	 * @param uuid
 	 *            to add the role
 	 * @return the public role
 	 */
-	private Role initRolesAndGetPublic(User user) {
-		//
+	private Role initRolesAndGetPublic(UUID uuid) {
+		Permission permissionRead;
+		Permission permissionComment;
+		Permission permissionPost;
+		Permission permissionDelete;
+		Permission permissionContact;
+
+		if ((permissionRead = permissionRepository.findByName("Read")) == null) {
+			permissionRead = new Permission("Read", "Read content");
+			permissionRepository.save(permissionRead);
+		}
+		if ((permissionComment = permissionRepository.findByName("Comment")) == null) {
+			permissionComment = new Permission("Comment", "Comment content");
+			permissionRepository.save(permissionComment);
+		}
+		if ((permissionPost = permissionRepository.findByName("Post")) == null) {
+			permissionPost = new Permission("Post", "Post content");
+			permissionRepository.save(permissionPost);
+		}
+		if ((permissionDelete = permissionRepository.findByName("Delete")) == null) {
+			permissionDelete = new Permission("Delete", "Delete content");
+			permissionRepository.save(permissionDelete);
+		}
+		if ((permissionContact = permissionRepository.findByName("Contact")) == null) {
+			permissionContact = new Permission("Contact", "Watch contact list");
+			permissionRepository.save(permissionContact);
+		}
+
 		Role roleFamily;
-		if ((roleFamily = roleRepository.findByName("Public", user.getId(),
-				TYPE)) == null) {
+		if ((roleFamily = roleRepository.findByName("Family", uuid, TYPE)) == null) {
 
 			roleFamily = new Role();
-			roleFamily.setActorId(user.getId());
-			roleFamily.setName("Public");
+			roleFamily.setActorId(uuid);
+			roleFamily.setName("Family");
 			roleFamily.setType(TYPE);
 
-			// init permission
-			Permission permission = new Permission("Read", "Family",
-					Arrays.asList(roleFamily));
-			Permission permission2 = new Permission("Comment", "Friends",
-					Arrays.asList(roleFamily));
-			Permission permission3 = new Permission("Post", "Friends",
-					Arrays.asList(roleFamily));
-			roleFamily.setPermissions(Arrays.asList(permission, permission2,
-					permission3));
+			roleFamily.setPermissions(Arrays.asList(permissionRead,
+					permissionComment, permissionContact));
 
 			roleRepository.save(roleFamily);
 		}
 		Role roleFriends;
-		if ((roleFriends = roleRepository.findByName("Public", user.getId(),
-				TYPE)) == null) {
+		if ((roleFriends = roleRepository.findByName("Friends", uuid, TYPE)) == null) {
 
 			roleFriends = new Role();
-			roleFriends.setActorId(user.getId());
-			roleFriends.setName("Public");
+			roleFriends.setActorId(uuid);
+			roleFriends.setName("Friends");
 			roleFriends.setType(TYPE);
 			// init permission
-			Permission permission = new Permission("Read", "Friends",
-					Arrays.asList(roleFriends));
-			Permission permission2 = new Permission("Comment", "Friends",
-					Arrays.asList(roleFriends));
-			Permission permission3 = new Permission("Post", "Friends",
-					Arrays.asList(roleFriends));
-			roleFriends.setPermissions(Arrays.asList(permission, permission2,
-					permission3));
+			roleFriends.setPermissions(Arrays.asList(permissionRead,
+					permissionComment, permissionContact));
 			roleRepository.save(roleFriends);
 		}
 		Role rolePro;
-		if ((rolePro = roleRepository.findByName("Public", user.getId(), TYPE)) == null) {
+		if ((rolePro = roleRepository.findByName("Public", uuid, TYPE)) == null) {
 
 			rolePro = new Role();
-			rolePro.setActorId(user.getId());
+			rolePro.setActorId(uuid);
 			rolePro.setName("Public");
 			rolePro.setType(TYPE);
 			// init permission
-			Permission permission = new Permission("Read", "Pro",
-					Arrays.asList(rolePro));
-			Permission permission2 = new Permission("Comment", "Pro",
-					Arrays.asList(rolePro));
-			Permission permission3 = new Permission("Post", "Pro",
-					Arrays.asList(rolePro));
-			rolePro.setPermissions(Arrays.asList(permission, permission2,
-					permission3));
+			rolePro.setPermissions(Arrays.asList(permissionRead,
+					permissionComment, permissionContact));
 
 			roleRepository.save(rolePro);
 		}
 		Role rolePublic;
-		if ((rolePublic = roleRepository.findByName("Public", user.getId(),
-				TYPE)) == null) {
+		if ((rolePublic = roleRepository.findByName("Public", uuid, TYPE)) == null) {
 
 			rolePublic = new Role();
-			rolePublic.setActorId(user.getId());
+			rolePublic.setActorId(uuid);
 			rolePublic.setName("Public");
 			rolePublic.setType(TYPE);
 			// init permission
-			Permission permission = new Permission("Read", "Public",
-					Arrays.asList(rolePublic));
-			rolePublic.setPermissions(Arrays.asList(permission));
+			rolePublic.setPermissions(Arrays.asList(permissionRead));
 
 			roleRepository.save(rolePublic);
 		}
@@ -408,7 +411,7 @@ public class RelationServiceImpl implements RelationService {
 		}
 		// Or, the user can edit the group his/her relationship is in.
 
-		List<String> roleName = getRolesNames(contact.getRole());
+		List<String> roleName = Contact.getRolesNames(contact.getRole());
 		if (!roleName.equals(contactXSD.getRole())) {
 			contact.getRole().clear();
 			for (String role : contactXSD.getRole()) {
@@ -424,22 +427,6 @@ public class RelationServiceImpl implements RelationService {
 		}
 		contactRepository.save(contact);
 		return;
-	}
-
-	/**
-	 * @param roles
-	 * @return
-	 */
-	private List<String> getRolesNames(List<Role> roles) {
-		List<String> roleName = new ArrayList<String>();
-		// try {
-		for (Role role : roles) {
-			roleName.add(role.getName());
-		}
-		// } catch (LazyInitializationException e) {
-		// LOGGER.error("no Role for this contact");
-		// }
-		return roleName;
 	}
 
 	@Override
@@ -526,27 +513,122 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public void creatDefaultUserRoles(UUID userId) {
+	public void creatDefaultUserRoles(UUID uuid) {
+		initRolesAndGetPublic(uuid);
 		Role roleUser;
-		if ((roleUser = roleRepository.findByName("USER", userId, "Box")) == null) {
+		if ((roleUser = roleRepository.findByName("USER", uuid, "Box")) == null) {
 
 			roleUser = new Role();
-			roleUser.setActorId(userId);
-			roleUser.setName("Public");
-			roleUser.setType(TYPE);
+			roleUser.setActorId(uuid);
+			roleUser.setName("USER");
+			roleUser.setType("Box");
 			// init permission
-			Permission permission = new Permission("Read", "Pro",
-					Arrays.asList(roleUser));
-			Permission permission2 = new Permission("Comment", "Pro",
-					Arrays.asList(roleUser));
-			Permission permission3 = new Permission("Post", "Pro",
-					Arrays.asList(roleUser));
+			Permission permission;
+			if ((permission = permissionRepository.findByName("BOXRead")) == null) {
+				permission = new Permission("BOXRead",
+						"read stored information on the box");
+				permissionRepository.save(permission);
+			}
+			Permission permission2;
+			if ((permission2 = permissionRepository.findByName("BOXText")) == null) {
+				permission2 = new Permission("BOXText",
+						"store text(comment,link,... ) on the box");
+				permissionRepository.save(permission2);
+			}
+			Permission permission3;
+			if ((permission3 = permissionRepository.findByName("BOXContent")) == null) {
+				permission3 = new Permission("BOXContent",
+						"store content(video, picture,...) on the box");
+				permissionRepository.save(permission3);
+			}
+			Permission permission4;
+			if ((permission4 = permissionRepository.findByName("BOXContact")) == null) {
+				permission4 = new Permission("BOXContact", "Can add relation");
+				permissionRepository.save(permission4);
+			}
 			roleUser.setPermissions(Arrays.asList(permission, permission2,
-					permission3));
+					permission3, permission4));
 
 			roleRepository.save(roleUser);
 		}
-		
+
+	}
+
+	@Override
+	public void setContentRole(Content content) {
+		List<String> roles = content.getMetadata();
+		UUID uuid = UUID.fromString(content.getActorID());
+		ActivityObjectExtand aOA;
+		if ((aOA = activityObjectExtandRepo.findOne(content.getContentsID())) == null) {
+			aOA = new ActivityObjectExtand();
+			aOA.setId(content.getContentsID());
+		}
+		List<Role> roleToSave = new ArrayList<Role>();
+		for (String roleStr : roles) {
+			Role role;
+			if ((role = roleRepository.findByName(roleStr, uuid, TYPE)) == null) {
+				// if not exist create role with no permission
+				role = new Role();
+				role.setActorId(uuid);
+				role.setName(roleStr);
+				role.setType(TYPE);
+				roleRepository.save(role);
+			}
+			roleToSave.add(role);
+
+		}
+
+		aOA.setRoles(roleToSave);
+		activityObjectExtandRepo.save(aOA);
+
+	}
+
+	@Override
+	public void getContentRole(Content content) {
+		// List<String> roles = content.getMetadata();
+		UUID uuid = UUID.fromString(content.getActorID());
+		ActivityObjectExtand aOA;
+
+		if ((aOA = activityObjectExtandRepo.findOne(content.getContentsID())) != null) {
+			List<Role> roles = aOA.getRoles();
+			for (Role role : roles) {
+				content.getMetadata().add(role.getName());
+			}
+		}
+
+	}
+
+	@Override
+	public List<ActivityObjectExtand> getActivityForContact(UUID actorUUID,
+			UUID contactUUID) {
+		// get list of roles of this contact
+		List<Role> roles;
+		try {
+			Contact c = getContact(actorUUID, contactUUID);
+			roles = c.getRole();
+			
+			if (roles.size()==0){
+				Role role;
+				if ((role = roleRepository.findByName("Public", actorUUID, TYPE)) == null) {
+					LOGGER.error("this user {} a not role Public", actorUUID);
+				}
+				roles.add(role);
+			}
+			for (Role role : roles) {
+				LOGGER.debug("role = {}",role);
+			}
+		} catch (NoSuchContactException e) {
+			Role role;
+			if ((role = roleRepository.findByName("Public", actorUUID, TYPE)) == null) {
+				LOGGER.error("this user {} a not role Public", actorUUID);
+			}
+			roles = Arrays.asList(role);
+		}
+
+		List<ActivityObjectExtand> activityObjectExtand = activityObjectExtandRepo
+				.findByRolesIn(roles);
+
+		return activityObjectExtand;
 	}
 
 }

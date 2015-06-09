@@ -14,8 +14,11 @@ angular.module('myApp.friendSearch', ['ngRoute', 'ui.bootstrap'])
         var search = this;
         search.friends = [];
         this.getFriendList = function() {
-            $http.get(PREFIX_RQ+"/api/app/"+userID+"/relation")
+            $http.get(PREFIX_RQ+"/api/app/relation")
                 .success(function(data, status, headers, config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     if ( data.relations !== "" ) {
                         if (angular.isArray(data.relations.relation) == false) {
                             search.friends.push(data.relations.relation);
@@ -42,6 +45,9 @@ angular.module('myApp.friendSearch', ['ngRoute', 'ui.bootstrap'])
             //$http.get("http://localhost:9999" + "/api/app/account/firstname/"+name)
             $http.get(PREFIX_RQ + "/api/app/account/firstname/"+name)
                 .success(function (data, status, headers, config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     if (data.users !== "") {
                         if (angular.isArray(data.users.user)) {
                             search.list = data.users.user;
@@ -65,8 +71,11 @@ angular.module('myApp.friendSearch', ['ngRoute', 'ui.bootstrap'])
 
         this.AskForFriend = function(relation) {
             relation.asked = true;
-            $http.post(PREFIX_RQ + "/api/app/" + userID + "/relation/"+relation.userID)
+            $http.post(PREFIX_RQ + "/api/app/relation/"+relation.uuid)
                 .success(function (data, status, headers, config) {
+                	if (headers('Content-Type').indexOf("text/html")==0) {
+    					window.location.replace("/");
+    				} 
                     console.log("Succeed");
                     // Friend Added successfully
                 })
