@@ -12,7 +12,7 @@
 		<link rel="icon" href="assets/img/logo.svg" sizes="any" type="image/svg+xml">
 		<link href="assets/css/snapmail.css" rel="stylesheet" media="all">
 	</head>
-	<body>
+	<body ng-app="RegisterForm">
 
 		<!-- Header -->
 
@@ -30,7 +30,7 @@
 			</div>
 			<div id="buttons">
 				<button>Login</button>
-				<button>Register</button>
+				<button class="popup-button" data-modal="popup">Register</button>
 			</div>
 		</header>
 		
@@ -44,11 +44,50 @@
 			
 		</section>
 		
+		<div class="modal blur-effect" id="popup">
+            <div class="popup-content">
+                <div  id="login-page" ng-controller="registerController">
+						<form  class="form-login" name="registerForm" validate>
+
+                                <form role="form" action="#" method="POST"> 
+                                        <div class="login-wrap">
+                                                <!-- Name -->
+                                                <input class="form-control" placeholder="Firstname" ng-model="person.firstname" type="text" autofocus required>       
+		            							<br>
+                                                
+                                                <!-- Surname -->
+                                                <input class="form-control" placeholder="Surname" ng-model="person.surname" type="text" autofocus>   
+		            							<br>
+                                                
+                                                <!-- Password -->
+                                                <input class="form-control" placeholder="Password" ng-model="person.password" type="password">   
+		            							<br>
+                                                
+                                                <!-- Mail Address -->
+                                                <input class="form-control" placeholder=" E-mail Address " ng-model="person.userID" type="text">   
+		            							<br>
+                                            
+                                                    <button ng-click="submitData(person)"  class="submit"><i class="fa fa-lock"></i> Sign Up </button>
+                                            
+		            					
+                                        </div>
+                                        
+                                  
+                                </form>
+
+                    <div class="close"></div>
+                </div>
+            </div>
+        </div>
+  		<div class="overlay"></div>
+		
 		<!-- Scripts -->
 		<script src="../assets/js/jquery-1.8.3.min.js"></script>
+		<script src="../assets/js/jquery-ui-1.9.2.custom.min.js"></script>
 		<script src="../bower_components/angular/angular.min.js"></script>
 		<script src="../bower_components/angular-route/angular-route.min.js"></script>
 		<script src="snapmail.js"></script>
 		<script src="assets/js/picturefill.js"></script>
+		
 	</body>
 </html>

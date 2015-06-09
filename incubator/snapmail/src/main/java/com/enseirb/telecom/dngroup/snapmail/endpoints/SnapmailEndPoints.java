@@ -64,6 +64,7 @@ public class SnapmailEndPoints extends HttpServlet {
 					+ "&state=" + actorID
 					+ "&approval_prompt=force"
 					+ "&access_type=offline"
+					+ "&approval_prompt=force"
 					)).build();
 		case "microsoft":
 			return Response.seeOther(new URI(
@@ -124,7 +125,8 @@ if(actorID.contains("@gmail.com")){
 				+ "&code=" + code
 				+ "&redirect_uri=" + redirectUri
 				+ "&grant_type=authorization_code"
-				+ "&access_type=offline";
+				+ "&access_type=offline"
+				+ "&approval_prompt=force";
 		
 		response = targetGoogle
 				.request()

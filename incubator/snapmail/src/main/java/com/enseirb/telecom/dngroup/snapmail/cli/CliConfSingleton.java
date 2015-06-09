@@ -1,5 +1,7 @@
 package com.enseirb.telecom.dngroup.snapmail.cli;
 
+import com.enseirb.telecom.dngroup.snapmail.cli.CliConf;
+
 
 // Default CliConfSingleton
 public class CliConfSingleton {
@@ -9,6 +11,7 @@ public class CliConfSingleton {
 	public static String google_clientsecret;
 	public static String yahoo_clientID;
 	public static String yahoo_clientsecret;
+	public static String publicAddr;
 	public static String mediahome_host;
 	public static String mediahome_port;
 	public static String clamav_host;
@@ -19,7 +22,9 @@ public class CliConfSingleton {
 		if(centralURL==null)
 			centralURL = "http://central.homeb.tv:8080";
 		if(mediahome_host==null)
-			mediahome_host = "localhost";
+			mediahome_host = "http://localhost:9998";
+		if(publicAddr==null)
+			publicAddr = "127.0.0.1";
 		if(mediahome_port==null)
 			mediahome_port = "9998";
 		if(clamav_host==null)

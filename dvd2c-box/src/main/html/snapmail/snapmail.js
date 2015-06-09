@@ -97,3 +97,94 @@ app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$rout
 			return 'views/content/generic.html';
 	}
 }]);
+
+app.controller("registerController", function ($scope, $http) {
+	console.log("Hello");
+    $scope.submitData = function (person) {
+        var data = {};
+        data.user = person;
+        console.log(data);
+        $http.post(PREFIX_RQ + "/api/app/account",data )
+            .success(function (data, status, headers, config)
+            {
+                console.log("Succeed");
+                window.location.replace("/home.html");
+            })
+            .error(function (data, status, headers, config)
+            {
+                console.log("Failed");
+            });
+    };
+   // $(document) Jquery for validating the form -->
+    angular.element(document).ready(function(){
+        $("form").validate({
+            rules: {
+                name:{
+                    minlength: 3,
+                    maxlength: 20,
+                    required: true
+                },
+                email:{
+                    minlength: 3,
+                    maxlength: 20,
+                    required: true
+                }
+            },
+            highlight: function (element) {
+                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+            },
+            unhighlight: function (element) {
+                $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+            }
+        });
+    });
+
+    // End of js part for validating the form inputs
+
+
+});
+
+var popup = (function() 
+		{
+		 
+		    function init() {
+		 
+		        var overlay = $('.overlay');
+		 
+		        $('.popup-button').each(function(i, el)
+		        {
+		            var modal = $('#' + $(el).attr('data-modal'));
+		            var close = $('.close');
+		 
+		            // fonction qui enleve la class .show de la popup et la fait disparaitre
+		            function removeModal() {
+		                modal.removeClass('show');
+		            }
+		 
+		            // evenement qui appelle la fonction removeModal()
+		            function removeModalHandler() {
+		                removeModal(); 
+		            }
+		 
+		            // au clic sur le bouton on ajoute la class .show a la div de la popup qui permet au CSS3 de prendre le relai
+		            $(el).click(function()
+		            {   
+		                modal.addClass('show');
+		                overlay.unbind("click");
+		                // on ajoute sur l'overlay la fonction qui permet de fermer la popup
+		                overlay.bind("click", removeModalHandler);
+		            });
+		 
+		            // en cliquant sur le bouton close on ferme tout et on arrête les fonctions
+		            close.click(function(event)
+		            {
+		                event.stopPropagation();
+		                removeModalHandler();
+		            });
+		 
+		        });
+		    }
+		 
+		    init();
+		 
+		})();
