@@ -164,7 +164,7 @@ public class ContentServiceImpl implements ContentService {
 			break;
 		case "image":
 			link = "/pictures/" + userID + "/" + uuid.toString();
-			content.setStatus("success");
+			//content.setStatus("success");
 			break;
 		default:
 			link = "/cloud/" + userID + "/" + uuid.toString();
@@ -189,6 +189,7 @@ public class ContentServiceImpl implements ContentService {
 		// Moving the file
 		LOGGER.debug("Moving temporary file to /var/www/html" + link + "/"
 				+ filename);
+		
 		File newFile = new File("/var/www/html" + link + "/" + filename);
 		try {
 			Files.move(tempFile, newFile);

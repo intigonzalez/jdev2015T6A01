@@ -90,7 +90,13 @@ app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$rout
 			return 'views/content/video.html';
 		}
 		else if ($scope.type == 'image')
+			if ($scope.content.status == "success")
+			{
 			return 'views/content/image.html';
+			}
+			else {
+				return 'views/content/imageorigin.html';
+			}
 		else if ($scope.type == null)
 			return 'views/content/404.html';
 		else

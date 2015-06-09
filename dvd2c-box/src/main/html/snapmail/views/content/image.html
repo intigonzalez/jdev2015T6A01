@@ -6,6 +6,6 @@
 	<source srcset="{{content.link + '/medium.jpg'}}" media="(min-width: 768px)">
 	<source srcset="{{content.link + '/small.jpg'}}" media="(max-width: 768px)">
 	<!--[if IE 9]></video><![endif]-->
-	<img srcset="{{content.link + '/original.jpg'}}" alt="{{content.name}}">
+	<img srcset="{{content.link + '/original.jpg'}}" >
 </picture>
-<a ng-href="{{content.link + '/original.jpg' }}" class="download md">Download</a>
+<a ng-href="{{content.link + '/' + content.name}}" class="download md">Download</a>

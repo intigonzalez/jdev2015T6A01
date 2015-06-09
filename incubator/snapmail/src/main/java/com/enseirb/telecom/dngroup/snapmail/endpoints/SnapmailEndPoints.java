@@ -64,7 +64,6 @@ public class SnapmailEndPoints extends HttpServlet {
 					+ "&state=" + actorID
 					+ "&approval_prompt=force"
 					+ "&access_type=offline"
-					+ "&approval_prompt=force"
 					)).build();
 		case "microsoft":
 			return Response.seeOther(new URI(
