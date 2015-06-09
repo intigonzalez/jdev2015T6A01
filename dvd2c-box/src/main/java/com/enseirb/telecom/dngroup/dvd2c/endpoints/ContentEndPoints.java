@@ -78,7 +78,7 @@ public class ContentEndPoints {
 			@PathParam("contentsID") String contentsID) {
 		Content content = uManager.getContent(contentsID);
 		if (content.getActorID().equals(userID)) {
-			content.setLink(CliConfSingleton.publicAddr + content.getLink());
+			//content.setLink(CliConfSingleton.publicAddr + content.getLink());
 			return content;
 		} else {
 			// No URL parameter idLanguage was sent
@@ -161,7 +161,7 @@ public class ContentEndPoints {
 		LOGGER.debug("New upload, Content-Disposition : "+contentDisposition);
 		try {
 			Content content = uManager.createContent(userID, uploadedInputStream, contentDisposition);
-			content.setLink(CliConfSingleton.publicAddr + content.getLink());
+			//content.setLink(CliConfSingleton.publicAddr + content.getLink());
 
 			LOGGER.debug("Content created :"+ CliConfSingleton.publicAddr + "/api/app/" + userID
 							+ "/content/" + content.getContentsID());
