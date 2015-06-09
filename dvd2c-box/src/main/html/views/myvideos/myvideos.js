@@ -151,14 +151,14 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
         $scope.roles = angular.copy(roles);
         if (video.metadata === undefined) {
         } else {
-            if ( angular.isArray(video.metadata.roleID) ) {
-                angular.forEach(video.metadata.roleID, function (id) {
+            if ( angular.isArray(video.metadata) ) {
+                angular.forEach(video.metadata, function (id) {
                     var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", id);
                     $scope.roles[index].value = true;
                 });
             }
             else {
-                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", video.roleID);
+                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", video.metadata);
                 $scope.roles[index].value=true;
             }
         }

@@ -184,7 +184,7 @@ public class RelationServiceImpl implements RelationService {
 		}
 
 		// contact2.setRole(Arrays.asList(role));
-		role.addContact(contact2);
+		
 
 		if (!fromBox) {
 			// User receiverActor1;
@@ -201,7 +201,8 @@ public class RelationServiceImpl implements RelationService {
 			}
 
 		}
-		contactRepository.save(contact2);
+		contact2 = contactRepository.save(contact2);
+		role.addContact(contact2);
 		roleRepository.save(role);
 
 		ContactXSD contactXSD = new ContactXSD();
@@ -488,7 +489,7 @@ public class RelationServiceImpl implements RelationService {
 	public void deleteRelation(UUID actorUUID, UUID contactUUID)
 			throws NoSuchUserException, NoSuchBoxException, NoRelationException {
 		Contact contact;
-
+		deleteRelationBox(actorUUID, contactUUID);
 		if ((contact = contactRepository.findContact(contactUUID, actorUUID)) != null) {
 			contactRepository.delete(contact);
 
@@ -513,9 +514,6 @@ public class RelationServiceImpl implements RelationService {
 			}
 
 		}
-
-		deleteRelationBox(actorUUID, contactUUID);
-
 	}
 
 	@Override

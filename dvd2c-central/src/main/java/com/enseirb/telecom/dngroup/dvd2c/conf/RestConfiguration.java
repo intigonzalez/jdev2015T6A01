@@ -6,6 +6,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
 
 import com.enseirb.telecom.dngroup.dvd2c.endpoints.BoxEndPoints;
+import com.enseirb.telecom.dngroup.dvd2c.endpoints.SnapmailEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.endpoints.UserEndPoints;
 
 /**
@@ -17,11 +18,12 @@ import com.enseirb.telecom.dngroup.dvd2c.endpoints.UserEndPoints;
 public class RestConfiguration extends ResourceConfig {
 
 	public RestConfiguration() {
-		super(MyApplicationEventListener.class);
+	
 		// endpoints
 	
 		register(BoxEndPoints.class);
 		register(UserEndPoints.class);
+		register(SnapmailEndPoints.class);
 
 		// features
 //		register(MultiPartFeature.class);

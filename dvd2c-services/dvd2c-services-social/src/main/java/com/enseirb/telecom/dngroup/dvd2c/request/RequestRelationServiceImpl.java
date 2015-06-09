@@ -35,21 +35,13 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 			.getLogger(RequestRelationServiceImpl.class);
 	@Inject
 	protected Client client;
+	
 	@Inject
 	protected RequestUserService requestServ;
 
 	public RequestRelationServiceImpl() {
 
 	}
-
-	// @Override
-	// public User getUserLocal(String relationIDString) {
-	// UriBuilder builder = UriBuilder
-	// .fromPath(CliConfSingleton.appHostName)
-	// .scheme("http")
-	// .path("/api/app/"+ relationIDString).port(CliConfSingleton.appPort);
-	// WebTarget target = client.target(builder);
-	// }
 
 	@Override
 	public User get(UUID UserID, UUID UserToGet) throws IOException,

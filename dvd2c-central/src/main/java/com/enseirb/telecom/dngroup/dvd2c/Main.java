@@ -288,7 +288,7 @@ public class Main {
 			if (CliConfSingleton.appPort == null)
 				CliConfSingleton.appPort = Integer.valueOf(ApplicationContext
 						.getProperties().getProperty("port"));
-			in.close();
+			
 		} catch (FileNotFoundException e1) {
 			LOGGER.info("File not found use default value or arg Path ={} ",
 					aPPath);

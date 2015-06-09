@@ -135,14 +135,14 @@ angular.module('myApp.mypictures', ['ngRoute', 'ui.bootstrap'])
         $scope.roles = angular.copy(roles);
         if (picture.metadata === undefined) {
         } else {
-            if ( angular.isArray(picture.metadata.roleID) ) {
-                angular.forEach(picture.metadata.roleID, function (id) {
+            if ( angular.isArray(picture.metadata) ) {
+                angular.forEach(picture.metadata, function (id) {
                     var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", id);
                     $scope.roles[index].value = true;
                 });
             }
             else {
-                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", picture.roleID);
+                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", picture.metadata);
                 $scope.roles[index].value=true;
             }
         }

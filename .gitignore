@@ -2,7 +2,6 @@ target/
 .*
 /target/
 bin/
-***/bin/*
 application.properties
 *~
 *.versionsBackup

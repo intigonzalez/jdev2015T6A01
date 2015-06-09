@@ -1,6 +1,6 @@
 box:
   image: dngroup/media-home-box
-  command: java -jar dvd2c-box.jar --ip 0.0.0.0 -p 9998 --db-hostname db -b BOX_DOCKER  -c http://central.homeb.tv:8080 -a http://box:9998 --rabbit-host worker
+worker
   ports:
    - "9998:9998"
   volumes:

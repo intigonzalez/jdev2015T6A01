@@ -154,7 +154,7 @@ public class Main {
 
 				Response ent = target.request(MediaType.APPLICATION_XML_TYPE)
 						.post(null);
-				client.close();
+				
 				LOGGER.debug("{}", ent);
 			} catch (URISyntaxException e) {
 				LOGGER.error("URI of server not good");
@@ -378,8 +378,9 @@ public class Main {
 				CliConfSingleton.yahoo_clientsecret = ApplicationContext
 						.getProperties().getProperty("yahoo_clientsecret");
 			LOGGER.info("File found use this values or arg Path ={} ", aPPath);
-			CliConfSingleton.defaultValue();
 			in.close();
+			CliConfSingleton.defaultValue();
+			
 		} catch (FileNotFoundException e1) {
 			LOGGER.info("File not found use default value or arg Path ={} ",
 					aPPath);
