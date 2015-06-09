@@ -1,8 +1,9 @@
 target/
 .*
 /target/
-bin/*
+bin/
 application.properties
 *~
 *.versionsBackup
 *.orig
+**/bin/*

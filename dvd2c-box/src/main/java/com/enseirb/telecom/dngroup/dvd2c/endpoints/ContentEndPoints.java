@@ -20,10 +20,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NoContentException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -33,13 +36,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
+import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
+import com.enseirb.telecom.dngroup.dvd2c.service.ContentServiceImpl;
+import com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQServer;
 import com.google.common.io.Files;
 
 // The Java class will be hosted at the URI path "/app/content"
 @Path("app/{userID}/content")
 public class ContentEndPoints {
+
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ContentEndPoints.class);
 

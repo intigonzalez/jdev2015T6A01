@@ -35,6 +35,7 @@ class CliConfSingleton {
 	public static String google_clientsecret;
 	public static String yahoo_clientID;
 	public static String yahoo_clientsecret;
+	public static String publicAddr;
 	public static String mediahome_host;
 	public static String mediahome_port;
 	public static String clamav_host;
@@ -46,6 +47,8 @@ class CliConfSingleton {
 			centralURL = "http://central.homeb.tv:8080";
 		if(mediahome_host==null)
 			mediahome_host = "localhost";
+		if(publicAddr==null)
+			publicAddr = "127.0.0.1";
 		if(mediahome_port==null)
 			mediahome_port = "9998";
 		if(clamav_host==null)
@@ -67,31 +70,34 @@ public class Main {
 //Cliconf for hard coded values
 	interface CliConf {
 
-		@Option(shortName="h", longName = "mediahome_host", defaultValue = "localhost")
+		@Option(shortName="h", longName = "mediahome_host", defaultToNull=true)
 		public String getMediaHomeHost();
 
-		@Option(shortName="p", longName = "mediahome_port", defaultValue = "9998")
+		@Option(shortName="p", longName = "mediahome_port", defaultToNull=true)
 		public String getMediaHomePort();
 
-		@Option(shortName="c", longName = "clamav_host", defaultValue = "127.0.0.1")
+		@Option(shortName="c", longName = "clamav_host", defaultToNull=true)
 		public String getClamAVHost();
 		
-		@Option(shortName="v", longName = "clamav_port", defaultValue = "3310")
+		@Option(shortName="v", longName = "clamav_port", defaultToNull=true)
 		public String getClamAVPort();
 		
-		@Option(longName = "centralURL", description = "URL of the central server")
+		@Option(longName = "publicAddr", description = "Public IP address", defaultToNull=true)
+		String getPublicAddr();
+
+		@Option(longName = "centralURL", description = "URL of the central server", defaultToNull=true)
 		String getCentralUrl();
 		
-		@Option(longName = "google_clientID", description = "google clientID for Oauth2")
+		@Option(longName = "google_clientID", description = "google clientID for Oauth2", defaultToNull=true)
 		String getGoogleClientID();
 		
-		@Option(longName = "google_clientsecret", description = "google client secret for Oauth2")
+		@Option(longName = "google_clientsecret", description = "google client secret for Oauth2", defaultToNull=true)
 		String getGoogleClientSecret();
 		
-		@Option(longName = "yahoo_clientID", description = "yahoo clientID for Oauth2")
+		@Option(longName = "yahoo_clientID", description = "yahoo clientID for Oauth2", defaultToNull=true)
 		String getYahooClientID();
 		
-		@Option(longName = "yahoo_clientsecret", description = "yahoo client secret for Oauth2")
+		@Option(longName = "yahoo_clientsecret", description = "yahoo client secret for Oauth2", defaultToNull=true)
 		String getYahooClientSecret();
 
 	}
@@ -149,6 +155,7 @@ public class Main {
 					CliConf.class, args);
 
 			CliConfSingleton.mediahome_host = cliconf.getMediaHomeHost();
+			getParametreFromFile();
 		} catch (ArgumentValidationException e1) {
 			
 
@@ -158,7 +165,6 @@ public class Main {
 		try {
 			CliConf cliconf = CliFactory.parseArguments(
 					CliConf.class, args);
-			CliConfSingleton.clamav_host = cliconf.getMediaHomeHost();
 		} catch (ArgumentValidationException e1) {
 			
 
@@ -173,6 +179,9 @@ static void getParametreFromFile() {
 	try {
 		FileInputStream in = new FileInputStream(aPPath);
 		ApplicationContext.properties.load(in);
+		if (CliConfSingleton.publicAddr == null)
+			CliConfSingleton.publicAddr = ApplicationContext.getProperties()
+					.getProperty("publicAddr");
 		if (CliConfSingleton.centralURL == null)
 			CliConfSingleton.centralURL = ApplicationContext.getProperties()
 					.getProperty("centralURL");
@@ -188,6 +197,9 @@ static void getParametreFromFile() {
 		if (CliConfSingleton.yahoo_clientsecret == null)
 			CliConfSingleton.yahoo_clientsecret = ApplicationContext.getProperties()
 					.getProperty("yahoo_clientsecret");
+		if (CliConfSingleton.clamav_host == null)
+			CliConfSingleton.clamav_host = ApplicationContext.getProperties()
+					.getProperty("clamavHost");
 		in.close();
 		CliConfSingleton.defaultValue();
 	} catch (FileNotFoundException e1) {
