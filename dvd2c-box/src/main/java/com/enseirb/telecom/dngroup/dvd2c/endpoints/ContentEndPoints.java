@@ -40,7 +40,6 @@ import com.enseirb.telecom.dngroup.dvd2c.db.ContentRepositoryMongo;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentServiceImpl;
-import com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQServer;
 import com.google.common.io.Files;
 
 // The Java class will be hosted at the URI path "/app/content"
