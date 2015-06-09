@@ -6,14 +6,14 @@
   <parent>
     <groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
     <artifactId>dvd2c-services</artifactId>
-    <version>0.6.0</version>
+    <version>0.7.0-SNAPSHOT</version>
   </parent>
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
         <artifactId>dvd2c-bom</artifactId>
-        <version>0.6.0</version>
+        <version>0.7.0-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -23,7 +23,7 @@
     <dependency>
       <groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
       <artifactId>dvd2c-services-box</artifactId>
-      <version>0.6.0</version>
+      <version>0.7.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <build>
