@@ -72,14 +72,12 @@ angular.module('myApp.mycloud', ['ngRoute', 'ui.bootstrap'])
             var data = {"content" : content};
             $http.put(PREFIX_RQ+"/api/app/content/"+content.contentsID,  data)
                 .success(function() {
-                	if (headers('Content-Type').indexOf("text/html")==0) {
-    					window.location.replace("/");
-    				} 
+                
                     console.log("success");
                 })
                 .error(function() {
                     console.log("error");
-                })
+                });
         }
 
         // ***** Remove a document *****
@@ -96,7 +94,7 @@ angular.module('myApp.mycloud', ['ngRoute', 'ui.bootstrap'])
                 })
                 .error(function (data, status, headers, config) {
                     console.log("Failed");
-                })
+                });
         }
 
         this.showDetails = function(content) {

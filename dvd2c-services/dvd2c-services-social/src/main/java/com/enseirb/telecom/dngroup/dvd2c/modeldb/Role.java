@@ -50,7 +50,7 @@ public class Role extends DBObject implements Serializable {
 	private String type;
 
 	// bi-directional many-to-many association to Contact
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@ManyToMany( fetch = FetchType.EAGER)
 	@JoinTable(name = "role_contacts", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "contact_id"))
 	private List<Contact> contacts;
 

@@ -136,12 +136,12 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
             if (friend.role !== undefined) {
                 if ( angular.isArray(friend.role) ) {
                     angular.forEach(friend.role, function (id) {
-                        var index = searchItemIntoArrayWithAttribute(friends.listRoles, "role", id);
-                        result.push(friends.listRoles[index].roleName);
+// var index = searchItemIntoArrayWithAttribute(friends.listRoles, "role", id);
+                        result.push(id);
                     });
                 }
                 else {
-                    result[0] = friends.listRoles[friend.role].roleName;
+                    result[0] = friend.role;
                 }
             }
             return result;
@@ -190,9 +190,6 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
             var data = {"contactXSD" : friend};
             $http.put(PREFIX_RQ+"/api/app/relation/"+friend.uuid, data)
                 .success(function() {
-                	if (headers('Content-Type').indexOf("text/html")==0) {
-    					window.location.replace("/");
-    				} 
                     console.log("success");
                 })
                 .error(function() {
@@ -245,7 +242,7 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
 
         // ***** Remove a friend *****
         this.removeRelation = function(friend) {
-            $http.delete(PREFIX_RQ + "/api/app/relation/"+friend.actorID)
+            $http.delete(PREFIX_RQ + "/api/app/relation/"+friend.uuid)
                 .success(function(data,status,headers,config) {
                 	if (headers('Content-Type').indexOf("text/html")==0) {
     					window.location.replace("/");

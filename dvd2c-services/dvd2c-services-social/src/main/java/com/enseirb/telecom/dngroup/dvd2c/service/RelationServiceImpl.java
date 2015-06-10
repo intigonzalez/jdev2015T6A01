@@ -202,8 +202,8 @@ public class RelationServiceImpl implements RelationService {
 
 		}
 		contact2 = contactRepository.save(contact2);
-		role.addContact(contact2);
-		roleRepository.save(role);
+//		role.addContact(contact2);
+//		
 
 		ContactXSD contactXSD = new ContactXSD();
 		contactXSD.setActorID(contact2.getReceiverActor().getEmail());

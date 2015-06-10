@@ -24,7 +24,7 @@ angular.module('myApp.mypictures', ['ngRoute', 'ui.bootstrap'])
                         {"roleID":"Family" , "roleName":"Family", "info":"Seen by all your family only"},
                         {"roleID":"Friends" , "roleName":"Friends", "info":"Seen by all your friends only"},
                         {"roleID":"Pro" , "roleName":"Pro", "info":"Seen by all your professional contacts"},
-     ];  //List of role
+     ];  // List of role
         this.getPictures = function() {
             $http.get(PREFIX_RQ + "/api/app/content")
                 .success(function (data, status, headers, config) {
@@ -72,14 +72,12 @@ angular.module('myApp.mypictures', ['ngRoute', 'ui.bootstrap'])
             var data = {"content" : content};
             $http.put(PREFIX_RQ+"/api/app/content/"+content.contentsID,  data)
                 .success(function() {
-                	if (headers('Content-Type').indexOf("text/html")==0) {
-    					window.location.replace("/");
-    				} 
+
                     console.log("success");
                 })
                 .error(function() {
                     console.log("error");
-                })
+                });
         }
 
         // ***** Remove a picture *****
@@ -96,7 +94,7 @@ angular.module('myApp.mypictures', ['ngRoute', 'ui.bootstrap'])
                 })
                 .error(function (data, status, headers, config) {
                     console.log("Failed");
-                })
+                });
         }
 
         this.showDetails = function(content) {
@@ -146,10 +144,10 @@ angular.module('myApp.mypictures', ['ngRoute', 'ui.bootstrap'])
                 $scope.roles[index].value=true;
             }
         }
-        //console.log(roles);
+        // console.log(roles);
 
         $scope.ok = function () {
-            //console.log($scope.roles);
+            // console.log($scope.roles);
             picture.metadata= [];
             angular.forEach($scope.roles, function(role) {
                 if (role.value == true) {
