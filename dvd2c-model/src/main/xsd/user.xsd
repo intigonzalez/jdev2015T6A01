@@ -39,16 +39,7 @@
 				<xs:element ref="content" maxOccurs="unbounded"
 					minOccurs="0" />
 
-				<xs:element name="smtpHost" type="xs:string" maxOccurs="1"
-					minOccurs="0" />
-				<xs:element name="smtpPort" type="xs:string" maxOccurs="1"
-					minOccurs="0" />
-				<xs:element name="smtpUsername" type="xs:string"
-					maxOccurs="1" minOccurs="0" />
-				<xs:element name="smtpPassword" type="xs:string"
-					maxOccurs="1" minOccurs="0" />
-				<xs:element name="smtpToken" type="xs:string" maxOccurs="1"
-					minOccurs="0" />
+				<xs:element ref="propertyGroups" maxOccurs="unbounded" minOccurs="0"></xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

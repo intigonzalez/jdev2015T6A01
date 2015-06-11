@@ -273,5 +273,48 @@ public class AccountServiceImpl implements AccountService {
 		}
 		return false;
 	}
-
+// TODO : verify this fonction
+	
+	@Override
+	public List<Property> getPropertiesForUser(String userId, final String propertyGroupName) {
+	
+		for (PropertyGroups pg : Collections2.filter(
+				this.userRepository.findOne(userId).getPropertyGroups(),
+				new Predicate<PropertyGroups>() {
+	
+					@Override
+					public boolean apply(PropertyGroups input) {
+						return propertyGroupName.equals(input.getName());
+					}
+				})) {
+			return pg.getProperty();
+		}
+		return Collections.emptyList();	
+	}
+	
+	@Override
+	public void setPropertiesForUser(final String userId,final String propertyGroupName, PropertyGroups propertyGroups) {
+		UserRepositoryObject user = this.userRepository.findOne(userId);
+		PropertyGroups pg = null;
+		for(PropertyGroups pr : user.getPropertyGroups()){
+			if (pr.getName().equals(propertyGroupName)){
+				pg = pr;
+			}
+		}
+		if(pg == null) {
+			pg = new PropertyGroups();
+			pg.setName(propertyGroupName);
+			user.getPropertyGroups().add(pg);
+		}
+		else
+			pg.getProperty().clear();
+		
+		for(Property property : propertyGroups.getProperty()) {
+			Property p = new Property();
+			p.setKey(property.getKey());
+			p.setValue(property.getValue());
+			pg.getProperty().add(p);
+		}
+		this.saveUserOnServer(user.toUser());
+	}
 }

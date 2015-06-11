@@ -11,7 +11,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
     .controller('ProfileCtrl',[function() {
 
     }])
-    .controller('ProfileController', ['$http', function ($http) {
+    .controller('ProfileController', ['$http','$location', function ($http, $location) {
 
         var user = this;
        
@@ -36,15 +36,12 @@ angular.module('myApp.myprofile', ['ngRoute'])
         
         this.openOauth = function (service) {
         	user.service=service;
-     	   return "/api/oauth/" + user.person.userID + "/" + service;
+     	   return "http://" + $location.host() + ":9997/api/oauth/" + user.person.userID + "/" + service;
          };
 
         this.getUser = function () {
-            $http.get(PREFIX_RQ + "/api/app/account/")// + userID)
+            $http.get(PREFIX_RQ + "/api/app/account/" + userID)
                 .success(function (data, status, headers, config) {
-                	if (headers('Content-Type').indexOf("text/html")==0) {
-    					window.location.replace("/");
-    				} 
                     user.person = data.user;
                 })
                 .error(function (data, status, headers, config) {
@@ -56,9 +53,6 @@ angular.module('myApp.myprofile', ['ngRoute'])
             data.user = person;
             $http.put(PREFIX_RQ + "/api/app/account/",data)// + this.person.userID, data)
                 .success(function (data, status, headers, config) {
-                	if (headers('Content-Type').indexOf("text/html")==0) {
-    					window.location.replace("/");
-    				} 
                     console.log("Succeed");
                     user.class = "btn-success";
                 })
@@ -70,44 +64,118 @@ angular.module('myApp.myprofile', ['ngRoute'])
         
         this.getSmtp = function ()
         {
-        	$http.get(PREFIX_RQ + "/api/app/snapmail/smtp")
+        	// Temporary until endpoints work
+        	$http.get(PREFIX_RQ + "/api/app/account/")
             .success(function (data, status, headers, config)
             {
-            	if (headers('Content-Type').indexOf("text/html")==0) {
+ 	if (headers('Content-Type').indexOf("text/html")==0) {
 					window.location.replace("/");
 				} 
-                user.smtp = data.smtpProperty;
-                if (user.smtp.hasOwnProperty("token") && user.smtp.token != "")
-                	user.smtpTab = 1;
-                else if (user.smtp.hasOwnProperty("username") && user.smtp.username != "" && user.smtp.hasOwnProperty("host") && user.smtp.host != "" && user.smtp.hasOwnProperty("port") && user.smtp.port != "" && user.smtp.hasOwnProperty("password") && user.smtp.password != "")
-                {
-                	user.smtpManualSettings = true;
-                	user.smtpTab = 2;
+            	var json=JSON.parse(angular.toJson(data));
+            	var l=json.user.propertyGroups.length;
+            	if(l==undefined){
+            		l=0;
+            		var e = json.user.propertyGroups;
+            		if(e.property.length==undefined){
+            			var p = e.property;
+            			user.smtp[p.key] = p.value;
+            		}
+            		else{
+            			for(var j = 0; j < e.property.length; j++) {
+            				var p = e.property[j];
+            				console.log("p: "+j);
+                    		console.log(p);
+            				user.smtp[p.key] = p.value;
+            			}
+            		}
                 }
-                else
-                	user.smtp = {
-                		host: "",
-                		port: "",
-                		username: "",
-                		password: "",
-                		token: ""
-                };
+            	else{
+	            	for(var i = 0; i <= l ; i++) {
+	            		var e = json.user.propertyGroups[i];
+	            		console.log("e: "+i);
+	            		console.log(e);
+	            		console.log(e.name);
+	            		console.log(e.name == "snapmail")
+	            		if(e.name == "snapmail") {
+	            			console.log("OK")
+	            			if(e.property.length==undefined){
+	                			var p = e.property;
+	                			user.smtp[p.key] = p.value;
+	                		}
+	                		else{
+	                			for(var j = 0; j < e.property.length; j++) {
+	                				var p = e.property[j];
+	                				console.log("p: "+j);
+	                        		console.log(p);
+	                				user.smtp[p.key] = p.value;
+	                			}
+	                		}
+	            			break;
+	            		}
+	            	}
+            	}
+            	console.log(user.smtp)
+            	if (user.smtp.hasOwnProperty("username") && user.smtp.username != "" && user.smtp.username != undefined && user.smtp.hasOwnProperty("host") && user.smtp.host != "" && user.smtp.host != undefined && user.smtp.hasOwnProperty("port") && user.smtp.port != "" && user.smtp.port != undefined && user.smtp.hasOwnProperty("password") && user.smtp.password != "" && user.smtp.password != undefined)
+            	{
+            		user.smtpManualSettings = true;1
+                	user.smtpTab = 1;
+                	console.log("view 1");
+            	}
+            	else if (user.smtp.hasOwnProperty("google") && user.smtp.google != "" && user.smtp.google != undefined) {
+            		user.smtpTab = 2;
+            	console.log("view 2");
+            	}
+            	else if (user.smtp.hasOwnProperty("yahoo") && user.smtp.yahoo != "" && user.smtp.yahoo != undefined) {
+            		user.smtpTab = 3;
+            	console.log("view 3");
+            	}
+            	else if (user.smtp.hasOwnProperty("microsoft") && user.smtp.microsoft != "" && user.smtp.microsoft != undefined) {
+            		user.smtpTab = 4;
+            	console.log("view 4");
+            	}
+            	else {
+            		user.smtp = {
+            			host: "",
+            			port: "",
+            			username: "",
+            			password: "",
+            			google: "",
+            			yahoo: "",
+            			microsoft: "",
+            		};
+            		console.log("view else");
+            	}
             })
             .error(function (data, status, headers, config) {
-                console.log("Failed while getting User Informations");
+            	console.log("Failed while getting User Informations");
             })
         };
         
         this.putSmtp = function (smtp)
         {
-            var data = {};
-            data.smtpProperty = smtp;
-            console.log(smtp);
-            $http.put(PREFIX_RQ + "/api/app/snapmail/" + this.person.userID + "/smtp", data)
+            var data = {
+            		propertyGroups: {
+            			props: []
+            		}
+            };
+            
+            if(smtp.host != "")
+            	data.propertyGroups.props.push({key: "host", value: smtp.host});
+           	if(smtp.port != "")
+            	data.propertyGroups.props.push({key: "port", value: smtp.port});
+            if(smtp.username != "")
+            	data.propertyGroups.props.push({key: "username", value: smtp.username});
+            if(smtp.password != "")
+            	data.propertyGroups.props.push({key: "password", value: smtp.password});
+           	if(smtp.google != "")
+            	data.propertyGroups.props.push({key: "google", value: smtp.google});
+            if(smtp.microsoft != "")
+            	data.propertyGroups.props.push({key: "microsoft", value: smtp.microsoft});
+            if(smtp.yahoo != "")
+            	data.propertyGroups.props.push({key: "yahoo", value: smtp.yahoo});
+            	
+            $http.put(PREFIX_RQ + "/api/app/account/" + this.person.userID + "/properties/snapmail", data)
                 .success(function (data, status, headers, config) {
-                	if (headers('Content-Type').indexOf("text/html")==0) {
-    					window.location.replace("/");
-    				} 
                     console.log("Succeed");
                     user.class = "btn-success";
                 })
@@ -123,12 +191,12 @@ angular.module('myApp.myprofile', ['ngRoute'])
         this.setSMTPTab = function(value)
         {
         	this.smtpTab = value;
-        	if (value == 5)
+        	if (value == 7)
         	{
         		if (user.smtp.host == "" || user.smtp.username == "" || user.smtp.password == "" || user.smtp.port == "")
         			user.setSMTPTab(0);
         		else
-        			user.setSMTPTab(2);
+        			user.setSMTPTab(1);
         	}
         }
         

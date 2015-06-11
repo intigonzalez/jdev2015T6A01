@@ -29,17 +29,7 @@ public class UserRepositoryObject {
 	protected String pubKey;
 
 	protected String privateKey;
-	/* SnapMail add-on */
 	
-	protected String smtpHost;
-
-	protected String smtpPort;
-
-	protected String smtpUsername;
-	
-	protected String smtpPassword;
-	
-	protected String smtpToken;
 	
 	
 
@@ -68,8 +58,7 @@ public class UserRepositoryObject {
 
 	public UserRepositoryObject(String userID, String boxID, String firstname,
 			String surname, String password, String pubKey, String privateKey,
-			String smtpHost, String smtpPort, String smtpUsername,
-			String smtpPassword, String smtpToken) {
+			) {
 		super();
 		this.boxID = boxID;
 		this.userEmail = userID;
@@ -78,12 +67,6 @@ public class UserRepositoryObject {
 		this.password = password;
 		this.pubKey = pubKey;
 		this.privateKey = privateKey;
-		/* SnapMail add-on */
-		this.smtpHost = smtpHost;
-		this.smtpPort = smtpPort;
-		this.smtpUsername = smtpUsername;
-		this.smtpPassword = smtpPassword;
-		this.smtpToken = smtpToken;
 	}
 
 	public UserRepositoryObject(User user) {
@@ -94,13 +77,6 @@ public class UserRepositoryObject {
 		this.password = user.getPassword();
 		this.pubKey = user.getPubKey();
 		this.privateKey = user.getPrivateKey();
-		this.uuid = UUID.fromString(user.getUuid());
-		/* SnapMail add-on */
-		this.smtpHost = user.getSmtpHost();
-		this.smtpPort = user.getSmtpPort();
-		this.smtpUsername = user.getSmtpUsername();
-		this.smtpPassword = user.getSmtpPassword();
-		this.smtpToken = user.getSmtpToken();
 	}
 
 	public String getFirstname() {
@@ -178,44 +154,5 @@ public class UserRepositoryObject {
 		this.boxID = boxID;
 	}
 
-	/* SnapMail add-on */
-	public String getSmtpHost() {
-		return smtpHost;
-	}
-
-	public void setSmtpHost(String smtpHost) {
-		this.smtpHost = smtpHost;
-	}
-
-	public String getSmtpPort() {
-		return smtpPort;
-	}
-
-	public void setSmtpPort(String smtpPort) {
-		this.smtpPort = smtpPort;
-	}
-
-	public String getSmtpUsername() {
-		return smtpUsername;
-	}
-
-	public void setSmtpUsername(String smtpUsername) {
-		this.smtpUsername = smtpUsername;
-	}
-
-	public String getSmtpPassword() {
-		return smtpPassword;
-	}
-
-	public void setSmtpPassword(String smtpPassword) {
-		this.smtpPassword = smtpPassword;
-	}
-
-	public String getSmtpToken() {
-		return smtpToken;
-	}
-
-	public void setSmtpToken(String smtpToken) {
-		this.smtpToken = smtpToken;
-	}
+	
 }

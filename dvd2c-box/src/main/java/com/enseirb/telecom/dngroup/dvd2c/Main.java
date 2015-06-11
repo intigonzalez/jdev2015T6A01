@@ -113,32 +113,21 @@ public class Main {
 			server.addListener(listener);
 			StaticHttpHandler videos = new StaticHttpHandlerCORS(
 					new String[] { "/var/www/html/videos" });
+			StaticHttpHandler pictures = new StaticHttpHandlerCORS(
+					new String[] { "/var/www/html/pictures" });			
+			StaticHttpHandler cloud = new StaticHttpHandlerCORS(
+					new String[] { "/var/www/html/cloud" });
 
 			// set disable cache
 			videos.setFileCacheEnabled(false);
-
+			pictures.setFileCacheEnabled(false);
+			cloud.setFileCacheEnabled(false);
+			
 			server.getServerConfiguration().addHttpHandler(videos, "/videos");
-
-			// server.getServerConfiguration().addHttpHandler(
-			// new StaticHttpHandler("/var/www/html/videos"), "/videos");
-
+			server.getServerConfiguration().addHttpHandler(pictures,"/pictures");
+			server.getServerConfiguration().addHttpHandler(cloud, "/cloud");
 			server.getServerConfiguration().addHttpHandler(
-					new StaticHttpHandler("/var/www/html/pictures"),
-					"/pictures");
-			server.getServerConfiguration().addHttpHandler(
-					new StaticHttpHandler("/var/www/html/cloud"), "/cloud");
-
-			CLStaticHttpHandler mainClStaticHttpHandler = new CLStaticHttpHandler(
-					Main.class.getClassLoader(), "/");
-			
-			
-	
-		
-			
-		
-			server.getServerConfiguration().addHttpHandler(
-					mainClStaticHttpHandler);
-			
+					new CLStaticHttpHandler(Main.class.getClassLoader(), "/"));
 
 			// finally, deploy the webapp
 			webappContext.deploy(server);

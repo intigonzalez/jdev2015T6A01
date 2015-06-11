@@ -154,14 +154,14 @@ public class ContentServiceImpl implements ContentService {
 
 		switch (fileType) {
 		case "video":
-			link = "/videos/" + uuid.toString();
+			link = "/videos/" + userID + "/" + uuid.toString();
 			break;
 		case "image":
-			link = "/pictures/" + uuid.toString();
+			link = "/pictures/" + userID + "/" + uuid.toString();
 			content.setStatus(INPROGRES);
 			break;
 		default:
-			link = "/cloud/" + uuid.toString();
+			link = "/cloud/" + userID + "/" + uuid.toString();
 			content.setStatus(SUCCESS);
 			break;
 		}

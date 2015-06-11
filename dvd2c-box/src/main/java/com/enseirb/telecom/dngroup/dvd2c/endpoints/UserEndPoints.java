@@ -136,6 +136,37 @@ public class UserEndPoints extends HttpServlet {
 		}
 	}
 
+/**
+	 * Get the propertyGroups of a user by userID
+	 * 
+	 * @param userID
+	 *            the user to get
+	 * @return a user
+	 */
+//TODO: SEE THIS FONCTION
+	@GET
+	@Path("{userID}/properties/{propertyGroupName}")
+	@RolesAllowed({ "account", "authenticated" })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public List<Property> getUserProperties(@PathParam("userID") String userID, @PathParam("propertyGroupName") String propertyGroupName) {
+		// Not working for unknown reason
+		return uManager.getPropertiesForUser(userID, propertyGroupName);
+	}
+
+	/**
+	 * 
+	 *
+	 */
+	@PUT
+	@Path("{userID}/properties/{propertyGroupName}")
+	@RolesAllowed({ "account", "authenticated" })
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response postUserProps(PropertyGroups propertyGroups, @PathParam("userID") String userID, @PathParam("propertyGroupName") String propertyGroupName) {
+		uManager.setPropertiesForUser(userID, propertyGroupName, propertyGroups);
+		return Response.status(200).build();
+	}
+
 	/**
 	 * Find a list of users from their firstname on server
 	 * 
