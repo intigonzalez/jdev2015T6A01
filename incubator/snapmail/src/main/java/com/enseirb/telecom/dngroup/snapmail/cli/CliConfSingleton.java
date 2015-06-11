@@ -1,6 +1,7 @@
 package com.enseirb.telecom.dngroup.snapmail.cli;
 
 import com.enseirb.telecom.dngroup.snapmail.cli.CliConf;
+import com.enseirb.telecom.dngroup.snapmail.server.conf.ServerName;
 
 
 // Default CliConfSingleton
@@ -16,6 +17,7 @@ public class CliConfSingleton {
 	public static String mediahome_port;
 	public static String clamav_host;
 	public static String clamav_port;
+	public static String snapmail_host;
 	
 	// Default value if there is no file and no arguments
 	public static void defaultValue() {
@@ -31,6 +33,8 @@ public class CliConfSingleton {
 			clamav_host = "127.0.0.1";
 		if(clamav_port==null)
 			clamav_port = "3310";
+		if(snapmail_host==null)
+			snapmail_host="http://"+ ServerName.localAddress() + ":9997";
 		if(google_clientID==null)
 			google_clientID = "547107646254-3rhmcq9g7ip63rl9trr6ono0cn1t8ab6.apps.googleusercontent.com";
 		if(google_clientsecret==null)

@@ -23,6 +23,9 @@ public interface CliConf {
 	@Option(longName = "centralURL", description = "URL of the central server", defaultToNull=true)
 	String getCentralUrl();
 	
+	@Option(longName = "snapmail_host", description = "URL of Snapmail_Host", defaultToNull=true)
+	String getSnapmail_Host();
+	
 	@Option(longName = "google_clientID", description = "google clientID for Oauth2", defaultToNull=true)
 	String getGoogleClientID();
 	

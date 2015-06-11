@@ -124,6 +124,10 @@
 			
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jettison</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>

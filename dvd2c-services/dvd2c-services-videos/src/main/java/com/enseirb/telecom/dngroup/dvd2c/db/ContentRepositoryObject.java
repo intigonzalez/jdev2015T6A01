@@ -53,7 +53,7 @@ public class ContentRepositoryObject {
 		previewLink = content.getPreviewLink();
 		status = content.getStatus();
 		this.comment = content.getComment();
-		this.metadata = content.getMetadata();
+		this.metadata = content.getPropertyGroups();
 	
 	}
 
@@ -156,7 +156,7 @@ public class ContentRepositoryObject {
 		content.setUnixTime(this.getUnixTime());
 		content.setStatus(this.getStatus());
 		content.getComment().addAll(this.getComment());
-		content.getMetadata().addAll(this.getMetadata());
+		content.getPropertyGroups().addAll(this.getMetadata());
 		return content;
 	}
 

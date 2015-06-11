@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+import javax.inject.Inject;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -44,6 +45,7 @@ import javax.mail.util.SharedFileInputStream;
 import org.subethamail.smtp.MessageContext;
 import org.subethamail.smtp.TooMuchDataException;
 
+import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.snapmail.cli.CliConfSingleton;
 import com.enseirb.telecom.dngroup.snapmail.exception.NoSuchProperty;
 import com.enseirb.telecom.dngroup.snapmail.mail.MediaHomeFacade;
@@ -55,10 +57,12 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(SimpleMessageListener.class);
 
-	private MediaHomeFacade mediaHomeFacade;
 
-	protected String username;
-	protected String password;
+	private MediaHomeFacade mediaHomeFacade = new MediaHomeFacadeImpl();
+
+//	protected String username;
+//	protected String password;
+	User user;
 
 	// to display all recipients
 	List<String> recipientArray = new ArrayList<String>();
@@ -82,8 +86,10 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 
 	@Override
 	public void login(String username, String password) {
-		this.username = username;
-		this.password = password;
+//		user = new User();
+//		user.setUserID(username);
+//		user.setPassword(password);
+		user=mediaHomeFacade.getUserORH(username, password);
 	}
 
 	@Override
@@ -159,7 +165,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			} catch (MessagingException e) {
 				e.printStackTrace();
 			} catch (NoSuchProperty e) {
-				
+
 				e.printStackTrace();
 			}
 			recipientArray.clear();
@@ -186,13 +192,14 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 * @param multiPart
 	 * @throws IOException
 	 * @throws MessagingException
-	 * @throws NoSuchProperty 
+	 * @throws NoSuchProperty
 	 */
 	private void sendMail(String recipient, Multipart multiPart)
 			throws IOException, MessagingException, NoSuchProperty {
 		// Get system properties
-		MediaHomeFacade mediahome = new MediaHomeFacadeImpl(this.username, this.password);
-		MailerProperties prop = mediahome.getSmtpParam();
+//		MediaHomeFacade mediahome = new MediaHomeFacadeImpl(this.username,
+//				this.password);
+		MailerProperties prop = mediaHomeFacade.getSmtpParamORH(user);
 		Session session = Session.getDefaultInstance(System.getProperties());
 		try {
 			// Creation of the message that will be send in place of the
@@ -202,7 +209,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			//
 			MimeMessage message = new MimeMessage(session);
 			// Set From: header field of the header.
-			message.setFrom(new InternetAddress(username));
+			message.setFrom(new InternetAddress(user.getUserID()));
 			// message.setHeader("Content-Type", this.type);
 			LOGGER.info("CONTENT-TYPE : " + this.type);
 			// Set To: header field of the header.
@@ -216,7 +223,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			multiPart.addBodyPart(textPart);
 			message.setContent(multiPart);
 			LOGGER.info("Mail rebuilt and ready to be sent");
-						
+
 			MailerFactory.getMailer(prop).send(message);
 			LOGGER.info("Mail sent successfully !");
 			LOGGER.info("--------------------------------------------------\n\n");
@@ -232,12 +239,11 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 * @param from
 	 * @param Clamav_report
 	 * @throws IOException
-	 * @throws NoSuchProperty 
+	 * @throws NoSuchProperty
 	 */
 	private void sendClamavReport(String from, String Clamav_report)
 			throws IOException, NoSuchProperty {
-		MediaHomeFacade mediahome = new MediaHomeFacadeImpl(this.username, this.password);
-		MailerProperties prop = mediahome.getSmtpParam();
+		MailerProperties prop = mediaHomeFacade.getSmtpParamORH(user);
 		Session session = Session.getDefaultInstance(System.getProperties());
 		MimeMessage message = new MimeMessage(session);
 		try {
@@ -764,13 +770,13 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 * @param Type
 	 * @throws IOException
 	 */
-	//TODO Move it
+	// TODO Move it
 	private void processAttachment(String filename, InputStream is, String Type)
 			throws IOException {
 		this.text += "Attachment : " + filename + "\n";
-		mediaHomeFacade=new MediaHomeFacadeImpl(this.username, this.password);
+		
 		String link = mediaHomeFacade.bodyPart2Link(is, filename, Type,
-				this.username, this.password, recipientArray);
+				user, recipientArray);
 		// String link = postFile(is, filename, Type);
 		this.text += "Link :" + link + "\n";
 	}
@@ -872,57 +878,43 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 * @return (String) link to see the document
 	 * @throws IOException
 	 */
-	//TODO replace by the new post in the interface
-	/*public String postFile(InputStream is, String filename, String Type)
-			throws IOException {
-		// nh: to extract in a dedicated service class
-		try {
-			HttpAuthenticationFeature feature = HttpAuthenticationFeature
-					.basic(this.username, this.password);
-
-			// Configuration of the client to allow a post with a large file
-			// nh: please create only 1 client and close it properly
-			ClientConfig cc = new ClientConfig();
-			cc.property(ClientProperties.REQUEST_ENTITY_PROCESSING, "CHUNKED");
-			cc.property(ClientProperties.CHUNKED_ENCODING_SIZE,
-					Integer.valueOf(128));
-			cc.property(ClientProperties.OUTBOUND_CONTENT_LENGTH_BUFFER,
-					Integer.valueOf(128));
-
-			Client client = ClientBuilder.newClient(cc);
-			client.register(feature).register(MultiPartFeature.class);
-
-			// nh: create
-			WebTarget target = client.target(CliConfSingleton.mediahome_host
-					+ "/api/app/" + this.username + "/content");
-
-			LOGGER.info("Filename : " + filename);
-			Response response = target
-					.request()
-					.header("Content-Disposition",
-							"attachment; filename=" + filename)
-					.post(Entity.entity(is, Type), Response.class);
-
-			if (response.getLocation() != null)
-				return CliConfSingleton.mediahome_host
-						+ "/snapmail/"
-						+ "snapmail.html#/"
-						+ this.username
-						+ "/"
-						+ response.getLocation().toString().split("/content/")[1];
-
-			else {
-				LOGGER.error("Error during the upload : Media@Home did not return a location");
-				return "Error during the upload";
-			}
-
-		} catch (WebApplicationException e) {
-			if (e.getResponse().getStatus() == 403) {
-				LOGGER.error("Error 403 (post content)");
-			} else {
-				throw e;
-			}
-		}
-		return "Error";
-	}*/
+	// TODO replace by the new post in the interface
+	/*
+	 * public String postFile(InputStream is, String filename, String Type)
+	 * throws IOException { // nh: to extract in a dedicated service class try {
+	 * HttpAuthenticationFeature feature = HttpAuthenticationFeature
+	 * .basic(this.username, this.password);
+	 * 
+	 * // Configuration of the client to allow a post with a large file // nh:
+	 * please create only 1 client and close it properly ClientConfig cc = new
+	 * ClientConfig(); cc.property(ClientProperties.REQUEST_ENTITY_PROCESSING,
+	 * "CHUNKED"); cc.property(ClientProperties.CHUNKED_ENCODING_SIZE,
+	 * Integer.valueOf(128));
+	 * cc.property(ClientProperties.OUTBOUND_CONTENT_LENGTH_BUFFER,
+	 * Integer.valueOf(128));
+	 * 
+	 * Client client = ClientBuilder.newClient(cc);
+	 * client.register(feature).register(MultiPartFeature.class);
+	 * 
+	 * // nh: create WebTarget target =
+	 * client.target(CliConfSingleton.mediahome_host + "/api/app/" +
+	 * this.username + "/content");
+	 * 
+	 * LOGGER.info("Filename : " + filename); Response response = target
+	 * .request() .header("Content-Disposition", "attachment; filename=" +
+	 * filename) .post(Entity.entity(is, Type), Response.class);
+	 * 
+	 * if (response.getLocation() != null) return
+	 * CliConfSingleton.mediahome_host + "/snapmail/" + "snapmail.html#/" +
+	 * this.username + "/" +
+	 * response.getLocation().toString().split("/content/")[1];
+	 * 
+	 * else {
+	 * LOGGER.error("Error during the upload : Media@Home did not return a location"
+	 * ); return "Error during the upload"; }
+	 * 
+	 * } catch (WebApplicationException e) { if (e.getResponse().getStatus() ==
+	 * 403) { LOGGER.error("Error 403 (post content)"); } else { throw e; } }
+	 * return "Error"; }
+	 */
 }

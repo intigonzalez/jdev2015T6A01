@@ -15,58 +15,58 @@ import com.enseirb.telecom.dngroup.snapmail.mail.impl.MicrosoftMailProperties;
 
 public class MediaHomeFacadeTest {
 	MediaHomeFacadeImpl objectToTest;
+
 	@Test
-	public void testNoPropertiesConfigured(){
-		objectToTest.user=new User();
+	public void testNoPropertiesConfigured() {
+		User user = new User();
 		PropertyGroups propgroup = new PropertyGroups();
 		propgroup.setName("snapmail");
-		objectToTest.user.getPropertyGroups().add(propgroup);
-		try{
-		MailerProperties properties = objectToTest.getSmtpParam();
-		assertFalse(true);
-		}catch(NoSuchProperty e){
-			//success
+		user.getPropertyGroups().add(propgroup);
+		try {
+			MailerProperties properties = objectToTest.getSmtpParamORH(user);
+			assertFalse(true);
+		} catch (NoSuchProperty e) {
+			// success
 		}
-		
-		
+
 	}
-	
+
 	@Test
-	public void testGoogleToken() throws NoSuchProperty{
-		objectToTest.user=new User();
+	public void testGoogleToken() throws NoSuchProperty {
+		User user = new User();
 		PropertyGroups propgroup = new PropertyGroups();
 		propgroup.setName("snapmail");
-		Property p= new Property();
+		Property p = new Property();
 		p.setKey("google");
 		p.setValue("123A3413232324234");
-		propgroup.getProps().add(p);
-		objectToTest.user.getPropertyGroups().add(propgroup);
-		
-		MailerProperties properties = objectToTest.getSmtpParam();
+		propgroup.getProperty().add(p);
+		user.getPropertyGroups().add(propgroup);
+
+		MailerProperties properties = objectToTest.getSmtpParamORH(user);
 		assertTrue(properties instanceof GoogleMailProperties);
-	
+
 	}
-	
+
 	@Test
-	public void testMicrosoftToken() throws NoSuchProperty{
-		objectToTest.user=new User();
+	public void testMicrosoftToken() throws NoSuchProperty {
+		User user = new User();
 		PropertyGroups propgroup = new PropertyGroups();
 		propgroup.setName("snapmail");
-		Property p= new Property();
+		Property p = new Property();
 		p.setKey("microsoft");
 		p.setValue("123A3413232324234");
-		propgroup.getProps().add(p);
-		objectToTest.user.getPropertyGroups().add(propgroup);
-		
-		MailerProperties properties = objectToTest.getSmtpParam();
-		assertTrue(properties instanceof MicrosoftMailProperties);	
-		
+		propgroup.getProperty().add(p);
+	    user.getPropertyGroups().add(propgroup);
+
+		MailerProperties properties = objectToTest.getSmtpParamORH(user);
+		assertTrue(properties instanceof MicrosoftMailProperties);
+
 	}
-	
+
 	@Before
-	public void setUp(){
-		
-		objectToTest=new MediaHomeFacadeImpl();
+	public void setUp() {
+
+		objectToTest = new MediaHomeFacadeImpl();
 	}
 
 }

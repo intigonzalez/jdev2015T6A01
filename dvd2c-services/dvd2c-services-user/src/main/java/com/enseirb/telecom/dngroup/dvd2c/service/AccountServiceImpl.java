@@ -290,7 +290,7 @@ public class AccountServiceImpl implements AccountService {
 						return propertyGroupName.equals(input.getName());
 					}
 				})) {
-			return pg.getProps();
+			return pg.getProperty();
 		}
 		return Collections.emptyList();	
 	}
@@ -310,13 +310,13 @@ public class AccountServiceImpl implements AccountService {
 			user.getPropertyGroups().add(pg);
 		}
 		else
-			pg.getProps().clear();
+			pg.getProperty().clear();
 		
-		for(Property property : propertyGroups.getProps()) {
+		for(Property property : propertyGroups.getProperty()) {
 			Property p = new Property();
 			p.setKey(property.getKey());
 			p.setValue(property.getValue());
-			pg.getProps().add(p);
+			pg.getProperty().add(p);
 		}
 		this.saveUserOnServer(user.toUser());
 	}

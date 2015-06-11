@@ -2,9 +2,8 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
-	<xs:include schemaLocation="comment.xsd"></xs:include>
-	<xs:include schemaLocation="property.xsd"></xs:include>
-	<xs:include schemaLocation="propertyGroups.xsd"></xs:include>
+    <xs:include schemaLocation="propertyGroups.xsd"></xs:include>
+    <xs:include schemaLocation="comment.xsd"></xs:include>
 	
 	<xs:element name="content">
 		<xs:complexType>
@@ -39,7 +38,7 @@
 					minOccurs="0">
 				</xs:element>
 
-				<xs:element name="metadata" type="propertyGroups" maxOccurs="unbounded" minOccurs="0"></xs:element>
+				<xs:element ref="propertyGroups" maxOccurs="unbounded" minOccurs="0"></xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

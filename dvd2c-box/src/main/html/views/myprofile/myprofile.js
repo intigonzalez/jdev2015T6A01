@@ -73,13 +73,13 @@ angular.module('myApp.myprofile', ['ngRoute'])
             	if(l==undefined){
             		l=0;
             		var e = json.user.propertyGroups;
-            		if(e.props.length==undefined){
-            			var p = e.props;
+            		if(e.property.length==undefined){
+            			var p = e.property;
             			user.smtp[p.key] = p.value;
             		}
             		else{
-            			for(var j = 0; j < e.props.length; j++) {
-            				var p = e.props[j];
+            			for(var j = 0; j < e.property.length; j++) {
+            				var p = e.property[j];
             				console.log("p: "+j);
                     		console.log(p);
             				user.smtp[p.key] = p.value;
@@ -95,13 +95,13 @@ angular.module('myApp.myprofile', ['ngRoute'])
 	            		console.log(e.name == "snapmail")
 	            		if(e.name == "snapmail") {
 	            			console.log("OK")
-	            			if(e.props.length==undefined){
-	                			var p = e.props;
+	            			if(e.property.length==undefined){
+	                			var p = e.property;
 	                			user.smtp[p.key] = p.value;
 	                		}
 	                		else{
-	                			for(var j = 0; j < e.props.length; j++) {
-	                				var p = e.props[j];
+	                			for(var j = 0; j < e.property.length; j++) {
+	                				var p = e.property[j];
 	                				console.log("p: "+j);
 	                        		console.log(p);
 	                				user.smtp[p.key] = p.value;
@@ -111,9 +111,6 @@ angular.module('myApp.myprofile', ['ngRoute'])
 	            		}
 	            	}
             	}
-            	//var json=JSON.parse(angular.toJson(data));
-            	//user.smtp[json.user.propertyGroups.props.key]=json.user.propertyGroups.props.value;
-            	//user.smtp[json.user.propertyGroups.props[0].key]=json.user.propertyGroups.props[0].key;
             	console.log(user.smtp)
             	if (user.smtp.hasOwnProperty("username") && user.smtp.username != "" && user.smtp.username != undefined && user.smtp.hasOwnProperty("host") && user.smtp.host != "" && user.smtp.host != undefined && user.smtp.hasOwnProperty("port") && user.smtp.port != "" && user.smtp.port != undefined && user.smtp.hasOwnProperty("password") && user.smtp.password != "" && user.smtp.password != undefined)
             	{
