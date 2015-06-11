@@ -32,6 +32,8 @@ import org.springframework.stereotype.Component;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
+import com.enseirb.telecom.dngroup.dvd2c.model.Property;
+import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
@@ -148,7 +150,7 @@ public class UserEndPoints extends HttpServlet {
 	@Path("{userID}/properties/{propertyGroupName}")
 	@RolesAllowed({ "account", "authenticated" })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<Property> getUserProperties(@PathParam("userID") String userID, @PathParam("propertyGroupName") String propertyGroupName) {
+	public List<Property> getUserProperties(@PathParam("userID") UUID userID, @PathParam("propertyGroupName") String propertyGroupName) {
 		// Not working for unknown reason
 		return uManager.getPropertiesForUser(userID, propertyGroupName);
 	}
@@ -162,7 +164,7 @@ public class UserEndPoints extends HttpServlet {
 	@RolesAllowed({ "account", "authenticated" })
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response postUserProps(PropertyGroups propertyGroups, @PathParam("userID") String userID, @PathParam("propertyGroupName") String propertyGroupName) {
+	public Response postUserProps(PropertyGroups propertyGroups, @PathParam("userID") UUID userID, @PathParam("propertyGroupName") String propertyGroupName) {
 		uManager.setPropertiesForUser(userID, propertyGroupName, propertyGroups);
 		return Response.status(200).build();
 	}

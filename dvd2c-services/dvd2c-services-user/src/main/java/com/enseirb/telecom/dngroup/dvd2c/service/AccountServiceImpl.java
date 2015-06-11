@@ -2,10 +2,14 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
+
+import jersey.repackaged.com.google.common.base.Predicate;
+import jersey.repackaged.com.google.common.collect.Collections2;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +18,8 @@ import org.springframework.stereotype.Service;
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
+import com.enseirb.telecom.dngroup.dvd2c.model.Property;
+import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
 import com.enseirb.telecom.dngroup.dvd2c.repository.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
@@ -276,45 +282,45 @@ public class AccountServiceImpl implements AccountService {
 // TODO : verify this fonction
 	
 	@Override
-	public List<Property> getPropertiesForUser(String userId, final String propertyGroupName) {
+	public List<Property> getPropertiesForUser(UUID userId, final String propertyGroupName) {
 	
-		for (PropertyGroups pg : Collections2.filter(
-				this.userRepository.findOne(userId).getPropertyGroups(),
-				new Predicate<PropertyGroups>() {
-	
-					@Override
-					public boolean apply(PropertyGroups input) {
-						return propertyGroupName.equals(input.getName());
-					}
-				})) {
-			return pg.getProperty();
-		}
+//		for (PropertyGroups pg : Collections2.filter(
+//				this.userRepository.findOne(userId).getPropertyGroups(),
+//				new Predicate<PropertyGroups>() {
+//	
+//					@Override
+//					public boolean apply(PropertyGroups input) {
+//						return propertyGroupName.equals(input.getName());
+//					}
+//				})) {
+//			return pg.getProperty();
+//		}
 		return Collections.emptyList();	
 	}
 	
 	@Override
-	public void setPropertiesForUser(final String userId,final String propertyGroupName, PropertyGroups propertyGroups) {
-		UserRepositoryObject user = this.userRepository.findOne(userId);
-		PropertyGroups pg = null;
-		for(PropertyGroups pr : user.getPropertyGroups()){
-			if (pr.getName().equals(propertyGroupName)){
-				pg = pr;
-			}
-		}
-		if(pg == null) {
-			pg = new PropertyGroups();
-			pg.setName(propertyGroupName);
-			user.getPropertyGroups().add(pg);
-		}
-		else
-			pg.getProperty().clear();
-		
-		for(Property property : propertyGroups.getProperty()) {
-			Property p = new Property();
-			p.setKey(property.getKey());
-			p.setValue(property.getValue());
-			pg.getProperty().add(p);
-		}
-		this.saveUserOnServer(user.toUser());
+	public void setPropertiesForUser(final UUID userId,final String propertyGroupName, PropertyGroups propertyGroups) {
+//		User user = this.userRepository.findOne(userId);
+//		PropertyGroups pg = null;
+//		for(PropertyGroups pr : user.getPropertyGroups()){
+//			if (pr.getName().equals(propertyGroupName)){
+//				pg = pr;
+//			}
+//		}
+//		if(pg == null) {
+//			pg = new PropertyGroups();
+//			pg.setName(propertyGroupName);
+//			user.getPropertyGroups().add(pg);
+//		}
+//		else
+//			pg.getProperty().clear();
+//		
+//		for(Property property : propertyGroups.getProperty()) {
+//			Property p = new Property();
+//			p.setKey(property.getKey());
+//			p.setValue(property.getValue());
+//			pg.getProperty().add(p);
+//		}
+//		this.saveUserOnServer(user.toUser());
 	}
 }

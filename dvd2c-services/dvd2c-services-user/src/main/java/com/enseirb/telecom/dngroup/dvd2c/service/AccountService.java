@@ -149,8 +149,8 @@ public interface AccountService {
 	public abstract User getContactInformation(UUID userID) throws NoSuchUserException;
 	
 
-	public abstract List<Property> getPropertiesForUser(final String userId,final String propertyGroupName);
-	public abstract void setPropertiesForUser(final String userId,final String propertyGroupName, PropertyGroups propertyGroups);
-}
+	public abstract List<Property> getPropertiesForUser(final UUID userId,final String propertyGroupName);
+	public abstract void setPropertiesForUser(final UUID userId,final String propertyGroupName, PropertyGroups propertyGroups);
+
 
 }

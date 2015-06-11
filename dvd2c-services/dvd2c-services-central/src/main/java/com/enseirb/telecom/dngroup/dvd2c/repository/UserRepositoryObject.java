@@ -1,6 +1,5 @@
 package com.enseirb.telecom.dngroup.dvd2c.repository;
 
-
 import java.util.UUID;
 
 import org.hibernate.annotations.Type;
@@ -9,31 +8,27 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
-@Document(collection="UserCentral")
+@Document(collection = "UserCentral")
 public class UserRepositoryObject {
-	
+
 	@Id
 	@Type(type = "uuid-char")
 	protected UUID uuid;
-	
+
 	protected String userEmail;
-	
+
 	protected String boxID;
-	
+
 	protected String firstname;
 
 	protected String surname;
-	
+
 	protected String password;
 
 	protected String pubKey;
 
 	protected String privateKey;
-	
-	
-	
 
-	
 	public UUID getUuid() {
 		return uuid;
 	}
@@ -57,8 +52,7 @@ public class UserRepositoryObject {
 	}
 
 	public UserRepositoryObject(String userID, String boxID, String firstname,
-			String surname, String password, String pubKey, String privateKey,
-			) {
+			String surname, String password, String pubKey, String privateKey) {
 		super();
 		this.boxID = boxID;
 		this.userEmail = userID;
@@ -133,12 +127,6 @@ public class UserRepositoryObject {
 		user.setPrivateKey(privateKey);
 		user.setPubKey(pubKey);
 		user.setBoxID(boxID);
-		/* SnapMail add-on */
-		user.setSmtpHost(smtpHost);
-		user.setSmtpPort(smtpPort);
-		user.setSmtpUsername(smtpUsername);
-		user.setSmtpPassword(smtpPassword);
-		user.setSmtpToken(smtpToken);
 		return user;
 	}
 
@@ -154,5 +142,4 @@ public class UserRepositoryObject {
 		this.boxID = boxID;
 	}
 
-	
 }
