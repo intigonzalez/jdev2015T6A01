@@ -3,6 +3,7 @@ package com.enseirb.telecom.dngroup.dvd2c.repository;
 
 import java.util.UUID;
 
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,6 +13,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 public class UserRepositoryObject {
 	
 	@Id
+	@Type(type = "uuid-char")
 	protected UUID uuid;
 	
 	protected String userEmail;

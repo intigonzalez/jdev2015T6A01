@@ -30,24 +30,11 @@ public class Document extends ActivityObject implements Serializable {
 	private String fileSize;
 
 	@Column(name = "file_processing")
-	private String fileProcessing;
+	private Integer fileProcessing;
 
 	private String type;
 
 	public Document() {
-	}
-
-	public Document(Content content) {
-		if (content.getContentsID() != null)
-			setId(Integer.valueOf(content.getContentsID()));
-		setActorId(UUID.fromString(content.getActorID()));
-		setTitle(content.getName());
-		setType(content.getType());
-		if (content.getUnixTime() != null)
-			setCreatedAt(new java.util.Date(1000 * content.getUnixTime()));
-		setFileLink(content.getLink());
-		setFilePreviewLink(content.getPreviewLink());
-		setFileProcessing(content.getStatus());
 	}
 
 	public String getFileContentType() {
@@ -82,11 +69,11 @@ public class Document extends ActivityObject implements Serializable {
 		this.fileSize = fileSize;
 	}
 
-	public String getFileProcessing() {
+	public Integer getFileProcessing() {
 		return this.fileProcessing;
 	}
 
-	public void setFileProcessing(String fileProcessing) {
+	public void setFileProcessing(int fileProcessing) {
 		this.fileProcessing = fileProcessing;
 	}
 
@@ -98,11 +85,24 @@ public class Document extends ActivityObject implements Serializable {
 		this.type = type;
 	}
 
+	public Document(Content content) {
+		if (content.getContentsID() != null)
+			setId(Integer.valueOf(content.getContentsID()));
+		setActorId(UUID.fromString(content.getActorID()));
+		setTitle(content.getName());
+		setType(content.getType());
+		if (content.getUnixTime() != null)
+			setCreatedAt(new java.util.Date(1000 * content.getUnixTime()));
+		setFileLink(content.getLink());
+		setFilePreviewLink(content.getPreviewLink());
+		setFileProcessing(content.getStatus());
+	}
+
 	public Content toContent() {
 		Content content = new Content();
 		content.setContentsID(this.getId());
 		content.setName(this.getTitle());
-		content.setType(this.getObjectType());
+		content.setType(this.getType());
 		content.setActorID(this.getActorId().toString());
 		if (getCreatedAt() != null)
 			content.setUnixTime(this.getCreatedAt().getTime() / 1000);

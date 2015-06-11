@@ -223,6 +223,7 @@ public class AccountServiceImpl implements AccountService {
 		try {
 			User userdb = new User(user);
 			user.setPassword(null);
+			user.setBoxID(CliConfSingleton.boxID);
 			requetUserService.updateUserORH(user);
 
 			saveUserOnLocal(userdb);

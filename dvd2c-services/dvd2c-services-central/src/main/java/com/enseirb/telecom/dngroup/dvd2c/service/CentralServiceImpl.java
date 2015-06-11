@@ -318,6 +318,12 @@ public class CentralServiceImpl implements CentralService {
 
 	@Override
 	public void saveUserOnLocal(User user) {
+		UserRepositoryObject userToSav = userRepository.findOne(UUID.fromString(user.getUuid()));
+		
+		userToSav.setFirstname(user.getFirstname());
+		userToSav.setSurname(user.getSurname());
+		userToSav.setUserID(user.getUserID());
+		
 		userRepository.save(new UserRepositoryObject(user));
 	}
 

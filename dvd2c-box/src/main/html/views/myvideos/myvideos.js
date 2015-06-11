@@ -60,7 +60,7 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
                 })
         };
         this.generateLink = function(content) {
-             if (content.status == "success") {
+             if (content.status == 1) {
                 return videos.prefix + ".html?url=" + content.link + "/" + videos.suffix;
             }
             else {
@@ -68,7 +68,7 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
             }
         };
         this.videoInProgress = function(content) {
-             if (content.status == "success") {
+             if (content.status == 1) {
                  return "";
              }
              else {
@@ -96,9 +96,6 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
         this.removeVideo = function(content) {
             $http.delete(PREFIX_RQ + "/api/app/content/"+content.contentsID)
                 .success(function(data,status,headers,config) {
-                	if (headers('Content-Type').indexOf("text/html")==0) {
-    					window.location.replace("/");
-    				} 
                     var index = videos.getIndex(content);
                     if (index > -1) {
                         videos.list.splice(index, 1);

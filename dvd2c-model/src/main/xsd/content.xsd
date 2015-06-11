@@ -24,7 +24,7 @@
 				<xs:element name="previewLink" type="xs:anyURI"
 					maxOccurs="1" minOccurs="0">
 				</xs:element>
-				<xs:element name="status" type="xs:string" maxOccurs="1"
+				<xs:element name="status" type="xs:int" maxOccurs="1"
 					minOccurs="0">
 				</xs:element>
 				<xs:element name="detail" type="xs:string" maxOccurs="1"

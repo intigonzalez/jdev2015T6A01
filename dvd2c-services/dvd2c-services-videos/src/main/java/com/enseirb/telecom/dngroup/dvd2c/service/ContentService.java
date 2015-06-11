@@ -67,28 +67,30 @@ public interface ContentService {
 //	public abstract void writeToFile(InputStream uploadedInputStream,
 //			File dest) throws IOException;
 
-	/**
-	 * //TODO : explain this method
-	 * get all content for a userID
-	 * is use to get video for a specific user
-	 * @param userID
-	 * @param relation
-	 * @return a list a content
-	 */
-	public List<Content> getAllContent(String userID, ContactXSD relation);
+//	/**
+//	 * //TODO : explain this method
+//	 * get all content for a userID
+//	 * is use to get video for a specific user
+//	 * @param userID
+//	 * @param relation
+//	 * @return a list a content
+//	 */
+//	public List<Content> getAllContent(String userID, ContactXSD relation);
 
 	/**
 	 * is use just for change status a video
-	 * @param contentsID
+	 * @param qUEUE_NAME
 	 * @param status
 	 */
-	public abstract void updateContent(String contentsID, String status);
+	public abstract void updateContent(String qUEUE_NAME, Integer status);
 
 //	public abstract Content createContent(String userID,
 //			InputStream uploadedInputStream, String[] fileType, File upload) throws IOException;
 //
 	public abstract Content createContent(String userID,
 			InputStream uploadedInputStream, String contentDisposition) throws IOException;
+
+
 
 	
 

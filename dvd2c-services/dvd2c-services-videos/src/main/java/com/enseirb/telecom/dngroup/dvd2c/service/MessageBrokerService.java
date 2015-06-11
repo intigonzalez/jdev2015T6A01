@@ -9,11 +9,11 @@ public interface MessageBrokerService {
 	 * Add the task and ask for the end message
 	 * 
 	 * @param task
-	 * @param id
+	 * @param string
 	 * @throws UnsupportedEncodingException
 	 * @throws IOException
 	 */
-	public abstract void addTask(String task, Integer id)
+	public abstract void addTask(String task, String string)
 			throws UnsupportedEncodingException, IOException;
 
 

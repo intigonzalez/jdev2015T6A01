@@ -47,7 +47,7 @@ angular.module('myApp.mypictures', ['ngRoute', 'ui.bootstrap'])
                 })
         };
         this.generateLink = function(content) {
-             if (content.status == "success") {
+             if (content.status == 1) {
                 return content.link+"/original.jpg";
             }
             else {
@@ -55,7 +55,7 @@ angular.module('myApp.mypictures', ['ngRoute', 'ui.bootstrap'])
             }
         };
         this.pictureInProgress = function(content) {
-             if (content.status == "success") {
+             if (content.status == 1) {
                  return "";
              }
              else {
@@ -84,10 +84,7 @@ angular.module('myApp.mypictures', ['ngRoute', 'ui.bootstrap'])
         this.removePicture = function(content) {
             $http.delete(PREFIX_RQ + "/api/app/content/"+content.contentsID)
                 .success(function(data,status,headers,config) {
-                	if (headers('Content-Type').indexOf("text/html")==0) {
-    					window.location.replace("/");
-    				} 
-                    var index = pictures.getIndex(content);
+                	var index = pictures.getIndex(content);
                     if (index > -1) {
                         pictures.list.splice(index, 1);
                     }

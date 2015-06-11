@@ -42,7 +42,7 @@ public class RabbitMQServiceImpl implements MessageBrokerService {
 	 * .lang.String, java.lang.String)
 	 */
 	@Override
-	public void addTask(String task, Integer id)
+	public void addTask(String task, String id)
 			throws UnsupportedEncodingException, IOException {
 		
 		channel.basicPublish("", QUEUE_NAME, new AMQP.BasicProperties.Builder()
@@ -50,7 +50,7 @@ public class RabbitMQServiceImpl implements MessageBrokerService {
 				.build(), task.getBytes("utf-8"));
 
 		try {
-			queueConsumerApp.getQueueMessage(id.toString(), contentService);
+			queueConsumerApp.getQueueMessage(id, contentService);
 		} catch (InterruptedException e) {
 			LOGGER.error("Queue interrupted", e);
 		}

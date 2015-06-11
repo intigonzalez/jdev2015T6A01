@@ -9,7 +9,6 @@ import java.io.Writer;
 //import java.nio.file.Path;
 //import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
-import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Task;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Document;
@@ -44,6 +42,10 @@ public class ContentServiceImpl implements ContentService {
 	DocumentRepository documentRepository;
 	@Inject
 	MessageBrokerService rabbitMq;
+
+	static final Integer SUCCESS = 1;
+	static final Integer FAILURE = -1;
+	static final Integer INPROGRES = 0;
 
 	// private RequestUserService requetUserService = new
 	// RequestUserServiceImpl();
@@ -148,7 +150,7 @@ public class ContentServiceImpl implements ContentService {
 		content.setActorID(userID);
 		content.setType(fileType);
 		// content.setContentsID(uuid.toString().replace("-", ""));
-		content.setStatus("In progress");
+		content.setStatus(INPROGRES);
 
 		switch (fileType) {
 		case "video":
@@ -156,11 +158,11 @@ public class ContentServiceImpl implements ContentService {
 			break;
 		case "image":
 			link = "/pictures/" + uuid.toString();
-			content.setStatus("success");
+			content.setStatus(INPROGRES);
 			break;
 		default:
 			link = "/cloud/" + uuid.toString();
-			content.setStatus("success");
+			content.setStatus(SUCCESS);
 			break;
 		}
 		content.setLink(link);
@@ -192,7 +194,6 @@ public class ContentServiceImpl implements ContentService {
 
 	}
 
-	
 	protected Content createContent(Content content, String srcfile)
 			throws IOException {
 		Document d = documentRepository.save(new Document(content));
@@ -201,7 +202,7 @@ public class ContentServiceImpl implements ContentService {
 			try {
 				Task task = new Task();
 				task.setTask("adaptation.commons.ddo");
-				task.setId(d.getId());
+				task.setId(d.getId().toString());
 				task.getArgs().add(srcfile);
 				task.getArgs().add(content.getLink());
 
@@ -224,7 +225,7 @@ public class ContentServiceImpl implements ContentService {
 			try {
 				Task task = new Task();
 				task.setTask("adaptation.commons.image_processing");
-				task.setId(d.getId());
+				task.setId(d.getId().toString());
 				task.getArgs().add(srcfile);
 				task.getArgs().add(content.getLink());
 
@@ -299,65 +300,67 @@ public class ContentServiceImpl implements ContentService {
 
 	}
 
-	public List<Content> getAllContent(String userID, ContactXSD relation) {
-		// List that will be return.
-		List<Content> listContent = new ArrayList<Content>();
-
-		// Get all the content the UserID stores
-		Iterable<Document> content = documentRepository.findAll();// FromUser(userID);
-		Iterator<Document> itr = content.iterator();
-
-		try {
-			while (itr.hasNext()) { // For each content
-				Document document = itr.next();
-				search:
-
-				if ((document.getActorId() != null)
-						&& (document.getActorId().equals(userID))) {
-					// For each group the relation belongs to
-					// RBAC: fix
-					// for (int i = 0; i < relation.getRole().size(); i++) {
-					// if (contentRepositoryObject.getMetadata() != null) {
-					// if (contentRepositoryObject.getMetadata().size() == 0) {
-					//
-					// break search;
-					// }
-					// }
-					// for (int j = 0; j < contentRepositoryObject
-					// .getMetadata().size(); j++) {
-					//
-					// if (relation
-					// .getRole()
-					// .get(i)
-					// .equals(contentRepositoryObject
-					// .getMetadata().get(j))) {
-					// contentRepositoryObject.getMetadata().clear();
-					// contentRepositoryObject
-					// .setLink(CliConfSingleton.publicAddr
-					// + contentRepositoryObject
-					// .getLink());
-					// listContent.add(contentRepositoryObject
-					// .toContent());
-					// break search;
-					// } else {
-					// LOGGER.debug("Group is not the same. ");
-					// }
-					// }
-					// }
-				}
-			}
-		} catch (Exception e) {
-			LOGGER.error("error for get contents", e);
-		}
-
-		return listContent;
-	}
+	// public List<Content> getAllContent(UUID userID, ContactXSD relation) {
+	// // List that will be return.
+	// List<Content> listContent = new ArrayList<Content>();
+	//
+	// // Get all the content the UserID stores
+	// Iterable<Document> content =
+	// documentRepository.findByActorUUID(userID);// FromUser(userID);
+	//
+	//
+	// try {
+	// while (content.hasNext()) { // For each content
+	// Document document = content.next();
+	// search:
+	//
+	// if ((document.getActorId() != null)
+	// && (document.getActorId().equals(userID))) {
+	// // For each group the relation belongs to
+	// // RBAC: fix
+	// // for (int i = 0; i < relation.getRole().size(); i++) {
+	// // if (contentRepositoryObject.getMetadata() != null) {
+	// // if (contentRepositoryObject.getMetadata().size() == 0) {
+	// //
+	// // break search;
+	// // }
+	// // }
+	// // for (int j = 0; j < contentRepositoryObject
+	// // .getMetadata().size(); j++) {
+	// //
+	// // if (relation
+	// // .getRole()
+	// // .get(i)
+	// // .equals(contentRepositoryObject
+	// // .getMetadata().get(j))) {
+	// // contentRepositoryObject.getMetadata().clear();
+	// // contentRepositoryObject
+	// // .setLink(CliConfSingleton.publicAddr
+	// // + contentRepositoryObject
+	// // .getLink());
+	// // listContent.add(contentRepositoryObject
+	// // .toContent());
+	// // break search;
+	// // } else {
+	// // LOGGER.debug("Group is not the same. ");
+	// // }
+	// // }
+	// // }
+	// }
+	// }
+	// } catch (Exception e) {
+	// LOGGER.error("error for get contents", e);
+	// }
+	//
+	// return listContent;
+	// }
 
 	@Override
-	public void updateContent(String contentsID, String status) {
+	public void updateContent(String contentsID, Integer status) {
 		try {
-			Integer id = Integer.valueOf(contentsID);
-			Document document = documentRepository.findOne(id);
+
+			Document document = documentRepository.findOne(Integer
+					.parseInt(contentsID));
 			document.setFileProcessing(status);
 			documentRepository.save(document);
 		} catch (NumberFormatException e) {

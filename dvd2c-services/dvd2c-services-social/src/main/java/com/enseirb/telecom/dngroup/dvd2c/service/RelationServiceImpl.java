@@ -62,7 +62,7 @@ public class RelationServiceImpl implements RelationService {
 	RequestUserService rus;
 
 	@Inject
-	RequestContentService requestContentService;
+	RequestContentService rcs;
 
 	@Inject
 	ActivityObjectAudienceRepository activityObjectExtandRepo;
@@ -183,7 +183,7 @@ public class RelationServiceImpl implements RelationService {
 			LOGGER.error("this user {} a not role Public", user.getId());
 		}
 
-		// contact2.setRole(Arrays.asList(role));
+		contact2.setRole(Arrays.asList(role));
 		
 
 		if (!fromBox) {
@@ -452,7 +452,7 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public List<Content> getAllContent(UUID userUUID, UUID relationUUID) {
 		try {
-			List<Content> listContent = requestContentService.get(userUUID,
+			List<Content> listContent = rcs.get(userUUID,
 					relationUUID);
 			LOGGER.debug("Content from {} fetched ! ", relationUUID);
 			return listContent;

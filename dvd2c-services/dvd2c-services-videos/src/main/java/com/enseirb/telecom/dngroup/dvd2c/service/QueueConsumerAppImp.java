@@ -14,6 +14,7 @@ import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Strings;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
@@ -21,27 +22,34 @@ import com.rabbitmq.client.Envelope;
 
 @Service
 public class QueueConsumerAppImp implements QueueConsumerApp {
-	private static final Logger LOGGER = LoggerFactory.getLogger(QueueConsumerAppImp.class);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(QueueConsumerAppImp.class);
+
 	
 	@Inject
 	ConnectionFactory factory;
-	
-	/* (non-Javadoc)
-	 * @see com.enseirb.telecom.dngroup.dvd2c.QueueConumerApp#getQueueMessage(java.lang.String, com.enseirb.telecom.dngroup.dvd2c.service.ContentService)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.enseirb.telecom.dngroup.dvd2c.QueueConumerApp#getQueueMessage(java
+	 * .lang.String, com.enseirb.telecom.dngroup.dvd2c.service.ContentService)
 	 */
 	@Override
-	public void getQueueMessage(String queue,final ContentService contentService) throws IOException,
+	public void getQueueMessage(String id,
+			final ContentService contentService) throws IOException,
 			InterruptedException {
-		final String QUEUE_NAME = queue;
+		final String QUEUE_NAME = id.toString();
 
-		
-		LOGGER.debug("Rabbit conection : host : {} , port : {} ",factory.getHost(),factory.getPort());
+		LOGGER.debug("Rabbit conection : host : {} , port : {} ",
+				factory.getHost(), factory.getPort());
 		Connection connection = factory.createConnection();
 		Channel channel = connection.createChannel(false);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("x-expires", 86400000);
 		channel.queueDeclare(QUEUE_NAME, true, false, true, map);
-		
+
 		LOGGER.info("Queue Name : {}", QUEUE_NAME);
 		LOGGER.info(" [*] Waiting for messages from RabbitMQ.");
 
@@ -53,24 +61,29 @@ public class QueueConsumerAppImp implements QueueConsumerApp {
 				JSONObject obj;
 				String status = null;
 				
-				
+				if (Strings.isNullOrEmpty(QUEUE_NAME)){
+					LOGGER.error("QUEUE_NAME is null or empty");
+//					QUEUE_NAME = properties.getCorrelationId();
+				}
+
 				try {
 					obj = new JSONObject(result);
 					status = obj.getString("status");
-					LOGGER.info("Result for element {}" , new Object[] {result, status});
+					LOGGER.info("Result for element {}", new Object[] { result,
+							status });
 				} catch (JSONException e) {
-					LOGGER.error("error for pars element",e);
+					LOGGER.error("error for pars element", e);
 				}
 
-			
 				if (status.equals("SUCCESS")) {
 					// change the status in DataBase
-					LOGGER.info("Response from Celery : Success for task ", QUEUE_NAME);
-					contentService.updateContent(QUEUE_NAME, "success");
-				}
-				else {
-					contentService.updateContent(QUEUE_NAME, "failure");
-					LOGGER.info("Response from Celery : Failure for task ", QUEUE_NAME);
+					LOGGER.info("Response from Celery : Success for task {}",
+							QUEUE_NAME);
+					contentService.updateContent(QUEUE_NAME, ContentServiceImpl.SUCCESS);
+				} else {
+					contentService.updateContent(QUEUE_NAME, ContentServiceImpl.FAILURE);
+					LOGGER.info("Response from Celery : Failure for task ",
+							QUEUE_NAME);
 				}
 			}
 		});
