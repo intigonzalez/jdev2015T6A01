@@ -1,0 +1,19 @@
+package com.enseirb.telecom.dngroup.dvd2c.repository;
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroups;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.Profile;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
+
+//import java.io.Serializable;
+@Repository
+public interface PropertyGroupsRepository extends CrudRepository<PropertyGroups, Integer> {
+	
+	@Query("select u from PropertyGroups u where u.name = ?1 and u.user = ?2")
+	PropertyGroups findByKeyAndUser(String name,User user);
+
+
+}

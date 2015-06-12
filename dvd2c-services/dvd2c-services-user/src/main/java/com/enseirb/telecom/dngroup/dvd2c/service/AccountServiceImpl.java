@@ -21,6 +21,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Property;
 import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
+import com.enseirb.telecom.dngroup.dvd2c.repository.PropertyGroupsRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 import com.google.common.base.Strings;
@@ -32,6 +33,9 @@ public class AccountServiceImpl implements AccountService {
 
 	@Inject
 	protected UserRepository userRepository;
+
+	@Inject
+	protected PropertyGroupsRepository propertyGroupsRepository;
 
 	@Inject
 	protected RequestUserService requetUserService;
@@ -233,6 +237,7 @@ public class AccountServiceImpl implements AccountService {
 			requetUserService.updateUserORH(user);
 
 			saveUserOnLocal(userdb);
+
 		} catch (IOException e) {
 			LOGGER.error("Error for Update this user on server : {}",
 					user.getBoxID(), e);
@@ -252,6 +257,7 @@ public class AccountServiceImpl implements AccountService {
 			u.setFirstname(user.getFirstname());
 		if (!Strings.isNullOrEmpty(user.getSurname()))
 			u.setSurname(user.getSurname());
+
 		userRepository.save(u);
 	}
 
@@ -279,43 +285,50 @@ public class AccountServiceImpl implements AccountService {
 		}
 		return false;
 	}
-// TODO : verify this fonction
-	
+
+	// TODO : verify this fonction
+
 	@Override
-	public List<Property> getPropertiesForUser(UUID userId, final String propertyGroupName) {
-	
-//		for (PropertyGroups pg : Collections2.filter(
-//				this.userRepository.findOne(userId).getPropertyGroups(),
-//				new Predicate<PropertyGroups>() {
-//	
-//					@Override
-//					public boolean apply(PropertyGroups input) {
-//						return propertyGroupName.equals(input.getName());
-//					}
-//				})) {
-//			return pg.getProperty();
-//		}
-		return Collections.emptyList();	
+	public List<Property> getPropertiesForUser(UUID userId,
+			final String propertyGroupName) {
+
+		// for (PropertyGroups pg : Collections2.filter(
+		// this.userRepository.findOne(userId).getPropertyGroups(),
+		// new Predicate<PropertyGroups>() {
+		//
+		// @Override
+		// public boolean apply(PropertyGroups input) {
+		// return propertyGroupName.equals(input.getName());
+		// }
+		// })) {
+		// return pg.getProperty();
+		// }
+		return Collections.emptyList();
 	}
-	
+
 	@Override
-	public void setPropertiesForUser(final UUID userId,final String propertyGroupName, PropertyGroups propertyGroups) {
-//		User user = this.userRepository.findOne(userId);
-//		PropertyGroups pg = null;
-//		for(PropertyGroups pr : user.getPropertyGroups()){
-//			if (pr.getName().equals(propertyGroupName)){
-//				pg = pr;
-//			}
-//		}
-//		if(pg == null) {
+	public void setPropertiesForUser(final UUID userId,
+			PropertyGroups propertyGroups) {
+
+		User user = userRepository.findOne(userId);
+		com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroups propertyGroupOnDB;
+		if (( propertyGroupOnDB = propertyGroupsRepository
+				.findByKeyAndUser(propertyGroups.getName(), user))==null){
+			propertyGroupOnDB = new com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroups();
+			propertyGroupOnDB.setName(propertyGroups.getName());
+			user.getProperty_groups().add(propertyGroupOnDB);
+//			userRepository.save(user);
+		}
+
+		// TODO : NEED TO FINSH
+//		if (pg == null) {
 //			pg = new PropertyGroups();
 //			pg.setName(propertyGroupName);
 //			user.getPropertyGroups().add(pg);
-//		}
-//		else
+//		} else
 //			pg.getProperty().clear();
-//		
-//		for(Property property : propertyGroups.getProperty()) {
+//
+//		for (Property property : propertyGroups.getProperty()) {
 //			Property p = new Property();
 //			p.setKey(property.getKey());
 //			p.setValue(property.getValue());

@@ -150,7 +150,7 @@ public interface AccountService {
 	
 
 	public abstract List<Property> getPropertiesForUser(final UUID userId,final String propertyGroupName);
-	public abstract void setPropertiesForUser(final UUID userId,final String propertyGroupName, PropertyGroups propertyGroups);
+	public abstract void setPropertiesForUser(final UUID uuid, PropertyGroups propertyGroups);
 
 
 }

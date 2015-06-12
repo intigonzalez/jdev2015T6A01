@@ -55,7 +55,8 @@ public class UserEndPoints extends HttpServlet {
 	@Path("/account/user")
 	@GET()
 	public Response getverification() {
-		String uuid = SecurityContextHolder.getContext().getAuthentication().getName();
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
 
 		return Response
 				.ok("authenticated successfully!")
@@ -138,19 +139,22 @@ public class UserEndPoints extends HttpServlet {
 		}
 	}
 
-/**
+	/**
 	 * Get the propertyGroups of a user by userID
 	 * 
 	 * @param userID
 	 *            the user to get
 	 * @return a user
 	 */
-//TODO: SEE THIS FONCTION
+	// TODO: SEE THIS FONCTION
 	@GET
 	@Path("{userID}/properties/{propertyGroupName}")
-	@RolesAllowed({ "account", "authenticated" })
+//	@RolesAllowed({ "account", "authenticated" })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<Property> getUserProperties(@PathParam("userID") UUID userID, @PathParam("propertyGroupName") String propertyGroupName) {
+	public List<Property> getUserProperties(@PathParam("userID") UUID userID,
+			@PathParam("propertyGroupName") String propertyGroupName) {
+		UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+				.getAuthentication().getName());
 		// Not working for unknown reason
 		return uManager.getPropertiesForUser(userID, propertyGroupName);
 	}
@@ -160,12 +164,15 @@ public class UserEndPoints extends HttpServlet {
 	 *
 	 */
 	@PUT
-	@Path("{userID}/properties/{propertyGroupName}")
-	@RolesAllowed({ "account", "authenticated" })
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response postUserProps(PropertyGroups propertyGroups, @PathParam("userID") UUID userID, @PathParam("propertyGroupName") String propertyGroupName) {
-		uManager.setPropertiesForUser(userID, propertyGroupName, propertyGroups);
+	@Path("{userID}/properties/")
+//	@RolesAllowed({ "account", "authenticated" })
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response postUserProps(PropertyGroups propertyGroups,
+			@PathParam("userID") UUID userID) {
+		UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+				.getAuthentication().getName());
+		uManager.setPropertiesForUser(uuid, propertyGroups);
 		return Response.status(200).build();
 	}
 
@@ -273,6 +280,7 @@ public class UserEndPoints extends HttpServlet {
 				&& uManager.userExistOnLocal(UUID.fromString(user.getUuid())) == true) {
 			try {
 				uManager.saveUserOnServer(user);
+
 				return Response.status(200).build();
 			} catch (NoSuchUserException e) {
 				return Response.status(Status.NOT_FOUND).build();
@@ -282,7 +290,6 @@ public class UserEndPoints extends HttpServlet {
 		}
 
 	}
-
 
 	/**
 	 * Delete the user with userID

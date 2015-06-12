@@ -2,13 +2,18 @@ package com.enseirb.telecom.dngroup.dvd2c.modeldb;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroups;
 
 /**
  * The persistent class for the users database table.
@@ -66,13 +71,30 @@ public class User extends Actor implements Serializable {
 
 	private String status;
 
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "user")
+	private List<PropertyGroups> property_groups;
+
+	public List<PropertyGroups> getProperty_groups() {
+		return property_groups;
+	}
+
+	public void setProperty_groups(List<PropertyGroups> property_groups) {
+		this.property_groups = property_groups;
+	}
+
 	public User() {
 	}
 
 	public User(com.enseirb.telecom.dngroup.dvd2c.model.User user) {
 		super(user);
 		this.encryptedPassword = user.getPassword();
-
+		
+//		List<com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups> pr = user.getPropertyGroups();
+//		for (com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups propertyGroups : pr) {
+//			
+//			if (this.property_groups.get);
+//		}
+		
 	}
 
 	public String getAuthenticationToken() {
