@@ -66,6 +66,7 @@ public class UserRepositoryObject {
 	public UserRepositoryObject(User user) {
 		this.userEmail = user.getUserID();
 		this.boxID = user.getBoxID();
+		this.uuid = UUID.fromString(user.getUuid());
 		this.firstname = user.getFirstname();
 		this.surname = user.getSurname();
 		this.password = user.getPassword();
