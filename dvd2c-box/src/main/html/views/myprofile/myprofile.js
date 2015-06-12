@@ -72,6 +72,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
 					window.location.replace("/");
 				} 
             	var json=JSON.parse(angular.toJson(data));
+            	console.log(json.user.propertyGroups);
             	var l=json.user.propertyGroups.length;
             	if(l==undefined){
             		l=0;
@@ -174,7 +175,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
             if(smtp.yahoo != "")
             	data.propertyGroups.props.push({key: "yahoo", value: smtp.yahoo});
             	
-            $http.put(PREFIX_RQ + "/api/app/account/" + this.person.userID + "/properties/snapmail", data)
+            $http.put(PREFIX_RQ + "/api/app/" + this.person.uuid + "/properties", data)
                 .success(function (data, status, headers, config) {
                     console.log("Succeed");
                     user.class = "btn-success";

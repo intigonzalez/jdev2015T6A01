@@ -65,5 +65,12 @@ public class PropertyGroups extends DBObject implements Serializable {
 	public void setUser(User user) {
 		this.user = user;
 	}
-
+	
+	public List<Property> getProperty(){
+		return properties;
+	}
+	
+	public void setProperty(List<Property> properties){
+		this.properties=properties;
+	}
 }
