@@ -56,12 +56,7 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public boolean contentExist(Integer contentsID) {
-		try {
-			Integer id = Integer.valueOf(contentsID);
-			return documentRepository.exists(id);
-		} catch (NumberFormatException e) {
-			return false;
-		}
+		return documentRepository.exists(contentsID);
 	}
 
 	@Override
