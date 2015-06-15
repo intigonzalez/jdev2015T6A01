@@ -17,7 +17,7 @@ public interface MediaHomeFacade {
 	 * take a bodypart from the mail and create a MH link from it
 	 */
 	public abstract String bodyPart2Link(InputStream inputStream,
-			String filename, String type,User user,
+			String filename, String type,String username,
 			List<String> recipients) throws IOException;
 
 	// TODO rename : getLinkFromBodyPart()
@@ -26,7 +26,7 @@ public interface MediaHomeFacade {
 	 * 
 	 * @throws NoSuchProperty
 	 */
-	public abstract MailerProperties getSmtpParamORH(User user) throws NoSuchProperty;
+	public abstract MailerProperties getSmtpParamORH(String username) throws NoSuchProperty;
 
 	// TODO rename : getMailerPropertiesFromUser
 

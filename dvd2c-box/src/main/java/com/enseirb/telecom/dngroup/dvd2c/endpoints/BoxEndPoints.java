@@ -1,15 +1,19 @@
 package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -24,6 +28,7 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
@@ -34,7 +39,11 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
+import com.enseirb.telecom.dngroup.dvd2c.model.Property;
+import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ActivityObjectExtand;
+import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
@@ -52,6 +61,10 @@ public class BoxEndPoints {
 
 	@Autowired
 	protected ContentService cManager;
+
+	//TODO: à supprimer quand la sécurité sera réglée
+	@Inject
+	protected AccountService uManager;
 
 	/**
 	 * get box with boxID
@@ -242,6 +255,71 @@ public class BoxEndPoints {
 		} else {
 
 			return Response.status(Status.CONFLICT).build();
+		}
+	}
+	
+	
+//TODO : supprimer tout ce qu'il y a en dessous quand le problème de sécurité sera réglé	
+	@PUT
+	@Path("{userID}/properties")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response postUserProps(PropertyGroups propertyGroups,
+			@PathParam("userID") UUID userID) {
+//		UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+//				.getAuthentication().getName());
+		
+		uManager.setPropertiesForUser(userID, propertyGroups);
+		return Response.status(200).build();
+	}
+	@GET
+	@Path("{userID}/properties/{propertyGroupName}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public PropertyGroups getUserProperties(@PathParam("userID") String userID,
+			@PathParam("propertyGroupName") String propertyGroupName) {
+//		UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+//				.getAuthentication().getName());
+		User user = null;
+		try {
+			user = uManager.findUserByEmail(userID);
+		} catch (NoSuchUserException e1) {
+
+			e1.printStackTrace();
+		}
+PropertyGroups groups=new PropertyGroups();
+groups.setName("Snapmail");
+List<Property> props=uManager.getPropertiesForUser(user.getId(), propertyGroupName);
+groups.getProperty().addAll(props);
+		return groups;
+	}
+	@POST
+	@Path("security/{userID}")
+	@RolesAllowed({ "other", "authenticated" })
+	@Consumes(MediaType.WILDCARD)
+	public Response postContent2(InputStream iS,
+			@HeaderParam("Content-Disposition") String contentDisposition, @PathParam("userID") String userID)
+			throws URISyntaxException, IOException {
+		User user = null;
+		try {
+			user = uManager.findUserByEmail(userID);
+		} catch (NoSuchUserException e1) {
+
+			e1.printStackTrace();
+		}
+		UUID uuid=user.getId();
+		
+		try {
+			Content content = cManager.createContent(uuid.toString(), iS,
+					contentDisposition);
+			content.setLink(CliConfSingleton.publicAddr + content.getLink());
+
+			LOGGER.debug("Content created :" + CliConfSingleton.publicAddr
+					+ "/api/app/content/" + content.getContentsID());
+			return Response.created(
+					new URI(CliConfSingleton.publicAddr + "/api/app/content/"
+							+ content.getContentsID())).build();
+		} catch (IOException | SecurityException e) {
+			throw e;
 		}
 	}
 

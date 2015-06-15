@@ -166,8 +166,8 @@ app.controller("registerController", function ($scope, $http) {
 
     // End of js part for validating the form inputs
 //TODO : ???
-    var login = function(){
-    	return "/api/app/login";
+    $scope.login = function(){
+    	return "api/app/login";
     }
 
 });

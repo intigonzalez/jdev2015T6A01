@@ -3,6 +3,7 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -42,8 +43,9 @@ public class SnapmailEndPoints {
 	public Response googlecode(@QueryParam("state") String actorID,
 			@QueryParam("code") String code) {
 		User actor;
+		String userID = actorID.substring(0, actorID.indexOf("_"));
 		try {
-			actor = boxManager.getUserFromEmail(actorID);
+			actor = boxManager.getUser(UUID.fromString(userID));
 
 			Box box = boxManager.getBoxOnLocal(actor.getBoxID());
 			boxManager.sendGoogleCode(actorID,box,code);

@@ -36,7 +36,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
         
         this.openOauth = function (service) {
         	user.service=service;
-     	   return "http://" + $location.host() + ":9997/api/oauth/" + user.person.userID + "/" + service;
+     	   return "http://" + $location.host() + ":9997/api/oauth/" + user.person.uuid + "_" + service + "/" + service;
          };
 
         this.getUser = function () {
@@ -64,8 +64,9 @@ angular.module('myApp.myprofile', ['ngRoute'])
         
         this.getSmtp = function ()
         {
+        	
         	// Temporary until endpoints work
-        	$http.get(PREFIX_RQ + "/api/app/account/")
+        	$http.get(PREFIX_RQ + "/api/app/" + userID + "/properties/Snapmail")
             .success(function (data, status, headers, config)
             {
  	if (headers('Content-Type').indexOf("text/html")==0) {
@@ -73,12 +74,12 @@ angular.module('myApp.myprofile', ['ngRoute'])
 				} 
  				console.log(data);
             	var json=JSON.parse(angular.toJson(data));
-            	console.log(json.user.propertyGroups);
-            	if(json.user.PropertyGroups!=undefined){
-	            	var l=json.user.propertyGroups.length;
+            	console.log(json);
+            	if(json.properties!=undefined){
+	            	var l=json.properties.length;
 	            	if(l==undefined){
 	            		l=0;
-	            		var e = json.user.propertyGroups;
+	            		var e = json.properties;
 	            		if(e.property.length==undefined){
 	            			var p = e.property;
 	            			user.smtp[p.key] = p.value;

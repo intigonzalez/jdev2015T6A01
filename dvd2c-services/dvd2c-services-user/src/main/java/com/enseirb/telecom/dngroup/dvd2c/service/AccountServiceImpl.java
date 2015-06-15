@@ -22,6 +22,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Property;
 import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyDB;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroupsDB;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
 import com.enseirb.telecom.dngroup.dvd2c.repository.PropertyGroupsRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.UserRepository;
@@ -293,7 +294,16 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public List<Property> getPropertiesForUser(UUID userId,
 			final String propertyGroupName) {
-
+		User user = userRepository.findOne(userId);
+		PropertyGroupsDB groups=propertyGroupsRepository.findByNameAndUser(
+				propertyGroupName, user);
+		ArrayList<Property> property = new ArrayList<Property>();
+		for (PropertyDB propertydb : groups.getProperty()) {
+			Property p= new Property();
+			p.setKey(propertydb.getKey());
+			p.setValue(propertydb.getValue());
+			property.add(p);
+		}
 		// for (PropertyGroups pg : Collections2.filter(
 		// this.userRepository.findOne(userId).getPropertyGroups(),
 		// new Predicate<PropertyGroups>() {
@@ -304,8 +314,8 @@ public class AccountServiceImpl implements AccountService {
 		// }
 		// })) {
 		// return pg.getProperty();
-		// }
-		return Collections.emptyList();
+		 //}
+		return property;
 	}
 
 	@Override
@@ -314,11 +324,13 @@ public class AccountServiceImpl implements AccountService {
 
 		User user = userRepository.findOne(userId);
 		com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroupsDB propertyGroupOnDB;
-		if ((propertyGroupOnDB = propertyGroupsRepository.findByKeyAndUser(
+		if ((propertyGroupOnDB = propertyGroupsRepository.findByNameAndUser(
 				propertyGroups.getName(), user)) == null) {
 			propertyGroupOnDB = new com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroupsDB();
 			propertyGroupOnDB.setName(propertyGroups.getName());
-			user.getProperty_groups().add(propertyGroupOnDB);
+			propertyGroupOnDB.setUser(user);
+//			user.getProperty_groups().add(propertyGroupOnDB);
+//			userRepository.save(user);
 		} else {
 			propertyGroupOnDB.getProperty().clear();
 		}
@@ -327,6 +339,7 @@ public class AccountServiceImpl implements AccountService {
 			PropertyDB p = new PropertyDB();
 			p.setKey(property.getKey());
 			p.setValue(property.getValue());
+			p.setPropertyGroups(propertyGroupOnDB);
 			propertyDBs.add(p);
 		}
 		propertyGroupOnDB.setProperty(propertyDBs);

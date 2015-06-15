@@ -35,6 +35,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Property;
 import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroupsDB;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 
@@ -149,13 +150,12 @@ public class UserEndPoints extends HttpServlet {
 	// TODO: SEE THIS FONCTION
 	@GET
 	@Path("{userID}/properties/{propertyGroupName}")
-//	@RolesAllowed({ "account", "authenticated" })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<Property> getUserProperties(@PathParam("userID") UUID userID,
 			@PathParam("propertyGroupName") String propertyGroupName) {
-		UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
-				.getAuthentication().getName());
-		// Not working for unknown reason
+//		UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+//				.getAuthentication().getName());
+
 		return uManager.getPropertiesForUser(userID, propertyGroupName);
 	}
 
@@ -164,15 +164,15 @@ public class UserEndPoints extends HttpServlet {
 	 *
 	 */
 	@PUT
-	@Path("{userID}/properties/")
-//	@RolesAllowed({ "account", "authenticated" })
+	@Path("{userID}/properties")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postUserProps(PropertyGroups propertyGroups,
 			@PathParam("userID") UUID userID) {
-		UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
-				.getAuthentication().getName());
-		uManager.setPropertiesForUser(uuid, propertyGroups);
+//		UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+//				.getAuthentication().getName());
+		
+		uManager.setPropertiesForUser(userID, propertyGroups);
 		return Response.status(200).build();
 	}
 

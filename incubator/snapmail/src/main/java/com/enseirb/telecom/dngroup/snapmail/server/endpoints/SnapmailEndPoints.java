@@ -149,12 +149,17 @@ public class SnapmailEndPoints extends HttpServlet {
 		String response = "";
 		String data;
 		PropertyGroups properties = new PropertyGroups();
-		properties.setName("properties");
+		properties.setName("Snapmail");
 
 		Property property = new Property();
+		
+		String userID = actorID.substring(0, actorID.indexOf("_"));
+		String service = actorID.substring(actorID.indexOf("_")+1);
 
-		// Send token request to google
-		if (actorID.contains("@gmail.com")) {
+		
+		switch(service){
+		case "google":
+			// Send token request to google
 			WebTarget targetGoogle = client
 					.target("https://www.googleapis.com/oauth2/v3/token");
 
@@ -169,8 +174,10 @@ public class SnapmailEndPoints extends HttpServlet {
 			LOGGER.info(response.toString());
 
 			property.setKey("google");
+			break;
+		case "yahoo":
 			// Send token request to Yahoo
-			// /*}else if(actorID.contains("@yahoo."))
+			// }else if(actorID.contains("@yahoo."))
 			// {
 			// WebTarget targetYahoo =
 			// client.target("https://api.login.yahoo.com/oauth2/get_token");
@@ -193,9 +200,10 @@ public class SnapmailEndPoints extends HttpServlet {
 			// .header("Authorization", "Basic " + encodedvalue)
 			// .post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED),
 			// String.class);
-			// LOGGER.info(response.toString());
-			// */
-		} else {
+			// 
+			break;
+			
+		case "microsoft":
 			WebTarget targetOutlook = client
 					.target("https://login.live.com/oauth20_token.srf");
 
@@ -210,7 +218,13 @@ public class SnapmailEndPoints extends HttpServlet {
 			LOGGER.info(response.toString());
 
 			property.setKey("microsoft");
+			break;
+			
+		default:
+			return Response.status(500).build();		
 		}
+		
+		
 		// get the refresh token
 		JSONObject json;
 		String token = "";
@@ -230,13 +244,13 @@ public class SnapmailEndPoints extends HttpServlet {
 				property.setValue(token);
 				properties.getProperty().add(property);
 
+				//TODO: à modifier quand le problème de sécurité sera réglé
 				WebTarget target = client1
 						.target(CliConfSingleton.mediahome_host
-								+ "/api/app/account/" + actorID
-								+ "/properties/snapmail");
+								+ "/api/box/" + userID
+								+ "/properties");
 				Response response1 = target
 						.request(MediaType.APPLICATION_XML_TYPE)
-						.cookie("authentication", actorID)
 						.put(Entity.entity(properties,
 								MediaType.APPLICATION_XML), Response.class);
 
@@ -249,18 +263,18 @@ public class SnapmailEndPoints extends HttpServlet {
 		}
 	}
 
-	protected User getUser(String username) {
-		Client client = ClientBuilder.newClient();
-
-		WebTarget target = client.target(CliConfSingleton.mediahome_host
-				+ "/api/app/account/" + username);
-		User user = target.request(MediaType.APPLICATION_XML_TYPE)
-				.cookie("authentication", username).get(User.class);
-		return user;
-	}
+//	protected User getUser(String username) {
+//		Client client = ClientBuilder.newClient();
+//
+//		WebTarget target = client.target(CliConfSingleton.mediahome_host
+//				+ "/api/app/account/" + username);
+//		User user = target.request(MediaType.APPLICATION_XML_TYPE)
+//				.cookie("authentication", username).get(User.class);
+//		return user;
+//	}
 
 	@GET
-	@PathParam("/api/app/login")
+	@PathParam("/app/login")
 	Response logInMediaHome() throws URISyntaxException {
 		return Response.seeOther(
 				new URI(CliConfSingleton.mediahome_host + "home.html#"

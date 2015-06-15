@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroupsDB;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
 import com.enseirb.telecom.dngroup.dvd2c.model.Property;
 import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
@@ -149,7 +150,7 @@ public interface AccountService {
 	public abstract User getContactInformation(UUID userID) throws NoSuchUserException;
 	
 
-	public abstract List<Property> getPropertiesForUser(final UUID userId,final String propertyGroupName);
+	public abstract List<Property> getPropertiesForUser(final UUID userId, String propertyGroupName);
 	public abstract void setPropertiesForUser(final UUID uuid, PropertyGroups propertyGroups);
 
 

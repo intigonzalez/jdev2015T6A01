@@ -12,7 +12,7 @@ import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
 public interface PropertyGroupsRepository extends CrudRepository<PropertyGroupsDB, Integer> {
 	
 	@Query("select u from PropertyGroupsDB u where u.name = ?1 and u.user = ?2")
-	PropertyGroupsDB findByKeyAndUser(String name,User user);
+	PropertyGroupsDB findByNameAndUser(String name,User user);
 
 
 }

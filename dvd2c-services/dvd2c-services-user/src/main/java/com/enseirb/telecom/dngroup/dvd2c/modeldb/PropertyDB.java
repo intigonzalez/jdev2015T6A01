@@ -33,6 +33,15 @@ public class PropertyDB extends DBObject implements Serializable {
 	@JoinColumn(name = "property")
 	private PropertyGroupsDB propertyGroups;
 
+
+	public PropertyGroupsDB getPropertyGroups() {
+		return propertyGroups;
+	}
+
+	public void setPropertyGroups(PropertyGroupsDB propertyGroups) {
+		this.propertyGroups = propertyGroups;
+	}
+
 	public PropertyDB() {
 	}
 

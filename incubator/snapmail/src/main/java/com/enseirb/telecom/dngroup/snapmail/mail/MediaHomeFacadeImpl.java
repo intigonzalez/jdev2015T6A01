@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.snapmail.mail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -48,12 +49,12 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 
 	@Override
 	public String bodyPart2Link(InputStream inputStream, String filename,
-			String type,User user,
+			String type,String username,
 			List<String> recipients) throws IOException {
 		// nh: to extract in a dedicated service class
 		try {
-			HttpAuthenticationFeature feature = HttpAuthenticationFeature
-					.basic(user.getUserID(), user.getPassword());
+//			HttpAuthenticationFeature feature = HttpAuthenticationFeature
+//					.basic(user.getUserID(), user.getPassword());
 
 			// Configuration of the client to allow a post with a large file
 			// nh: please create only 1 client and close it properly
@@ -65,11 +66,12 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 					Integer.valueOf(128));
 
 			Client client = ClientBuilder.newClient(cc);
-			client.register(feature).register(MultiPartFeature.class);
+//			client.register(feature).register(MultiPartFeature.class);
 
 			// nh: create
+			//TODO: à remodifier
 			WebTarget target = client.target(CliConfSingleton.mediahome_host
-					+ "/api/app/" + user.getUserID() + "/content");
+					+ "/api/box/security/" + username);
 
 			LOGGER.info("Filename : " + filename);
 			Response response = target
@@ -79,48 +81,48 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 					.post(Entity.entity(inputStream, type), Response.class);
 
 			if (response.getLocation() != null) {
-				target = client
-						.target(CliConfSingleton.mediahome_host
-								+ "/api/app/"
-								+ user.getUserID()
-								+ "/content/"
-								+ response.getLocation().toString()
-										.split("/content/")[1]);
-				Content content = target
-						.request(MediaType.APPLICATION_XML_TYPE).get(
-								Content.class);
-
-				PropertyGroups originGroups = new PropertyGroups();
-				originGroups.setName("origin");
-
-				Property origin = new Property();
-				origin.setKey("origin");
-				origin.setValue("snapmail");
-				originGroups.getProperty().add(origin);
-
-				content.getPropertyGroups().add(originGroups);
-
-				PropertyGroups recipientsGroups = new PropertyGroups();
-				recipientsGroups.setName("emails");
-
-				int i = 0;
-				for (String email : recipients) {
-					Property p = new Property();
-					p.setKey(Integer.toString(i));
-					p.setValue(email);
-					recipientsGroups.getProperty().add(p);
-					i++;
-				}
-
-				content.getPropertyGroups().add(recipientsGroups);
-
-				Response r = target.request().put(
-						Entity.entity(content, MediaType.APPLICATION_XML));
+//				target = client
+//						.target(CliConfSingleton.mediahome_host
+//								+ "/api/app/"
+//								+ user.getUserID()
+//								+ "/content/"
+//								+ response.getLocation().toString()
+//										.split("/content/")[1]);
+//				Content content = target
+//						.request(MediaType.APPLICATION_XML_TYPE).get(
+//								Content.class);
+//
+//				PropertyGroups originGroups = new PropertyGroups();
+//				originGroups.setName("origin");
+//
+//				Property origin = new Property();
+//				origin.setKey("origin");
+//				origin.setValue("snapmail");
+//				originGroups.getProperty().add(origin);
+//
+//				content.getPropertyGroups().add(originGroups);
+//
+//				PropertyGroups recipientsGroups = new PropertyGroups();
+//				recipientsGroups.setName("emails");
+//
+//				int i = 0;
+//				for (String email : recipients) {
+//					Property p = new Property();
+//					p.setKey(Integer.toString(i));
+//					p.setValue(email);
+//					recipientsGroups.getProperty().add(p);
+//					i++;
+//				}
+//
+//				content.getPropertyGroups().add(recipientsGroups);
+//
+//				Response r = target.request().put(
+//						Entity.entity(content, MediaType.APPLICATION_XML));
 
 				return CliConfSingleton.snapmail_host
 						+ "/snapmail/"
 						+ "snapmail.html#/"
-						+ user.getUserID()
+						+ username
 						+ "/"
 						+ response.getLocation().toString().split("/content/")[1];
 			} else {
@@ -139,13 +141,19 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 	}
 
 	@Override
-	public MailerProperties getSmtpParamORH(User user) throws NoSuchProperty {
+	public MailerProperties getSmtpParamORH(String username) throws NoSuchProperty {
 		try {
+PropertyGroups groups;
+Client client = ClientBuilder.newClient();
 
-			for (PropertyGroups pg : user.getPropertyGroups()) {
-				if (pg.getName().equals("snapmail")) {
+WebTarget target = client.target(CliConfSingleton.mediahome_host
+		+ "/api/box/" + username + "/properties/Snapmail");
+groups = target.request(MediaType.APPLICATION_XML_TYPE).get(PropertyGroups.class);
+
+		//	for (PropertyGroups pg : groups) {
+		//		if (pg.getName().equals("snapmail")) {
 					SMTPProperties smtpProperties = new SMTPProperties();
-					for (Property p : pg.getProperty()) {
+					for (Property p : groups.getProperty()) {
 						switch (p.getKey()) {
 						case "google":
 							if (p.getValue() != null && p.getValue() != "")
@@ -181,10 +189,10 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 						throw new NoSuchProperty();
 					}
 					return smtpProperties;
-				}
-			}
-			LOGGER.error("Error: there is no snapmail propertyGroups for the user "
-					+ user.getUserID());
+//				}
+//			}
+//			LOGGER.error("Error: there is no snapmail propertyGroups for the user "
+//					+ username);
 
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 403) {
