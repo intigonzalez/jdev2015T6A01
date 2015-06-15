@@ -156,24 +156,25 @@ angular.module('myApp.myprofile', ['ngRoute'])
         {
             var data = {
             		propertyGroups: {
-            			props: []
+            			property: [],
+            			name:"Snapmail"
             		}
             };
             
             if(smtp.host != "")
-            	data.propertyGroups.props.push({key: "host", value: smtp.host});
+            	data.propertyGroups.property.push({key: "host", value: smtp.host});
            	if(smtp.port != "")
-            	data.propertyGroups.props.push({key: "port", value: smtp.port});
+            	data.propertyGroups.property.push({key: "port", value: smtp.port});
             if(smtp.username != "")
-            	data.propertyGroups.props.push({key: "username", value: smtp.username});
+            	data.propertyGroups.property.push({key: "username", value: smtp.username});
             if(smtp.password != "")
-            	data.propertyGroups.props.push({key: "password", value: smtp.password});
+            	data.propertyGroups.property.push({key: "password", value: smtp.password});
            	if(smtp.google != "")
-            	data.propertyGroups.props.push({key: "google", value: smtp.google});
+            	data.propertyGroups.property.push({key: "google", value: smtp.google});
             if(smtp.microsoft != "")
-            	data.propertyGroups.props.push({key: "microsoft", value: smtp.microsoft});
+            	data.propertyGroups.property.push({key: "microsoft", value: smtp.microsoft});
             if(smtp.yahoo != "")
-            	data.propertyGroups.props.push({key: "yahoo", value: smtp.yahoo});
+            	data.propertyGroups.property.push({key: "yahoo", value: smtp.yahoo});
             	
             $http.put(PREFIX_RQ + "/api/app/" + this.person.uuid + "/properties", data)
                 .success(function (data, status, headers, config) {

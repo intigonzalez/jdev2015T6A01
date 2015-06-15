@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,17 +21,18 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "property_groups")
-@NamedQuery(name = "PropertyGroups.findAll", query = "SELECT p FROM PropertyGroups p")
-public class PropertyGroups extends DBObject implements Serializable {
+@NamedQuery(name = "PropertyGroupsDB.findAll", query = "SELECT p FROM PropertyGroupsDB p")
+public class PropertyGroupsDB extends DBObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@OneToMany(cascade={CascadeType.ALL})
-	@JoinColumn(name = "property")
-	private List<Property> properties;
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "propertyGroups")
+	// @OneToMany(fetch=FetchType.EAGER)
+	// @JoinColumn(name = "property_db")
+	private List<PropertyDB> property;
 
 	private String name;
 
@@ -38,7 +40,7 @@ public class PropertyGroups extends DBObject implements Serializable {
 	@JoinColumn(name = "property_groups")
 	private User user;
 
-	public PropertyGroups() {
+	public PropertyGroupsDB() {
 	}
 
 	public Integer getId() {
@@ -49,8 +51,7 @@ public class PropertyGroups extends DBObject implements Serializable {
 		this.id = id;
 	}
 
-
-	public String getValue() {
+	public String getName() {
 		return name;
 	}
 
@@ -65,12 +66,12 @@ public class PropertyGroups extends DBObject implements Serializable {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
-	public List<Property> getProperty(){
-		return properties;
+
+	public List<PropertyDB> getProperty() {
+		return property;
 	}
-	
-	public void setProperty(List<Property> properties){
-		this.properties=properties;
+
+	public void setProperty(List<PropertyDB> properties) {
+		this.property = properties;
 	}
 }

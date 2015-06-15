@@ -7,5 +7,7 @@
 		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Group</class>
 		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.Profile</class>
 		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.User</class>
+		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyDB</class>
+		<class>com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroupsDB</class>
 	</persistence-unit>
 </persistence>

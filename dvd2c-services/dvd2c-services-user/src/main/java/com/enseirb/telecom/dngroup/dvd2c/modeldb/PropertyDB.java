@@ -17,23 +17,23 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "property")
-@NamedQuery(name = "Property.findAll", query = "SELECT p FROM Property p")
-public class Property extends DBObject implements Serializable {
+@NamedQuery(name = "PropertyDB.findAll", query = "SELECT p FROM PropertyDB p")
+public class PropertyDB extends DBObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	private String key;
+	private String keyName;
 
 	private String value;
 
 	@ManyToOne()
 	@JoinColumn(name = "property")
-	private PropertyGroups propertyGroups;
+	private PropertyGroupsDB propertyGroups;
 
-	public Property() {
+	public PropertyDB() {
 	}
 
 	public Integer getId() {
@@ -45,11 +45,11 @@ public class Property extends DBObject implements Serializable {
 	}
 
 	public String getKey() {
-		return key;
+		return keyName;
 	}
 
 	public void setKey(String key) {
-		this.key = key;
+		this.keyName = key;
 	}
 
 	public String getValue() {

@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +21,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Property;
 import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyDB;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
 import com.enseirb.telecom.dngroup.dvd2c.repository.PropertyGroupsRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.UserRepository;
@@ -115,7 +117,7 @@ public class AccountServiceImpl implements AccountService {
 		if ((user = userRepository.findByEmail(userID)) == null) {
 			throw new NoSuchUserException();
 		}
-		return findUserByUUID(user.getId());
+		return user;
 	}
 
 	/*
@@ -311,29 +313,23 @@ public class AccountServiceImpl implements AccountService {
 			PropertyGroups propertyGroups) {
 
 		User user = userRepository.findOne(userId);
-		com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroups propertyGroupOnDB;
-		if (( propertyGroupOnDB = propertyGroupsRepository
-				.findByKeyAndUser(propertyGroups.getName(), user))==null){
-			propertyGroupOnDB = new com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroups();
+		com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroupsDB propertyGroupOnDB;
+		if ((propertyGroupOnDB = propertyGroupsRepository.findByKeyAndUser(
+				propertyGroups.getName(), user)) == null) {
+			propertyGroupOnDB = new com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroupsDB();
 			propertyGroupOnDB.setName(propertyGroups.getName());
 			user.getProperty_groups().add(propertyGroupOnDB);
-//			userRepository.save(user);
+		} else {
+			propertyGroupOnDB.getProperty().clear();
 		}
-
-		// TODO : NEED TO FINSH
-//		if (pg == null) {
-//			pg = new PropertyGroups();
-//			pg.setName(propertyGroupName);
-//			user.getPropertyGroups().add(pg);
-//		} else
-//			pg.getProperty().clear();
-//
-//		for (Property property : propertyGroups.getProperty()) {
-//			Property p = new Property();
-//			p.setKey(property.getKey());
-//			p.setValue(property.getValue());
-//			pg.getProperty().add(p);
-//		}
-//		this.saveUserOnServer(user.toUser());
+		ArrayList<PropertyDB> propertyDBs = new ArrayList<PropertyDB>();
+		for (Property property : propertyGroups.getProperty()) {
+			PropertyDB p = new PropertyDB();
+			p.setKey(property.getKey());
+			p.setValue(property.getValue());
+			propertyDBs.add(p);
+		}
+		propertyGroupOnDB.setProperty(propertyDBs);
+		propertyGroupsRepository.save(propertyGroupOnDB);
 	}
 }
