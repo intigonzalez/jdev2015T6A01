@@ -56,12 +56,7 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public boolean contentExist(Integer contentsID) {
-		try {
-			Integer id = Integer.valueOf(contentsID);
-			return documentRepository.exists(id);
-		} catch (NumberFormatException e) {
-			return false;
-		}
+		return documentRepository.exists(contentsID);
 	}
 
 	@Override
@@ -82,7 +77,11 @@ public class ContentServiceImpl implements ContentService {
 	@Override
 	public Content getContent(Integer contentsID) throws NoContentException {
 		Document document = documentRepository.findOne(contentsID);
-		return document.toContent();
+		if (document == null) {
+			throw new NoContentException("Content ID can't be NULL");
+		} else {
+			return document.toContent();
+		}
 	}
 
 	// @Override
