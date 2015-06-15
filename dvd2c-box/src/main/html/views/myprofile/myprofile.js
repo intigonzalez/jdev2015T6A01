@@ -71,80 +71,83 @@ angular.module('myApp.myprofile', ['ngRoute'])
  	if (headers('Content-Type').indexOf("text/html")==0) {
 					window.location.replace("/");
 				} 
+ 				console.log(data);
             	var json=JSON.parse(angular.toJson(data));
             	console.log(json.user.propertyGroups);
-            	var l=json.user.propertyGroups.length;
-            	if(l==undefined){
-            		l=0;
-            		var e = json.user.propertyGroups;
-            		if(e.property.length==undefined){
-            			var p = e.property;
-            			user.smtp[p.key] = p.value;
-            		}
-            		else{
-            			for(var j = 0; j < e.property.length; j++) {
-            				var p = e.property[j];
-            				console.log("p: "+j);
-                    		console.log(p);
-            				user.smtp[p.key] = p.value;
-            			}
-            		}
-                }
-            	else{
-	            	for(var i = 0; i <= l ; i++) {
-	            		var e = json.user.propertyGroups[i];
-	            		console.log("e: "+i);
-	            		console.log(e);
-	            		console.log(e.name);
-	            		console.log(e.name == "snapmail")
-	            		if(e.name == "snapmail") {
-	            			console.log("OK")
-	            			if(e.property.length==undefined){
-	                			var p = e.property;
-	                			user.smtp[p.key] = p.value;
-	                		}
-	                		else{
-	                			for(var j = 0; j < e.property.length; j++) {
-	                				var p = e.property[j];
-	                				console.log("p: "+j);
-	                        		console.log(p);
-	                				user.smtp[p.key] = p.value;
-	                			}
-	                		}
-	            			break;
+            	if(json.user.PropertyGroups!=undefined){
+	            	var l=json.user.propertyGroups.length;
+	            	if(l==undefined){
+	            		l=0;
+	            		var e = json.user.propertyGroups;
+	            		if(e.property.length==undefined){
+	            			var p = e.property;
+	            			user.smtp[p.key] = p.value;
 	            		}
+	            		else{
+	            			for(var j = 0; j < e.property.length; j++) {
+	            				var p = e.property[j];
+	            				console.log("p: "+j);
+	                    		console.log(p);
+	            				user.smtp[p.key] = p.value;
+	            			}
+	            		}
+	                }
+	            	else{
+		            	for(var i = 0; i <= l ; i++) {
+		            		var e = json.user.propertyGroups[i];
+		            		console.log("e: "+i);
+		            		console.log(e);
+		            		console.log(e.name);
+		            		console.log(e.name == "snapmail")
+		            		if(e.name == "snapmail") {
+		            			console.log("OK")
+		            			if(e.property.length==undefined){
+		                			var p = e.property;
+		                			user.smtp[p.key] = p.value;
+		                		}
+		                		else{
+		                			for(var j = 0; j < e.property.length; j++) {
+		                				var p = e.property[j];
+		                				console.log("p: "+j);
+		                        		console.log(p);
+		                				user.smtp[p.key] = p.value;
+		                			}
+		                		}
+		            			break;
+		            		}
+		            	}
 	            	}
-            	}
-            	console.log(user.smtp)
-            	if (user.smtp.hasOwnProperty("username") && user.smtp.username != "" && user.smtp.username != undefined && user.smtp.hasOwnProperty("host") && user.smtp.host != "" && user.smtp.host != undefined && user.smtp.hasOwnProperty("port") && user.smtp.port != "" && user.smtp.port != undefined && user.smtp.hasOwnProperty("password") && user.smtp.password != "" && user.smtp.password != undefined)
-            	{
-            		user.smtpManualSettings = true;1
-                	user.smtpTab = 1;
-                	console.log("view 1");
-            	}
-            	else if (user.smtp.hasOwnProperty("google") && user.smtp.google != "" && user.smtp.google != undefined) {
-            		user.smtpTab = 2;
-            	console.log("view 2");
-            	}
-            	else if (user.smtp.hasOwnProperty("yahoo") && user.smtp.yahoo != "" && user.smtp.yahoo != undefined) {
-            		user.smtpTab = 3;
-            	console.log("view 3");
-            	}
-            	else if (user.smtp.hasOwnProperty("microsoft") && user.smtp.microsoft != "" && user.smtp.microsoft != undefined) {
-            		user.smtpTab = 4;
-            	console.log("view 4");
-            	}
-            	else {
-            		user.smtp = {
-            			host: "",
-            			port: "",
-            			username: "",
-            			password: "",
-            			google: "",
-            			yahoo: "",
-            			microsoft: "",
-            		};
-            		console.log("view else");
+	            	console.log(user.smtp)
+	            	if (user.smtp.hasOwnProperty("username") && user.smtp.username != "" && user.smtp.username != undefined && user.smtp.hasOwnProperty("host") && user.smtp.host != "" && user.smtp.host != undefined && user.smtp.hasOwnProperty("port") && user.smtp.port != "" && user.smtp.port != undefined && user.smtp.hasOwnProperty("password") && user.smtp.password != "" && user.smtp.password != undefined)
+	            	{
+	            		user.smtpManualSettings = true;1
+	                	user.smtpTab = 1;
+	                	console.log("view 1");
+	            	}
+	            	else if (user.smtp.hasOwnProperty("google") && user.smtp.google != "" && user.smtp.google != undefined) {
+	            		user.smtpTab = 2;
+	            	console.log("view 2");
+	            	}
+	            	else if (user.smtp.hasOwnProperty("yahoo") && user.smtp.yahoo != "" && user.smtp.yahoo != undefined) {
+	            		user.smtpTab = 3;
+	            	console.log("view 3");
+	            	}
+	            	else if (user.smtp.hasOwnProperty("microsoft") && user.smtp.microsoft != "" && user.smtp.microsoft != undefined) {
+	            		user.smtpTab = 4;
+	            	console.log("view 4");
+	            	}
+	            	else {
+	            		user.smtp = {
+	            			host: "",
+	            			port: "",
+	            			username: "",
+	            			password: "",
+	            			google: "",
+	            			yahoo: "",
+	            			microsoft: "",
+	            		};
+	            		console.log("view else");
+	            	}
             	}
             })
             .error(function (data, status, headers, config) {
