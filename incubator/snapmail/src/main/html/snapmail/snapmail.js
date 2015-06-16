@@ -33,6 +33,7 @@ app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$rout
 		if (headers('Content-Type').indexOf("text/html")==0) {
 			window.location.replace("/");
 		} 
+		console.log(data);
 		$scope.content = data.content;
 		$scope.contentID = data.content.contentsID;
 		$scope.sender = data.content.actorID;
@@ -56,7 +57,7 @@ app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$rout
 			var suffix
 			var userAgent = $window.navigator.userAgent;
 			
-			if ($scope.content.status == "success")
+			if ($scope.content.status == 1)
 			{
 				if (userAgent.indexOf("Chrome") >= 0 || userAgent.indexOf("Windows") >=0 || userAgent.indexOf("Chromium") >=0)
 				{
@@ -108,7 +109,7 @@ app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$rout
 			return 'views/content/video.html';
 		}
 		else if ($scope.type == 'image')
-			if ($scope.content.status == "success")
+			if ($scope.content.status == 1)
 			{
 			return 'views/content/image.html';
 			}
@@ -165,11 +166,6 @@ app.controller("registerController", function ($scope, $http) {
     });
 
     // End of js part for validating the form inputs
-//TODO : ???
-    $scope.login = function(){
-    	return "api/app/login";
-    }
-
 });
 
 var popup = (function() 

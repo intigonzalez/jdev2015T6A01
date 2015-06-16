@@ -23,6 +23,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NoContentException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
@@ -321,6 +322,43 @@ groups.getProperty().addAll(props);
 		} catch (IOException | SecurityException e) {
 			throw e;
 		}
+	}
+	@GET
+	@Path("/content/{contentsID}/{userId}")
+	@RolesAllowed({ "authenticated", "other" })
+	@Produces({ MediaType.WILDCARD })
+	public Content getContent(@PathParam("contentsID") Integer contentsID, @PathParam("userId") String userID)
+			throws URISyntaxException {
+//		String uuid = SecurityContextHolder.getContext().getAuthentication()
+//				.getName();
+		User user = null;
+		try {
+			user = uManager.findUserByEmail(userID);
+		} catch (NoSuchUserException e1) {
+			e1.printStackTrace();
+		}
+		String uuid = user.getId().toString();
+		Content content;
+		try {
+			content = cManager.getContent(contentsID);
+
+			if (content.getActorID().equals(uuid)) {
+				URI uri = new URI(CliConfSingleton.publicAddr
+						+ content.getLink() + "/" + content.getName());
+				return content;
+			} else {
+				// No URL parameter idLanguage was sent
+				ResponseBuilder builder = Response
+						.status(Response.Status.FORBIDDEN);
+				builder.entity("This content doesn't belong to you ! ");
+				Response response = builder.build();
+				throw new WebApplicationException(response);
+			}
+		} catch (NoContentException e) {
+			throw new WebApplicationException(e.getLocalizedMessage(),
+					Status.NO_CONTENT);
+		}
+
 	}
 
 }

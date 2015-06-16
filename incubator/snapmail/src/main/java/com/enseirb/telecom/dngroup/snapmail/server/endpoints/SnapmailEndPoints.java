@@ -9,6 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -60,15 +61,22 @@ public class SnapmailEndPoints extends HttpServlet {
 			@PathParam("contentID") String contentID) {
 		Content content;
 		Client client = ClientBuilder.newClient();
-		String url = CliConfSingleton.mediahome_host.toString() + "/api/app/"
-				+ actorID + "/content/" + contentID;
+		String url = CliConfSingleton.mediahome_host.toString() + "/api/box/content/" + contentID + "/" + actorID;
 		WebTarget target = client.target(url);
-		content = target.request(MediaType.APPLICATION_XML_TYPE).get(
-				Content.class);
-		if (!content.getLink().contains(CliConfSingleton.mediahome_host)) {
-			content.setLink(CliConfSingleton.mediahome_host + content.getLink());
+		try {
+			content = target.request(MediaType.APPLICATION_XML_TYPE).get(
+					Content.class);
+			client.close();
+			if (!content.getLink().contains(CliConfSingleton.mediahome_host)) {
+				content.setLink(CliConfSingleton.mediahome_host + content.getLink());
+			}
+			return content;
+		} catch (ProcessingException e) {
+			client.close();
+			LOGGER.error("no content");
 		}
-		return content;
+		return null;
+		
 	}
 
 	/**
@@ -152,12 +160,11 @@ public class SnapmailEndPoints extends HttpServlet {
 		properties.setName("Snapmail");
 
 		Property property = new Property();
-		
-		String userID = actorID.substring(0, actorID.indexOf("_"));
-		String service = actorID.substring(actorID.indexOf("_")+1);
 
-		
-		switch(service){
+		String userID = actorID.substring(0, actorID.indexOf("_"));
+		String service = actorID.substring(actorID.indexOf("_") + 1);
+
+		switch (service) {
 		case "google":
 			// Send token request to google
 			WebTarget targetGoogle = client
@@ -200,9 +207,9 @@ public class SnapmailEndPoints extends HttpServlet {
 			// .header("Authorization", "Basic " + encodedvalue)
 			// .post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED),
 			// String.class);
-			// 
+			//
 			break;
-			
+
 		case "microsoft":
 			WebTarget targetOutlook = client
 					.target("https://login.live.com/oauth20_token.srf");
@@ -219,11 +226,12 @@ public class SnapmailEndPoints extends HttpServlet {
 
 			property.setKey("microsoft");
 			break;
-			
+
 		default:
-			return Response.status(500).build();		
+			client.close();
+			return Response.status(500).build();
 		}
-		
+		client.close();
 		
 		// get the refresh token
 		JSONObject json;
@@ -244,17 +252,17 @@ public class SnapmailEndPoints extends HttpServlet {
 				property.setValue(token);
 				properties.getProperty().add(property);
 
-				//TODO: à modifier quand le problème de sécurité sera réglé
+				// TODO: à modifier quand le problème de sécurité sera réglé
 				WebTarget target = client1
-						.target(CliConfSingleton.mediahome_host
-								+ "/api/box/" + userID
-								+ "/properties");
-				Response response1 = target
-						.request(MediaType.APPLICATION_XML_TYPE)
-						.put(Entity.entity(properties,
-								MediaType.APPLICATION_XML), Response.class);
+						.target(CliConfSingleton.mediahome_host + "/api/box/"
+								+ userID + "/properties");
+				Response response1 = target.request(
+						MediaType.APPLICATION_XML_TYPE).put(
+						Entity.entity(properties, MediaType.APPLICATION_XML),
+						Response.class);
 
 				responsePut = response1;
+				client1.close();
 
 			} else {
 				responsePut = Response.status(500).build();
@@ -263,22 +271,30 @@ public class SnapmailEndPoints extends HttpServlet {
 		}
 	}
 
-//	protected User getUser(String username) {
-//		Client client = ClientBuilder.newClient();
-//
-//		WebTarget target = client.target(CliConfSingleton.mediahome_host
-//				+ "/api/app/account/" + username);
-//		User user = target.request(MediaType.APPLICATION_XML_TYPE)
-//				.cookie("authentication", username).get(User.class);
-//		return user;
-//	}
+	// protected User getUser(String username) {
+	// Client client = ClientBuilder.newClient();
+	//
+	// WebTarget target = client.target(CliConfSingleton.mediahome_host
+	// + "/api/app/account/" + username);
+	// User user = target.request(MediaType.APPLICATION_XML_TYPE)
+	// .cookie("authentication", username).get(User.class);
+	// return user;
+	// }
 
 	@GET
-	@PathParam("/app/login")
-	Response logInMediaHome() throws URISyntaxException {
-		return Response.seeOther(
-				new URI(CliConfSingleton.mediahome_host + "home.html#"
-						+ "/home")).build();
+	@Path("app/login/{userID}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response logInMediaHome(@PathParam("userID") String userID){
+		Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(CliConfSingleton.centralURL
+				 + "/api/oauth/box/" + userID);
+		String redirect = target.request().get(String.class);
+		try {
+			return Response.seeOther(new URI(redirect + "/index.html")).build();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

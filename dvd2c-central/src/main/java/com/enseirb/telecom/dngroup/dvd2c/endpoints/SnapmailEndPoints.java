@@ -8,8 +8,11 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -30,6 +33,8 @@ public class SnapmailEndPoints {
 
 	@Inject
 	CentralService boxManager;
+	@Inject
+	CentralService uManager;
 
 
 	/**
@@ -64,6 +69,17 @@ public class SnapmailEndPoints {
 					Status.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	@GET
+	@Path("box/{userID}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public String getBoxOfUser(@PathParam("userID") String userID) {
+		User user;
+		try {
+			user = uManager.getUserFromEmail(userID);
+			return uManager.getBox(UUID.fromString(user.getUuid())).getIp();
+		} catch (NoSuchUserException e) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+	}
 
 }

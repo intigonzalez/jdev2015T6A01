@@ -5,89 +5,109 @@
 <!--[if IE 8]>		<html lang="en" ng-app="myApp" class="no-js lt-ie9">				<![endif]-->
 
 <html ng-app="snapmailApp" class="no-js">
-	<head>
-		<meta name="viewport" content="initial-scale=1">
-		<meta charset="utf-8">
-		<title>Snapmail</title>
-		<link rel="icon" href="assets/img/logo.svg" sizes="any" type="image/svg+xml">
-		<link href="assets/css/snapmail.css" rel="stylesheet" media="all">
-	</head>
-	<body ng-app="RegisterForm">
+<head>
+<meta name="viewport" content="initial-scale=1">
+<meta charset="utf-8">
+<title>Snapmail</title>
+<link rel="icon" href="assets/img/logo.svg" sizes="any"
+	type="image/svg+xml">
+<link href="assets/css/snapmail.css" rel="stylesheet" media="all">
+</head>
+<body ng-app="RegisterForm">
 
-		<!-- Header -->
+	<!-- Header -->
 
-		<header id="header" class="tb">
-			<div id="logo">
-				<img src="assets/img/logo.svg" width="60px" height="58px">
-				<span>snap</span><span class="md">mail</span>
-			</div>
-			<div id="menu">
-				<nav class="tb">
-<!-- 					<div>Media@Home</div> -->
-<!-- 					<div>Features</div> -->
-<!-- 					<div>Contact</div> -->
-				</nav>
-			</div>
-			<div id="buttons">
-				<a class='btn' href='../api/app/login'>Login</a>
-				<button class="popup-button" data-modal="popup">Register</button>
-			</div>
-		</header>
-		
-		<!-- Content -->
-		
-		<section id="content" ng-view>
-		
-			<!--[if lt IE 7]>
+	<header id="header" class="tb">
+		<div id="logo">
+			<img src="assets/img/logo.svg" width="60px" height="58px"> <span>snap</span><span
+				class="md">mail</span>
+		</div>
+		<div id="menu">
+			<nav class="tb">
+				<!-- 					<div>Media@Home</div> -->
+				<!-- 					<div>Features</div> -->
+				<!-- 					<div>Contact</div> -->
+			</nav>
+		</div>
+		<div id="buttons">
+			<button class="popup-button" data-modal="popup2">Login</button>
+			<button class="popup-button" data-modal="popup">Register</button>
+		</div>
+	</header>
+
+	<!-- Content -->
+
+	<section id="content" ng-view>
+
+		<!--[if lt IE 7]>
 			<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 			<![endif]-->
-			
-		</section>
-		
-		<div class="modal blur-effect" id="popup">
-            <div class="popup-content">
-                <div  id="login-page" ng-controller="registerController">
-						<form  class="form-login" name="registerForm" validate>
 
-                                <form role="form" action="#" method="POST"> 
-                                        <div class="login-wrap">
-                                                <!-- Name -->
-                                                <input class="form-control" placeholder="Firstname" ng-model="person.firstname" type="text" autofocus required>       
-		            							<br>
-                                                
-                                                <!-- Surname -->
-                                                <input class="form-control" placeholder="Surname" ng-model="person.surname" type="text" autofocus>   
-		            							<br>
-                                                
-                                                <!-- Password -->
-                                                <input class="form-control" placeholder="Password" ng-model="person.password" type="password">   
-		            							<br>
-                                                
-                                                <!-- Mail Address -->
-                                                <input class="form-control" placeholder=" E-mail Address " ng-model="person.userID" type="text">   
-		            							<br>
-                                            
-                                                    <button ng-click="submitData(person)"  class="submit"><i class="fa fa-lock"></i> Sign Up </button>
-                                            
-		            					
-                                        </div>
-                                        
-                                  
-                                </form>
+	</section>
 
-                    <div class="close"></div>
-                </div>
-            </div>
-        </div>
-  		<div class="overlay"></div>
-		
-		<!-- Scripts -->
-		<script src="../assets/js/jquery-1.8.3.min.js"></script>
-		<script src="../assets/js/jquery-ui-1.9.2.custom.min.js"></script>
-		<script src="../bower_components/angular/angular.min.js"></script>
-		<script src="../bower_components/angular-route/angular-route.min.js"></script>
-		<script src="snapmail.js"></script>
-		<script src="assets/js/picturefill.js"></script>
-		
-	</body>
+	<div class="modal blur-effect" id="popup">
+		<div class="popup-content">
+			<div id="login-page" ng-controller="registerController">
+				<form class="form-login" name="registerForm" validate>
+
+					<form role="form" action="#" method="POST">
+						<div class="login-wrap">
+							<!-- Name -->
+							<input class="form-control" placeholder="Firstname"
+								ng-model="person.firstname" type="text" autofocus required>
+							<br>
+
+							<!-- Surname -->
+							<input class="form-control" placeholder="Surname"
+								ng-model="person.surname" type="text" autofocus> <br>
+
+							<!-- Password -->
+							<input class="form-control" placeholder="Password"
+								ng-model="person.password" type="password"> <br>
+
+							<!-- Mail Address -->
+							<input class="form-control" placeholder=" E-mail Address "
+								ng-model="person.userID" type="text"> <br>
+
+							<button ng-click="submitData(person)" class="submit">
+								<i class="fa fa-lock"></i> Sign Up
+							</button>
+
+
+						</div>
+
+
+					</form>
+
+					<div class="close"></div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal blur-effect" id="popup2">
+		<div class="popup-content">
+			<div id="login-page2" ng-controller="registerController">
+				<form role="form" action="#" method="GET">
+					<input class="form-control" placeholder="Mail address"
+						ng-model="person.userID" type="text" autofocus required>
+					<br>
+					<a class="submit button" href="../api/app/login/{{person.userID}}">
+								<i class="fa fa-lock"></i> Go to my box
+							</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="overlay"></div>
+
+	<!-- Scripts -->
+	<script src="../assets/js/jquery-1.8.3.min.js"></script>
+	<script src="../assets/js/jquery-ui-1.9.2.custom.min.js"></script>
+	<script src="../bower_components/angular/angular.min.js"></script>
+	<script src="../bower_components/angular-route/angular-route.min.js"></script>
+	<script src="snapmail.js"></script>
+	<script src="assets/js/picturefill.js"></script>
+
+</body>
 </html>
