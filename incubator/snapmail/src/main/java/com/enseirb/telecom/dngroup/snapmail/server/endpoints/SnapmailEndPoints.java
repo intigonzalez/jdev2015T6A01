@@ -3,6 +3,7 @@ package com.enseirb.telecom.dngroup.snapmail.server.endpoints;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServlet;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -13,39 +14,27 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.glassfish.jersey.media.multipart.MultiPart;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.model.Property;
-import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
-import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.snapmail.cli.CliConfSingleton;
+import com.enseirb.telecom.dngroup.snapmail.server.service.SnapmailService;
 
 // The Java class will be hosted at the URI path "/"
 
+@SuppressWarnings("serial")
 @Path("/")
 public class SnapmailEndPoints extends HttpServlet {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(SnapmailEndPoints.class);
 
-	private static final String Googleclient_ID = CliConfSingleton.google_clientID;
-	private static final String Googleclient_secret = CliConfSingleton.google_clientsecret;
-	private static final String Yahooclient_ID = CliConfSingleton.yahoo_clientID;
-	private static final String Yahooclient_secret = CliConfSingleton.yahoo_clientsecret;
-	private static final String Microsoftclient_ID = "000000004C14F710";
-	private static final String Microsoftclient_secret = "nYBtVB-xkEUnVp3gZdkIMHu4DcAeGZPh";
-	private static final String redirectUri = CliConfSingleton.centralURL
-			.toString() + "/api/oauth";
+	@Inject
+	SnapmailService snapmailservice;
 
 	/**
 	 * Send a request to the box to get a content
@@ -61,14 +50,16 @@ public class SnapmailEndPoints extends HttpServlet {
 			@PathParam("contentID") String contentID) {
 		Content content;
 		Client client = ClientBuilder.newClient();
-		String url = CliConfSingleton.mediahome_host.toString() + "/api/box/content/" + contentID + "/" + actorID;
+		String url = CliConfSingleton.mediahome_host.toString()
+				+ "/api/box/content/" + contentID + "/" + actorID;
 		WebTarget target = client.target(url);
 		try {
 			content = target.request(MediaType.APPLICATION_XML_TYPE).get(
 					Content.class);
 			client.close();
 			if (!content.getLink().contains(CliConfSingleton.mediahome_host)) {
-				content.setLink(CliConfSingleton.mediahome_host + content.getLink());
+				content.setLink(CliConfSingleton.mediahome_host
+						+ content.getLink());
 			}
 			return content;
 		} catch (ProcessingException e) {
@@ -76,12 +67,12 @@ public class SnapmailEndPoints extends HttpServlet {
 			LOGGER.error("no content");
 		}
 		return null;
-		
+
 	}
 
 	/**
-	 * Redirect the client to google or yahoo identification and authorization
-	 * system
+	 * Redirect the client to google, yahoo or microsoft identification and
+	 * authorization system
 	 * 
 	 * @param actorID
 	 * @param service
@@ -93,46 +84,8 @@ public class SnapmailEndPoints extends HttpServlet {
 	@Path("oauth/{actorID}/{service}")
 	public Response getOauthredirect(@PathParam("actorID") String actorID,
 			@PathParam("service") String service) throws URISyntaxException {
-		switch (service) {
-		case "google":
-			return Response
-					.seeOther(
-							new URI(
-									"https://accounts.google.com/o/oauth2/auth"
-											+ "?response_type=code"
-											+ "&client_id="
-											+ Googleclient_ID
-											+ "&redirect_uri="
-											+ redirectUri
-											+ "&scope=https://www.googleapis.com/auth/gmail.compose"
-											+ "&state=" + actorID
-											+ "&approval_prompt=force"
-											+ "&access_type=offline")).build();
-		case "microsoft":
-			return Response.seeOther(
-					new URI(
-					// "https://login.microsoftonline.com/common/oauth2/authorize"
-							"https://login.live.com/oauth20_authorize.srf"
-									+ "?response_type=code" + "&client_id="
-									+ Microsoftclient_ID + "&redirect_uri="
-									+ redirectUri
-									+ "&scope=wl.offline_access,wl.imap"
-									+ "&state=" + actorID
-									+ "&access_type=offline"
-									+ "&approval_prompt=force")).build();
-		case "yahoo":
-			return Response.seeOther(
-					new URI("https://api.login.yahoo.com/oauth2/request_auth"
-							+ "?response_type=code"
-							+ "&client_id="
-							+ Yahooclient_ID
-							+ "&redirect_uri="
-							+ redirectUri.replace(":9999", "").replace(":8080",
-									"")// Because yahoo refuse Uri with port
-							+ "&state=" + actorID)).build();
-		default:
-			return Response.status(404).build();
-		}
+
+		return snapmailservice.redirectOauthService(service, actorID);
 	}
 
 	/**
@@ -149,145 +102,29 @@ public class SnapmailEndPoints extends HttpServlet {
 	@POST
 	@Path("oauth/{actorID}")
 	@Consumes("text/plain")
-	@SuppressWarnings("finally")
 	public Response postOauth(@PathParam("actorID") String actorID, String code)
 			throws URISyntaxException {
 
-		Client client = ClientBuilder.newClient();
-		String response = "";
-		String data;
-		PropertyGroups properties = new PropertyGroups();
-		properties.setName("Snapmail");
-
-		Property property = new Property();
-
 		String userID = actorID.substring(0, actorID.indexOf("_"));
 		String service = actorID.substring(actorID.indexOf("_") + 1);
+		return snapmailservice.getOauthTokenWithCode(service, code, userID);
 
-		switch (service) {
-		case "google":
-			// Send token request to google
-			WebTarget targetGoogle = client
-					.target("https://www.googleapis.com/oauth2/v3/token");
-
-			data = "client_id=" + Googleclient_ID + "&client_secret="
-					+ Googleclient_secret + "&code=" + code + "&redirect_uri="
-					+ redirectUri + "&grant_type=authorization_code"
-					+ "&access_type=offline" + "&approval_prompt=force";
-
-			response = targetGoogle.request().post(
-					Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED),
-					String.class);
-			LOGGER.info(response.toString());
-
-			property.setKey("google");
-			break;
-		case "yahoo":
-			// Send token request to Yahoo
-			// }else if(actorID.contains("@yahoo."))
-			// {
-			// WebTarget targetYahoo =
-			// client.target("https://api.login.yahoo.com/oauth2/get_token");
-			//
-			// String secure = Yahooclient_ID + ":" + Yahooclient_secret;
-			// String encodedvalue=
-			// Base64.getEncoder().encodeToString(secure.getBytes());
-			//
-			// data = "client_id=" + Yahooclient_ID
-			// + "&client_secret=" + Yahooclient_secret
-			// + "&code=" + code
-			// + "&redirect_uri=" +
-			// redirectUri.replace(":9999","").replace(":8080", "") // Because
-			// yahoo refuse Uri with port
-			// + "&grant_type=authorization_code";
-			//
-			//
-			// response = targetYahoo
-			// .request()
-			// .header("Authorization", "Basic " + encodedvalue)
-			// .post(Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED),
-			// String.class);
-			//
-			break;
-
-		case "microsoft":
-			WebTarget targetOutlook = client
-					.target("https://login.live.com/oauth20_token.srf");
-
-			data = "client_id=" + Microsoftclient_ID + "&client_secret="
-					+ Microsoftclient_secret + "&code=" + code
-					+ "&redirect_uri=" + redirectUri
-					+ "&grant_type=authorization_code";
-
-			response = targetOutlook.request().post(
-					Entity.entity(data, MediaType.APPLICATION_FORM_URLENCODED),
-					String.class);
-			LOGGER.info(response.toString());
-
-			property.setKey("microsoft");
-			break;
-
-		default:
-			client.close();
-			return Response.status(500).build();
-		}
-		client.close();
-		
-		// get the refresh token
-		JSONObject json;
-		String token = "";
-		try {
-			json = new JSONObject(response);
-			token = json.get("refresh_token").toString();
-			LOGGER.info("Good Token");
-		} catch (JSONException e) {
-
-			LOGGER.error("Error with the token");
-		} finally {
-			// save the token
-			Response responsePut = null;
-			if (token.equals("") == false) {
-				Client client1 = ClientBuilder.newClient();
-
-				property.setValue(token);
-				properties.getProperty().add(property);
-
-				// TODO: à modifier quand le problème de sécurité sera réglé
-				WebTarget target = client1
-						.target(CliConfSingleton.mediahome_host + "/api/box/"
-								+ userID + "/properties");
-				Response response1 = target.request(
-						MediaType.APPLICATION_XML_TYPE).put(
-						Entity.entity(properties, MediaType.APPLICATION_XML),
-						Response.class);
-
-				responsePut = response1;
-				client1.close();
-
-			} else {
-				responsePut = Response.status(500).build();
-			}
-			return responsePut;
-		}
 	}
 
-	// protected User getUser(String username) {
-	// Client client = ClientBuilder.newClient();
-	//
-	// WebTarget target = client.target(CliConfSingleton.mediahome_host
-	// + "/api/app/account/" + username);
-	// User user = target.request(MediaType.APPLICATION_XML_TYPE)
-	// .cookie("authentication", username).get(User.class);
-	// return user;
-	// }
-
+	/**
+	 * Redirect a user who wants to log in to his box webpage. His box is known
+	 * thanks to a request to the Central server.
+	 * 
+	 * @param userID
+	 * @return Response
+	 */
 	@GET
 	@Path("app/login/{userID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response logInMediaHome(@PathParam("userID") String userID){
+	public Response logInMediaHome(@PathParam("userID") String userID) {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(CliConfSingleton.centralURL
-				 + "/api/oauth/box/" + userID);
+				+ "/api/oauth/box/" + userID);
 		String redirect = target.request().get(String.class);
 		try {
 			return Response.seeOther(new URI(redirect + "/index.html")).build();

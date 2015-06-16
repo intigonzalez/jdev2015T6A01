@@ -121,7 +121,8 @@ angular.module('myApp.myprofile', ['ngRoute'])
 	            	console.log(user.smtp)
 	            	if (user.smtp.hasOwnProperty("username") && user.smtp.username != "" && user.smtp.username != undefined && user.smtp.hasOwnProperty("host") && user.smtp.host != "" && user.smtp.host != undefined && user.smtp.hasOwnProperty("port") && user.smtp.port != "" && user.smtp.port != undefined && user.smtp.hasOwnProperty("password") && user.smtp.password != "" && user.smtp.password != undefined)
 	            	{
-	            		user.smtpManualSettings = true;1
+	            		user.smtp.password=
+	            		user.smtpManualSettings = true;
 	                	user.smtpTab = 1;
 	                	console.log("view 1");
 	            	}

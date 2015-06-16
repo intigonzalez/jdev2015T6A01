@@ -141,8 +141,8 @@
 			<artifactId>jersey-media-json-jettison</artifactId>
 		</dependency>
   	</dependencies>
+  	
   <build>
-
     <resources>
         <resource>
           <directory>src/main/java/com/enseirb/telecom/dngroup/snapmail</directory>

@@ -32,23 +32,22 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.model.Property;
 import com.google.common.base.Strings;
 
+/**
+ * 
+ * @author gatux
+ *
+ */
 public class MediaHomeFacadeImpl implements MediaHomeFacade {
 
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(MediaHomeFacadeImpl.class);
 
-	// protected User user;
-
-	protected MediaHomeFacadeImpl() {
-
+	public MediaHomeFacadeImpl(){
+		
 	}
 
-	// public MediaHomeFacadeImpl(String username, String password) {
-	// this.user = getUser(username, password);
-	// }
-
 	@Override
-	public String bodyPart2Link(InputStream inputStream, String filename,
+	public String getLinkFromBodyPart(InputStream inputStream, String filename,
 			String type, String username, List<String> recipients)
 			throws IOException {
 		// nh: to extract in a dedicated service class
@@ -141,7 +140,7 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 	}
 
 	@Override
-	public MailerProperties getSmtpParamORH(String username)
+	public MailerProperties getMailerPropertiesFromUser(String username)
 			throws NoSuchProperty {
 		try {
 			PropertyGroups groups;
@@ -220,14 +219,5 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 				User.class);
 		return user;
 	}
-	//
-	// @Override
-	// public User getUser() {
-	// return user;
-	// }
-	//
-	// @Override
-	// public void setUser(User user) {
-	// this.user = user;
-	// }
+
 }

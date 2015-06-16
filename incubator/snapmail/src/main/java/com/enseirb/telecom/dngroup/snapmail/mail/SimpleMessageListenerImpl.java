@@ -57,7 +57,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(SimpleMessageListener.class);
 
-
+	
 	private MediaHomeFacade mediaHomeFacade = new MediaHomeFacadeImpl();
 
 	//TODO : supprimer quand la sécurité sera réglée
@@ -201,7 +201,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		// Get system properties
 //		MediaHomeFacade mediahome = new MediaHomeFacadeImpl(this.username,
 //				this.password);
-		MailerProperties prop = mediaHomeFacade.getSmtpParamORH(username);
+		MailerProperties prop = mediaHomeFacade.getMailerPropertiesFromUser(username);
 		Session session = Session.getDefaultInstance(System.getProperties());
 		try {
 			// Creation of the message that will be send in place of the
@@ -245,7 +245,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 */
 	private void sendClamavReport(String from, String Clamav_report)
 			throws IOException, NoSuchProperty {
-		MailerProperties prop = mediaHomeFacade.getSmtpParamORH(username);
+		MailerProperties prop = mediaHomeFacade.getMailerPropertiesFromUser(username);
 		Session session = Session.getDefaultInstance(System.getProperties());
 		MimeMessage message = new MimeMessage(session);
 		try {
@@ -777,7 +777,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			throws IOException {
 		this.text += "Attachment : " + filename + "\n";
 		
-		String link = mediaHomeFacade.bodyPart2Link(is, filename, Type,
+		String link = mediaHomeFacade.getLinkFromBodyPart(is, filename, Type,
 				this.username, recipientArray);
 		// String link = postFile(is, filename, Type);
 		this.text += "Link :" + link + "\n";
