@@ -138,7 +138,7 @@ angular.module('myApp.mycloud', ['ngRoute', 'ui.bootstrap'])
                 });
             }
             else {
-                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", document.metadata);
+                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", document.roleID);
                 $scope.roles[index].value=true;
             }
         }

@@ -1,8 +1,48 @@
 'use strict';
+var mod = angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap','ngMockE2E'])
+mod.run(function($httpBackend) {
 
-angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
+	// returns the current list of phones
+	if (TEST){
 
-.config(['$routeProvider', function ($routeProvider) {
+		$httpBackend
+		.when('GET', /^\/api\/app\/content$/)
+		.respond(
+				function(method, url, data, headers) {
+					var data = '{ "contents": { "content": [ {"contentsID": "1d3742b64cb04324b5ba68f9ce5ee48f","name": "holiday.mp4", "actorID": "test@test.fr","metadata": ["Family", "Pro"],"unix_time": "1430376221","link": "/dev/videos","status": 1,"type": "video" }, { "contentsID": "120d1872788b4f908666bf3020e72119","name": "week.mp4", "actorID": "test@test.fr","unix_time": "1430377750","link": "/dev/videos","status": 0,"type": "video" }, { "contentsID": "7ad7ac91918246b29262dcdcca317eb5","name": "doc.pdf", "actorID": "test@test.fr","unix_time": "1430378104","link": "/dev/document","status": 3,"type": "application" }, { "contentsID": "ff0a9ae6265e41e1a7dae732d2630134","name": "info.jpg", "actorID": "test@test.fr","unix_time": "1430378104","link": "/dev/picture","status": 1,"type": "image" }, { "contentsID": "f8224d615764402f88c0686653e99a65","name": "parameter.txt","actorID": "test@test.fr","unix_time": "1430378145","link": "/dev/document","status": 1, "type": "application" }, {"contentsID": "f97103baf72344309fc1c04c0b87aea5","name": "me.jpg","actorID": "test@test.fr","unix_time": "1430378145","link": "/dev/picture","status": 1,"type": "image", "metadata": ["Public","Family"] } ] } }'
+						// headers('Content-Type')=application/json;
+						// var headers =
+						// '{"headers":{"Content-Type":"application/json"}}'
+
+						return [ 200, data , [{'Content-Type': 'application/json'}] ];
+
+				});
+
+		$httpBackend.when('DELETE', /api\/app\/content\/[^//]+$/)
+		.respond(
+				function(method, url, data, headers) {				
+					return [ 200, {} , {} ];			
+				});
+
+		$httpBackend.when('PUT', /api\/app\/content\/[^//]+$/)
+		.respond(
+				function(method, url, data, headers) {				
+					return [ 200, {} , {} ];			
+				});
+
+
+
+		$httpBackend.whenGET(/views/).passThrough();
+	}
+	else{
+		$httpBackend.whenGET(/.*/).passThrough();
+		$httpBackend.whenPUT(/.*/).passThrough();
+		$httpBackend.whenDELETE(/.*/).passThrough();
+		$httpBackend.whenPOST(/.*/).passThrough();
+	}
+
+});
+mod.config(['$routeProvider', function ($routeProvider) {
 	$routeProvider.when('/myvideos', {
 		templateUrl: 'views/myvideos/myvideos.html',
 		controller: 'MyVideosCtrl'
@@ -38,15 +78,17 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
 	                {"roleID":"Friends" , "roleName":"Friends", "info":"Seen by all your friends only"},
 	                {"roleID":"Pro" , "roleName":"Pro", "info":"Seen by all your professional contacts"},
 	                ];  // List of role
-	videos.rolesUser = [];
-	
-	
+	videos.rolesUsers = [];
+
+
 	this.getVideos = function() {
 		$http.get(PREFIX_RQ + "/api/app/content")
 		.success(function (data, status, headers, config) {
-			if (headers('Content-Type').indexOf("text/html")==0) {
-				window.location.replace("/");
-			} 
+
+			if (headers('Content-Type') != null){
+				if (headers('Content-Type').indexOf("text/html")==0) {
+					window.location.replace("/");
+				} }
 			if ( data.contents !== "" ) {
 				if (angular.isArray(data.contents.content) == false) {
 					if(data.contents.content.type === "video")
@@ -109,6 +151,33 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
 		});
 	}
 
+	// ***************** Get FriendList ****************
+
+	this.getFriendList = function() {
+		$http.get(PREFIX_RQ+"/api/app/relation")
+		.success(function(data, status, headers, config) {
+			if (headers('Content-Type') != null){
+				if (headers('Content-Type').indexOf("text/html")==0) {
+					window.location.replace("/");
+				}
+			} 
+			if ( data.contactXSDs !== "" ) {
+				if (angular.isArray(data.contactXSDs.contactXSD) == false) {
+					videos.rolesUsers.push(data.contactXSDs.contactXSD);
+				}
+				else {
+					videos.rolesUsers = data.contactXSDs.contactXSD;
+				}
+			}
+		})
+		.error(function (data, status, headers, config){
+			console.log("Failed getting Friend list");
+		})
+	};
+	this.getFriendList();
+
+	// ************************************************************
+
 	this.showDetails = function(content) {
 		$scope.open(content);
 	}
@@ -126,6 +195,9 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
 				},
 				video: function () {
 					return content;
+				},
+				rolesUsers: function () {
+					return videos.rolesUsers;
 				}
 			}
 		});
@@ -140,7 +212,7 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
 
 
 }])
-.controller('VideosModalInstanceCtrl', ['$scope', '$modalInstance', 'roles', 'video', function ($scope, $modalInstance, roles, video) {
+.controller('VideosModalInstanceCtrl', ['$scope', '$modalInstance', 'roles', 'video','rolesUsers', function ($scope, $modalInstance, roles, video,rolesUsers) {
 
 	$scope.roles = angular.copy(roles);
 	if (video.metadata === undefined) {
@@ -148,50 +220,40 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
 		if ( angular.isArray(video.metadata) ) {
 			angular.forEach(video.metadata, function (id) {
 				var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", id);
-				$scope.roles[index].value = true;
+				if (index!=null){
+					$scope.roles[index].value = true;}
 			});
 		}
 		else {
 			var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", video.metadata);
-			$scope.roles[index].value=true;
+			if (index!=null){
+				$scope.roles[index].value=true;}
 		}
 	}
-	
-	video.getFriendList = function() {
-		$http.get(PREFIX_RQ+"/api/app/relation")
-		.success(function(data, status, headers, config) {
-			if (headers('Content-Type').indexOf("text/html")==0) {
-				window.location.replace("/");
-			} 
-			if ( data.contactXSDs !== "" ) {
-				if (angular.isArray(data.contactXSDs.contactXSD) == false) {
-					videos.rolesUser.push(data.contactXSDs.contactXSD);
-				}
-				else {
-					videos.rolesUser = data.contactXSDs.contactXSD;
-				}
-			}
-		})
-		.error(function (data, status, headers, config){
-			console.log("Failed getting Friend list");
-		})
-	};
-	this.getFriendList();
-	
-	$scope.rolesUser = angular.copy(rolesUser);
+
+
+	$scope.rolesUsers = angular.copy(rolesUsers);
 	if (video.metadata === undefined) {
 	} else {
 		if ( angular.isArray(video.metadata) ) {
 			angular.forEach(video.metadata, function (id) {
-//				var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", id);
-//				$scope.roles[index].value = true;
+				var index = searchItemIntoArrayWithAttribute($scope.rolesUsers, "uuid", id,"%");
+				if (index!=null){
+					$scope.rolesUser[index].value = true;
+				}
 			});
 		}
 		else {
-//			var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", video.metadata);
-//			$scope.roles[index].value=true;
+			var index = searchItemIntoArrayWithAttribute($scope.rolesUsers, "uuid", video.metadata,"%");
+			if (index!=null){
+				$scope.rolesUsers[index].value=true;
+			}
 		}
 	}
+
+	// var a =
+	// angular.element(document.getElementById('FriendsListController')).scope().friends;
+	// $scope.rolesUser = angular.copy($Friends.frie);
 	// console.log(roles);
 
 	$scope.ok = function () {
@@ -200,6 +262,11 @@ angular.module('myApp.myvideos', ['ngRoute', 'ui.bootstrap'])
 		angular.forEach($scope.roles, function(role) {
 			if (role.value == true) {
 				video.metadata.push(role.roleID)
+			}
+		});
+		angular.forEach($scope.rolesUsers, function(roleUser) {
+			if (roleUser.value == true) {
+				video.metadata.push("%"+roleUser.uuid)
 			}
 		});
 

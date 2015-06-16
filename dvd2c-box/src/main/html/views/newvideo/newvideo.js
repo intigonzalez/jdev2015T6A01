@@ -1,70 +1,107 @@
 'use strict';
 
-angular.module('myApp.newvideo', ['ngRoute', 'angularFileUpload'])
+var mod = angular.module('myApp.newvideo', [ 'ngRoute', 'angularFileUpload',
+		'ngMockE2E' ])
+mod.run(function($httpBackend) {
 
-    .config(['$routeProvider', function ($routeProvider) {
-        $routeProvider.when('/newvideo', {
-            templateUrl: 'views/newvideo/newvideo.html',
-            controller: 'NewVideosCtrl'
-        });
-    }])
+	// returns the current list of phones
 
-    .controller('NewVideosCtrl', [function ($scope, $http) {
+	if (TEST) {
 
+		$httpBackend.when('POST', /api\/app\/[^//]+\/content$/).respond(
+				function(method, url, data, headers) {
+					return [ 200, {}, {} ];
+				});
 
-    }])
+		$httpBackend.whenGET(/views/).passThrough();
+	} else {
+		$httpBackend.whenGET(/.*/).passThrough();
+		$httpBackend.whenPUT(/.*/).passThrough();
+		$httpBackend.whenDELETE(/.*/).passThrough();
+		$httpBackend.whenPOST(/.*/).passThrough();
+	}
 
-    .controller('NewVideoController', ['$scope', 'FileUploader', function($scope, FileUploader) {
+});
 
-        var uploader = $scope.uploader = new FileUploader({
-            url: '/api/app/content'
-        });
+mod.config([ '$routeProvider', function($routeProvider) {
+	$routeProvider.when('/newvideo', {
+		templateUrl : 'views/newvideo/newvideo.html',
+		controller : 'NewVideosCtrl'
+	});
+} ])
 
-        // FILTERS
+.controller('NewVideosCtrl', [ function($scope, $http) {
 
-        uploader.filters.push({
-            name: 'customFilter',
-            fn: function(item /*{File|FileLikeObject}*/, options) {
-                return this.queue.length < 10;
-            }
-        });
+} ])
 
-        // CALLBACKS
+.controller(
+		'NewVideoController',
+		[
+				'$scope',
+				'FileUploader',
+				function($scope, FileUploader) {
 
-        uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
-            console.info('onWhenAddingFileFailed', item, filter, options);
-        };
-        uploader.onAfterAddingFile = function(fileItem) {
-            console.info('onAfterAddingFile', fileItem);
-        };
-        uploader.onAfterAddingAll = function(addedFileItems) {
-            console.info('onAfterAddingAll', addedFileItems);
-        };
-        uploader.onBeforeUploadItem = function(item) {
-            console.info('onBeforeUploadItem', item);
-        };
-        uploader.onProgressItem = function(fileItem, progress) {
-            console.info('onProgressItem', fileItem, progress);
-        };
-        uploader.onProgressAll = function(progress) {
-            console.info('onProgressAll', progress);
-        };
-        uploader.onSuccessItem = function(fileItem, response, status, headers) {
-            console.info('onSuccessItem', fileItem, response, status, headers);
-        };
-        uploader.onErrorItem = function(fileItem, response, status, headers) {
-            console.info('onErrorItem', fileItem, response, status, headers);
-        };
-        uploader.onCancelItem = function(fileItem, response, status, headers) {
-            console.info('onCancelItem', fileItem, response, status, headers);
-        };
-        uploader.onCompleteItem = function(fileItem, response, status, headers) {
-            console.info('onCompleteItem', fileItem, response, status, headers);
-        };
-        uploader.onCompleteAll = function() {
-            console.info('onCompleteAll');
-        };
+					var uploader = $scope.uploader = new FileUploader({
+						url : '/api/app/content'
+					});
 
-        console.info('uploader', uploader);
+					// FILTERS
 
-    }]);
+					uploader.filters
+							.push({
+								name : 'customFilter',
+								fn : function(item /* {File|FileLikeObject} */,
+										options) {
+									return this.queue.length < 10;
+								}
+							});
+
+					// CALLBACKS
+
+					uploader.onWhenAddingFileFailed = function(
+							item /* {File|FileLikeObject} */, filter, options) {
+						console.info('onWhenAddingFileFailed', item, filter,
+								options);
+					};
+					uploader.onAfterAddingFile = function(fileItem) {
+						console.info('onAfterAddingFile', fileItem);
+					};
+					uploader.onAfterAddingAll = function(addedFileItems) {
+						console.info('onAfterAddingAll', addedFileItems);
+					};
+					uploader.onBeforeUploadItem = function(item) {
+						console.info('onBeforeUploadItem', item);
+					};
+					uploader.onProgressItem = function(fileItem, progress) {
+						console.info('onProgressItem', fileItem, progress);
+					};
+					uploader.onProgressAll = function(progress) {
+						console.info('onProgressAll', progress);
+					};
+					uploader.onSuccessItem = function(fileItem, response,
+							status, headers) {
+						console.info('onSuccessItem', fileItem, response,
+								status, headers);
+					};
+					uploader.onErrorItem = function(fileItem, response, status,
+							headers) {
+						console.info('onErrorItem', fileItem, response, status,
+								headers);
+					};
+					uploader.onCancelItem = function(fileItem, response,
+							status, headers) {
+						console.info('onCancelItem', fileItem, response,
+								status, headers);
+					};
+					uploader.onCompleteItem = function(fileItem, response,
+							status, headers) {
+						console.info('onCompleteItem', fileItem, response,
+								status, headers);
+					};
+					uploader.onCompleteAll = function() {
+						console.info('onCompleteAll');
+					};
+
+					console.info('uploader', uploader);
+
+				} ]);

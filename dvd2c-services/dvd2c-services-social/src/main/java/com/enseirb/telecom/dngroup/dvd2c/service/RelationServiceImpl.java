@@ -7,12 +7,15 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.persistence.NonUniqueResultException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+
 
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
@@ -477,10 +480,15 @@ public class RelationServiceImpl implements RelationService {
 	public void deleteRelationBox(UUID userUUId, UUID relationUUId)
 			throws NoRelationException {
 		Contact contact;
-		if ((contact = contactRepository.findContact(userUUId, relationUUId)) != null) {
-			contactRepository.delete(contact);
-		} else {
-			throw new NoRelationException();
+		try {
+			if ((contact = contactRepository.findContact(userUUId, relationUUId)) != null) {
+				contactRepository.delete(contact);
+			} else {
+				throw new NoRelationException();
+			}
+		} catch (NonUniqueResultException e) {
+			LOGGER.error("No unique relation");
+			throw e;
 		}
 
 	}
@@ -577,6 +585,7 @@ public class RelationServiceImpl implements RelationService {
 				role.setName(roleStr);
 				role.setType(TYPE);
 				roleRepository.save(role);
+				//TODO: ADD Permission to read
 			}
 			roleToSave.add(role);
 

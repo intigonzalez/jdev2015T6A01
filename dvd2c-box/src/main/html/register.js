@@ -2,9 +2,43 @@
 PREFIX_RQ = "";
 //PREFIX_RQ = "http://localhost:9998";
 
+var RegisterForm = angular.module('RegisterForm', ['ngMockE2E','ngCookies','ngRoute']);
 
-var RegisterForm = angular.module('RegisterForm', []);
-//Hello
+
+RegisterForm.run(function($httpBackend,$cookieStore ) {
+
+	if (TEST){
+	// returns the current list of phones	
+	$httpBackend.when('POST', '/api/app/account/').respond(
+			function(method, url, data, headers) {
+					data=JSON.parse(data);
+					if(data.user.userID=="testtest"){
+						var user='testtest';
+
+						//console.log(user);
+						//$cookieStore.put('authentication',data.user.userID); 
+						 
+						return [ 403, {}, {} ];
+					}
+					else if(data.user.userID=="test@test.fr"){
+						
+						return [ 403, {}, {} ];
+					}
+					else{
+						$cookieStore.put('authentication',data.user.userID); 
+						return [ 200, {}, {} ];
+						window.location.replace("/home.html");
+					}
+			});
+	}
+	else{
+		$httpBackend.whenGET(/.*/).passThrough();
+		$httpBackend.whenPUT(/.*/).passThrough();
+		$httpBackend.whenDELETE(/.*/).passThrough();
+		$httpBackend.whenPOST(/.*/).passThrough();
+	}
+});
+
 RegisterForm.controller("mainController", function ($scope, $http) {
 
     $scope.submitData = function (person) {
@@ -65,6 +99,6 @@ RegisterForm.controller("mainController", function ($scope, $http) {
     });
 
     // End of js part for validating the form inputs
-    
+
 
 });

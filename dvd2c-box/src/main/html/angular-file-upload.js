@@ -12,8 +12,26 @@
     }
 }(typeof angular === 'undefined' ? null : angular, function(angular) {
 
-var module = angular.module('angularFileUpload', []);
+var module = angular.module('angularFileUpload', ['ngMockE2E']);
+module.run(function($httpBackend) {
 
+	// returns the current list of phones
+	
+	
+
+
+	$httpBackend.when('POST', /api\/app\/[^//]+\/content$/)
+	.respond(
+			function(method, url, data, headers) {				
+					return [ 200, {} , {} ];			
+			});
+	
+	
+	
+	$httpBackend.whenGET(/views/).passThrough();
+	
+	
+});
 'use strict';
 
 /**

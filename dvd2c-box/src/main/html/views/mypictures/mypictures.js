@@ -137,7 +137,7 @@ angular.module('myApp.mypictures', ['ngRoute', 'ui.bootstrap'])
                 });
             }
             else {
-                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", picture.metadata);
+                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", picture.roleID);
                 $scope.roles[index].value=true;
             }
         }

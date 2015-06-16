@@ -1,8 +1,65 @@
 'use strict';
 
-angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
+var mod = angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap','ngMockE2E'])
+mod.run(function($httpBackend) {
 
-.config(['$routeProvider', function ($routeProvider) {
+	// returns the current list of phones
+	if (TEST){
+
+		$httpBackend
+		.when('GET', /^\/api\/app\/relation$/)
+		.respond(
+				function(method, url, data, headers) {
+					var data = '{"contactXSDs":{"contactXSD":[{"actorID":"blu","firstname":"blu","surname":"blu","aprouve":1,"roleID":0,"uuid":"ad13fe72-5830-4057-9991-689091a467bf"},{"actorID":"blue@blue.fr","firstname":"blue","surname":"colors","aprouve":2,"roleID":0,"uuid":"bd13fe72-5830-4057-9991-689091a467bf"},{"actorID":"cgonzalez@viotech.net","firstname":"clement","surname":"clement","aprouve":3,"roleID":0,"uuid":"cd13fe72-5830-4057-9991-689091a467bf"}]}}';
+					var header = {};
+					return [ 200, data , {} ];
+
+				});
+		$httpBackend
+		.when('PUT', /^\/api\/app\/relation\/[^//]+$/)
+		.respond(
+				function(method, url, data, headers) {
+					var data = '';
+					var header = {};
+					return [ 200, data , {} ];
+
+				});
+		$httpBackend.when('POST', /^\/api\/app\/relation\/[^//]+$/)
+		.respond(
+				function(method, url, data, headers) {
+
+					return [ 200, data , {} ];			
+				});
+
+		$httpBackend.when('DELETE', /^\/api\/app\/relation\/[^//]+$/)
+		.respond(
+				function(method, url, data, headers) {
+
+					return [ 200, data , {} ];			
+				});
+		$httpBackend
+		.when('GET', /^\/api\/app\/relation\/[^//]+\/content$/)
+		.respond(
+				function(method, url, data, headers) {
+					var data = '{"contents":{"content":[{"contentsID":"1d3742b64cb04324b5ba68f9ce5ee48f","name":"holiday.mp4","actorID":"test@test.fr","metadata":[2,3],"unix_time":1430376221,"link":"\/dev\/videos","status":"success","type":"video"},{"contentsID":"120d1872788b4f908666bf3020e72119","name":"week.mp4","actorID":"test@test.fr","unix_time":1430377750,"link":"\/dev\/videos","status":"success","type":"video"},{"contentsID":"7ad7ac91918246b29262dcdcca317eb5","name":"doc.pdf","actorID":"test@test.fr","unix_time":1430378104,"link":"\/dev\/document","status":"success","type":"application"},{"contentsID":"ff0a9ae6265e41e1a7dae732d2630134","name":"info.jpg","actorID":"test@test.fr","unix_time":1430378104,"link":"\/dev\/picture","status":"success","type":"image"},{"contentsID":"f8224d615764402f88c0686653e99a65","name":"parameter.txt","actorID":"test@test.fr","unix_time":1430378145,"link":"\/dev\/document","status":"success","type":"application"},{"contentsID":"f97103baf72344309fc1c04c0b87aea5","name":"me.jpg","actorID":"test@test.fr","unix_time":1430378145,"link":"\/dev\/picture","status":"success","type":"image","metadata":[0,1]}]}}'
+						var header = {};
+					return [ 200, data , {} ];
+
+				});
+
+
+		$httpBackend.whenGET(/views/).passThrough();
+	}
+	else{
+		$httpBackend.whenGET(/.*/).passThrough();
+		$httpBackend.whenPUT(/.*/).passThrough();
+		$httpBackend.whenDELETE(/.*/).passThrough();
+		$httpBackend.whenPOST(/.*/).passThrough();
+	}
+
+});
+
+mod.config(['$routeProvider', function ($routeProvider) {
 	$routeProvider.when('/friends', {
 		templateUrl: 'views/friends/friends.html',
 		controller: 'FriendsCtrl'
@@ -84,7 +141,7 @@ angular.module('myApp.friends', ['ngRoute', 'ui.bootstrap'])
 			return "";
 		}
 	}
-	
+
 	$scope.FriendProfileController.videoInProgress = function(content) {
 		if (content.status == 1) {		
 			return "";

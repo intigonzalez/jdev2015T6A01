@@ -15,6 +15,9 @@ public interface ContactRepository extends CrudRepository<Contact, Integer> {
 
 	@Query("select c from Contact c where c.ownerId = ?1 and c.receiverActor.id = ?2")
 	Contact findContact(UUID senderId, UUID a);
+	
+	@Query("select c from Contact c where c.ownerId = ?1 and c.receiverActor.id = ?2")
+	List<Contact> findContacts(UUID senderId, UUID a);
 
 	@Query("select c from Contact c where c.ownerId = ?1")
 	List<Contact> findByOwner(UUID senderId);
