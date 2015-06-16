@@ -15,6 +15,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+
 /**
  * The persistent class for the key value database table.
  * 
@@ -74,4 +77,5 @@ public class PropertyGroupsDB extends DBObject implements Serializable {
 	public void setProperty(List<PropertyDB> properties) {
 		this.property = properties;
 	}
+	
 }

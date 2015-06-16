@@ -35,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 			.antMatchers("/api/application.wadl","/api/app/register/").permitAll()
 			.antMatchers("/api/box/**").permitAll()
+			.antMatchers("/api/app/**").hasIpAddress("127.0.0.1")
 			.anyRequest().authenticated()
 		.and()
 			.formLogin()

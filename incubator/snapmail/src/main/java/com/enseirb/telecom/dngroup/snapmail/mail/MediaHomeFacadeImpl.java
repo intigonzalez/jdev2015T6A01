@@ -42,8 +42,8 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(MediaHomeFacadeImpl.class);
 
-	public MediaHomeFacadeImpl(){
-		
+	public MediaHomeFacadeImpl() {
+
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 			// nh: create
 			// TODO: à remodifier
 			WebTarget target = client.target(CliConfSingleton.mediahome_host
-					+ "/api/box/security/" + username);
+					+ "/api/app/content/" + username);
 
 			LOGGER.info("Filename : " + filename);
 			Response response = target
@@ -145,10 +145,10 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 		try {
 			PropertyGroups groups;
 			Client client = ClientBuilder.newClient();
-
+			// TODO : à remodifier après sécu
 			WebTarget target = client.target(CliConfSingleton.mediahome_host
-					+ "/api/box/" + username + "/properties/Snapmail");
-			
+					+ "/api/app/" + username + "/properties/Snapmail");
+
 			groups = target.request(MediaType.APPLICATION_XML_TYPE).get(
 					PropertyGroups.class);
 			client.close();
@@ -213,10 +213,11 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 		Client client = ClientBuilder.newClient();
 		client.register(feature);
 		WebTarget target = client.target(CliConfSingleton.mediahome_host
-				+ "/api/app/account/" + username);
-		client.close();
+				+ "/api/app/account/email/" + username);
+		
 		User user = target.request(MediaType.APPLICATION_XML_TYPE).get(
 				User.class);
+		client.close();
 		return user;
 	}
 

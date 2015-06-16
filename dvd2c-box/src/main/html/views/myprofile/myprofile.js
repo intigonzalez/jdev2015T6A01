@@ -75,11 +75,11 @@ angular.module('myApp.myprofile', ['ngRoute'])
  				console.log(data);
             	var json=JSON.parse(angular.toJson(data));
             	console.log(json);
-            	if(json.properties!=undefined){
-	            	var l=json.properties.length;
+            	if(json.propertyGroups!=undefined){
+	            	var l=json.propertyGroups.length;
 	            	if(l==undefined){
 	            		l=0;
-	            		var e = json.properties;
+	            		var e = json.propertyGroups;
 	            		if(e.property.length==undefined){
 	            			var p = e.property;
 	            			user.smtp[p.key] = p.value;
@@ -95,7 +95,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
 	                }
 	            	else{
 		            	for(var i = 0; i <= l ; i++) {
-		            		var e = json.user.propertyGroups[i];
+		            		var e = jsonpropertyGroups[i];
 		            		console.log("e: "+i);
 		            		console.log(e);
 		            		console.log(e.name);

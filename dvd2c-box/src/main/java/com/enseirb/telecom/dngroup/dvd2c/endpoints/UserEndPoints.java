@@ -147,16 +147,31 @@ public class UserEndPoints extends HttpServlet {
 	 *            the user to get
 	 * @return a user
 	 */
-	// TODO: SEE THIS FONCTION
 	@GET
 	@Path("{userID}/properties/{propertyGroupName}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<Property> getUserProperties(@PathParam("userID") UUID userID,
+	public PropertyGroups getUserProperties(@PathParam("userID") String userID,
 			@PathParam("propertyGroupName") String propertyGroupName) {
-//		UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
-//				.getAuthentication().getName());
+		// UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+		// .getAuthentication().getName());
+		com.enseirb.telecom.dngroup.dvd2c.modeldb.User user = null;
+		try {
+			if(userID.contains("@")){
+			user = uManager.findUserByEmail(userID);
+			}else{
+				user = uManager.findUserByUUID(UUID.fromString(userID));
+			}
+				
+		} catch (NoSuchUserException e1) {
 
-		return uManager.getPropertiesForUser(userID, propertyGroupName);
+			e1.printStackTrace();
+		}
+		PropertyGroups groups = new PropertyGroups();
+		groups.setName("Snapmail");
+		List<Property> props = uManager.getPropertiesForUser(user.getId(),
+				propertyGroupName);
+		groups.getProperty().addAll(props);
+		return groups;
 	}
 
 	/**
@@ -169,9 +184,9 @@ public class UserEndPoints extends HttpServlet {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postUserProps(PropertyGroups propertyGroups,
 			@PathParam("userID") UUID userID) {
-//		UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
-//				.getAuthentication().getName());
-		
+		// UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+		// .getAuthentication().getName());
+
 		uManager.setPropertiesForUser(userID, propertyGroups);
 		return Response.status(200).build();
 	}

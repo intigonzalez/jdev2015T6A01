@@ -61,9 +61,9 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	private MediaHomeFacade mediaHomeFacade = new MediaHomeFacadeImpl();
 
 	//TODO : supprimer quand la sécurité sera réglée
-	protected String username;
+//	protected String username;
 //	protected String password;
-	//User user;
+	User user;
 
 	// to display all recipients
 	List<String> recipientArray = new ArrayList<String>();
@@ -90,8 +90,9 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 //		user = new User();
 //		user.setUserID(username);
 //		user.setPassword(password);
-		this.username=username;
-		//user=mediaHomeFacade.getUserORH(username, password);
+//		this.username=username;
+//		this.password=password;
+		user=mediaHomeFacade.getUserORH(username, password);
 	}
 
 	@Override
@@ -201,7 +202,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		// Get system properties
 //		MediaHomeFacade mediahome = new MediaHomeFacadeImpl(this.username,
 //				this.password);
-		MailerProperties prop = mediaHomeFacade.getMailerPropertiesFromUser(username);
+		MailerProperties prop = mediaHomeFacade.getMailerPropertiesFromUser(user.getUserID());
 		Session session = Session.getDefaultInstance(System.getProperties());
 		try {
 			// Creation of the message that will be send in place of the
@@ -211,7 +212,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			//
 			MimeMessage message = new MimeMessage(session);
 			// Set From: header field of the header.
-			message.setFrom(new InternetAddress(username));
+			message.setFrom(new InternetAddress(user.getUserID()));
 			// message.setHeader("Content-Type", this.type);
 			LOGGER.info("CONTENT-TYPE : " + this.type);
 			// Set To: header field of the header.
@@ -245,7 +246,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 */
 	private void sendClamavReport(String from, String Clamav_report)
 			throws IOException, NoSuchProperty {
-		MailerProperties prop = mediaHomeFacade.getMailerPropertiesFromUser(username);
+		MailerProperties prop = mediaHomeFacade.getMailerPropertiesFromUser(user.getUserID());
 		Session session = Session.getDefaultInstance(System.getProperties());
 		MimeMessage message = new MimeMessage(session);
 		try {
@@ -778,7 +779,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		this.text += "Attachment : " + filename + "\n";
 		
 		String link = mediaHomeFacade.getLinkFromBodyPart(is, filename, Type,
-				this.username, recipientArray);
+				this.user.getUserID(), recipientArray);
 		// String link = postFile(is, filename, Type);
 		this.text += "Link :" + link + "\n";
 	}

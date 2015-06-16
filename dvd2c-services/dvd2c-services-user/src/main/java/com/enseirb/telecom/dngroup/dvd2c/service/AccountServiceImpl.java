@@ -25,6 +25,7 @@ import com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyDB;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroupsDB;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
 import com.enseirb.telecom.dngroup.dvd2c.repository.PropertyGroupsRepository;
+import com.enseirb.telecom.dngroup.dvd2c.repository.PropertyRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 import com.google.common.base.Strings;
@@ -304,17 +305,6 @@ public class AccountServiceImpl implements AccountService {
 			p.setValue(propertydb.getValue());
 			property.add(p);
 		}
-		// for (PropertyGroups pg : Collections2.filter(
-		// this.userRepository.findOne(userId).getPropertyGroups(),
-		// new Predicate<PropertyGroups>() {
-		//
-		// @Override
-		// public boolean apply(PropertyGroups input) {
-		// return propertyGroupName.equals(input.getName());
-		// }
-		// })) {
-		// return pg.getProperty();
-		 //}
 		return property;
 	}
 
@@ -329,10 +319,8 @@ public class AccountServiceImpl implements AccountService {
 			propertyGroupOnDB = new com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroupsDB();
 			propertyGroupOnDB.setName(propertyGroups.getName());
 			propertyGroupOnDB.setUser(user);
-//			user.getProperty_groups().add(propertyGroupOnDB);
-//			userRepository.save(user);
 		} else {
-			propertyGroupOnDB.getProperty().clear();
+			propertyGroupsRepository.deleteProperties(propertyGroupOnDB.getId());
 		}
 		ArrayList<PropertyDB> propertyDBs = new ArrayList<PropertyDB>();
 		for (Property property : propertyGroups.getProperty()) {

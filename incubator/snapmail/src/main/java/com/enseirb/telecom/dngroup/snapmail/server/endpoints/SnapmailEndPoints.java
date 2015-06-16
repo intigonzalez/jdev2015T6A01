@@ -50,8 +50,9 @@ public class SnapmailEndPoints extends HttpServlet {
 			@PathParam("contentID") String contentID) {
 		Content content;
 		Client client = ClientBuilder.newClient();
+		//TODO: à remodifier après sécurité
 		String url = CliConfSingleton.mediahome_host.toString()
-				+ "/api/box/content/" + contentID + "/" + actorID;
+				+ "/api/app/content/" + contentID + "/" + actorID;
 		WebTarget target = client.target(url);
 		try {
 			content = target.request(MediaType.APPLICATION_XML_TYPE).get(
