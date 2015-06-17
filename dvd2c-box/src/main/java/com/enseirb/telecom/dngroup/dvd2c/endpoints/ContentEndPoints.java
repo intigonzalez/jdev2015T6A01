@@ -163,8 +163,6 @@ public class ContentEndPoints {
 	@Produces({ MediaType.WILDCARD })
 	public Content getContent(@PathParam("contentsID") Integer contentsID, @PathParam("userId") String userID)
 			throws URISyntaxException {
-//		String uuid = SecurityContextHolder.getContext().getAuthentication()
-//				.getName();
 		User user = null;
 		try {
 			user = uManager.findUserByEmail(userID);

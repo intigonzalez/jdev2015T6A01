@@ -354,6 +354,9 @@ public class Main {
 			if (CliConfSingleton.appPort == null)
 				CliConfSingleton.appPort = Integer.valueOf(ApplicationContext
 						.getProperties().getProperty("port"));
+			if (CliConfSingleton.snapmail_host == null)
+				CliConfSingleton.snapmail_host = ApplicationContext
+						.getProperties().getProperty("snapmail_host");
 			LOGGER.info("File found use this values or arg Path ={} ", aPPath);
 			in.close();
 			CliConfSingleton.defaultValue();
@@ -400,6 +403,9 @@ interface CliConfiguration {
 
 	@Option(longName = "rabbit-port", description = "the port of rabbitMQ", defaultToNull = true)
 	Integer getRabbitPort();
+	
+	@Option(longName = "snapmail_host", description = "URL of Snapmail_Host", defaultToNull=true)
+	String getSnapmail_Host();
 
 	@Option(helpRequest = true)
 	boolean getHelp();

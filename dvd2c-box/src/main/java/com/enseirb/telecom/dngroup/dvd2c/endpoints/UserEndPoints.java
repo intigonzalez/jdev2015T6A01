@@ -173,10 +173,12 @@ public class UserEndPoints extends HttpServlet {
 		return groups;
 	}
 
-	/**
-	 * 
-	 *
-	 */
+/**
+ * Change the Properties of the authenticated user
+ * 
+ * @param propertyGroups
+ * @return Response
+ */
 	@PUT
 	@Path("/properties")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -189,29 +191,6 @@ public class UserEndPoints extends HttpServlet {
 		return Response.status(200).build();
 	}
 	
-	@PUT
-	@Path("/unsecure/properties/{userId}")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postUserProps(PropertyGroups propertyGroups, @PathParam("userId") String userID) {
-//		 UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
-//		 .getAuthentication().getName());
-		com.enseirb.telecom.dngroup.dvd2c.modeldb.User user = null;
-		try {
-			if(userID.contains("@")){
-			user = uManager.findUserByEmail(userID);
-			}else{
-				user = uManager.findUserByUUID(UUID.fromString(userID));
-			}
-				
-		} catch (NoSuchUserException e1) {
-
-			e1.printStackTrace();
-		}
-		uManager.setPropertiesForUser(user.getId(), propertyGroups);
-		return Response.status(200).build();
-	}
-
 	/**
 	 * Find a list of users from their firstname on server
 	 * 

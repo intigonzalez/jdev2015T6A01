@@ -107,8 +107,9 @@ public class SnapmailEndPoints extends HttpServlet {
 			throws URISyntaxException {
 
 		String userID = actorID.substring(0, actorID.indexOf("_"));
-		String service = actorID.substring(actorID.indexOf("_") + 1);
-		return snapmailservice.getOauthTokenWithCode(service, code, userID);
+		String service = actorID.substring(actorID.indexOf("_") + 1, actorID.lastIndexOf("_"));
+		String validator = actorID.substring(actorID.lastIndexOf("_") + 1);
+		return snapmailservice.getOauthTokenWithCode(service, code, userID, validator);
 
 	}
 

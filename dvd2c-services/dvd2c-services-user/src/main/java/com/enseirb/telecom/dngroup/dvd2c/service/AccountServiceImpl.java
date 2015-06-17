@@ -299,11 +299,14 @@ public class AccountServiceImpl implements AccountService {
 		PropertyGroupsDB groups=propertyGroupsRepository.findByNameAndUser(
 				propertyGroupName, user);
 		ArrayList<Property> property = new ArrayList<Property>();
+		if(groups!=null){
 		for (PropertyDB propertydb : groups.getProperty()) {
 			Property p= new Property();
 			p.setKey(propertydb.getKey());
 			p.setValue(propertydb.getValue());
 			property.add(p);
+		}
+		return property;
 		}
 		return property;
 	}

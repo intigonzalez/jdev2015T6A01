@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.RememberMeServices;
 
+import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.security.AjaxAuthenticationFailureHandler;
 import com.enseirb.telecom.dngroup.dvd2c.security.AjaxAuthenticationSuccessHandler;
 import com.enseirb.telecom.dngroup.dvd2c.security.AjaxLogoutSuccessHandler;
@@ -38,8 +39,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 			.antMatchers("/api/application.wadl","/api/app/register/").permitAll()
 			.antMatchers("/api/box/**").permitAll()
-			.antMatchers("/api/app/content/unsecure/**").hasIpAddress("127.0.0.1")
-			.antMatchers("/api/app/unsecure/properties/**").hasIpAddress("127.0.0.1")
+			.antMatchers("/api/snapmail/**").permitAll()
+			.antMatchers("/api/app/content/unsecure/**").permitAll()
 			.anyRequest().authenticated()
 		.and()
 			.formLogin()

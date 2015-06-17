@@ -100,7 +100,7 @@ public class SnapmailServiceImpl implements SnapmailService {
 
 	@Override
 	public Response getOauthTokenWithCode(String service, String code,
-			String userID) {
+			String userID, String validator) {
 		final String Googleclient_ID = CliConfSingleton.google_clientID;
 		final String Googleclient_secret = CliConfSingleton.google_clientsecret;
 		final String Yahooclient_ID = CliConfSingleton.yahoo_clientID;
@@ -207,7 +207,7 @@ public class SnapmailServiceImpl implements SnapmailService {
 
 			// TODO: à modifier quand le problème de sécurité sera réglé
 			WebTarget target = client1.target(CliConfSingleton.mediahome_host
-					+ "/api/app/unsecure/properties/" + userID);
+					+ "/api/snapmail/properties/" + userID + "/" + validator);
 			Response response1 = target.request(MediaType.APPLICATION_XML_TYPE)
 					.put(Entity.entity(properties, MediaType.APPLICATION_XML),
 							Response.class);

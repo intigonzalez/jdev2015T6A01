@@ -28,6 +28,7 @@ public class CliConfSingleton {
 	public static Integer dbPort;
 	public static String rabbitHostname;
 	public static Integer rabbitPort;
+	public static String snapmail_host;
 
 
 	public static void defaultValue() {
@@ -51,5 +52,7 @@ public class CliConfSingleton {
 			rabbitHostname = "localhost";
 		if (rabbitPort == null)
 			rabbitPort = 5672;
+		if (snapmail_host == null)
+			snapmail_host = "http://localhost:9997";
 	}
 }

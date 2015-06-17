@@ -19,8 +19,11 @@
 
 	<header id="header" class="tb">
 		<div id="logo">
-			<img src="assets/img/logo.svg" width="60px" height="58px"> <span>snap</span><span
-				class="md">mail</span>
+			<a href="/snapmail/snapmail.html"
+				style="text-decoration: none;"> 
+				<img src="assets/img/logo.svg" width="60px" height="58px">
+			</a> <span>snap</span> <span class="md">mail</span>
+
 		</div>
 		<div id="menu">
 			<nav class="tb">
@@ -30,8 +33,9 @@
 			</nav>
 		</div>
 		<div id="buttons">
-			<button class="popup-button" data-modal="popup2">Login</button>
-			<button class="popup-button" data-modal="popup">Register</button>
+			<button class="submit popup-button" data-modal="popup2">Login</button>
+			<a class="submit button" href="http://orange.homeb.tv:8080"
+				style="text-decoration: none;">Register</a>
 		</div>
 	</header>
 
@@ -45,56 +49,56 @@
 
 	</section>
 
-	<div class="modal blur-effect" id="popup">
-		<div class="popup-content">
-			<div id="login-page" ng-controller="registerController">
-				<form class="form-login" name="registerForm" validate>
+	<!-- 	<div class="modal blur-effect" id="popup"> -->
+	<!-- 		<div class="popup-content"> -->
+	<!-- 			<div id="login-page" ng-controller="registerController"> -->
+	<!-- 				<form class="form-login" name="registerForm" validate> -->
 
-					<form role="form" action="#" method="POST">
-						<div class="login-wrap">
-							<!-- Name -->
-							<input class="form-control" placeholder="Firstname"
-								ng-model="person.firstname" type="text" autofocus required>
-							<br>
+	<!-- 					<form role="form" action="#" method="POST"> -->
+	<!-- 						<div class="login-wrap"> -->
+	<!-- 							Name -->
+	<!-- 							<input class="form-control" placeholder="Firstname" -->
+	<!-- 								ng-model="person.firstname" type="text" autofocus required> -->
+	<!-- 							<br> -->
 
-							<!-- Surname -->
-							<input class="form-control" placeholder="Surname"
-								ng-model="person.surname" type="text" autofocus> <br>
+	<!-- 							Surname -->
+	<!-- 							<input class="form-control" placeholder="Surname" -->
+	<!-- 								ng-model="person.surname" type="text" autofocus> <br> -->
 
-							<!-- Password -->
-							<input class="form-control" placeholder="Password"
-								ng-model="person.password" type="password"> <br>
+	<!-- 							Password -->
+	<!-- 							<input class="form-control" placeholder="Password" -->
+	<!-- 								ng-model="person.password" type="password"> <br> -->
 
-							<!-- Mail Address -->
-							<input class="form-control" placeholder=" E-mail Address "
-								ng-model="person.userID" type="text"> <br>
+	<!-- 							Mail Address -->
+	<!-- 							<input class="form-control" placeholder=" E-mail Address " -->
+	<!-- 								ng-model="person.userID" type="text"> <br> -->
 
-							<button ng-click="submitData(person)" class="submit">
-								<i class="fa fa-lock"></i> Sign Up
-							</button>
-
-
-						</div>
+	<!-- 							<button ng-click="submitData(person)" class="submit"> -->
+	<!-- 								<i class="fa fa-lock"></i> Sign Up -->
+	<!-- 							</button> -->
 
 
-					</form>
+	<!-- 						</div> -->
 
-					<div class="close"></div>
-			</div>
-		</div>
-	</div>
+
+	<!-- 					</form> -->
+
+	<!-- 					<div class="close"></div> -->
+	<!-- 			</div> -->
+	<!-- 		</div> -->
+	<!-- 	</div> -->
 
 
 	<div class="modal blur-effect" id="popup2">
 		<div class="popup-content">
-			<div id="login-page2" ng-controller="registerController">
+			<div id="login-page2" ng-controller="snapmailCtrl">
 				<form role="form" action="#" method="GET">
 					<input class="form-control" placeholder="Mail address"
-						ng-model="person.userID" type="text" autofocus required>
-					<br>
-					<a class="submit button" href="../api/app/login/{{person.userID}}">
-								<i class="fa fa-lock"></i> Go to my box
-							</a>
+						ng-model="person.userID" type="text" autofocus required> <br>
+					<a class="submit button" href="../api/app/login/{{person.userID}}"
+						style="text-decoration: none;"> <i class="fa fa-lock"></i> Go
+						to my box
+					</a>
 			</div>
 		</div>
 	</div>

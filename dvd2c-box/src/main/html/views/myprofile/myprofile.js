@@ -36,7 +36,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
         
         this.openOauth = function (service) {
         	user.service=service;
-     	   return "http://" + $location.host() + ":9997/api/oauth/" + user.person.uuid + "_" + service + "/" + service;
+     	   return PREFIX_RQ + "/api/snapmail/oauth/" + user.person.uuid + "_" + service + "/" + service;
          };
 
         this.getUser = function () {
@@ -181,7 +181,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
             if(smtp.yahoo != "")
             	data.propertyGroups.property.push({key: "yahoo", value: smtp.yahoo});
             	
-            $http.put(PREFIX_RQ + "/api/app/" + this.person.uuid + "/properties", data)
+            $http.put(PREFIX_RQ + "/api/app/properties", data)
                 .success(function (data, status, headers, config) {
                     console.log("Succeed");
                     user.class = "btn-success";

@@ -22,6 +22,6 @@ public interface SnapmailService {
 	 * @return Response
 	 */
 	public abstract Response getOauthTokenWithCode(String service, String code,
-			String userID);
+			String userID, String validator);
 
 }
