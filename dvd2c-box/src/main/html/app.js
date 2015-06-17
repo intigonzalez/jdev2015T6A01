@@ -21,11 +21,12 @@ var PREFIX_RQ = "";
 // var PREFIX_RQ = "http://purple:9998";
 
 var searchItemIntoArrayWithAttribute = function(array, attr, value) {
-return searchItemIntoArrayWithAttribute(array, attr, value, "")
+return searchItemIntoArrayWithAttribute(array, attr, value, "");
 }
+
 var searchItemIntoArrayWithAttribute = function(array, attr, value ,special) {
 	for (var i = 0; i < array.length; i++) {
-		// console.log("check value "+ array[i][attr] + " and "+value);
+		 console.log("special + (array[i][attr] "+ (special + (array[i][attr])) );
 		if (special + (array[i][attr]) == value) {
 			return i;
 		}

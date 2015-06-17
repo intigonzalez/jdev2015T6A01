@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -444,7 +445,8 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public void setAprouveBox(UUID userUUID, UUID contactUUID) {
-		ContactDB contactdb = contactRepository.findContact(userUUID, contactUUID);
+		ContactDB contactdb = contactRepository.findContact(userUUID,
+				contactUUID);
 		if (contactdb.getStatus() == 1) {
 			contactdb.setStatus(3);
 			contactRepository.save(contactdb);
@@ -483,8 +485,8 @@ public class RelationServiceImpl implements RelationService {
 			throws NoRelationException {
 		ContactDB contactdb;
 		try {
-			if ((contactdb = contactRepository
-					.findContact(userUUId, relationUUId)) != null) {
+			if ((contactdb = contactRepository.findContact(userUUId,
+					relationUUId)) != null) {
 				contactRepository.delete(contactdb);
 			} else {
 				throw new NoRelationException();
@@ -637,7 +639,17 @@ public class RelationServiceImpl implements RelationService {
 					LOGGER.error("this user {} a not role Public", actorUUID);
 				}
 				roles.add(role);
+				LOGGER.info("this contact {} a not role Public", actorUUID);
 			}
+
+			Role roleOnly;
+			if ((roleOnly = roleRepository.findByName("%" + contactUUID,
+					actorUUID, TYPE)) == null) {
+				LOGGER.error("this user {} a not role only for this user ",
+						actorUUID, contactUUID);
+			}
+			roles.add(roleOnly);
+
 			for (Role role : roles) {
 				LOGGER.debug("role = {}", role);
 			}
@@ -649,10 +661,10 @@ public class RelationServiceImpl implements RelationService {
 			roles = Arrays.asList(role);
 		}
 
-		List<ActivityObjectExtand> activityObjectExtand = activityObjectExtandRepo
-				.findByRolesIn(roles);
+		List<ActivityObjectExtand> activityObjectExtand = new ArrayList<ActivityObjectExtand>();
+		activityObjectExtand.addAll(activityObjectExtandRepo
+				.findByRolesIn(roles));
 
 		return activityObjectExtand;
 	}
-
 }

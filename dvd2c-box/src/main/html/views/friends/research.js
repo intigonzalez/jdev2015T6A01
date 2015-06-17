@@ -3,7 +3,7 @@
 var mod = angular.module('myApp.friendSearch', [ 'ngRoute', 'ui.bootstrap',
                                                  'ngMockE2E' ]);
 
-mod 
+mod
 .run(function($httpBackend) {
 
 	// returns the current list of phones
@@ -72,8 +72,7 @@ mod
 											 "text/html") == 0) {
 										 window.location
 										 .replace("/");
-									 }
-									else if (data.contacts !== "") {
+									 } else if (data.contacts !== "") {
 										 if (angular
 												 .isArray(data.contacts.contact) == false) {
 											 search.friends
@@ -151,20 +150,12 @@ mod
 
 					 this.AskForFriend = function(relation) {
 						 relation.asked = true;
-						 $http
-						 .post(
-								 PREFIX_RQ
-								 + "/api/app/relation/"
+						 $http.post(
+								 PREFIX_RQ + "/api/app/relation/"
 								 + relation.uuid)
 								 .success(
 										 function(data, status, headers,
 												 config) {
-											 if (headers('Content-Type')
-													 .indexOf(
-													 "text/html") == 0) {
-												 window.location
-												 .replace("/");
-											 }
 											 console.log("Succeed");
 											 // Friend Added successfully
 										 }).error(

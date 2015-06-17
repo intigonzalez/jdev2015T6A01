@@ -219,13 +219,13 @@ mod.config(['$routeProvider', function ($routeProvider) {
 	} else {
 		if ( angular.isArray(video.metadata) ) {
 			angular.forEach(video.metadata, function (id) {
-				var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", id);
+				var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", id,"");
 				if (index!=null){
 					$scope.roles[index].value = true;}
 			});
 		}
 		else {
-			var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", video.metadata);
+			var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", video.metadata,"");
 			if (index!=null){
 				$scope.roles[index].value=true;}
 		}
@@ -239,7 +239,7 @@ mod.config(['$routeProvider', function ($routeProvider) {
 			angular.forEach(video.metadata, function (id) {
 				var index = searchItemIntoArrayWithAttribute($scope.rolesUsers, "uuid", id,"%");
 				if (index!=null){
-					$scope.rolesUser[index].value = true;
+					$scope.rolesUsers[index].value = true;
 				}
 			});
 		}

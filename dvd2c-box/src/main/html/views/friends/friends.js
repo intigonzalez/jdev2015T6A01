@@ -234,7 +234,7 @@ mod.config(['$routeProvider', function ($routeProvider) {
 		if (friend.role !== undefined) {
 			if ( angular.isArray(friend.role) ) {
 				angular.forEach(friend.role, function (id) {
-// var index = searchItemIntoArrayWithAttribute(friends.listRoles, "role", id);
+//					var index = searchItemIntoArrayWithAttribute(friends.listRoles, "role", id);
 					result.push(id);
 				});
 			}
@@ -262,7 +262,8 @@ mod.config(['$routeProvider', function ($routeProvider) {
 				}
 			}
 			// console.log(friends.list);
-			friends.addFriendSuccess =null; // reset the value if the
+			friends.addFriendSuccess =null; // reset the value if
+			// the
 			// function is called from
 			// AddFriend Callback
 			// Success
@@ -412,12 +413,12 @@ mod.config(['$routeProvider', function ($routeProvider) {
 	} else {
 		if ( angular.isArray(friend.role) ) {
 			angular.forEach(friend.role, function (id) {
-				var index = searchItemIntoArrayWithAttribute($scope.listRoles, "role", id);
+				var index = searchItemIntoArrayWithAttribute($scope.listRoles, "role", id, "");
 				$scope.listRoles[index].value = true;
 			});
 		}
 		else {
-			var index = searchItemIntoArrayWithAttribute($scope.listRoles, "role", friend.role);
+			var index = searchItemIntoArrayWithAttribute($scope.listRoles, "role", friend.role, "");
 			$scope.listRoles[index].value=true;
 		}
 	}

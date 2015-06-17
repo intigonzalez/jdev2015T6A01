@@ -125,20 +125,20 @@ public class RelationEndPoints {
 		// TODO: need to change beacause the content of one user doit etre
 		// recupre directement aupré de la ressource utilisateur
 
-		Contact relation;
-		try {
-			relation = rManager.getContact(UUID.fromString(uuid), relationID)
-					.toContact();
-
-			if (relation.getAprouve() == 3)
+//		Contact relation;
+//		try {
+//			relation = rManager.getContact(UUID.fromString(uuid), relationID)
+//					.toContact();
+//
+//			if (relation.getAprouve() == 3)
 				return rManager
 						.getAllContent(UUID.fromString(uuid), relationID);
-			else {
-				throw new WebApplicationException(Status.FORBIDDEN);
-			}
-		} catch (NoSuchContactException e) {
-			throw new WebApplicationException(Status.NOT_FOUND);
-		}
+//			else {
+//				throw new WebApplicationException(Status.FORBIDDEN);
+//			}
+//		} catch (NoSuchContactException e) {
+//			throw new WebApplicationException(Status.NOT_FOUND);
+//		}
 
 	}
 
