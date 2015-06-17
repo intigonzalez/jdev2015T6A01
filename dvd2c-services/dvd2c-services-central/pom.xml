@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
 		<artifactId>dvd2c-services</artifactId>
-		<version>0.7.0</version>
+		<version>0.7.1</version>
 	</parent>
 	<artifactId>dvd2c-services-central</artifactId>
 	<dependencyManagement>
@@ -13,7 +13,7 @@
 			<dependency>
 				<groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
 				<artifactId>dvd2c-bom</artifactId>
-				<version>0.7.0</version>
+				<version>0.7.1</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -33,7 +33,7 @@
 		<dependency>
 			<groupId>com.enseirb.telecom.dngroup.dvd2c.services</groupId>
 			<artifactId>dvd2c-services-commons</artifactId>
-			<version>0.7.0</version>
+			<version>0.7.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
