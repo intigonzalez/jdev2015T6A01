@@ -141,7 +141,7 @@ public class RequestBoxServiceImpl implements RequestBoxService {
 	public void sendOauthORH(String actorID, Box box, String code)
 			throws IOException {
 
-		WebTarget target = client.target(box.getIp() + "/api/oauth/" + actorID);
+		WebTarget target = client.target(box.getIp() + "/api/snapmail/oauth/" + actorID);
 		LOGGER.debug("Send request to server {}", target.getUri());
 
 		Response response = target.request().post(

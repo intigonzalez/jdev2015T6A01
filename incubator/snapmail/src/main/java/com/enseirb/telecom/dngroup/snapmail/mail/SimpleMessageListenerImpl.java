@@ -57,9 +57,10 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(SimpleMessageListener.class);
 
-
+	
 	private MediaHomeFacade mediaHomeFacade = new MediaHomeFacadeImpl();
 
+	//TODO : supprimer quand la sécurité sera réglée
 //	protected String username;
 //	protected String password;
 	User user;
@@ -89,6 +90,8 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 //		user = new User();
 //		user.setUserID(username);
 //		user.setPassword(password);
+//		this.username=username;
+//		this.password=password;
 		user=mediaHomeFacade.getUserORH(username, password);
 	}
 
@@ -199,7 +202,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		// Get system properties
 //		MediaHomeFacade mediahome = new MediaHomeFacadeImpl(this.username,
 //				this.password);
-		MailerProperties prop = mediaHomeFacade.getSmtpParamORH(user);
+		MailerProperties prop = mediaHomeFacade.getMailerPropertiesFromUser(user);
 		Session session = Session.getDefaultInstance(System.getProperties());
 		try {
 			// Creation of the message that will be send in place of the
@@ -243,7 +246,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 */
 	private void sendClamavReport(String from, String Clamav_report)
 			throws IOException, NoSuchProperty {
-		MailerProperties prop = mediaHomeFacade.getSmtpParamORH(user);
+		MailerProperties prop = mediaHomeFacade.getMailerPropertiesFromUser(user);
 		Session session = Session.getDefaultInstance(System.getProperties());
 		MimeMessage message = new MimeMessage(session);
 		try {
@@ -775,8 +778,8 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 			throws IOException {
 		this.text += "Attachment : " + filename + "\n";
 		
-		String link = mediaHomeFacade.bodyPart2Link(is, filename, Type,
-				user, recipientArray);
+		String link = mediaHomeFacade.getLinkFromBodyPart(is, filename, Type,
+				this.user, recipientArray);
 		// String link = postFile(is, filename, Type);
 		this.text += "Link :" + link + "\n";
 	}
@@ -878,7 +881,7 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 	 * @return (String) link to see the document
 	 * @throws IOException
 	 */
-	// TODO replace by the new post in the interface
+	// replace by the new post in the interface
 	/*
 	 * public String postFile(InputStream is, String filename, String Type)
 	 * throws IOException { // nh: to extract in a dedicated service class try {

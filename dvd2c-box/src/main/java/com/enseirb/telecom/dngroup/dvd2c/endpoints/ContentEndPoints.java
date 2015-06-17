@@ -31,10 +31,15 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
+import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
+import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 import com.google.common.io.Files;
@@ -50,6 +55,9 @@ public class ContentEndPoints {
 
 	@Inject
 	protected RelationService rManager;
+	
+	@Inject
+	protected AccountService uManager;
 
 	// ContentService uManager = new ContentServiceImpl(
 	// new ContentRepositoryMongo(), new RabbitMQServer());
@@ -148,7 +156,43 @@ public class ContentEndPoints {
 		}
 
 	}
+	
+	@GET
+	@Path("/unsecure/{contentsID}/{userId}")
+//	@RolesAllowed({ "authenticated", "other" })
+	@Produces({ MediaType.WILDCARD })
+	public Content getContent(@PathParam("contentsID") Integer contentsID, @PathParam("userId") String userID)
+			throws URISyntaxException {
+		User user = null;
+		try {
+			user = uManager.findUserByEmail(userID);
+		} catch (NoSuchUserException e1) {
+			e1.printStackTrace();
+		}
+		String uuid = user.getId().toString();
+		Content content;
+		try {
+			content = cManager.getContent(contentsID);
 
+			if (content.getActorID().equals(uuid)) {
+				URI uri = new URI(CliConfSingleton.publicAddr
+						+ content.getLink() + "/" + content.getName());
+				return content;
+			} else {
+				// No URL parameter idLanguage was sent
+				ResponseBuilder builder = Response
+						.status(Response.Status.FORBIDDEN);
+				builder.entity("This content doesn't belong to you ! ");
+				Response response = builder.build();
+				throw new WebApplicationException(response);
+			}
+		} catch (NoContentException e) {
+			throw new WebApplicationException(e.getLocalizedMessage(),
+					Status.NO_CONTENT);
+		}
+
+	}
+	
 	// @POST
 	// @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	// public Response postVideo(Content content) {
@@ -166,6 +210,7 @@ public class ContentEndPoints {
 	 * @return
 	 * @throws URISyntaxException
 	 * @throws IOException
+	 * @throws NoSuchUserException 
 	 */
 	@POST
 	@RolesAllowed({ "other", "authenticated" })
@@ -174,9 +219,9 @@ public class ContentEndPoints {
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail,
 			@FormDataParam("file") FormDataBodyPart body)
-			throws URISyntaxException, IOException {
-//		String uuid = SecurityContextHolder.getContext().getAuthentication()
-//				.getName();
+			throws URISyntaxException, IOException, NoSuchUserException {
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
 
 		String fileName = fileDetail.getFileName();
 //		LOGGER.info("New file {}", fileDetail);
@@ -220,7 +265,15 @@ public class ContentEndPoints {
 			throws URISyntaxException, IOException {
 		String uuid = SecurityContextHolder.getContext().getAuthentication()
 				.getName();
-
+//		User user = null;
+//		try {
+//			user = uManager.findUserByEmail(userID);
+//		} catch (NoSuchUserException e1) {
+//
+//			e1.printStackTrace();
+//		}
+//		UUID uuid=user.getId();
+		
 		LOGGER.debug("New local upload, Content-Disposition : "
 				+ contentDisposition);
 		try {

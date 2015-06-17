@@ -354,18 +354,9 @@ public class Main {
 			if (CliConfSingleton.appPort == null)
 				CliConfSingleton.appPort = Integer.valueOf(ApplicationContext
 						.getProperties().getProperty("port"));
-			if (CliConfSingleton.google_clientID == null)
-				CliConfSingleton.google_clientID = ApplicationContext
-						.getProperties().getProperty("google_clientID");
-			if (CliConfSingleton.google_clientsecret == null)
-				CliConfSingleton.google_clientsecret = ApplicationContext
-						.getProperties().getProperty("google_clientsecret");
-			if (CliConfSingleton.yahoo_clientID == null)
-				CliConfSingleton.yahoo_clientID = ApplicationContext
-						.getProperties().getProperty("yahoo_clientID");
-			if (CliConfSingleton.yahoo_clientsecret == null)
-				CliConfSingleton.yahoo_clientsecret = ApplicationContext
-						.getProperties().getProperty("yahoo_clientsecret");
+			if (CliConfSingleton.snapmail_host == null)
+				CliConfSingleton.snapmail_host = ApplicationContext
+						.getProperties().getProperty("snapmail_host");
 			LOGGER.info("File found use this values or arg Path ={} ", aPPath);
 			in.close();
 			CliConfSingleton.defaultValue();
@@ -412,18 +403,9 @@ interface CliConfiguration {
 
 	@Option(longName = "rabbit-port", description = "the port of rabbitMQ", defaultToNull = true)
 	Integer getRabbitPort();
-
-	@Option(longName = "google_clientID", description = "google clientID for Oauth2", defaultToNull = true)
-	String getGoogleClientID();
-
-	@Option(longName = "google_clientsecret", description = "google client secret for Oauth2", defaultToNull = true)
-	String getGoogleClientSecret();
-
-	@Option(longName = "yahoo_clientID", description = "yahoo clientID for Oauth2", defaultToNull = true)
-	String getYahooClientID();
-
-	@Option(longName = "yahoo_clientsecret", description = "yahoo client secret for Oauth2", defaultToNull = true)
-	String getYahooClientSecret();
+	
+	@Option(longName = "snapmail_host", description = "URL of Snapmail_Host", defaultToNull=true)
+	String getSnapmail_Host();
 
 	@Option(helpRequest = true)
 	boolean getHelp();

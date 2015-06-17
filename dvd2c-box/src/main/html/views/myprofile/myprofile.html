@@ -142,25 +142,25 @@
 			    			</div>
 		    			</div>
 			    	</div>
-			    	<button class="btn btn-success" ng-click="user.smtp.host='';user.smtp.port='';user.smtp.username='';user.smtp.password='';user.putSmtp(user.smtp); user.setSMTPTab(7)">Delete parameters</button>
+			    	<button class="btn btn-success" ng-click="user.smtp.host=undefined;user.smtp.port=undefined;user.smtp.username=undefined;user.smtp.password=undefined;user.putSmtp(user.smtp); user.setSMTPTab(0)">Delete parameters</button>
 		    	</div>
 		    	
 		    	<!-- Vue 2 - Google -->
 		    	<div class="panel-body" ng-show="user.isSMTPTab(2)">
 	    		<p>Your account is currently linked with Google</p>
-	    			<button class="btn btn-danger" ng-click="user.smtp.google='';user.putSmtp(user.smtp);user.setSMTPTab(0)">Unlink my account with Google</button>
+	    			<button class="btn btn-danger" ng-click="user.smtp.google=undefined;user.putSmtp(user.smtp);user.setSMTPTab(0)">Unlink my account with Google</button>
 	    		</div>
 	    		
 	    		<!-- Vue 3 - Yahoo -->
 		    	<div class="panel-body" ng-show="user.isSMTPTab(3)">
 	    		<p>Your account is currently linked with Yahoo</p>
-	    			<button class="btn btn-danger" ng-click="user.smtp.yahoo='';user.putSmtp(user.smtp);user.setSMTPTab(0)">Unlink my account with Yahoo</button>
+	    			<button class="btn btn-danger" ng-click="user.smtp.yahoo=undefined;user.putSmtp(user.smtp);user.setSMTPTab(0)">Unlink my account with Yahoo</button>
 	    		</div>
 	    		
 	    		<!-- Vue 4 - Microsoft -->
 		    	<div class="panel-body" ng-show="user.isSMTPTab(4)">
 	    		<p>Your account is currently linked with Microsoft</p>
-	    			<button class="btn btn-danger" ng-click="user.smtp.microsoft='';user.putSmtp(user.smtp);user.setSMTPTab(0)">Unlink my account with Microsoft</button>
+	    			<button class="btn btn-danger" ng-click="user.smtp.microsoft=undefined;user.putSmtp(user.smtp);user.setSMTPTab(0)">Unlink my account with Microsoft</button>
 	    		</div>
 	    		
 	    		<!-- Vue 5 - Edit manuel -->

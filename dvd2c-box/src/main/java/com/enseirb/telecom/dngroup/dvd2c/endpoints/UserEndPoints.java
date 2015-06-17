@@ -35,6 +35,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.SuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Property;
 import com.enseirb.telecom.dngroup.dvd2c.model.PropertyGroups;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.PropertyGroupsDB;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 
@@ -129,7 +130,7 @@ public class UserEndPoints extends HttpServlet {
 	 */
 	@GET
 	@Path("/account/{userUUID}")
-	// @PreAuthorize("hasRole('USER')")
+	//@PreAuthorize("hasRole('USER')")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public User getUserByUUID(@PathParam("userUUID") UUID userUUID) {
 		try {
@@ -146,36 +147,50 @@ public class UserEndPoints extends HttpServlet {
 	 *            the user to get
 	 * @return a user
 	 */
-	// TODO: SEE THIS FONCTION
 	@GET
-	@Path("{userID}/properties/{propertyGroupName}")
-//	@RolesAllowed({ "account", "authenticated" })
+	@Path("/properties/{propertyGroupName}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<Property> getUserProperties(@PathParam("userID") UUID userID,
-			@PathParam("propertyGroupName") String propertyGroupName) {
-		UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
-				.getAuthentication().getName());
-		// Not working for unknown reason
-		return uManager.getPropertiesForUser(userID, propertyGroupName);
+	public PropertyGroups getUserProperties(@PathParam("propertyGroupName") String propertyGroupName) {
+		 UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+		 .getAuthentication().getName());
+//		com.enseirb.telecom.dngroup.dvd2c.modeldb.User user = null;
+//		try {
+//			if(userID.contains("@")){
+//			user = uManager.findUserByEmail(userID);
+//			}else{
+//				user = uManager.findUserByUUID(UUID.fromString(userID));
+//			}
+//				
+//		} catch (NoSuchUserException e1) {
+//
+//			e1.printStackTrace();
+//		}
+		PropertyGroups groups = new PropertyGroups();
+		groups.setName("Snapmail");
+		List<Property> props = uManager.getPropertiesForUser(uuid,
+				propertyGroupName);
+		groups.getProperty().addAll(props);
+		return groups;
 	}
 
-	/**
-	 * 
-	 *
-	 */
+/**
+ * Change the Properties of the authenticated user
+ * 
+ * @param propertyGroups
+ * @return Response
+ */
 	@PUT
-	@Path("{userID}/properties/")
-//	@RolesAllowed({ "account", "authenticated" })
+	@Path("/properties")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postUserProps(PropertyGroups propertyGroups,
-			@PathParam("userID") UUID userID) {
-		UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
-				.getAuthentication().getName());
+	public Response postUserProps(PropertyGroups propertyGroups) {
+		 UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+		 .getAuthentication().getName());
+
 		uManager.setPropertiesForUser(uuid, propertyGroups);
 		return Response.status(200).build();
 	}
-
+	
 	/**
 	 * Find a list of users from their firstname on server
 	 * 

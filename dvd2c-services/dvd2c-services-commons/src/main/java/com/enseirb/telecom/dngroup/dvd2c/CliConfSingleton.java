@@ -28,10 +28,8 @@ public class CliConfSingleton {
 	public static Integer dbPort;
 	public static String rabbitHostname;
 	public static Integer rabbitPort;
-	public static String google_clientID;
-	public static String google_clientsecret;
-	public static String yahoo_clientID;
-	public static String yahoo_clientsecret;
+	public static String snapmail_host;
+
 
 	public static void defaultValue() {
 		if (boxID == null)
@@ -54,17 +52,7 @@ public class CliConfSingleton {
 			rabbitHostname = "localhost";
 		if (rabbitPort == null)
 			rabbitPort = 5672;
-		if(google_clientID==null)
-			google_clientID = "547107646254-3rhmcq9g7ip63rl9trr6ono0cn1t8ab6.apps.googleusercontent.com";
-		if(google_clientsecret==null)
-			google_clientsecret = "9lfX5WtjkWYiV2LrgTdhG62S";
-		if(yahoo_clientID==null)
-			yahoo_clientID = "dj0yJmk9Um5NdERwR1FSYVN1JmQ9WVdrOWQwSlJkMk5oTkRJbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD1mMQ--";
-		if(yahoo_clientsecret==null)
-			yahoo_clientsecret = "26b146829545f8df236e2f4c44bc0cd168162d5e";
+		if (snapmail_host == null)
+			snapmail_host = "http://localhost:9997";
 	}
-	
-
-
-
 }

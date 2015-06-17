@@ -9,6 +9,7 @@ import org.springframework.web.filter.DelegatingFilterProxy;
 import com.enseirb.telecom.dngroup.dvd2c.endpoints.BoxEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.endpoints.ContentEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
+import com.enseirb.telecom.dngroup.dvd2c.endpoints.SnapmailEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.endpoints.UserEndPoints;
 
 /**
@@ -27,6 +28,7 @@ public class RestConfiguration extends ResourceConfig {
 		register(BoxEndPoints.class);
 		register(RelationEndPoints.class);
 		register(UserEndPoints.class);
+		register(SnapmailEndPoints.class);
 
 		// features
 		register(MultiPartFeature.class);

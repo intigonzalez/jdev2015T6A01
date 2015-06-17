@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.snapmail.mail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -31,29 +32,28 @@ import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.model.Property;
 import com.google.common.base.Strings;
 
-
+/**
+ * 
+ * @author gatux
+ *
+ */
 public class MediaHomeFacadeImpl implements MediaHomeFacade {
 
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(MediaHomeFacadeImpl.class);
-//	protected User user;
 
-	protected MediaHomeFacadeImpl() {
+	public MediaHomeFacadeImpl() {
 
 	}
 
-//	public MediaHomeFacadeImpl(String username, String password) {
-//		this.user = getUser(username, password);
-//	}
-
 	@Override
-	public String bodyPart2Link(InputStream inputStream, String filename,
-			String type,User user,
-			List<String> recipients) throws IOException {
+	public String getLinkFromBodyPart(InputStream inputStream, String filename,
+			String type, User user, List<String> recipients)
+			throws IOException {
 		// nh: to extract in a dedicated service class
 		try {
-			HttpAuthenticationFeature feature = HttpAuthenticationFeature
-					.basic(user.getUserID(), user.getPassword());
+			 HttpAuthenticationFeature feature = HttpAuthenticationFeature
+			 .basic(user.getUserID(), user.getPassword());
 
 			// Configuration of the client to allow a post with a large file
 			// nh: please create only 1 client and close it properly
@@ -65,11 +65,12 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 					Integer.valueOf(128));
 
 			Client client = ClientBuilder.newClient(cc);
-			client.register(feature).register(MultiPartFeature.class);
+			 client.register(feature).register(MultiPartFeature.class);
 
 			// nh: create
+			// TODO: à remodifier
 			WebTarget target = client.target(CliConfSingleton.mediahome_host
-					+ "/api/app/" + user.getUserID() + "/content");
+					+ "/api/app/content");
 
 			LOGGER.info("Filename : " + filename);
 			Response response = target
@@ -77,45 +78,45 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 					.header("Content-Disposition",
 							"attachment; filename=" + filename)
 					.post(Entity.entity(inputStream, type), Response.class);
-
+			client.close();
 			if (response.getLocation() != null) {
-				target = client
-						.target(CliConfSingleton.mediahome_host
-								+ "/api/app/"
-								+ user.getUserID()
-								+ "/content/"
-								+ response.getLocation().toString()
-										.split("/content/")[1]);
-				Content content = target
-						.request(MediaType.APPLICATION_XML_TYPE).get(
-								Content.class);
-
-				PropertyGroups originGroups = new PropertyGroups();
-				originGroups.setName("origin");
-
-				Property origin = new Property();
-				origin.setKey("origin");
-				origin.setValue("snapmail");
-				originGroups.getProperty().add(origin);
-
-				content.getPropertyGroups().add(originGroups);
-
-				PropertyGroups recipientsGroups = new PropertyGroups();
-				recipientsGroups.setName("emails");
-
-				int i = 0;
-				for (String email : recipients) {
-					Property p = new Property();
-					p.setKey(Integer.toString(i));
-					p.setValue(email);
-					recipientsGroups.getProperty().add(p);
-					i++;
-				}
-
-				content.getPropertyGroups().add(recipientsGroups);
-
-				Response r = target.request().put(
-						Entity.entity(content, MediaType.APPLICATION_XML));
+				// target = client
+				// .target(CliConfSingleton.mediahome_host
+				// + "/api/app/"
+				// + user.getUserID()
+				// + "/content/"
+				// + response.getLocation().toString()
+				// .split("/content/")[1]);
+				// Content content = target
+				// .request(MediaType.APPLICATION_XML_TYPE).get(
+				// Content.class);
+				//
+				// PropertyGroups originGroups = new PropertyGroups();
+				// originGroups.setName("origin");
+				//
+				// Property origin = new Property();
+				// origin.setKey("origin");
+				// origin.setValue("snapmail");
+				// originGroups.getProperty().add(origin);
+				//
+				// content.getPropertyGroups().add(originGroups);
+				//
+				// PropertyGroups recipientsGroups = new PropertyGroups();
+				// recipientsGroups.setName("emails");
+				//
+				// int i = 0;
+				// for (String email : recipients) {
+				// Property p = new Property();
+				// p.setKey(Integer.toString(i));
+				// p.setValue(email);
+				// recipientsGroups.getProperty().add(p);
+				// i++;
+				// }
+				//
+				// content.getPropertyGroups().add(recipientsGroups);
+				//
+				// Response r = target.request().put(
+				// Entity.entity(content, MediaType.APPLICATION_XML));
 
 				return CliConfSingleton.snapmail_host
 						+ "/snapmail/"
@@ -139,52 +140,63 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 	}
 
 	@Override
-	public MailerProperties getSmtpParamORH(User user) throws NoSuchProperty {
+	public MailerProperties getMailerPropertiesFromUser(User user)
+			throws NoSuchProperty {
 		try {
+			PropertyGroups groups;
+			HttpAuthenticationFeature feature = HttpAuthenticationFeature
+					 .basic(user.getUserID(), user.getPassword());
+			Client client = ClientBuilder.newClient();
+			client.register(feature).register(MultiPartFeature.class);
+			// TODO : à remodifier après sécu
+			WebTarget target = client.target(CliConfSingleton.mediahome_host
+					+ "/api/app/properties/Snapmail");
 
-			for (PropertyGroups pg : user.getPropertyGroups()) {
-				if (pg.getName().equals("snapmail")) {
-					SMTPProperties smtpProperties = new SMTPProperties();
-					for (Property p : pg.getProperty()) {
-						switch (p.getKey()) {
-						case "google":
-							if (p.getValue() != null && p.getValue() != "")
-								return new GoogleMailProperties(p.getValue());
-							break;
+			groups = target.request(MediaType.APPLICATION_XML_TYPE).get(
+					PropertyGroups.class);
+			client.close();
+			// for (PropertyGroups pg : groups) {
+			// if (pg.getName().equals("snapmail")) {
+			SMTPProperties smtpProperties = new SMTPProperties();
+			for (Property p : groups.getProperty()) {
+				switch (p.getKey()) {
+				case "google":
+					if (p.getValue() != null && p.getValue() != "")
+						return new GoogleMailProperties(p.getValue());
+					break;
 
-						case "microsoft":
-							if (p.getValue() != null && p.getValue() != "")
-								return new MicrosoftMailProperties(p.getValue());
-							break;
+				case "microsoft":
+					if (p.getValue() != null && p.getValue() != "")
+						return new MicrosoftMailProperties(p.getValue());
+					break;
 
-						case "host":
-							smtpProperties.setHost(p.getValue());
-							break;
+				case "host":
+					smtpProperties.setHost(p.getValue());
+					break;
 
-						case "port":
-							smtpProperties.setPort(p.getValue());
-							break;
+				case "port":
+					smtpProperties.setPort(p.getValue());
+					break;
 
-						case "username":
-							smtpProperties.setUsername(p.getValue());
-							break;
+				case "username":
+					smtpProperties.setUsername(p.getValue());
+					break;
 
-						case "password":
-							smtpProperties.setPassword(p.getValue());
-							break;
+				case "password":
+					smtpProperties.setPassword(p.getValue());
+					break;
 
-						}
-					}
-					if (Strings.isNullOrEmpty(smtpProperties.getUsername())
-							|| Strings.isNullOrEmpty(smtpProperties
-									.getPassword())) {
-						throw new NoSuchProperty();
-					}
-					return smtpProperties;
 				}
 			}
-			LOGGER.error("Error: there is no snapmail propertyGroups for the user "
-					+ user.getUserID());
+			if (Strings.isNullOrEmpty(smtpProperties.getUsername())
+					|| Strings.isNullOrEmpty(smtpProperties.getPassword())) {
+				throw new NoSuchProperty();
+			}
+			return smtpProperties;
+			// }
+			// }
+			// LOGGER.error("Error: there is no snapmail propertyGroups for the user "
+			// + username);
 
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 403) {
@@ -196,6 +208,7 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 		// TODO: need to be changed
 		return null;
 	}
+
 	@Override
 	public User getUserORH(String username, String password) {
 		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(
@@ -203,19 +216,13 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 		Client client = ClientBuilder.newClient();
 		client.register(feature);
 		WebTarget target = client.target(CliConfSingleton.mediahome_host
-				+ "/api/app/account/" + username);
+				+ "/api/app/account/email/" + username);
+		
 		User user = target.request(MediaType.APPLICATION_XML_TYPE).get(
 				User.class);
+		user.setPassword(password);
+		client.close();
 		return user;
 	}
-//	
-//	@Override
-//	public User getUser() {
-//		return user;
-//	}
-//	
-//	@Override
-//	public void setUser(User user) {
-//		this.user = user;
-//	}
+
 }

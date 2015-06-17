@@ -33,6 +33,7 @@ app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$rout
 		if (headers('Content-Type').indexOf("text/html")==0) {
 			window.location.replace("/");
 		} 
+		console.log(data);
 		$scope.content = data.content;
 		$scope.contentID = data.content.contentsID;
 		$scope.sender = data.content.actorID;
@@ -56,7 +57,7 @@ app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$rout
 			var suffix
 			var userAgent = $window.navigator.userAgent;
 			
-			if ($scope.content.status == "success")
+			if ($scope.content.status == 1)
 			{
 				if (userAgent.indexOf("Chrome") >= 0 || userAgent.indexOf("Windows") >=0 || userAgent.indexOf("Chromium") >=0)
 				{
@@ -108,7 +109,7 @@ app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$rout
 			return 'views/content/video.html';
 		}
 		else if ($scope.type == 'image')
-			if ($scope.content.status == "success")
+			if ($scope.content.status == 1)
 			{
 			return 'views/content/image.html';
 			}
@@ -123,54 +124,49 @@ app.controller('snapmailCtrl', ['$scope', '$timeout', '$window', '$http', '$rout
 	
 }]);
 
-app.controller("registerController", function ($scope, $http) {
-	console.log("Hello");
-    $scope.submitData = function (person) {
-        var data = {};
-        data.user = person;
-        console.log(data);
-        $http.post(PREFIX_RQ + "/api/app/account",data )
-            .success(function (data, status, headers, config)
-            {
-                console.log("Succeed");
-                window.location.replace("/home.html");
-            })
-            .error(function (data, status, headers, config)
-            {
-                console.log("Failed");
-            });
-    };
-   // $(document) Jquery for validating the form -->
-    angular.element(document).ready(function(){
-        $("form").validate({
-            rules: {
-                name:{
-                    minlength: 3,
-                    maxlength: 20,
-                    required: true
-                },
-                email:{
-                    minlength: 3,
-                    maxlength: 20,
-                    required: true
-                }
-            },
-            highlight: function (element) {
-                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-            },
-            unhighlight: function (element) {
-                $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
-            }
-        });
-    });
-
-    // End of js part for validating the form inputs
-//TODO : ???
-    var login = function(){
-    	return "/api/app/login";
-    }
-
-});
+//app.controller("registerController", function ($scope, $http) {
+//	console.log("Hello");
+//    $scope.submitData = function (person) {
+//        var data = {};
+//        data.user = person;
+//        console.log(data);
+//        $http.post(PREFIX_RQ + "/api/app/account",data )
+//            .success(function (data, status, headers, config)
+//            {
+//                console.log("Succeed");
+//                window.location.replace("/home.html");
+//            })
+//            .error(function (data, status, headers, config)
+//            {
+//                console.log("Failed");
+//            });
+//    };
+//   // $(document) Jquery for validating the form -->
+//    angular.element(document).ready(function(){
+//        $("form").validate({
+//            rules: {
+//                name:{
+//                    minlength: 3,
+//                    maxlength: 20,
+//                    required: true
+//                },
+//                email:{
+//                    minlength: 3,
+//                    maxlength: 20,
+//                    required: true
+//                }
+//            },
+//            highlight: function (element) {
+//                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+//            },
+//            unhighlight: function (element) {
+//                $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+//            }
+//        });
+//    });
+//
+//    // End of js part for validating the form inputs
+//});
 
 var popup = (function() 
 		{

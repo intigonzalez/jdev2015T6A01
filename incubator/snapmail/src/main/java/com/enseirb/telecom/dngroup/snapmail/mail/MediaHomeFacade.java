@@ -7,29 +7,41 @@ import java.util.List;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.snapmail.exception.NoSuchProperty;
 
-/**
- * 
- *
- */
+
 public interface MediaHomeFacade {
 
-	/**
-	 * take a bodypart from the mail and create a MH link from it
-	 */
-	public abstract String bodyPart2Link(InputStream inputStream,
+	
+/**
+ * Take a bodypart from the mail and create a MH link from it
+ * 
+ * @param inputStream
+ * @param filename
+ * @param type
+ * @param username
+ * @param recipients
+ * @return
+ * @throws IOException
+ */
+	public abstract String getLinkFromBodyPart(InputStream inputStream,
 			String filename, String type,User user,
 			List<String> recipients) throws IOException;
 
-	// TODO rename : getLinkFromBodyPart()
-	/**
-	 * for a specific user, retrieve his smtp parameters
-	 * 
-	 * @throws NoSuchProperty
-	 */
-	public abstract MailerProperties getSmtpParamORH(User user) throws NoSuchProperty;
+/**
+ * For a specific user, retrieve his smtp parameters
+ * 
+ * @param username
+ * @return
+ * @throws NoSuchProperty
+ */
+	public abstract MailerProperties getMailerPropertiesFromUser(User user) throws NoSuchProperty;
 
-	// TODO rename : getMailerPropertiesFromUser
-
+/**
+ * Retrieve a user from Media@Home thanks to his username and his password.
+ * 
+ * @param username
+ * @param password
+ * @return User
+ */
 	public abstract User getUserORH(String username, String password);
 	
 }

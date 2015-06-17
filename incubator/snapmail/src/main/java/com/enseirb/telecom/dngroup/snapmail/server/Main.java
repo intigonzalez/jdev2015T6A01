@@ -55,7 +55,8 @@ public class Main {
 
 			String baseHost = host.substring(host.lastIndexOf("http://")+7, host.lastIndexOf(":"));
 			LOGGER.debug(host.substring(host.lastIndexOf("http://")+7, host.lastIndexOf(":")));
-			int pasePort = Integer.parseInt(host.substring(host.lastIndexOf(":")+1));
+			int basePort = Integer.parseInt(host.substring(host.lastIndexOf(":")+1));
+
 
 			// WEB APP SETUP
 
@@ -97,7 +98,7 @@ public class Main {
 
 			// configure a network listener with our configuration
 			NetworkListener listener = new NetworkListener("grizzly2",
-					baseHost, pasePort);
+					baseHost, basePort);
 			server.addListener(listener);
 
 			server.getServerConfiguration().addHttpHandler(

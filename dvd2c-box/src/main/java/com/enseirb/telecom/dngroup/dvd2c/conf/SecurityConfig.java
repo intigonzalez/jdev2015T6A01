@@ -8,7 +8,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.RememberMeServices;
+
+import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.security.AjaxAuthenticationFailureHandler;
 import com.enseirb.telecom.dngroup.dvd2c.security.AjaxAuthenticationSuccessHandler;
 import com.enseirb.telecom.dngroup.dvd2c.security.AjaxLogoutSuccessHandler;
@@ -31,10 +34,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		
 		http
 			.authorizeRequests()
 			.antMatchers("/api/application.wadl","/api/app/register/").permitAll()
 			.antMatchers("/api/box/**").permitAll()
+			.antMatchers("/api/snapmail/**").permitAll()
+			.antMatchers("/api/app/content/unsecure/**").permitAll()
 			.anyRequest().authenticated()
 		.and()
 			.formLogin()
@@ -45,6 +51,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.usernameParameter("j_username")
 			.passwordParameter("j_password")
 			.permitAll()
+		.and()
+			.httpBasic()
+			
 //		.and()
 //		    .rememberMe()
 //		    .rememberMeServices(rememberMeServices)
