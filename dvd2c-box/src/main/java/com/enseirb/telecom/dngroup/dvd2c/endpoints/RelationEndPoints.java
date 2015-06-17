@@ -34,7 +34,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
-import com.enseirb.telecom.dngroup.dvd2c.modeldb.Contact;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.ContactDB;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 
@@ -156,10 +156,10 @@ public class RelationEndPoints {
 		String uuid = SecurityContextHolder.getContext().getAuthentication()
 				.getName();
 		List<ContactXSD> listContactXSD = new ArrayList<ContactXSD>();
-		List<Contact> contacts = rManager.getListContact(UUID.fromString(uuid));
-		for (Contact contact : contacts) {
+		List<ContactDB> contactDBs = rManager.getListContact(UUID.fromString(uuid));
+		for (ContactDB contactdb : contactDBs) {
 
-			listContactXSD.add(contact.toContactXSD());
+			listContactXSD.add(contactdb.toContactXSD());
 		}
 		return listContactXSD;
 

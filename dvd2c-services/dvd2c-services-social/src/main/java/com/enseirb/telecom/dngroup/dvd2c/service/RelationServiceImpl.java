@@ -15,8 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-
-
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRoleException;
@@ -26,7 +24,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ActivityObjectExtand;
-import com.enseirb.telecom.dngroup.dvd2c.modeldb.Contact;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.ContactDB;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Permission;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ReceiverActor;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Role;
@@ -45,7 +43,13 @@ import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 public class RelationServiceImpl implements RelationService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RelationServiceImpl.class);
-	public static String TYPE = "Social";
+	public static final String TYPE = "Social";
+	public static final String READ = "Read";
+	public static final String COMMENT = "Comment";
+	public static final String POST = "Post";
+	public static final String DELETE = "Delete";
+	public static final String CONTACT = "Contact";
+
 	// @Inject
 	// RelationRepository relationRepository;
 
@@ -79,7 +83,7 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public boolean RelationExist(UUID UserUUID, UUID actorUUID) {
 
-		Contact c = contactRepository.findContact(UserUUID, actorUUID);
+		ContactDB c = contactRepository.findContact(UserUUID, actorUUID);
 		return (c != null);
 	}
 
@@ -87,7 +91,7 @@ public class RelationServiceImpl implements RelationService {
 	public void updateRelation(UUID UserUUID) throws IOException,
 			NoSuchUserException {
 
-		for (Contact rro : contactRepository.findByOwner(UserUUID)) {
+		for (ContactDB rro : contactRepository.findByOwner(UserUUID)) {
 
 			try {
 				User relationUpdate = new User(rrs.get(UserUUID, rro
@@ -109,23 +113,23 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public Contact getContact(UUID ownerID, UUID contactID)
+	public ContactDB getContact(UUID ownerID, UUID contactID)
 			throws NoSuchContactException {
 
-		Contact contact;
-		if ((contact = contactRepository.findContact(ownerID, contactID)) == null)
+		ContactDB contactdb;
+		if ((contactdb = contactRepository.findContact(ownerID, contactID)) == null)
 			throw new NoSuchContactException();
 
-		return contact;
+		return contactdb;
 
 	}
 
 	@Override
-	public List<Contact> getListContact(UUID userID) {
+	public List<ContactDB> getListContact(UUID userID) {
 
-		List<Contact> contacts = contactRepository.findByOwner(userID);
+		List<ContactDB> contactdbs = contactRepository.findByOwner(userID);
 
-		return contacts;
+		return contactdbs;
 	}
 
 	@Override
@@ -171,13 +175,13 @@ public class RelationServiceImpl implements RelationService {
 			receiverActorRepository.save(receiverActor);
 		}
 
-		Contact contact2 = new Contact();
-		contact2.setOwnerId(user.getId());
-		contact2.setReceiverActor(receiverActor);
+		ContactDB contactdb2 = new ContactDB();
+		contactdb2.setOwnerId(user.getId());
+		contactdb2.setReceiverActor(receiverActor);
 		if (fromBox)
-			contact2.setStatus(2);
+			contactdb2.setStatus(2);
 		else
-			contact2.setStatus(1);
+			contactdb2.setStatus(1);
 
 		// set public relation
 		Role role;
@@ -186,8 +190,7 @@ public class RelationServiceImpl implements RelationService {
 			LOGGER.error("this user {} a not role Public", user.getId());
 		}
 
-		contact2.setRole(Arrays.asList(role));
-		
+		contactdb2.setRole(Arrays.asList(role));
 
 		if (!fromBox) {
 			// User receiverActor1;
@@ -204,16 +207,16 @@ public class RelationServiceImpl implements RelationService {
 			}
 
 		}
-		contact2 = contactRepository.save(contact2);
-//		role.addContact(contact2);
-//		
+		contactdb2 = contactRepository.save(contactdb2);
+		// role.addContact(contact2);
+		//
 
 		ContactXSD contactXSD = new ContactXSD();
-		contactXSD.setActorID(contact2.getReceiverActor().getEmail());
-		contactXSD.setAprouve(contact2.getStatus());
-		contactXSD.setFirstname(contact2.getReceiverActor().getFirstname());
-		contactXSD.setSurname(contact2.getReceiverActor().getSurname());
-		contactXSD.setUuid(contact2.getReceiverActor().getId().toString());
+		contactXSD.setActorID(contactdb2.getReceiverActor().getEmail());
+		contactXSD.setAprouve(contactdb2.getStatus());
+		contactXSD.setFirstname(contactdb2.getReceiverActor().getFirstname());
+		contactXSD.setSurname(contactdb2.getReceiverActor().getSurname());
+		contactXSD.setUuid(contactdb2.getReceiverActor().getId().toString());
 		return contactXSD;
 		// User user;
 		// try {
@@ -294,24 +297,24 @@ public class RelationServiceImpl implements RelationService {
 		Permission permissionDelete;
 		Permission permissionContact;
 
-		if ((permissionRead = permissionRepository.findByName("Read")) == null) {
-			permissionRead = new Permission("Read", "Read content");
+		if ((permissionRead = permissionRepository.findByName(READ)) == null) {
+			permissionRead = new Permission(READ, "Read content");
 			permissionRepository.save(permissionRead);
 		}
-		if ((permissionComment = permissionRepository.findByName("Comment")) == null) {
-			permissionComment = new Permission("Comment", "Comment content");
+		if ((permissionComment = permissionRepository.findByName(COMMENT)) == null) {
+			permissionComment = new Permission(COMMENT, "Comment content");
 			permissionRepository.save(permissionComment);
 		}
-		if ((permissionPost = permissionRepository.findByName("Post")) == null) {
-			permissionPost = new Permission("Post", "Post content");
+		if ((permissionPost = permissionRepository.findByName(POST)) == null) {
+			permissionPost = new Permission(POST, "Post content");
 			permissionRepository.save(permissionPost);
 		}
-		if ((permissionDelete = permissionRepository.findByName("Delete")) == null) {
-			permissionDelete = new Permission("Delete", "Delete content");
+		if ((permissionDelete = permissionRepository.findByName(DELETE)) == null) {
+			permissionDelete = new Permission(DELETE, "Delete content");
 			permissionRepository.save(permissionDelete);
 		}
-		if ((permissionContact = permissionRepository.findByName("Contact")) == null) {
-			permissionContact = new Permission("Contact", "Watch contact list");
+		if ((permissionContact = permissionRepository.findByName(CONTACT)) == null) {
+			permissionContact = new Permission(CONTACT, "Watch contact list");
 			permissionRepository.save(permissionContact);
 		}
 
@@ -375,21 +378,21 @@ public class RelationServiceImpl implements RelationService {
 		// Here, the user is only allowed to edit the approve value if the
 		// current value is = 2
 		// User user = accountService.getUserFromUUID(userUUID);
-		Contact contact;
-		if ((contact = contactRepository.findContact(userUUID,
+		ContactDB contactdb;
+		if ((contactdb = contactRepository.findContact(userUUID,
 				UUID.fromString(contactXSD.getUuid()))) == null) {
 			throw new NoSuchContactException();
 		}
 
-		if (contact.getStatus() != contactXSD.getAprouve()
-				&& contact.getStatus() == 2 && contactXSD.getAprouve() == 3) {
-			contact.setStatus(3);
+		if (contactdb.getStatus() != contactXSD.getAprouve()
+				&& contactdb.getStatus() == 2 && contactXSD.getAprouve() == 3) {
+			contactdb.setStatus(3);
 
-			Contact contact2;
-			if ((contact2 = contactRepository.findContact(
+			ContactDB contactdb2;
+			if ((contactdb2 = contactRepository.findContact(
 					UUID.fromString(contactXSD.getUuid()), userUUID)) != null) {
-				contact2.setStatus(3);
-				contactRepository.save(contact2);
+				contactdb2.setStatus(3);
+				contactRepository.save(contactdb2);
 			} else {
 				RequestRelationService rss = new RequestRelationServiceImpl();
 				try {
@@ -415,18 +418,18 @@ public class RelationServiceImpl implements RelationService {
 		}
 		// Or, the user can edit the group his/her relationship is in.
 
-		List<String> roleName = Contact.getRolesNames(contact.getRole());
+		List<String> roleName = ContactDB.getRolesNames(contactdb.getRole());
 		if (!roleName.equals(contactXSD.getRole())) {
-			contact.getRole().clear();
+			contactdb.getRole().clear();
 			for (String roleStr : contactXSD.getRole()) {
 				Role role;
 				if ((role = roleRepository.findByName(roleStr,
-						contact.getOwnerId(), TYPE)) != null)
+						contactdb.getOwnerId(), TYPE)) != null)
 
-					contact.getRole().add(role);
+					contactdb.getRole().add(role);
 				else {
 					role = new Role();
-					role.setActorId(contact.getOwnerId());
+					role.setActorId(contactdb.getOwnerId());
 					role.setName(roleStr);
 					role.setType(TYPE);
 					roleRepository.save(role);
@@ -435,16 +438,16 @@ public class RelationServiceImpl implements RelationService {
 			}
 
 		}
-		contactRepository.save(contact);
+		contactRepository.save(contactdb);
 		return;
 	}
 
 	@Override
 	public void setAprouveBox(UUID userUUID, UUID contactUUID) {
-		Contact contact = contactRepository.findContact(userUUID, contactUUID);
-		if (contact.getStatus() == 1) {
-			contact.setStatus(3);
-			contactRepository.save(contact);
+		ContactDB contactdb = contactRepository.findContact(userUUID, contactUUID);
+		if (contactdb.getStatus() == 1) {
+			contactdb.setStatus(3);
+			contactRepository.save(contactdb);
 		} else {
 			LOGGER.error("Something has been changed...");
 			throw new WebApplicationException(Status.FORBIDDEN);
@@ -455,8 +458,7 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public List<Content> getAllContent(UUID userUUID, UUID relationUUID) {
 		try {
-			List<Content> listContent = rcs.get(userUUID,
-					relationUUID);
+			List<Content> listContent = rcs.get(userUUID, relationUUID);
 			LOGGER.debug("Content from {} fetched ! ", relationUUID);
 			return listContent;
 		} catch (IOException e) {
@@ -479,10 +481,11 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public void deleteRelationBox(UUID userUUId, UUID relationUUId)
 			throws NoRelationException {
-		Contact contact;
+		ContactDB contactdb;
 		try {
-			if ((contact = contactRepository.findContact(userUUId, relationUUId)) != null) {
-				contactRepository.delete(contact);
+			if ((contactdb = contactRepository
+					.findContact(userUUId, relationUUId)) != null) {
+				contactRepository.delete(contactdb);
 			} else {
 				throw new NoRelationException();
 			}
@@ -496,10 +499,10 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public void deleteRelation(UUID actorUUID, UUID contactUUID)
 			throws NoSuchUserException, NoSuchBoxException, NoRelationException {
-		Contact contact;
+		ContactDB contactdb;
 		deleteRelationBox(actorUUID, contactUUID);
-		if ((contact = contactRepository.findContact(contactUUID, actorUUID)) != null) {
-			contactRepository.delete(contact);
+		if ((contactdb = contactRepository.findContact(contactUUID, actorUUID)) != null) {
+			contactRepository.delete(contactdb);
 
 		} else {
 			RequestRelationService rss = new RequestRelationServiceImpl();
@@ -536,26 +539,26 @@ public class RelationServiceImpl implements RelationService {
 			roleUser.setType("Box");
 			// init permission
 			Permission permission;
-			if ((permission = permissionRepository.findByName("BOXRead")) == null) {
-				permission = new Permission("BOXRead",
+			if ((permission = permissionRepository.findByName("%BOXRead")) == null) {
+				permission = new Permission("%BOXRead",
 						"read stored information on the box");
 				permissionRepository.save(permission);
 			}
 			Permission permission2;
-			if ((permission2 = permissionRepository.findByName("BOXText")) == null) {
-				permission2 = new Permission("BOXText",
+			if ((permission2 = permissionRepository.findByName("%BOXText")) == null) {
+				permission2 = new Permission("%BOXText",
 						"store text(comment,link,... ) on the box");
 				permissionRepository.save(permission2);
 			}
 			Permission permission3;
-			if ((permission3 = permissionRepository.findByName("BOXContent")) == null) {
-				permission3 = new Permission("BOXContent",
+			if ((permission3 = permissionRepository.findByName("%BOXContent")) == null) {
+				permission3 = new Permission("%BOXContent",
 						"store content(video, picture,...) on the box");
 				permissionRepository.save(permission3);
 			}
 			Permission permission4;
-			if ((permission4 = permissionRepository.findByName("BOXContact")) == null) {
-				permission4 = new Permission("BOXContact", "Can add relation");
+			if ((permission4 = permissionRepository.findByName("%BOXContact")) == null) {
+				permission4 = new Permission("%BOXContact", "Can add relation");
 				permissionRepository.save(permission4);
 			}
 			roleUser.setPermissions(Arrays.asList(permission, permission2,
@@ -584,8 +587,15 @@ public class RelationServiceImpl implements RelationService {
 				role.setActorId(uuid);
 				role.setName(roleStr);
 				role.setType(TYPE);
+				// ADD Permission to read
+				Permission permission;
+				if ((permission = permissionRepository.findByName(READ)) == null) {
+					permission = new Permission("%BOXContact",
+							"Can add relation");
+					permissionRepository.save(permission);
+				}
+				role.setPermissions(Arrays.asList(permission));
 				roleRepository.save(role);
-				//TODO: ADD Permission to read
 			}
 			roleToSave.add(role);
 
@@ -617,7 +627,7 @@ public class RelationServiceImpl implements RelationService {
 		// get list of roles of this contact
 		List<Role> roles;
 		try {
-			Contact c = getContact(actorUUID, contactUUID);
+			ContactDB c = getContact(actorUUID, contactUUID);
 			roles = c.getRole();
 
 			if (roles.size() == 0) {

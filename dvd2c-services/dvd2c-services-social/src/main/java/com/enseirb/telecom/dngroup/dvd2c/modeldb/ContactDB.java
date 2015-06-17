@@ -19,8 +19,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "contacts")
-@NamedQuery(name = "Contact.findAll", query = "SELECT c FROM Contact c")
-public class Contact extends DBObject implements Serializable {
+@NamedQuery(name = "ContactDB.findAll", query = "SELECT c FROM ContactDB c")
+public class ContactDB extends DBObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -48,7 +48,7 @@ public class Contact extends DBObject implements Serializable {
 	@JoinTable(name = "contact_role", joinColumns = @JoinColumn(name = "contact_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private List<Role> roles;
 
-	public Contact() {
+	public ContactDB() {
 	}
 
 	public Integer getId() {

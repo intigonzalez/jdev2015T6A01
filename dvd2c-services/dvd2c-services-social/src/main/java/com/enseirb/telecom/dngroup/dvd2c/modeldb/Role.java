@@ -52,7 +52,7 @@ public class Role extends DBObject implements Serializable {
 	// bi-directional many-to-many association to Contact
 	@ManyToMany( fetch = FetchType.EAGER)
 	@JoinTable(name = "role_contacts", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "contact_id"))
-	private List<Contact> contacts;
+	private List<ContactDB> contactdbs;
 
 	// bi-directional many-to-many association to Permission
 	@ManyToMany(mappedBy = "relations")
@@ -130,16 +130,16 @@ public class Role extends DBObject implements Serializable {
 		this.type = type;
 	}
 
-	public List<Contact> getContacts() {
-		return this.contacts;
+	public List<ContactDB> getContacts() {
+		return this.contactdbs;
 	}
 
-	public void setContacts(List<Contact> contacts) {
-		this.contacts = contacts;
+	public void setContacts(List<ContactDB> contacts) {
+		this.contactdbs = contacts;
 	}
 
-	public void addContact(Contact contacts) {
-		this.contacts.add(contacts);
+	public void addContact(ContactDB contacts) {
+		this.contactdbs.add(contacts);
 	}
 
 	public List<Permission> getPermissions() {

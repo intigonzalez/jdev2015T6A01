@@ -12,7 +12,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ActivityObjectExtand;
-import com.enseirb.telecom.dngroup.dvd2c.modeldb.Contact;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.ContactDB;
 
 public interface RelationService {
 
@@ -37,7 +37,7 @@ public interface RelationService {
 	 * @return the relation
 	 * @throws NoSuchContactException
 	 */
-	public abstract Contact getContact(UUID userUUID, UUID relationUUID)
+	public abstract ContactDB getContact(UUID userUUID, UUID relationUUID)
 			throws NoSuchContactException;
 
 	/**
@@ -47,7 +47,7 @@ public interface RelationService {
 	 *            to get relation
 	 * @return the list of relation
 	 */
-	public abstract List<Contact> getListContact(UUID userUUID);
+	public abstract List<ContactDB> getListContact(UUID userUUID);
 
 	// /**
 	// * get the list of relation of a group from a user
