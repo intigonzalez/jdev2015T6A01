@@ -62,7 +62,12 @@ public class AccountServiceImpl implements AccountService {
 		boolean exist = userExistOnLocal(userID);
 		if (!exist) {
 			try {
-				User userGet = new User(requetUserService.get(userID));
+				com.enseirb.telecom.dngroup.dvd2c.model.User u ;
+				
+				if((u= requetUserService.get(userID))==null){
+					return false;
+				}
+				User userGet = new User(u);
 				if (userGet.getId().equals(userID))
 					exist = true;
 			} catch (IOException e) {

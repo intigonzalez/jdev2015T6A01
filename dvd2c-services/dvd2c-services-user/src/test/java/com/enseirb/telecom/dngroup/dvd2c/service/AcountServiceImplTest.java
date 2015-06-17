@@ -21,6 +21,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
+import com.enseirb.telecom.dngroup.dvd2c.repository.PropertyGroupsRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.UserRepository;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 
@@ -35,6 +36,11 @@ class AcountServiceImplTestImplTestConfig {
 	@Bean
 	public RequestUserService requetUserService() {
 		return mock(RequestUserService.class);
+	}
+	
+	@Bean
+	public PropertyGroupsRepository propertyGroupsRepository() {
+		return mock(PropertyGroupsRepository.class);
 	}
 
 	@Bean
