@@ -24,7 +24,7 @@ import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
+import com.enseirb.telecom.dngroup.dvd2c.model.Contact;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.request.RequestUserService;
 import com.sun.research.ws.wadl.Link;
@@ -61,7 +61,7 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 	}
 
 	@Override
-	public void updateRelationORH(ContactXSD relationOfRequest,
+	public void updateRelationORH(Contact relationOfRequest,
 			UUID relationUUID) throws IOException, NoSuchBoxException {
 		Box boxRelation;
 		try {
@@ -135,7 +135,7 @@ public class RequestRelationServiceImpl implements RequestRelationService {
 		Box boxRelation = requestServ.getBoxByUserUuidORH(actorIDOfRelation);
 		WebTarget target = client.target(boxRelation.getIp()
 				+ "/api/box/relation/" + actorIDOfRelation + "/" + userID);
-		ContactXSD relation = new ContactXSD();
+		Contact relation = new Contact();
 		Response response = null;
 		try {
 			response = target.request(MediaType.APPLICATION_XML_TYPE).put(

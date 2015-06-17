@@ -73,13 +73,13 @@ mod
 										 window.location
 										 .replace("/");
 									 }
-									else if (data.contactXSDs !== "") {
+									else if (data.contacts !== "") {
 										 if (angular
-												 .isArray(data.contactXSDs.contactXSD) == false) {
+												 .isArray(data.contacts.contact) == false) {
 											 search.friends
-											 .push(data.contactXSDs.contactXSD);
+											 .push(data.contacts.contact);
 										 } else {
-											 search.friends = data.contactXSDs.contactXSD;
+											 search.friends = data.contacts.contact;
 										 }
 									 }
 									 // console.log(friends.list);

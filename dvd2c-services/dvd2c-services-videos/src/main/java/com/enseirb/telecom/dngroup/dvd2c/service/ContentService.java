@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import javax.ws.rs.core.NoContentException;
 
-import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
+import com.enseirb.telecom.dngroup.dvd2c.model.Contact;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 
 
@@ -75,7 +75,7 @@ public interface ContentService {
 //	 * @param relation
 //	 * @return a list a content
 //	 */
-//	public List<Content> getAllContent(String userID, ContactXSD relation);
+//	public List<Content> getAllContent(String userID, Contact relation);
 
 	/**
 	 * is use just for change status a video

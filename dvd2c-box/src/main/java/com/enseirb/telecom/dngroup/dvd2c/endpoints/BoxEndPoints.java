@@ -32,7 +32,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.SuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Box;
-import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
+import com.enseirb.telecom.dngroup.dvd2c.model.Contact;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ActivityObjectExtand;
 import com.enseirb.telecom.dngroup.dvd2c.service.BoxService;
@@ -184,7 +184,7 @@ public class BoxEndPoints {
 		LOGGER.debug("Receive Request to get list content from {}", contactUUID);
 		// try {
 
-		// ContactXSD relation;
+		// Contact relation;
 		// relation = rManager.getRelation(actorUUID, contactUUID);
 
 		LOGGER.debug("Check contact {} and get content of {}", contactUUID,
@@ -219,7 +219,7 @@ public class BoxEndPoints {
 	@Path("{actorUUID}/relationfrombox")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postFriendFromBox(@PathParam("actorUUID") UUID uuid,
-			ContactXSD relation) throws URISyntaxException {
+			Contact relation) throws URISyntaxException {
 		// String uuid = SecurityContextHolder.getContext().getAuthentication()
 		// .getName();
 		LOGGER.debug("add a relation from box between {} and {} ", uuid,

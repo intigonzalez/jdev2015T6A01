@@ -9,7 +9,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoRoleException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
-import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
+import com.enseirb.telecom.dngroup.dvd2c.model.Contact;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ActivityObjectExtand;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ContactDB;
@@ -55,7 +55,7 @@ public interface RelationService {
 	// * @param roleID the group to get
 	// * @return the list of relation
 	// */
-	// public abstract List<ContactXSD> getListRelation(String userUUID, Role
+	// public abstract List<Contact> getListRelation(String userUUID, Role
 	// roleID);
 
 	/**
@@ -85,7 +85,7 @@ public interface RelationService {
 	 * @throws IOException
 	 * @throws NoSuchBoxException
 	 */
-	public abstract ContactXSD createRelation(UUID userUUID, UUID relationUUID,
+	public abstract Contact createRelation(UUID userUUID, UUID relationUUID,
 			Boolean fromBox) throws NoSuchUserException, IOException,
 			NoSuchBoxException;
 
@@ -101,7 +101,7 @@ public interface RelationService {
 	 * @throws NoRoleException
 	 * @throws NoSuchContactException 
 	 */
-	public abstract void saveRelation(UUID userUUID, ContactXSD relation)
+	public abstract void saveRelation(UUID userUUID, Contact relation)
 			throws NoRelationException, NoSuchUserException, NoRoleException, NoSuchContactException;
 
 	/**

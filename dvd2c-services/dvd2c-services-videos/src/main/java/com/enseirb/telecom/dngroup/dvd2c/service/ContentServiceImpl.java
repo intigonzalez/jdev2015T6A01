@@ -299,7 +299,7 @@ public class ContentServiceImpl implements ContentService {
 
 	}
 
-	// public List<Content> getAllContent(UUID userID, ContactXSD relation) {
+	// public List<Content> getAllContent(UUID userID, Contact relation) {
 	// // List that will be return.
 	// List<Content> listContent = new ArrayList<Content>();
 	//

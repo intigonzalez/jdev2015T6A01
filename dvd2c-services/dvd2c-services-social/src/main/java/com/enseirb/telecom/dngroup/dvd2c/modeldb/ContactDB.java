@@ -7,7 +7,7 @@ import javax.persistence.*;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
+import com.enseirb.telecom.dngroup.dvd2c.model.Contact;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,18 +111,18 @@ public class ContactDB extends DBObject implements Serializable {
 	 * @param contact
 	 * @return
 	 */
-	public ContactXSD toContactXSD() {
+	public Contact toContact() {
 		ReceiverActor receiverActor = getReceiverActor();
-		ContactXSD contactXSD = new ContactXSD();
-		contactXSD.setActorID(receiverActor.getEmail());
-		contactXSD.setAprouve(getStatus());
-		contactXSD.setFirstname(receiverActor.getFirstname());
-		contactXSD.setSurname(receiverActor.getSurname());
-		contactXSD.setUuid(receiverActor.getId().toString());
+		Contact contact = new Contact();
+		contact.setActorID(receiverActor.getEmail());
+		contact.setAprouve(getStatus());
+		contact.setFirstname(receiverActor.getFirstname());
+		contact.setSurname(receiverActor.getSurname());
+		contact.setUuid(receiverActor.getId().toString());
 
-		contactXSD.getRole().addAll(getRolesNames(getRole()));
+		contact.getRole().addAll(getRolesNames(getRole()));
 
-		return contactXSD;
+		return contact;
 	}
 
 	/**

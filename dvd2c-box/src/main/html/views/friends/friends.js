@@ -10,7 +10,7 @@ mod.run(function($httpBackend) {
 		.when('GET', /^\/api\/app\/relation$/)
 		.respond(
 				function(method, url, data, headers) {
-					var data = '{"contactXSDs":{"contactXSD":[{"actorID":"blu","firstname":"blu","surname":"blu","aprouve":1,"roleID":0,"uuid":"ad13fe72-5830-4057-9991-689091a467bf"},{"actorID":"blue@blue.fr","firstname":"blue","surname":"colors","aprouve":2,"roleID":0,"uuid":"bd13fe72-5830-4057-9991-689091a467bf"},{"actorID":"cgonzalez@viotech.net","firstname":"clement","surname":"clement","aprouve":3,"roleID":0,"uuid":"cd13fe72-5830-4057-9991-689091a467bf"}]}}';
+					var data = '{"contacts":{"contact":[{"actorID":"blu","firstname":"blu","surname":"blu","aprouve":1,"roleID":0,"uuid":"ad13fe72-5830-4057-9991-689091a467bf"},{"actorID":"blue@blue.fr","firstname":"blue","surname":"colors","aprouve":2,"roleID":0,"uuid":"bd13fe72-5830-4057-9991-689091a467bf"},{"actorID":"cgonzalez@viotech.net","firstname":"clement","surname":"clement","aprouve":3,"roleID":0,"uuid":"cd13fe72-5830-4057-9991-689091a467bf"}]}}';
 					var header = {};
 					return [ 200, data , {} ];
 
@@ -211,7 +211,7 @@ mod.config(['$routeProvider', function ($routeProvider) {
 			if (headers('Content-Type').indexOf("text/html")==0) {
 				window.location.replace("/");
 			} 
-			if ( data.contactXSDs !== "" ) {
+			if ( data.contacts !== "" ) {
 				if (angular.isArray(data.listRoles.roles) == false) {
 					friends.listRoles.push(data.listRoles.roles);
 				}
@@ -253,12 +253,12 @@ mod.config(['$routeProvider', function ($routeProvider) {
 			if (headers('Content-Type').indexOf("text/html")==0) {
 				window.location.replace("/");
 			} 
-			if ( data.contactXSDs !== "" ) {
-				if (angular.isArray(data.contactXSDs.contactXSD) == false) {
-					friends.list.push(data.contactXSDs.contactXSD);
+			if ( data.contacts !== "" ) {
+				if (angular.isArray(data.contacts.contact) == false) {
+					friends.list.push(data.contacts.contact);
 				}
 				else {
-					friends.list = data.contactXSDs.contactXSD;
+					friends.list = data.contacts.contact;
 				}
 			}
 			// console.log(friends.list);
@@ -285,7 +285,7 @@ mod.config(['$routeProvider', function ($routeProvider) {
 
 	// **** Function to update a friend with PUT Request
 	this.updateRelation = function(friend) {
-		var data = {"contactXSD" : friend};
+		var data = {"contact" : friend};
 		$http.put(PREFIX_RQ+"/api/app/relation/"+friend.uuid, data)
 		.success(function() {
 			console.log("success");

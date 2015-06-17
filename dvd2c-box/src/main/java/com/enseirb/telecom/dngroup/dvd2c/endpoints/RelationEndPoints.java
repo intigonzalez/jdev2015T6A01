@@ -31,7 +31,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoRoleException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
-import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
+import com.enseirb.telecom.dngroup.dvd2c.model.Contact;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ContactDB;
@@ -95,12 +95,12 @@ public class RelationEndPoints {
 	@GET
 	@Path("{relationUUID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ContactXSD getRelation(@PathParam("relationUUID") UUID relationUUID) {
+	public Contact getRelation(@PathParam("relationUUID") UUID relationUUID) {
 		String uuid = SecurityContextHolder.getContext().getAuthentication()
 				.getName();
 		try {
 			return rManager.getContact(UUID.fromString(uuid), relationUUID)
-					.toContactXSD();
+					.toContact();
 		} catch (NoSuchContactException e) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
@@ -125,10 +125,10 @@ public class RelationEndPoints {
 		// TODO: need to change beacause the content of one user doit etre
 		// recupre directement aupré de la ressource utilisateur
 
-		ContactXSD relation;
+		Contact relation;
 		try {
 			relation = rManager.getContact(UUID.fromString(uuid), relationID)
-					.toContactXSD();
+					.toContact();
 
 			if (relation.getAprouve() == 3)
 				return rManager
@@ -152,16 +152,16 @@ public class RelationEndPoints {
 	@RolesAllowed("other")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<ContactXSD> getListRelation() {
+	public List<Contact> getListRelation() {
 		String uuid = SecurityContextHolder.getContext().getAuthentication()
 				.getName();
-		List<ContactXSD> listContactXSD = new ArrayList<ContactXSD>();
+		List<Contact> listContact = new ArrayList<Contact>();
 		List<ContactDB> contactDBs = rManager.getListContact(UUID.fromString(uuid));
 		for (ContactDB contactdb : contactDBs) {
 
-			listContactXSD.add(contactdb.toContactXSD());
+			listContact.add(contactdb.toContact());
 		}
-		return listContactXSD;
+		return listContact;
 
 	}
 
@@ -179,7 +179,7 @@ public class RelationEndPoints {
 	@Deprecated
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response oldpostFriend(ContactXSD relationID)
+	public Response oldpostFriend(Contact relationID)
 			throws URISyntaxException {
 
 		LOGGER.warn("maybe this fonction don't work");
@@ -208,7 +208,7 @@ public class RelationEndPoints {
 		LOGGER.debug("add a relation between {} and {} ", uuid, relationUUID);
 		if (rManager.RelationExist(UUID.fromString(uuid), relationUUID) == false) {
 			try {
-				ContactXSD r = rManager.createRelation(UUID.fromString(uuid),
+				Contact r = rManager.createRelation(UUID.fromString(uuid),
 						relationUUID, false);
 				// RABC: FIXE it
 				return Response.created(
@@ -236,13 +236,13 @@ public class RelationEndPoints {
 	@Path("{relationUUID}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putFriend(@PathParam("relationUUID") UUID relationUUID,
-			ContactXSD contact) {
+			Contact contact) {
 		String uuid = SecurityContextHolder.getContext().getAuthentication()
 				.getName();
 		// need to verify the friend and after this modifies the friend
 		try {
-			// ContactXSD c = rManager.getContact(UUID.fromString(uuid),
-			// relationUUID).toContactXSD();
+			// Contact c = rManager.getContact(UUID.fromString(uuid),
+			// relationUUID).toContact();
 			// contact.setUuid(c.getUuid());
 			if (contact.getUuid().equals(relationUUID.toString())) {
 				rManager.saveRelation(UUID.fromString(uuid), contact);

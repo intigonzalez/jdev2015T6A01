@@ -21,7 +21,7 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.NoRoleException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchContactException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
-import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
+import com.enseirb.telecom.dngroup.dvd2c.model.Contact;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ActivityObjectExtand;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ContactDB;
@@ -133,7 +133,7 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public ContactXSD createRelation(UUID userUUID, UUID relationUUID,
+	public Contact createRelation(UUID userUUID, UUID relationUUID,
 			Boolean fromBox) throws NoSuchUserException, IOException,
 			NoSuchBoxException {
 		/*
@@ -198,7 +198,7 @@ public class RelationServiceImpl implements RelationService {
 				createRelation(receiverActor.getId(), (user.getId()), true);
 			} else {
 				// receiverActor1 = rus.get(relationIDString);
-				ContactXSD contact = new ContactXSD();
+				Contact contact = new Contact();
 				contact.setActorID(user.getId().toString());
 				contact.setAprouve(2);
 				contact.setFirstname(user.getFirstname());
@@ -211,25 +211,25 @@ public class RelationServiceImpl implements RelationService {
 		// role.addContact(contact2);
 		//
 
-		ContactXSD contactXSD = new ContactXSD();
-		contactXSD.setActorID(contactdb2.getReceiverActor().getEmail());
-		contactXSD.setAprouve(contactdb2.getStatus());
-		contactXSD.setFirstname(contactdb2.getReceiverActor().getFirstname());
-		contactXSD.setSurname(contactdb2.getReceiverActor().getSurname());
-		contactXSD.setUuid(contactdb2.getReceiverActor().getId().toString());
-		return contactXSD;
+		Contact contact = new Contact();
+		contact.setActorID(contactdb2.getReceiverActor().getEmail());
+		contact.setAprouve(contactdb2.getStatus());
+		contact.setFirstname(contactdb2.getReceiverActor().getFirstname());
+		contact.setSurname(contactdb2.getReceiverActor().getSurname());
+		contact.setUuid(contactdb2.getReceiverActor().getId().toString());
+		return contact;
 		// User user;
 		// try {
-		// user = rus.get(contactXSD.getActorID());
+		// user = rus.get(contact.getActorID());
 		// if (user == null) {
 		// throw new NoSuchUserException();
 		// }
 		// } catch (IOException e) {
 		// LOGGER.error("get user fail", e);
 		// }
-		// contactXSD.setFirstname(user.getFirstname());
-		// contactXSD.setSurname(user.getSurname());
-		// contactXSD.setAprouve(1);
+		// contact.setFirstname(user.getFirstname());
+		// contact.setSurname(user.getSurname());
+		// contact.setAprouve(1);
 		//
 		// // Prepare the relation for the "UserAsked"
 		// com.enseirb.telecom.dngroup.dvd2c.modeldb.User uro = userRepo
@@ -244,39 +244,39 @@ public class RelationServiceImpl implements RelationService {
 		// relation2.setSurname(userWhoAsked.getSurname());
 		// relation2.setPubKey(userWhoAsked.getPubKey());
 		// relation2.setAprouve(2);
-		// relation2.setUnixTime(contactXSD.getUnixTime());
+		// relation2.setUnixTime(contact.getUnixTime());
 		// Role role = new Role();
 		// role.setRoleId("public");
 		// relation2.getRole().add(role.getRoleId());
 		// if (!fromBox) {
-		// if (userRepo.exists(contactXSD.getActorID())) {
+		// if (userRepo.exists(contact.getActorID())) {
 		// relationRepository
 		// .save(new RelationshipRepositoryOldObject(
-		// contactXSD.getActorID(), relation2));
+		// contact.getActorID(), relation2));
 		// } else {
 		//
 		// RequestRelationService rss = new RequestRelationServiceImpl();
 		// try {
-		// rss.updateRelationORH(relation2, contactXSD.get);
+		// rss.updateRelationORH(relation2, contact.get);
 		// } catch (IOException e) {
 		// LOGGER.error(
 		// "Error during create the relation  betewen {} and {}",
-		// relation2, contactXSD, e);
+		// relation2, contact, e);
 		// e.printStackTrace();
 		// } catch (NoSuchBoxException e) {
 		// LOGGER.error(
 		// "Error during create the relation  betewen {} and {} box not found",
-		// relation2, contactXSD, e);
+		// relation2, contact, e);
 		// }
 		// // Send a request to the right box with the profile of
 		// // userID
 		// rss.close();
 		// }
 		// } else {
-		// contactXSD.setAprouve(2);
+		// contact.setAprouve(2);
 		// }
 		// return relationRepository.save(
-		// new RelationshipRepositoryOldObject(userID, contactXSD))
+		// new RelationshipRepositoryOldObject(userID, contact))
 		// .toRelation();
 		// }
 		//
@@ -373,42 +373,42 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	@Override
-	public void saveRelation(UUID userUUID, ContactXSD contactXSD)
+	public void saveRelation(UUID userUUID, Contact contact)
 			throws NoSuchUserException, NoRoleException, NoSuchContactException {
 		// Here, the user is only allowed to edit the approve value if the
 		// current value is = 2
 		// User user = accountService.getUserFromUUID(userUUID);
 		ContactDB contactdb;
 		if ((contactdb = contactRepository.findContact(userUUID,
-				UUID.fromString(contactXSD.getUuid()))) == null) {
+				UUID.fromString(contact.getUuid()))) == null) {
 			throw new NoSuchContactException();
 		}
 
-		if (contactdb.getStatus() != contactXSD.getAprouve()
-				&& contactdb.getStatus() == 2 && contactXSD.getAprouve() == 3) {
+		if (contactdb.getStatus() != contact.getAprouve()
+				&& contactdb.getStatus() == 2 && contact.getAprouve() == 3) {
 			contactdb.setStatus(3);
 
 			ContactDB contactdb2;
 			if ((contactdb2 = contactRepository.findContact(
-					UUID.fromString(contactXSD.getUuid()), userUUID)) != null) {
+					UUID.fromString(contact.getUuid()), userUUID)) != null) {
 				contactdb2.setStatus(3);
 				contactRepository.save(contactdb2);
 			} else {
 				RequestRelationService rss = new RequestRelationServiceImpl();
 				try {
 					rss.setAprouveRelationORH(userUUID,
-							UUID.fromString(contactXSD.getUuid()));
+							UUID.fromString(contact.getUuid()));
 				} catch (IOException e) {
 					LOGGER.error("Can not set aprouve {} for {} Error IO",
-							userUUID, contactXSD.getActorID(), e);
+							userUUID, contact.getActorID(), e);
 					e.printStackTrace();
 				} catch (NoSuchBoxException e) {
 					LOGGER.error("Can not set aprouve {} for {} no box found",
-							userUUID, contactXSD.getActorID(), e);
+							userUUID, contact.getActorID(), e);
 				} catch (NoSuchUserException e) {
 					LOGGER.error(
 							"Can not set aprouve {} for {} user not found",
-							userUUID, contactXSD.getActorID(), e);
+							userUUID, contact.getActorID(), e);
 				}
 
 				// Send a request to the box to tell it the user accepts the
@@ -419,9 +419,9 @@ public class RelationServiceImpl implements RelationService {
 		// Or, the user can edit the group his/her relationship is in.
 
 		List<String> roleName = ContactDB.getRolesNames(contactdb.getRole());
-		if (!roleName.equals(contactXSD.getRole())) {
+		if (!roleName.equals(contact.getRole())) {
 			contactdb.getRole().clear();
-			for (String roleStr : contactXSD.getRole()) {
+			for (String roleStr : contact.getRole()) {
 				Role role;
 				if ((role = roleRepository.findByName(roleStr,
 						contactdb.getOwnerId(), TYPE)) != null)

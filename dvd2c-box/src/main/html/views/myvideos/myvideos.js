@@ -161,12 +161,12 @@ mod.config(['$routeProvider', function ($routeProvider) {
 					window.location.replace("/");
 				}
 			} 
-			if ( data.contactXSDs !== "" ) {
-				if (angular.isArray(data.contactXSDs.contactXSD) == false) {
-					videos.rolesUsers.push(data.contactXSDs.contactXSD);
+			if ( data.contacts !== "" ) {
+				if (angular.isArray(data.contacts.contact) == false) {
+					videos.rolesUsers.push(data.contacts.contact);
 				}
 				else {
-					videos.rolesUsers = data.contactXSDs.contactXSD;
+					videos.rolesUsers = data.contacts.contact;
 				}
 			}
 		})

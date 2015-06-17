@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
-import com.enseirb.telecom.dngroup.dvd2c.model.ContactXSD;
+import com.enseirb.telecom.dngroup.dvd2c.model.Contact;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 
 public interface RequestRelationService {
@@ -40,7 +40,7 @@ public interface RequestRelationService {
 	 * @throws NoSuchBoxException
 	 *             no box found
 	 */
-	public abstract void updateRelationORH(ContactXSD relationOfRequest,
+	public abstract void updateRelationORH(Contact relationOfRequest,
 			UUID relationID) throws IOException, NoSuchBoxException;
 
 	/**
