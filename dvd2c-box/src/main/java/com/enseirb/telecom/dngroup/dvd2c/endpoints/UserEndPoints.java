@@ -130,7 +130,7 @@ public class UserEndPoints extends HttpServlet {
 	 */
 	@GET
 	@Path("/account/{userUUID}")
-	// @PreAuthorize("hasRole('USER')")
+	//@PreAuthorize("hasRole('USER')")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public User getUserByUUID(@PathParam("userUUID") UUID userUUID) {
 		try {
@@ -148,12 +148,54 @@ public class UserEndPoints extends HttpServlet {
 	 * @return a user
 	 */
 	@GET
-	@Path("{userID}/properties/{propertyGroupName}")
+	@Path("/properties/{propertyGroupName}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public PropertyGroups getUserProperties(@PathParam("userID") String userID,
-			@PathParam("propertyGroupName") String propertyGroupName) {
-		// UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
-		// .getAuthentication().getName());
+	public PropertyGroups getUserProperties(@PathParam("propertyGroupName") String propertyGroupName) {
+		 UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+		 .getAuthentication().getName());
+//		com.enseirb.telecom.dngroup.dvd2c.modeldb.User user = null;
+//		try {
+//			if(userID.contains("@")){
+//			user = uManager.findUserByEmail(userID);
+//			}else{
+//				user = uManager.findUserByUUID(UUID.fromString(userID));
+//			}
+//				
+//		} catch (NoSuchUserException e1) {
+//
+//			e1.printStackTrace();
+//		}
+		PropertyGroups groups = new PropertyGroups();
+		groups.setName("Snapmail");
+		List<Property> props = uManager.getPropertiesForUser(uuid,
+				propertyGroupName);
+		groups.getProperty().addAll(props);
+		return groups;
+	}
+
+	/**
+	 * 
+	 *
+	 */
+	@PUT
+	@Path("/properties")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response postUserProps(PropertyGroups propertyGroups) {
+		 UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+		 .getAuthentication().getName());
+
+		uManager.setPropertiesForUser(uuid, propertyGroups);
+		return Response.status(200).build();
+	}
+	
+	@PUT
+	@Path("/unsecure/properties/{userId}")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response postUserProps(PropertyGroups propertyGroups, @PathParam("userId") String userID) {
+//		 UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+//		 .getAuthentication().getName());
 		com.enseirb.telecom.dngroup.dvd2c.modeldb.User user = null;
 		try {
 			if(userID.contains("@")){
@@ -166,28 +208,7 @@ public class UserEndPoints extends HttpServlet {
 
 			e1.printStackTrace();
 		}
-		PropertyGroups groups = new PropertyGroups();
-		groups.setName("Snapmail");
-		List<Property> props = uManager.getPropertiesForUser(user.getId(),
-				propertyGroupName);
-		groups.getProperty().addAll(props);
-		return groups;
-	}
-
-	/**
-	 * 
-	 *
-	 */
-	@PUT
-	@Path("{userID}/properties")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response postUserProps(PropertyGroups propertyGroups,
-			@PathParam("userID") UUID userID) {
-		// UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
-		// .getAuthentication().getName());
-
-		uManager.setPropertiesForUser(userID, propertyGroups);
+		uManager.setPropertiesForUser(user.getId(), propertyGroups);
 		return Response.status(200).build();
 	}
 

@@ -207,7 +207,7 @@ public class SnapmailServiceImpl implements SnapmailService {
 
 			// TODO: à modifier quand le problème de sécurité sera réglé
 			WebTarget target = client1.target(CliConfSingleton.mediahome_host
-					+ "/api/app/" + userID + "/properties");
+					+ "/api/app/unsecure/properties/" + userID);
 			Response response1 = target.request(MediaType.APPLICATION_XML_TYPE)
 					.put(Entity.entity(properties, MediaType.APPLICATION_XML),
 							Response.class);

@@ -48,12 +48,12 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 
 	@Override
 	public String getLinkFromBodyPart(InputStream inputStream, String filename,
-			String type, String username, List<String> recipients)
+			String type, User user, List<String> recipients)
 			throws IOException {
 		// nh: to extract in a dedicated service class
 		try {
-			// HttpAuthenticationFeature feature = HttpAuthenticationFeature
-			// .basic(user.getUserID(), user.getPassword());
+			 HttpAuthenticationFeature feature = HttpAuthenticationFeature
+			 .basic(user.getUserID(), user.getPassword());
 
 			// Configuration of the client to allow a post with a large file
 			// nh: please create only 1 client and close it properly
@@ -65,12 +65,12 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 					Integer.valueOf(128));
 
 			Client client = ClientBuilder.newClient(cc);
-			// client.register(feature).register(MultiPartFeature.class);
+			 client.register(feature).register(MultiPartFeature.class);
 
 			// nh: create
 			// TODO: à remodifier
 			WebTarget target = client.target(CliConfSingleton.mediahome_host
-					+ "/api/app/content/" + username);
+					+ "/api/app/content");
 
 			LOGGER.info("Filename : " + filename);
 			Response response = target
@@ -121,7 +121,7 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 				return CliConfSingleton.snapmail_host
 						+ "/snapmail/"
 						+ "snapmail.html#/"
-						+ username
+						+ user.getUserID()
 						+ "/"
 						+ response.getLocation().toString().split("/content/")[1];
 			} else {
@@ -140,14 +140,17 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 	}
 
 	@Override
-	public MailerProperties getMailerPropertiesFromUser(String username)
+	public MailerProperties getMailerPropertiesFromUser(User user)
 			throws NoSuchProperty {
 		try {
 			PropertyGroups groups;
+			HttpAuthenticationFeature feature = HttpAuthenticationFeature
+					 .basic(user.getUserID(), user.getPassword());
 			Client client = ClientBuilder.newClient();
+			client.register(feature).register(MultiPartFeature.class);
 			// TODO : à remodifier après sécu
 			WebTarget target = client.target(CliConfSingleton.mediahome_host
-					+ "/api/app/" + username + "/properties/Snapmail");
+					+ "/api/app/properties/Snapmail");
 
 			groups = target.request(MediaType.APPLICATION_XML_TYPE).get(
 					PropertyGroups.class);
@@ -217,6 +220,7 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 		
 		User user = target.request(MediaType.APPLICATION_XML_TYPE).get(
 				User.class);
+		user.setPassword(password);
 		client.close();
 		return user;
 	}

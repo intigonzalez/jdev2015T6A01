@@ -23,7 +23,7 @@ public interface MediaHomeFacade {
  * @throws IOException
  */
 	public abstract String getLinkFromBodyPart(InputStream inputStream,
-			String filename, String type,String username,
+			String filename, String type,User user,
 			List<String> recipients) throws IOException;
 
 /**
@@ -33,7 +33,7 @@ public interface MediaHomeFacade {
  * @return
  * @throws NoSuchProperty
  */
-	public abstract MailerProperties getMailerPropertiesFromUser(String username) throws NoSuchProperty;
+	public abstract MailerProperties getMailerPropertiesFromUser(User user) throws NoSuchProperty;
 
 /**
  * Retrieve a user from Media@Home thanks to his username and his password.

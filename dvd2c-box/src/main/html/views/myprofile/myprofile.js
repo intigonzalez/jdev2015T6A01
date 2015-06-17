@@ -66,7 +66,7 @@ angular.module('myApp.myprofile', ['ngRoute'])
         {
         	
         	// Temporary until endpoints work
-        	$http.get(PREFIX_RQ + "/api/app/" + userID + "/properties/Snapmail")
+        	$http.get(PREFIX_RQ + "/api/app/properties/Snapmail")
             .success(function (data, status, headers, config)
             {
  	if (headers('Content-Type').indexOf("text/html")==0) {

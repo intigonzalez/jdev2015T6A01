@@ -31,6 +31,8 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
@@ -154,9 +156,10 @@ public class ContentEndPoints {
 		}
 
 	}
+	
 	@GET
-	@Path("/{contentsID}/{userId}")
-	@RolesAllowed({ "authenticated", "other" })
+	@Path("/unsecure/{contentsID}/{userId}")
+//	@RolesAllowed({ "authenticated", "other" })
 	@Produces({ MediaType.WILDCARD })
 	public Content getContent(@PathParam("contentsID") Integer contentsID, @PathParam("userId") String userID)
 			throws URISyntaxException {
@@ -191,6 +194,7 @@ public class ContentEndPoints {
 		}
 
 	}
+	
 	// @POST
 	// @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	// public Response postVideo(Content content) {
@@ -239,7 +243,7 @@ public class ContentEndPoints {
 //		return Response.created(
 //				new URI(CliConfSingleton.publicAddr + "/api/app/content/"
 //						+ content.getContentsID())).build();
-		return postContent2(uploadedInputStream, fileName, uManager.findUserByUUID(UUID.fromString(uuid)).getEmail());
+		return postContent2(uploadedInputStream, fileName);
 
 	}
 
@@ -257,26 +261,25 @@ public class ContentEndPoints {
 	 */
 	@POST
 	@RolesAllowed({ "other", "authenticated" })
-	@Path("{userID}")
 	@Consumes(MediaType.WILDCARD)
 	public Response postContent2(InputStream iS,
-			@HeaderParam("Content-Disposition") String contentDisposition, @PathParam("userID") String userID)
+			@HeaderParam("Content-Disposition") String contentDisposition)
 			throws URISyntaxException, IOException {
-//		String uuid = SecurityContextHolder.getContext().getAuthentication()
-//				.getName();
-		User user = null;
-		try {
-			user = uManager.findUserByEmail(userID);
-		} catch (NoSuchUserException e1) {
-
-			e1.printStackTrace();
-		}
-		UUID uuid=user.getId();
+		String uuid = SecurityContextHolder.getContext().getAuthentication()
+				.getName();
+//		User user = null;
+//		try {
+//			user = uManager.findUserByEmail(userID);
+//		} catch (NoSuchUserException e1) {
+//
+//			e1.printStackTrace();
+//		}
+//		UUID uuid=user.getId();
 		
 		LOGGER.debug("New local upload, Content-Disposition : "
 				+ contentDisposition);
 		try {
-			Content content = cManager.createContent(uuid.toString(), iS,
+			Content content = cManager.createContent(uuid, iS,
 					contentDisposition);
 			content.setLink(CliConfSingleton.publicAddr + content.getLink());
 
