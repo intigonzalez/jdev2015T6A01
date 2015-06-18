@@ -84,7 +84,6 @@ mod.config(['$routeProvider', function ($routeProvider) {
 	this.getVideos = function() {
 		$http.get(PREFIX_RQ + "/api/app/content")
 		.success(function (data, status, headers, config) {
-
 			if (headers('Content-Type') != null){
 				if (headers('Content-Type').indexOf("text/html")==0) {
 					window.location.replace("/");
