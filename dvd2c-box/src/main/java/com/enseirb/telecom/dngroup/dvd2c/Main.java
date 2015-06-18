@@ -1,6 +1,5 @@
 package com.enseirb.telecom.dngroup.dvd2c;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,7 +19,6 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.grizzly.servlet.WebappContext;
-import org.glassfish.grizzly.utils.ArraySet;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -309,7 +307,7 @@ public class Main {
 			CliConfSingleton.database_password = cliconf.getDatabasePassword();
 			CliConfSingleton.database_url = cliconf.getDatabaseURL();
 			CliConfSingleton.database_username = cliconf.getDatabaseUserName();
-			
+
 			getParametreFromFile();
 
 		} catch (ArgumentValidationException e1) {
@@ -364,17 +362,20 @@ public class Main {
 				CliConfSingleton.snapmail_host = ApplicationContext
 						.getProperties().getProperty("snapmail_host");
 
-
-			if (CliConfSingleton.database_url == null)
-				CliConfSingleton.database_url = ApplicationContext.getProperties()
-								.getProperty("database_url");
+			if (CliConfSingleton.database_url == null) {
+				CliConfSingleton.database_url = ApplicationContext
+						.getProperties().getProperty("database_url");
+				LOGGER.debug("CliConfSingleton.database_url = {}",
+						CliConfSingleton.database_url);
+				;
+			}
 			if (CliConfSingleton.database_username == null)
 				CliConfSingleton.database_username = ApplicationContext
 						.getProperties().getProperty("database_username");
 			if (CliConfSingleton.database_password == null)
 				CliConfSingleton.database_password = ApplicationContext
 						.getProperties().getProperty("database_password");
-			
+
 			LOGGER.info("File found use this values or arg Path ={} ", aPPath);
 			in.close();
 			CliConfSingleton.defaultValue();
