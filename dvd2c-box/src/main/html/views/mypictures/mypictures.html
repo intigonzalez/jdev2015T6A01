@@ -44,6 +44,12 @@
                                                 {{role.roleName}}
                                             </td>
                                         </tr>
+                                        
+                                        <tr>
+											<td ng-repeat="rolesUser in rolesUsers"><span class="check"><input
+													class="checked" type="checkbox" ng-model="rolesUser.value"></span>
+												{{rolesUser.firstname}} {{rolesUser.surname}}</td>
+										</tr>
                                         </tbody>
                                     </table>
                                 </div><!-- /table-responsive -->

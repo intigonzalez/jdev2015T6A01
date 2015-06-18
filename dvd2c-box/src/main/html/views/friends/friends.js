@@ -10,7 +10,7 @@ mod.run(function($httpBackend) {
 		.when('GET', /^\/api\/app\/relation$/)
 		.respond(
 				function(method, url, data, headers) {
-					var data = '{"contacts":{"contact":[{"actorID":"blu","firstname":"blu","surname":"blu","aprouve":1,"roleID":0,"uuid":"ad13fe72-5830-4057-9991-689091a467bf"},{"actorID":"blue@blue.fr","firstname":"blue","surname":"colors","aprouve":2,"roleID":0,"uuid":"bd13fe72-5830-4057-9991-689091a467bf"},{"actorID":"cgonzalez@viotech.net","firstname":"clement","surname":"clement","aprouve":3,"roleID":0,"uuid":"cd13fe72-5830-4057-9991-689091a467bf"}]}}';
+					var data = '{"contacts":{"contact":[{"actorID":"blu","firstname":"blu","surname":"blu","aprouve":1,"roleID":0,"uuid":"ad13fe72-5830-4057-9991-689091a467bf"},{"actorID":"blue@blue.fr","firstname":"blue","surname":"colors","aprouve":2,"roleID":0,"uuid":"bd13fe72-5830-4057-9991-689091a467bf"},{"actorID":"blue@blue.fr","firstname":"blue","surname":"colors","aprouve":2,"roleID":0,"uuid":"9d13fe72-5830-4057-9991-689091a467bf"},{"actorID":"blue@blue.fr","firstname":"blue","surname":"colors","aprouve":2,"roleID":0,"uuid":"ed13fe72-5830-4057-9991-689091a467bf"},{"actorID":"blue@blue.fr","firstname":"blue","surname":"colors","aprouve":2,"roleID":0,"uuid":"dd13fe72-5830-4057-9991-689091a467bf"},{"actorID":"cgonzalez@viotech.net","firstname":"clement","surname":"clement","aprouve":3,"roleID":0,"uuid":"cd13fe72-5830-4057-9991-689091a467bf"}]}}';
 					var header = {};
 					return [ 200, data , {} ];
 

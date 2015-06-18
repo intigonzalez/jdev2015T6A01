@@ -25,6 +25,8 @@ angular.module('myApp.mycloud', ['ngRoute', 'ui.bootstrap'])
             {"roleID":"Friends" , "roleName":"Friends"	, "info":"Seen by all your friends only"},
             {"roleID":"Pro" 	, "roleName":"Pro"		, "info":"Seen by all your professional contacts"},
         ];  // List of role
+        documents.rolesUsers = [];
+        
         this.getDocuments = function() {
             $http.get(PREFIX_RQ + "/api/app/content")
                 .success(function (data, status, headers, config) {
@@ -95,6 +97,33 @@ angular.module('myApp.mycloud', ['ngRoute', 'ui.bootstrap'])
                 });
         }
 
+	// ***************** Get FriendList ****************
+
+	this.getFriendList = function() {
+		$http.get(PREFIX_RQ+"/api/app/relation")
+		.success(function(data, status, headers, config) {
+			if (headers('Content-Type') != null){
+				if (headers('Content-Type').indexOf("text/html")==0) {
+					window.location.replace("/");
+				}
+			} 
+			if ( data.contacts !== "" ) {
+				if (angular.isArray(data.contacts.contact) == false) {
+					documents.rolesUsers.push(data.contacts.contact);
+				}
+				else {
+					documents.rolesUsers = data.contacts.contact;
+				}
+			}
+		})
+		.error(function (data, status, headers, config){
+			console.log("Failed getting Friend list");
+		})
+	};
+	this.getFriendList();
+
+	// ************************************************************
+	
         this.showDetails = function(content) {
             $scope.open(content);
         }
@@ -112,7 +141,10 @@ angular.module('myApp.mycloud', ['ngRoute', 'ui.bootstrap'])
                     },
                     document: function () {
                         return content;
-                    }
+                    },
+                    rolesUsers: function () {
+			return documents.rolesUsers;
+			}
                 }
             });
 
@@ -126,32 +158,58 @@ angular.module('myApp.mycloud', ['ngRoute', 'ui.bootstrap'])
 
 
     }])
-    .controller('DocumentsModalInstanceCtrl', ['$scope', '$modalInstance', 'roles', 'document', function ($scope, $modalInstance, roles, document) {
+    .controller('DocumentsModalInstanceCtrl', ['$scope', '$modalInstance', 'roles', 'document','rolesUsers', function ($scope, $modalInstance, roles, document,rolesUsers) {
 
         $scope.roles = angular.copy(roles);
         if (document.metadata === undefined) {
         } else {
             if ( angular.isArray(document.metadata) ) {
                 angular.forEach(document.metadata, function (id) {
-                    var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", id);
-                    $scope.roles[index].value = true;
+                    var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", id,"");
+                   if (index!=null){
+                    $scope.roles[index].value = true;}
                 });
             }
             else {
-                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", document.roleID);
+                var index = searchItemIntoArrayWithAttribute($scope.roles, "roleID", document.roleID,"");
+                if (index!=null){
                 $scope.roles[index].value=true;
+                }
             }
         }
         // console.log(roles);
+$scope.rolesUsers = angular.copy(rolesUsers);
+	if (document.metadata === undefined) {
+	} else {
+		if ( angular.isArray(document.metadata) ) {
+			angular.forEach(document.metadata, function (id) {
+				var index = searchItemIntoArrayWithAttribute($scope.rolesUsers, "uuid", id,"%");
+				if (index!=null){
+					$scope.rolesUsers[index].value = true;
+				}
+			});
+		}
+		else {
+			var index = searchItemIntoArrayWithAttribute($scope.rolesUsers, "uuid", document.metadata,"%");
+			if (index!=null){
+				$scope.rolesUsers[index].value=true;
+			}
+		}
+	}
 
-        $scope.ok = function () {
-            // console.log($scope.roles);
-            document.metadata= [];
-            angular.forEach($scope.roles, function(role) {
-                if (role.value == true) {
-                    document.metadata.push(role.roleID)
-                }
-            });
+      $scope.ok = function () {
+		// console.log($scope.roles);
+		document.metadata= [];
+		angular.forEach($scope.roles, function(role) {
+			if (role.value == true) {
+				document.metadata.push(role.roleID)
+			}
+		});
+		angular.forEach($scope.rolesUsers, function(roleUser) {
+			if (roleUser.value == true) {
+				document.metadata.push("%"+roleUser.uuid)
+			}
+		});
 
             $modalInstance.close(document);
         };
