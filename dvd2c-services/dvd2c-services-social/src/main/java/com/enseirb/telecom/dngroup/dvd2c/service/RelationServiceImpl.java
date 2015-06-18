@@ -136,8 +136,8 @@ public class RelationServiceImpl implements RelationService {
 
 	@Override
 	public Contact createRelation(UUID userUUID, UUID relationUUID,
-			Boolean fromBox) throws NoSuchUserException, IOException,
-			NoSuchBoxException {
+			Boolean fromBox) throws  IOException,
+			NoSuchBoxException, NoSuchUserException {
 		/*
 		 * Check the content, add a state 1 to the approuve value Check the user
 		 * really exists from the central server Send a request to the right box
