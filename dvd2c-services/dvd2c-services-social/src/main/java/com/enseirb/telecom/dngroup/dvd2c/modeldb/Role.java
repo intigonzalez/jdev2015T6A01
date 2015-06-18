@@ -58,7 +58,8 @@ public class Role extends DBObject implements Serializable {
 	@ManyToMany(mappedBy = "relations")
 	private List<Permission> permissions;
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+//	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@ManyToMany( fetch = FetchType.EAGER)
 	@JoinTable(name = "activity_object_audiences", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "activityObjectExtand_id"))
 	private List<ActivityObjectExtand> activityObjectExtand;
 

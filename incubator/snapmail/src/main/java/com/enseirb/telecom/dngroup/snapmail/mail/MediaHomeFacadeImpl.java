@@ -48,12 +48,12 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 
 	@Override
 	public String getLinkFromBodyPart(InputStream inputStream, String filename,
-			String type, User user, List<String> recipients)
-			throws IOException {
+			String type, User user, List<String> recipients) throws IOException {
 		// nh: to extract in a dedicated service class
+		
 		try {
-			 HttpAuthenticationFeature feature = HttpAuthenticationFeature
-			 .basic(user.getUserID(), user.getPassword());
+			HttpAuthenticationFeature feature = HttpAuthenticationFeature
+					.basic(user.getUserID(), user.getPassword());
 
 			// Configuration of the client to allow a post with a large file
 			// nh: please create only 1 client and close it properly
@@ -65,7 +65,7 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 					Integer.valueOf(128));
 
 			Client client = ClientBuilder.newClient(cc);
-			 client.register(feature).register(MultiPartFeature.class);
+			client.register(feature).register(MultiPartFeature.class);
 
 			// nh: create
 			// TODO: à remodifier
@@ -79,18 +79,45 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 							"attachment; filename=" + filename)
 					.post(Entity.entity(inputStream, type), Response.class);
 			client.close();
+
 			if (response.getLocation() != null) {
-				// target = client
-				// .target(CliConfSingleton.mediahome_host
-				// + "/api/app/"
-				// + user.getUserID()
-				// + "/content/"
-				// + response.getLocation().toString()
-				// .split("/content/")[1]);
-				// Content content = target
-				// .request(MediaType.APPLICATION_XML_TYPE).get(
-				// Content.class);
-				//
+				/**
+				 * Get the metadatas of the content
+				 */
+				Client client1 = ClientBuilder.newClient();
+				client1.register(feature).register(MultiPartFeature.class);
+
+				target = client1
+						.target(CliConfSingleton.mediahome_host
+								+ "/api/app/"
+								+ "content/"
+								+ response.getLocation().toString()
+										.split("/content/")[1] + "/metadata");
+
+				Content content = target
+						.request(MediaType.APPLICATION_XML_TYPE).get(
+								Content.class);
+				client1.close();
+
+				/**
+				 * Get UUID if the recipients have a Media@Home account
+				 */
+				Client clientuuid = ClientBuilder.newClient();
+				clientuuid.register(feature).register(MultiPartFeature.class);
+				User userbymail;
+				for (String email : recipients) {
+					target = clientuuid.target(CliConfSingleton.mediahome_host
+							+ "/api/app/account/email/" + email);
+					try{
+					userbymail = target.request(MediaType.APPLICATION_XML_TYPE).get(User.class);
+					} catch (WebApplicationException e) {
+						if (e.getResponse().getStatus() == 403);
+							continue;
+					}
+						content.getMetadata().add(userbymail.getUuid());
+		
+				}
+				clientuuid.close();
 				// PropertyGroups originGroups = new PropertyGroups();
 				// originGroups.setName("origin");
 				//
@@ -114,10 +141,18 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 				// }
 				//
 				// content.getPropertyGroups().add(recipientsGroups);
-				//
-				// Response r = target.request().put(
-				// Entity.entity(content, MediaType.APPLICATION_XML));
+				Client client2 = ClientBuilder.newClient();
+				client2.register(feature).register(MultiPartFeature.class);
 
+				target = client2
+						.target(CliConfSingleton.mediahome_host
+								+ "/api/app/"
+								+ "content/"
+								+ response.getLocation().toString()
+										.split("/content/")[1]);
+				Response r = target.request().put(
+						Entity.entity(content, MediaType.APPLICATION_XML));
+				client2.close();
 				return CliConfSingleton.snapmail_host
 						+ "/snapmail/"
 						+ "snapmail.html#/"
@@ -145,7 +180,7 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 		try {
 			PropertyGroups groups;
 			HttpAuthenticationFeature feature = HttpAuthenticationFeature
-					 .basic(user.getUserID(), user.getPassword());
+					.basic(user.getUserID(), user.getPassword());
 			Client client = ClientBuilder.newClient();
 			client.register(feature).register(MultiPartFeature.class);
 			// TODO : à remodifier après sécu
@@ -217,7 +252,7 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 		client.register(feature);
 		WebTarget target = client.target(CliConfSingleton.mediahome_host
 				+ "/api/app/account/email/" + username);
-		
+
 		User user = target.request(MediaType.APPLICATION_XML_TYPE).get(
 				User.class);
 		user.setPassword(password);

@@ -63,9 +63,6 @@ public class BoxEndPoints {
 	@Autowired
 	protected ContentService cManager;
 
-	//TODO: à supprimer quand la sécurité sera réglée
-	@Inject
-	protected AccountService uManager;
 
 	/**
 	 * get box with boxID
@@ -203,18 +200,28 @@ public class BoxEndPoints {
 
 		LOGGER.debug("Check contact {} and get content of {}", contactUUID,
 				actorUUID);
-		List<Content> content = new ArrayList<Content>();
+		List<Content> contents = new ArrayList<Content>();
 		List<ActivityObjectExtand> a = rManager.getActivityForContact(
 				actorUUID, contactUUID);
 		for (ActivityObjectExtand activityObjectExtand : a) {
-			content.add(cManager.getContent(activityObjectExtand.getId()));
+			try {
+				Content content = cManager.getContent(activityObjectExtand.getId());
+				contents.add(content);
+			} catch (NoContentException e) {
+				LOGGER.error("some content is null "
+						+ "Deleting {}",activityObjectExtand.getId());
+				
+				rManager.deleteActivityObject(activityObjectExtand.getId());
+			}
+			
+			
 		}
 
 		// //RBAC:need to fix it after merge
 		// List<Content> listContent = uManager
 		// .getAllContent(userID, relation);
 		// return listContent;
-		return content;
+		return contents;
 		// } catch (NoSuchContactException e) {
 		// throw new WebApplicationException(Status.NOT_ACCEPTABLE);
 		// }
@@ -258,10 +265,6 @@ public class BoxEndPoints {
 			return Response.status(Status.CONFLICT).build();
 		}
 	}
-	
-	
-//TODO : supprimer tout ce qu'il y a en dessous quand le problème de sécurité sera réglé	
-
 	
 
 }
