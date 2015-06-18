@@ -367,8 +367,9 @@ public class Main {
 						.getProperties().getProperty("database_url");
 				LOGGER.debug("CliConfSingleton.database_url = {}",
 						CliConfSingleton.database_url);
-				;
-			}
+			} else
+				LOGGER.debug("CliConfSingleton.database_url = {}",
+						CliConfSingleton.database_url);
 			if (CliConfSingleton.database_username == null)
 				CliConfSingleton.database_username = ApplicationContext
 						.getProperties().getProperty("database_username");

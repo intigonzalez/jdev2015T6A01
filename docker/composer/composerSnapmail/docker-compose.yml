@@ -3,31 +3,39 @@ box:
   ports:
    - "9998:9998"
   volumes:
-   - /var/www/html:/var/www/html
+   - ~/mediahome/data:/var/www/html
    - /tmp:/tmp
-   - /etc/mediahome:/etc/mediahome
+   - ~/mediahome/config:/etc/mediahome
   links:
    - db
    - worker
 db:
-  image: mongo
-  ports:
-   - "27017:27017"
+  image: mysql:5.5
+  environment:
+   - MYSQL_ROOT_PASSWORD=root
+   - MYSQL_DATABASE=mediahome
+   - MYSQL_USER=mediahome
+   - MYSQL_PASSWORD=mediahome
   volumes: 
-   - /data/db:/data/db
+   - ~/mediahome/mysql:/var/lib/mysql
 worker:
   build: ../../worker
   volumes:
-   - /var/www/html:/var/www/html
+   - ~/mediahome/data:/var/www/html
    - /tmp:/tmp
 snapmail:
   build: ../../snapmail
   ports:
    - "25004:25004"
   volumes:
-   - /etc/mediahome:/etc/mediahome
+   - ~/mediahome/config:/etc/mediahome
   links:
    - box
    - clamav
 clamav:
   build: ../../clamav
+snapmailserver:
+  build: ../../snapmailserver
+  ports:
+   - "9997:9997"
+
