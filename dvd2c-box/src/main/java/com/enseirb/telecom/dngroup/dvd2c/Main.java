@@ -114,7 +114,7 @@ public class Main {
 			StaticHttpHandler videos = new StaticHttpHandlerCORS(
 					new String[] { "/var/www/html/videos" });
 			StaticHttpHandler pictures = new StaticHttpHandlerCORS(
-					new String[] { "/var/www/html/pictures" });			
+					new String[] { "/var/www/html/pictures" });
 			StaticHttpHandler cloud = new StaticHttpHandlerCORS(
 					new String[] { "/var/www/html/cloud" });
 
@@ -122,9 +122,10 @@ public class Main {
 			videos.setFileCacheEnabled(false);
 			pictures.setFileCacheEnabled(false);
 			cloud.setFileCacheEnabled(false);
-			
+
 			server.getServerConfiguration().addHttpHandler(videos, "/videos");
-			server.getServerConfiguration().addHttpHandler(pictures,"/pictures");
+			server.getServerConfiguration().addHttpHandler(pictures,
+					"/pictures");
 			server.getServerConfiguration().addHttpHandler(cloud, "/cloud");
 			server.getServerConfiguration().addHttpHandler(
 					new CLStaticHttpHandler(Main.class.getClassLoader(), "/"));
@@ -143,7 +144,7 @@ public class Main {
 
 				Response ent = target.request(MediaType.APPLICATION_XML_TYPE)
 						.post(null);
-				
+
 				LOGGER.debug("{}", ent);
 			} catch (URISyntaxException e) {
 				LOGGER.error("URI of server not good");
@@ -299,11 +300,16 @@ public class Main {
 			CliConfSingleton.contentPath = cliconf.getContentPath();
 			CliConfSingleton.appHostName = cliconf.getIp();
 			CliConfSingleton.publicAddr = cliconf.getPublicAddr();
-			CliConfSingleton.dbHostname = cliconf.getDbHostname();
-			CliConfSingleton.dbPort = cliconf.getDbPort();
+			// CliConfSingleton.dbHostname = cliconf.getDbHostname();
+			// CliConfSingleton.dbPort = cliconf.getDbPort();
 			CliConfSingleton.rabbitHostname = cliconf.getRabbitHost();
 			CliConfSingleton.rabbitPort = cliconf.getRabbitPort();
 			CliConfSingleton.appPort = cliconf.getPort();
+			CliConfSingleton.snapmail_host = cliconf.getSnapmail_Host();
+			CliConfSingleton.database_password = cliconf.getDatabasePassword();
+			CliConfSingleton.database_url = cliconf.getDatabaseURL();
+			CliConfSingleton.database_username = cliconf.getDatabaseUserName();
+			
 			getParametreFromFile();
 
 		} catch (ArgumentValidationException e1) {
@@ -338,12 +344,12 @@ public class Main {
 			if (CliConfSingleton.publicAddr == null)
 				CliConfSingleton.publicAddr = ApplicationContext
 						.getProperties().getProperty("publicAddr");
-			if (CliConfSingleton.dbHostname == null)
-				CliConfSingleton.dbHostname = ApplicationContext
-						.getProperties().getProperty("dbHostname");
-			if (CliConfSingleton.dbPort == null)
-				CliConfSingleton.dbPort = Integer.valueOf(ApplicationContext
-						.getProperties().getProperty("dbPort"));
+			// if (CliConfSingleton.dbHostname == null)
+			// CliConfSingleton.dbHostname = ApplicationContext
+			// .getProperties().getProperty("dbHostname");
+			// if (CliConfSingleton.dbPort == null)
+			// CliConfSingleton.dbPort = Integer.valueOf(ApplicationContext
+			// .getProperties().getProperty("dbPort"));
 			if (CliConfSingleton.rabbitHostname == null)
 				CliConfSingleton.rabbitHostname = ApplicationContext
 						.getProperties().getProperty("rabbitHostname");
@@ -357,10 +363,22 @@ public class Main {
 			if (CliConfSingleton.snapmail_host == null)
 				CliConfSingleton.snapmail_host = ApplicationContext
 						.getProperties().getProperty("snapmail_host");
+
+
+			if (CliConfSingleton.database_url == null)
+				CliConfSingleton.database_url = ApplicationContext.getProperties()
+								.getProperty("database_url");
+			if (CliConfSingleton.database_username == null)
+				CliConfSingleton.database_username = ApplicationContext
+						.getProperties().getProperty("database_username");
+			if (CliConfSingleton.database_password == null)
+				CliConfSingleton.database_password = ApplicationContext
+						.getProperties().getProperty("database_password");
+			
 			LOGGER.info("File found use this values or arg Path ={} ", aPPath);
 			in.close();
 			CliConfSingleton.defaultValue();
-			
+
 		} catch (FileNotFoundException e1) {
 			LOGGER.info("File not found use default value or arg Path ={} ",
 					aPPath);
@@ -392,20 +410,31 @@ interface CliConfiguration {
 	@Option(shortName = "a", longName = "public-addr", description = "the http addr of curent box", defaultToNull = true)
 	String getPublicAddr();
 
-	@Option(longName = "db-hostname", description = "the hostname of database", defaultToNull = true)
-	String getDbHostname();
-
-	@Option(longName = "db-port", description = "the port of database", defaultToNull = true)
-	Integer getDbPort();
+	// @Option(longName = "db-hostname", description =
+	// "the hostname of database", defaultToNull = true)
+	// String getDbHostname();
+	//
+	// @Option(longName = "db-port", description = "the port of database",
+	// defaultToNull = true)
+	// Integer getDbPort();
 
 	@Option(longName = "rabbit-host", description = "the host of rabbitMQ", defaultToNull = true)
 	String getRabbitHost();
 
 	@Option(longName = "rabbit-port", description = "the port of rabbitMQ", defaultToNull = true)
 	Integer getRabbitPort();
-	
-	@Option(longName = "snapmail_host", description = "URL of Snapmail_Host", defaultToNull=true)
+
+	@Option(longName = "snapmail_host", description = "URL of Snapmail_Host", defaultToNull = true)
 	String getSnapmail_Host();
+
+	@Option(longName = "database_url", description = "The url of the database (jdbc:mysql://localhost:3306/mediahome)", defaultToNull = true)
+	String getDatabaseURL();
+
+	@Option(longName = "database_password", description = "The password of database", defaultToNull = true)
+	String getDatabasePassword();
+
+	@Option(longName = "database_username", description = "The Username of database", defaultToNull = true)
+	String getDatabaseUserName();
 
 	@Option(helpRequest = true)
 	boolean getHelp();

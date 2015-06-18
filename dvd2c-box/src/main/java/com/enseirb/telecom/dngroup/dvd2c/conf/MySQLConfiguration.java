@@ -18,6 +18,8 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
+
 @Configuration
 @EnableTransactionManagement
 @ComponentScan("com.spr")
@@ -25,9 +27,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 class MySQLConfiguration {
 
 	private static final String PROPERTY_NAME_DATABASE_DRIVER = "com.mysql.jdbc.Driver";
-	private static final String PROPERTY_NAME_DATABASE_PASSWORD = "mediahome";
-	private static final String PROPERTY_NAME_DATABASE_URL = "jdbc:mysql://localhost:3306/mediahome";
-	private static final String PROPERTY_NAME_DATABASE_USERNAME = "mediahome";
+//	private static final String PROPERTY_NAME_DATABASE_PASSWORD = "mediahome";
+//	private static final String PROPERTY_NAME_DATABASE_URL = "jdbc:mysql://localhost:3306/mediahome";
+//	private static final String PROPERTY_NAME_DATABASE_USERNAME = "mediahome";
 
 	private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "hibernate.dialect";
 	private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "hibernate.show_sql";
@@ -41,9 +43,9 @@ class MySQLConfiguration {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
 		dataSource.setDriverClassName(PROPERTY_NAME_DATABASE_DRIVER);
-		dataSource.setUrl(PROPERTY_NAME_DATABASE_URL);
-		dataSource.setUsername(PROPERTY_NAME_DATABASE_USERNAME);
-		dataSource.setPassword(PROPERTY_NAME_DATABASE_PASSWORD);
+		dataSource.setUrl(CliConfSingleton.database_url);
+		dataSource.setUsername(CliConfSingleton.database_username);
+		dataSource.setPassword(CliConfSingleton.database_password);
 
 		return dataSource;
 	}
