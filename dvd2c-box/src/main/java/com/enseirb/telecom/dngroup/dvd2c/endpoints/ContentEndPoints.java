@@ -377,6 +377,7 @@ public class ContentEndPoints {
 			Content contents = cManager.getContent(contentsID);
 			if (contents.getActorID().equals(uuid)) {
 				cManager.deleteContent(contentsID);
+				rManager.deleteActivityObject(contentsID);
 				return Response.status(200).build();
 			} else
 				throw new WebApplicationException(Status.FORBIDDEN);

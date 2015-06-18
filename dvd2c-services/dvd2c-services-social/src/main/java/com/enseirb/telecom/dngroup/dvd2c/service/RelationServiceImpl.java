@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+
 //import com.enseirb.telecom.dngroup.dvd2c.endpoints.RelationEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRoleException;
@@ -666,5 +667,11 @@ public class RelationServiceImpl implements RelationService {
 				.findByRolesIn(roles));
 
 		return activityObjectExtand;
+	}
+
+	@Override
+	public void deleteActivityObject(Integer contentsID) {
+		activityObjectExtandRepo.delete(contentsID);
+		
 	}
 }

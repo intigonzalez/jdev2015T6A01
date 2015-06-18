@@ -169,4 +169,10 @@ public interface RelationService {
 
 	public abstract  void getContentRole(Content content);
 
+	/**
+	 * delete the extend of the contents
+	 * @param contentsID
+	 */
+	public abstract void deleteActivityObject(Integer contentsID);
+
 }
