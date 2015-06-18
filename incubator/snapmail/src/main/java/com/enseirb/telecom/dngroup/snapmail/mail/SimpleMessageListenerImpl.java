@@ -23,8 +23,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -112,6 +114,9 @@ public class SimpleMessageListenerImpl implements SimpleMessageListener,
 		// Emptying the array
 		counter--;
 		if (counter == 0) {
+			Set<String> set = new HashSet<String>();
+	        set.addAll(recipientArray) ;
+	        recipientArray = new ArrayList<String>(set);
 			allrecipients = recipientArray.toString();
 			this.allrecipients = this.allrecipients.substring(1,
 					this.allrecipients.length() - 1);
