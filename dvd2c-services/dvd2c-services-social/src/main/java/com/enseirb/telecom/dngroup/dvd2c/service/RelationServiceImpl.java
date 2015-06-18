@@ -396,9 +396,9 @@ public class RelationServiceImpl implements RelationService {
 				contactdb2.setStatus(3);
 				contactRepository.save(contactdb2);
 			} else {
-				RequestRelationService rss = new RequestRelationServiceImpl();
+				
 				try {
-					rss.setAprouveRelationORH(userUUID,
+					rrs.setAprouveRelationORH(userUUID,
 							UUID.fromString(contact.getUuid()));
 				} catch (IOException e) {
 					LOGGER.error("Can not set aprouve {} for {} Error IO",
@@ -508,9 +508,9 @@ public class RelationServiceImpl implements RelationService {
 			contactRepository.delete(contactdb);
 
 		} else {
-			RequestRelationService rss = new RequestRelationServiceImpl();
+			
 			try {
-				rss.deleteRelationORH(actorUUID, contactUUID);
+				rrs.deleteRelationORH(actorUUID, contactUUID);
 			} catch (IOException e) {
 				LOGGER.error(
 						"Can not delete a relation betewen {} and {} Error IO",

@@ -158,7 +158,7 @@ public class BoxEndPoints {
 	 * @return
 	 */
 	@DELETE
-	@Path("relation/{relationId}")
+	@Path("relation/{userId}/{relationId}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteFriend(@PathParam("userId") UUID userId,
 			@PathParam("relationId") UUID relationId) {
