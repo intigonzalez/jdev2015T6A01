@@ -672,6 +672,15 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public void deleteActivityObject(Integer contentsID) {
 		activityObjectExtandRepo.delete(contentsID);
-		
+		ActivityObjectExtand a;
+		if((a = activityObjectExtandRepo.findOne(contentsID))!=null){
+			LOGGER.error("can not deleting");
+			
+			List<Role> roles = a.getRoles();
+			for (Role role : roles) {
+				LOGGER.error("this role {} is linked", role.getName());
+				
+			}
+		}
 	}
 }

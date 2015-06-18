@@ -78,8 +78,7 @@ public class ContentServiceImpl implements ContentService {
 	public Content getContent(Integer contentsID) throws NoContentException {
 		Document document = documentRepository.findOne(contentsID);
 		if (document == null) {
-			//throw new NoContentException("Content ID can't be NULL");
-			return null;
+			throw new NoContentException("Content ID can't be NULL");
 		} else {
 			return document.toContent();
 		}
