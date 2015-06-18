@@ -98,13 +98,14 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 						.request(MediaType.APPLICATION_XML_TYPE).get(
 								Content.class);
 				client1.close();
+				content.getMetadata().add("%Unreferenced");
 
 				/**
 				 * Get UUID if the recipients have a Media@Home account
 				 */
 				Client clientuuid = ClientBuilder.newClient();
 				clientuuid.register(feature).register(MultiPartFeature.class);
-				User userbymail;
+				User userbymail;		
 				for (String email : recipients) {
 					target = clientuuid.target(CliConfSingleton.mediahome_host
 							+ "/api/app/account/email/" + email);
@@ -114,8 +115,7 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 						if (e.getResponse().getStatus() == 403);
 							continue;
 					}
-						content.getMetadata().add(userbymail.getUuid());
-		
+						content.getMetadata().add("%" + userbymail.getUuid());
 				}
 				clientuuid.close();
 				// PropertyGroups originGroups = new PropertyGroups();
