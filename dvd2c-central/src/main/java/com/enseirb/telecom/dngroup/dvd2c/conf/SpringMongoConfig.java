@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.mongodb.Mongo;
 
 @Configuration
@@ -19,7 +18,7 @@ public class SpringMongoConfig extends AbstractMongoConfiguration {
 
 	  @Override
 	  public Mongo mongo() throws Exception {
-	    return new Mongo(CliConfSingleton.dbHostname,CliConfSingleton.dbPort);
+	    return new Mongo(CliConfSingletonC.dbHostname,CliConfSingletonC.dbPort);
 	  }
 
 	  @Override

@@ -1,14 +1,7 @@
 package com.enseirb.telecom.dngroup.dvd2c;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.lexicalscope.jewel.cli.ArgumentValidationException;
-import com.lexicalscope.jewel.cli.CliFactory;
-import com.lexicalscope.jewel.cli.InvalidOptionSpecificationException;
 
 /**
  * a singleton that contains input from CLI

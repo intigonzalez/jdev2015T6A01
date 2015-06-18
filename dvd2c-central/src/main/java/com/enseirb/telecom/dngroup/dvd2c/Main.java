@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+
 import javax.servlet.ServletRegistration;
 import javax.ws.rs.core.UriBuilder;
 
@@ -18,6 +19,7 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
+import com.enseirb.telecom.dngroup.dvd2c.conf.CliConfSingletonC;
 import com.lexicalscope.jewel.cli.ArgumentValidationException;
 import com.lexicalscope.jewel.cli.CliFactory;
 import com.lexicalscope.jewel.cli.HelpRequestedException;
@@ -30,7 +32,7 @@ public class Main {
 	// public static final String BASE_PATH = "api";
 	private static int getPort(int defaultPort) {
 		// grab port from environment, otherwise fall back to default port 9998
-		return CliConfSingleton.appPort;
+		return CliConfSingletonC.appPort;
 	}
 
 	private static final String BASE_PATH = "api";
@@ -38,8 +40,8 @@ public class Main {
 	private static URI getBaseApiURI() {
 
 		return UriBuilder.fromUri(
-				"http://" + CliConfSingleton.appHostName + ":"
-						+ getPort(CliConfSingleton.appPort)).build();
+				"http://" + CliConfSingletonC.appHostName + ":"
+						+ getPort(CliConfSingletonC.appPort)).build();
 	}
 
 	/**
@@ -55,8 +57,8 @@ public class Main {
 		try {
 			initConfSingleton(args);
 
-			String baseHost = CliConfSingleton.appHostName;
-			int pasePort = CliConfSingleton.appPort;
+			String baseHost = CliConfSingletonC.appHostName;
+			int pasePort = CliConfSingletonC.appPort;
 
 			// WEB APP SETUP
 
@@ -252,10 +254,10 @@ public class Main {
 		try {
 			CliConfiguration cliconf = CliFactory.parseArguments(
 					CliConfiguration.class, args);
-			CliConfSingleton.appHostName = cliconf.getIp();
-			CliConfSingleton.dbHostname = cliconf.getDbHostname();
-			CliConfSingleton.dbPort = cliconf.getDbPort();
-			CliConfSingleton.appPort = cliconf.getPort();
+			CliConfSingletonC.appHostName = cliconf.getIp();
+			CliConfSingletonC.dbHostname = cliconf.getDbHostname();
+			CliConfSingletonC.dbPort = cliconf.getDbPort();
+			CliConfSingletonC.appPort = cliconf.getPort();
 		} catch (ArgumentValidationException e1) {
 
 			LOGGER.info("No arg detected use default or file value ");
@@ -276,17 +278,17 @@ public class Main {
 			FileInputStream in = new FileInputStream(aPPath);
 			ApplicationContext.properties.load(in);
 
-			if (CliConfSingleton.appHostName == null)
-				CliConfSingleton.appHostName = ApplicationContext
+			if (CliConfSingletonC.appHostName == null)
+				CliConfSingletonC.appHostName = ApplicationContext
 						.getProperties().getProperty("ip");
-			if (CliConfSingleton.dbHostname == null)
-				CliConfSingleton.dbHostname = ApplicationContext
+			if (CliConfSingletonC.dbHostname == null)
+				CliConfSingletonC.dbHostname = ApplicationContext
 						.getProperties().getProperty("dbHostname");
-			if (CliConfSingleton.dbPort == null)
-				CliConfSingleton.dbPort = Integer.valueOf(ApplicationContext
+			if (CliConfSingletonC.dbPort == null)
+				CliConfSingletonC.dbPort = Integer.valueOf(ApplicationContext
 						.getProperties().getProperty("dbPort"));
-			if (CliConfSingleton.appPort == null)
-				CliConfSingleton.appPort = Integer.valueOf(ApplicationContext
+			if (CliConfSingletonC.appPort == null)
+				CliConfSingletonC.appPort = Integer.valueOf(ApplicationContext
 						.getProperties().getProperty("port"));
 			
 		} catch (FileNotFoundException e1) {
