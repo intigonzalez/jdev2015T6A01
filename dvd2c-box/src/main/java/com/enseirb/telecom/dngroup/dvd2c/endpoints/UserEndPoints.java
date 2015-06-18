@@ -208,7 +208,7 @@ public class UserEndPoints extends HttpServlet {
 		try {
 			return uManager.findUserByEmail(email).toXSDUser();
 		} catch (NoSuchUserException e) {
-			throw new WebApplicationException(Status.NOT_FOUND);
+			throw new WebApplicationException(Status.NO_CONTENT);
 		}
 	}
 

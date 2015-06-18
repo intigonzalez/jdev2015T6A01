@@ -107,12 +107,12 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 				clientuuid.register(feature).register(MultiPartFeature.class);
 				User userbymail;		
 				for (String email : recipients) {
-					target = clientuuid.target(CliConfSingleton.mediahome_host
+					target = clientuuid.target(CliConfSingleton.centralURL
 							+ "/api/app/account/email/" + email);
 					try{
 					userbymail = target.request(MediaType.APPLICATION_XML_TYPE).get(User.class);
 					} catch (WebApplicationException e) {
-						if (e.getResponse().getStatus() == 403);
+						if (e.getResponse().getStatus() == 204);
 							continue;
 					}
 						content.getMetadata().add("%" + userbymail.getUuid());
