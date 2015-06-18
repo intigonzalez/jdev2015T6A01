@@ -18,6 +18,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -26,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRelationException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoRoleException;
 import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchBoxException;
@@ -36,6 +39,7 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.User;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ContactDB;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
+import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 
 //import com.enseirb.telecom.s9.Relation;
@@ -53,6 +57,9 @@ public class RelationEndPoints {
 
 	@Inject
 	protected AccountService aService;
+
+	@Inject
+	protected ContentService cManager;
 
 	/**
 	 * get user for a remote host
@@ -125,20 +132,21 @@ public class RelationEndPoints {
 		// TODO: need to change beacause the content of one user doit etre
 		// recupre directement aupré de la ressource utilisateur
 
-//		Contact relation;
-//		try {
-//			relation = rManager.getContact(UUID.fromString(uuid), relationID)
-//					.toContact();
-//
-//			if (relation.getAprouve() == 3)
-				return rManager
-						.getAllContent(UUID.fromString(uuid), relationID);
-//			else {
-//				throw new WebApplicationException(Status.FORBIDDEN);
-//			}
-//		} catch (NoSuchContactException e) {
-//			throw new WebApplicationException(Status.NOT_FOUND);
-//		}
+		// Contact relation;
+		// try {
+		// relation = rManager.getContact(UUID.fromString(uuid), relationID)
+		// .toContact();
+		//
+		// if (relation.getAprouve() == 3)
+		
+		return rManager.getAllContent(UUID.fromString(uuid),
+				relationID);
+		// else {
+		// throw new WebApplicationException(Status.FORBIDDEN);
+		// }
+		// } catch (NoSuchContactException e) {
+		// throw new WebApplicationException(Status.NOT_FOUND);
+		// }
 
 	}
 
@@ -156,7 +164,8 @@ public class RelationEndPoints {
 		String uuid = SecurityContextHolder.getContext().getAuthentication()
 				.getName();
 		List<Contact> listContact = new ArrayList<Contact>();
-		List<ContactDB> contactDBs = rManager.getListContact(UUID.fromString(uuid));
+		List<ContactDB> contactDBs = rManager.getListContact(UUID
+				.fromString(uuid));
 		for (ContactDB contactdb : contactDBs) {
 
 			listContact.add(contactdb.toContact());
@@ -179,8 +188,7 @@ public class RelationEndPoints {
 	@Deprecated
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response oldpostFriend(Contact relationID)
-			throws URISyntaxException {
+	public Response oldpostFriend(Contact relationID) throws URISyntaxException {
 
 		LOGGER.warn("maybe this fonction don't work");
 		return postFriend2(UUID.fromString(relationID.getUuid()));
@@ -228,8 +236,6 @@ public class RelationEndPoints {
 			return Response.status(409).build();
 		}
 	}
-
-
 
 	@PUT
 	@RolesAllowed("other")

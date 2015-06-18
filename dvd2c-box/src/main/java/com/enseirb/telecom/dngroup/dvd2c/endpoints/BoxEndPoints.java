@@ -206,6 +206,7 @@ public class BoxEndPoints {
 		for (ActivityObjectExtand activityObjectExtand : a) {
 			try {
 				Content content = cManager.getContent(activityObjectExtand.getId());
+				content.setLink(CliConfSingleton.publicAddr + content.getLink());
 				contents.add(content);
 			} catch (NoContentException e) {
 				LOGGER.error("some content is null "

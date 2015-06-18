@@ -99,6 +99,7 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 								Content.class);
 				client1.close();
 				content.getMetadata().add("%Unreferenced");
+				content.setLink(content.getLink().replace(CliConfSingleton.mediahome_host, ""));
 
 				/**
 				 * Get UUID if the recipients have a Media@Home account
