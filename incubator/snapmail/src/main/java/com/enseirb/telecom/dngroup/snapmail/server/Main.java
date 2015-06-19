@@ -53,7 +53,7 @@ public class Main {
 		try {
 			
 
-			String baseHost = host.substring(host.lastIndexOf("http://")+7, host.lastIndexOf(":"));
+			String baseHost = CliConfSingleton.publicAddr;
 			LOGGER.debug(host.substring(host.lastIndexOf("http://")+7, host.lastIndexOf(":")));
 			int basePort = Integer.parseInt(host.substring(host.lastIndexOf(":")+1));
 

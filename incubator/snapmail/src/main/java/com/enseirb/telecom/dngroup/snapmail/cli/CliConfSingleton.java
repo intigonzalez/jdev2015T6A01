@@ -26,7 +26,7 @@ public class CliConfSingleton {
 		if(mediahome_host==null)
 			mediahome_host = "http://localhost:9998";
 		if(publicAddr==null)
-			publicAddr = "127.0.0.1";
+			publicAddr = "0.0.0.0";
 		if(mediahome_port==null)
 			mediahome_port = "9998";
 		if(clamav_host==null)

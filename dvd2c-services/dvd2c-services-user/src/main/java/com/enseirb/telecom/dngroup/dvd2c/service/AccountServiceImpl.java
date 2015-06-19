@@ -101,21 +101,9 @@ public class AccountServiceImpl implements AccountService {
 	 * .String)
 	 */
 	@Override
-	public User findUserByUUID(UUID userUUID) throws NoSuchUserException {
+	public User findUserByUUID(UUID userUUID) {
 		User user = userRepository.findOne(userUUID);
-
-		if (user == null) {
-			throw new NoSuchUserException();
-		} else {
-			// User userXsd = new User();
-			// userXsd.setUserID(user.getEmail());
-			// userXsd.setFirstname(user.getFirstname());
-			// userXsd.setPassword(user.getEncryptedPassword());
-			// userXsd.setSurname(user.getSurname());
-			// userXsd.setBoxID(CliConfSingleton.boxID);
-			// userXsd.setUuid(user.getId().toString());
 			return user;
-		}
 	}
 
 	@Override

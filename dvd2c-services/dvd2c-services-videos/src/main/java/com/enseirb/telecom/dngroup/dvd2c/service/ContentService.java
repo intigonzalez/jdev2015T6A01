@@ -90,8 +90,6 @@ public interface ContentService {
 	public abstract Content createContent(String userID,
 			InputStream uploadedInputStream, String contentDisposition) throws IOException;
 
-
-
 	
 
 }

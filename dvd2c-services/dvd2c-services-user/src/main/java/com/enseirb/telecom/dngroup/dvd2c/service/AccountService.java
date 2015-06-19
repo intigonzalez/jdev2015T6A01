@@ -34,9 +34,8 @@ public interface AccountService {
 	 * get a user from local
 	 * @param userUUID the user id to get
 	 * @return the user
-	 * @throws NoSuchUserException 
 	 */
-	public abstract User findUserByUUID(UUID userUUID) throws NoSuchUserException;
+	public abstract User findUserByUUID(UUID userUUID);
 
 
 	/**

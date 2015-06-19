@@ -11,12 +11,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -90,11 +92,10 @@ public class SnapmailEndPoints {
 		 UUID uuid = UUID.fromString(auth.getName());
 		 auth=null; timer= 0; personalToken="";
 		 User user = null;
-		try {
-			user = uManager.findUserByUUID(uuid);
-		} catch (NoSuchUserException e) {
-			e.printStackTrace();
-		}
+		 user = uManager.findUserByUUID(uuid);
+			if (user == null) {
+				throw new WebApplicationException(Status.NOT_FOUND);
+			}
 		 HttpAuthenticationFeature feature = HttpAuthenticationFeature
 				 .basic(user.getEmail(), user.getEncryptedPassword());
 		Client client = ClientBuilder.newClient();

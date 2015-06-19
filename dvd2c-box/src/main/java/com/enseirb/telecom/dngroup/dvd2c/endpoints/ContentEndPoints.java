@@ -1,6 +1,5 @@
 package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -31,8 +30,6 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
@@ -42,7 +39,6 @@ import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
-import com.google.common.io.Files;
 
 // The Java class will be hosted at the URI path "/app/content"
 @Path("app/content")
@@ -55,7 +51,7 @@ public class ContentEndPoints {
 
 	@Inject
 	protected RelationService rManager;
-	
+
 	@Inject
 	protected AccountService uManager;
 
@@ -80,7 +76,7 @@ public class ContentEndPoints {
 		for (Content content : contents) {
 			rManager.getContentRole(content);
 		}
-		
+
 		return contents;
 	}
 
@@ -94,7 +90,8 @@ public class ContentEndPoints {
 	@Path("{contentsID}/metadata")
 	@RolesAllowed({ "authenticated", "other" })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Content getContentMetadata(@PathParam("contentsID") Integer contentsID) {
+	public Content getContentMetadata(
+			@PathParam("contentsID") Integer contentsID) {
 		String uuid = SecurityContextHolder.getContext().getAuthentication()
 				.getName();
 
@@ -156,13 +153,13 @@ public class ContentEndPoints {
 		}
 
 	}
-	
+
 	@GET
 	@Path("/unsecure/{contentsID}/{userId}")
-//	@RolesAllowed({ "authenticated", "other" })
+	// @RolesAllowed({ "authenticated", "other" })
 	@Produces({ MediaType.WILDCARD })
-	public Content getContent(@PathParam("contentsID") Integer contentsID, @PathParam("userId") String userID)
-			throws URISyntaxException {
+	public Content getContent(@PathParam("contentsID") Integer contentsID,
+			@PathParam("userId") String userID) throws URISyntaxException {
 		User user = null;
 		try {
 			user = uManager.findUserByEmail(userID);
@@ -173,11 +170,13 @@ public class ContentEndPoints {
 		Content content;
 		try {
 			content = cManager.getContent(contentsID);
-
-			if (content.getActorID().equals(uuid)) {
+			rManager.getContentRole(content);
+			if (content.getActorID().equals(uuid)
+					&& content.getMetadata().contains("%Unreferenced")){
 				URI uri = new URI(CliConfSingleton.publicAddr
 						+ content.getLink() + "/" + content.getName());
 				return content;
+
 			} else {
 				// No URL parameter idLanguage was sent
 				ResponseBuilder builder = Response
@@ -192,7 +191,7 @@ public class ContentEndPoints {
 		}
 
 	}
-	
+
 	// @POST
 	// @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	// public Response postVideo(Content content) {
@@ -210,7 +209,7 @@ public class ContentEndPoints {
 	 * @return
 	 * @throws URISyntaxException
 	 * @throws IOException
-	 * @throws NoSuchUserException 
+	 * @throws NoSuchUserException
 	 */
 	@POST
 	@RolesAllowed({ "other", "authenticated" })
@@ -224,23 +223,23 @@ public class ContentEndPoints {
 				.getName();
 
 		String fileName = fileDetail.getFileName();
-//		LOGGER.info("New file {}", fileDetail);
-//		String extension = Files.getFileExtension(fileName);
-//		MediaType fileMediaType = body.getMediaType();
-//		String fileTypeTemp = fileMediaType.toString();
-//		String[] fileType = fileTypeTemp.split("/");
-//
-//		File upload = File.createTempFile(UUID.randomUUID().toString(), "."
-//				+ extension, Files.createTempDir());
-//		Content content = cManager.createContent(uuid, uploadedInputStream,
-//				fileType, upload);
-//		// content.setLink(CliConfSingleton.publicAddr + content.getLink());
-//		// return content;
-//		// return Response.created(new
-//		// URI("app/content/"+content.getContentsID())).build();
-//		return Response.created(
-//				new URI(CliConfSingleton.publicAddr + "/api/app/content/"
-//						+ content.getContentsID())).build();
+		// LOGGER.info("New file {}", fileDetail);
+		// String extension = Files.getFileExtension(fileName);
+		// MediaType fileMediaType = body.getMediaType();
+		// String fileTypeTemp = fileMediaType.toString();
+		// String[] fileType = fileTypeTemp.split("/");
+		//
+		// File upload = File.createTempFile(UUID.randomUUID().toString(), "."
+		// + extension, Files.createTempDir());
+		// Content content = cManager.createContent(uuid, uploadedInputStream,
+		// fileType, upload);
+		// // content.setLink(CliConfSingleton.publicAddr + content.getLink());
+		// // return content;
+		// // return Response.created(new
+		// // URI("app/content/"+content.getContentsID())).build();
+		// return Response.created(
+		// new URI(CliConfSingleton.publicAddr + "/api/app/content/"
+		// + content.getContentsID())).build();
 		return postContent2(uploadedInputStream, fileName);
 
 	}
@@ -265,15 +264,15 @@ public class ContentEndPoints {
 			throws URISyntaxException, IOException {
 		String uuid = SecurityContextHolder.getContext().getAuthentication()
 				.getName();
-//		User user = null;
-//		try {
-//			user = uManager.findUserByEmail(userID);
-//		} catch (NoSuchUserException e1) {
-//
-//			e1.printStackTrace();
-//		}
-//		UUID uuid=user.getId();
-		
+		// User user = null;
+		// try {
+		// user = uManager.findUserByEmail(userID);
+		// } catch (NoSuchUserException e1) {
+		//
+		// e1.printStackTrace();
+		// }
+		// UUID uuid=user.getId();
+
 		LOGGER.debug("New local upload, Content-Disposition : "
 				+ contentDisposition);
 		try {

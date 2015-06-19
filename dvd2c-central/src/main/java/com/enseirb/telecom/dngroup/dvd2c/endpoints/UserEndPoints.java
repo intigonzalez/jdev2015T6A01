@@ -60,6 +60,28 @@ public class UserEndPoints {
 		return users;
 	}
 
+	/**
+	 * Find a list of users from their firstname
+	 * 
+	 * @param firstname
+	 * @return a list of user
+	 */
+	@GET
+	@Path("account/email/{email}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public User getUserFromMail(@PathParam("email") String email) {
+
+		User user;
+		try {
+			user = uManager.getUserFromEmail(email);
+			return user;
+		} catch (NoSuchUserException e) {
+			throw new WebApplicationException(Status.NO_CONTENT);
+
+		}
+
+	}
+
 	@GET
 	@Path("account/boxID/{boxID}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

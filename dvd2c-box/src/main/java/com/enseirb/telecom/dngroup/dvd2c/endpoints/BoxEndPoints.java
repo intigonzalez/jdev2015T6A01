@@ -158,7 +158,7 @@ public class BoxEndPoints {
 	 * @return
 	 */
 	@DELETE
-	@Path("relation/{relationId}")
+	@Path("relation/{userId}/{relationId}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response deleteFriend(@PathParam("userId") UUID userId,
 			@PathParam("relationId") UUID relationId) {
@@ -206,6 +206,7 @@ public class BoxEndPoints {
 		for (ActivityObjectExtand activityObjectExtand : a) {
 			try {
 				Content content = cManager.getContent(activityObjectExtand.getId());
+				content.setLink(CliConfSingleton.publicAddr + content.getLink());
 				contents.add(content);
 			} catch (NoContentException e) {
 				LOGGER.error("some content is null "

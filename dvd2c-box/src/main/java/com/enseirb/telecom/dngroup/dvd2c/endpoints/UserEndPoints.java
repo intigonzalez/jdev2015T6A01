@@ -130,14 +130,16 @@ public class UserEndPoints extends HttpServlet {
 	 */
 	@GET
 	@Path("/account/{userUUID}")
-	//@PreAuthorize("hasRole('USER')")
+	// @PreAuthorize("hasRole('USER')")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public User getUserByUUID(@PathParam("userUUID") UUID userUUID) {
-		try {
-			return uManager.findUserByUUID(userUUID).toXSDUser();
-		} catch (NoSuchUserException e) {
+		com.enseirb.telecom.dngroup.dvd2c.modeldb.User u;
+
+		u = uManager.findUserByUUID(userUUID);
+		if (u == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
+		return u.toXSDUser();
 	}
 
 	/**
@@ -150,21 +152,22 @@ public class UserEndPoints extends HttpServlet {
 	@GET
 	@Path("/properties/{propertyGroupName}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public PropertyGroups getUserProperties(@PathParam("propertyGroupName") String propertyGroupName) {
-		 UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
-		 .getAuthentication().getName());
-//		com.enseirb.telecom.dngroup.dvd2c.modeldb.User user = null;
-//		try {
-//			if(userID.contains("@")){
-//			user = uManager.findUserByEmail(userID);
-//			}else{
-//				user = uManager.findUserByUUID(UUID.fromString(userID));
-//			}
-//				
-//		} catch (NoSuchUserException e1) {
-//
-//			e1.printStackTrace();
-//		}
+	public PropertyGroups getUserProperties(
+			@PathParam("propertyGroupName") String propertyGroupName) {
+		UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+				.getAuthentication().getName());
+		// com.enseirb.telecom.dngroup.dvd2c.modeldb.User user = null;
+		// try {
+		// if(userID.contains("@")){
+		// user = uManager.findUserByEmail(userID);
+		// }else{
+		// user = uManager.findUserByUUID(UUID.fromString(userID));
+		// }
+		//
+		// } catch (NoSuchUserException e1) {
+		//
+		// e1.printStackTrace();
+		// }
 		PropertyGroups groups = new PropertyGroups();
 		groups.setName("Snapmail");
 		List<Property> props = uManager.getPropertiesForUser(uuid,
@@ -173,24 +176,24 @@ public class UserEndPoints extends HttpServlet {
 		return groups;
 	}
 
-/**
- * Change the Properties of the authenticated user
- * 
- * @param propertyGroups
- * @return Response
- */
+	/**
+	 * Change the Properties of the authenticated user
+	 * 
+	 * @param propertyGroups
+	 * @return Response
+	 */
 	@PUT
 	@Path("/properties")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postUserProps(PropertyGroups propertyGroups) {
-		 UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
-		 .getAuthentication().getName());
+		UUID uuid = UUID.fromString(SecurityContextHolder.getContext()
+				.getAuthentication().getName());
 
 		uManager.setPropertiesForUser(uuid, propertyGroups);
 		return Response.status(200).build();
 	}
-	
+
 	/**
 	 * Find a list of users from their firstname on server
 	 * 
@@ -205,7 +208,7 @@ public class UserEndPoints extends HttpServlet {
 		try {
 			return uManager.findUserByEmail(email).toXSDUser();
 		} catch (NoSuchUserException e) {
-			throw new WebApplicationException(Status.NOT_FOUND);
+			throw new WebApplicationException(Status.NO_CONTENT);
 		}
 	}
 
