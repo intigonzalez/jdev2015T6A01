@@ -27,6 +27,7 @@
     <module>dvd2c-model</module>
     <module>dvd2c-services</module>
     <module>incubator/snapmail</module>
+    <module>incubator/snapmailServer</module>
   </modules>
   <dependencyManagement>
     <dependencies>
