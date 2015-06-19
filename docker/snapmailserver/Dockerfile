@@ -13,5 +13,5 @@ EXPOSE 9997
 
 
 # get the lasted version of dvd2c-box
-ADD http://nexus.homeb.tv:8080/nexus/service/local/artifact/maven/redirect?r=snapshots&g=fr/enseirb-matmeca/telecom/t2/s8&a=snapmailserver&v=LATEST&c=jar-with-dependencies snapmailserver.jar
-CMD sleep 3 && java -jar snapmailserver.jar 
+ADD http://nexus.homeb.tv:8080/nexus/service/local/artifact/maven/redirect?r=snapshots&g=fr/enseirb-matmeca/telecom/t2/s8&a=snapmailServer&v=LATEST&c=jar-with-dependencies snapmailserver.jar
+CMD java -jar snapmailserver.jar 
