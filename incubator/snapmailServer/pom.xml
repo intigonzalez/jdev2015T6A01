@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
     <artifactId>dvd2c-parent</artifactId>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>0.8.0</version>
     <relativePath>../..</relativePath>
   </parent>
   <distributionManagement>
@@ -26,7 +26,7 @@
       <dependency>
         <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
         <artifactId>dvd2c-bom</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.8.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -70,7 +70,7 @@
     <dependency>
       <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
       <artifactId>dvd2c-model</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.8.0</version>
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>

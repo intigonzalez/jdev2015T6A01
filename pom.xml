@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
   <artifactId>dvd2c-parent</artifactId>
-  <version>0.8.0-SNAPSHOT</version>
+  <version>0.8.0</version>
   <packaging>pom</packaging>
   <distributionManagement>
     <repository>
@@ -34,7 +34,7 @@
       <dependency>
         <groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
         <artifactId>dvd2c-bom</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.8.0</version>
         <type>pom</type>
       </dependency>
     </dependencies>
