@@ -18,10 +18,10 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
  *
  */
 @Configuration
-@ComponentScan(basePackages = { "com.enseirb.telecom.dngroup.snapmail.server.conf",
-		"com.enseirb.telecom.dngroup.snapmail.server.service",
-		"com.enseirb.telecom.dngroup.snapmail.server.endpoints",
-		"com.enseirb.telecom.dngroup.snapmail.server"})
+@ComponentScan(basePackages = { "com.enseirb.telecom.dngroup.snapmail.conf",
+		"com.enseirb.telecom.dngroup.snapmail.service",
+		"com.enseirb.telecom.dngroup.snapmail.endpoints",
+		"com.enseirb.telecom.dngroup.snapmail"})
 public class SpringConfiguration {
 
 	@Bean

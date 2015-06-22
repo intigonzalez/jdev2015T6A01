@@ -129,7 +129,7 @@ public class SnapmailEndPoints extends HttpServlet {
 				+ "/api/oauth/box/" + userID);
 		String redirect = target.request().get(String.class);
 		try {
-			return Response.seeOther(new URI(redirect + "/index.html")).build();
+			return Response.seeOther(new URI(redirect + "/home.html#/friends")).build();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}

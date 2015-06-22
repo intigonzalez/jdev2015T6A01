@@ -146,6 +146,9 @@
         <resource>
           <directory>src/main/java/com/enseirb/telecom/dngroup/snapmail</directory>
     </resource>
+    <resource>
+          <directory>src/main/html</directory>
+    </resource>
 </resources>
     <plugins>
       <plugin>

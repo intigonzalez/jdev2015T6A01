@@ -50,7 +50,7 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 	public String getLinkFromBodyPart(InputStream inputStream, String filename,
 			String type, User user, List<String> recipients) throws IOException {
 		// nh: to extract in a dedicated service class
-		
+
 		try {
 			HttpAuthenticationFeature feature = HttpAuthenticationFeature
 					.basic(user.getUserID(), user.getPassword());
@@ -98,50 +98,34 @@ public class MediaHomeFacadeImpl implements MediaHomeFacade {
 						.request(MediaType.APPLICATION_XML_TYPE).get(
 								Content.class);
 				client1.close();
-				content.getMetadata().add("%Unreferenced");
-				content.setLink(content.getLink().replace(CliConfSingleton.mediahome_host, ""));
+
+				content.setLink(content.getLink().replace(
+						CliConfSingleton.mediahome_host, ""));
 
 				/**
 				 * Get UUID if the recipients have a Media@Home account
 				 */
 				Client clientuuid = ClientBuilder.newClient();
 				clientuuid.register(feature).register(MultiPartFeature.class);
-				User userbymail;		
+				User userbymail;
 				for (String email : recipients) {
 					target = clientuuid.target(CliConfSingleton.centralURL
 							+ "/api/app/account/email/" + email);
-					try{
-					userbymail = target.request(MediaType.APPLICATION_XML_TYPE).get(User.class);
-					} catch (WebApplicationException e) {
-						if (e.getResponse().getStatus() == 204);
-							continue;
-					}
+					userbymail = target.request(MediaType.APPLICATION_XML_TYPE)
+							.get(User.class);
+
+					if (userbymail == null) {
+						if (!content.getMetadata().contains("%Unreferenced")) {
+							content.getMetadata().add("%Unreferenced");
+						}
+						continue;
+					} else {
 						content.getMetadata().add("%" + userbymail.getUuid());
+					}
 				}
+
 				clientuuid.close();
-				// PropertyGroups originGroups = new PropertyGroups();
-				// originGroups.setName("origin");
-				//
-				// Property origin = new Property();
-				// origin.setKey("origin");
-				// origin.setValue("snapmail");
-				// originGroups.getProperty().add(origin);
-				//
-				// content.getPropertyGroups().add(originGroups);
-				//
-				// PropertyGroups recipientsGroups = new PropertyGroups();
-				// recipientsGroups.setName("emails");
-				//
-				// int i = 0;
-				// for (String email : recipients) {
-				// Property p = new Property();
-				// p.setKey(Integer.toString(i));
-				// p.setValue(email);
-				// recipientsGroups.getProperty().add(p);
-				// i++;
-				// }
-				//
-				// content.getPropertyGroups().add(recipientsGroups);
+
 				Client client2 = ClientBuilder.newClient();
 				client2.register(feature).register(MultiPartFeature.class);
 
