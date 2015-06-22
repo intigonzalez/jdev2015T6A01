@@ -9,6 +9,7 @@ box:
   links:
    - db
    - worker
+   - snapmailserver
 db:
   image: mysql:5.5
   environment:
@@ -38,4 +39,6 @@ snapmailserver:
   build: ../../snapmailserver
   ports:
    - "9997:9997"
+  links:
+   - box
 

@@ -16,4 +16,4 @@ RUN sudo apt-get install -y mysql-client
 
 # get the lasted version of dvd2c-box
 ADD http://nexus.homeb.tv:8080/nexus/service/local/artifact/maven/redirect?r=snapshots&g=com/enseirb/telecom/dngroup/dvd2c&a=dvd2c-box&v=LATEST&c=jar-with-dependencies dvd2c-box.jar
-CMD sleep 6 && java -Dorg.slf4j.simpleLogger.defaultLogLevel=info -jar dvd2c-box.jar --ip 0.0.0.0 -p 9998  --rabbit-host worker
+CMD sleep 10 && java -jar dvd2c-box.jar --ip 0.0.0.0 -p 9998  --rabbit-host worker
