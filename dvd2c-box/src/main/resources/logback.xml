@@ -11,7 +11,7 @@
 		</encoder>
 	</appender>
 
-	<logger name="com.enseirb.telecom.s9" level="DEBUG">
+	<logger name="com.enseirb.telecom.s9" level="INFO">
 
 
 	</logger>

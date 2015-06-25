@@ -12,7 +12,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -39,13 +38,6 @@ public class Main {
 	private static int getPort(int defaultPort) {
 		// grab port from environment, otherwise fall back to default port 9998
 		return CliConfSingleton.appPort;
-	}
-
-	private static URI getBaseApiURI() {
-
-		return UriBuilder.fromUri(
-				"http://" + CliConfSingleton.appHostName + ":"
-						+ CliConfSingleton.appPort).build();
 	}
 
 	private static final String BASE_PATH = "api";
@@ -149,7 +141,7 @@ public class Main {
 			}
 
 			LOGGER.info("Jersey app started with WADL available at {}",
-					getBaseApiURI() + "/api/application.wadl");
+					CliConfSingleton.getBaseURI() + "/api/application.wadl");
 
 			// wait for the server to die before we quit
 			Thread.currentThread().join();
@@ -157,133 +149,6 @@ public class Main {
 			System.out.println(ios.getMessage());
 		}
 	}
-
-	// protected static HttpServer startServer() throws IOException {
-	//
-	// ResourceConfig resources = new ResourceConfig();
-	// resources.packages("com.enseirb.telecom.dngroup.dvd2c.endpoints");
-	// resources.register(CORSResponseFilter.class);
-	// resources.register(MultiPartFeature.class);
-	// resources.register(JettisonFeature.class);
-	// /**
-	// * this two follow line is for security
-	// */
-	// resources.register(SecurityEntityFilteringFeature.class);
-	//
-	// resources.register(SecurityRequestFilter.class);
-	//
-	// // System.out.println("Starting grizzly2...");
-	// LOGGER.info("Starting grizzly2");
-	//
-	// LOGGER.info("wadl here -> /api/application.wadl");
-	//
-	// // return GrizzlyServerFactory.createHttpServer(BASE_URI,
-	// // resourceConfig);
-	// LOGGER.info("Send information to the server central ...");
-	// try {
-	// BoxService boxManager = new BoxServiceImpl(new BoxRepositoryMongo(
-	// "mediahome"));
-	// boxManager.updateBox();
-	//
-	// LOGGER.info("Sucess ");
-	// } catch (ProcessingException e) {
-	// LOGGER.error(
-	// "Error for send information to the server central. Is running ?",
-	// e);
-	// } catch (Exception e) {
-	// LOGGER.error("Error for send information to the server central.", e);
-	//
-	// }
-	//
-	// // WEB APP SETUP
-	// LOGGER.debug("WEB APP SETUP");
-	// // instead of using web.xml, we use java-based configuration
-	// WebappContext webappContext = new WebappContext("production");
-	//
-	// // add a listener to spring so that IoC can happen
-	// webappContext.addListener(ContextLoaderListener.class);
-	//
-	// // specify that spring should be configured with annotations
-	// webappContext.addContextInitParameter(
-	// ContextLoader.CONTEXT_CLASS_PARAM,
-	// AnnotationConfigWebApplicationContext.class.getName());
-	//
-	// // and where spring should find its configuration
-	// webappContext.addContextInitParameter(
-	// ContextLoader.CONFIG_LOCATION_PARAM,
-	// SpringConfiguration.class.getName());
-	// // attache the jersey servlet to this context
-	// ServletRegistration jerseyServlet = webappContext.addServlet(
-	// "jersey-servlet", ServletContainer.class);
-	//
-	// // configure it with extern configuration class
-	// jerseyServlet.setInitParameter("javax.ws.rs.Application",
-	// RestConfiguration.class
-	// .getName());
-	//
-	// HttpServer httpServer =
-	// GrizzlyHttpServerFactory.createHttpServer(getBaseURI(),
-	// resources);
-	//
-	// httpServer.getServerConfiguration().addHttpHandler(
-	// new StaticHttpHandler("/var/www/html/videos"),
-	// "/videos");
-	// httpServer.getServerConfiguration().addHttpHandler(
-	// new StaticHttpHandler("/var/www/html/pictures"),
-	// "/pictures");
-	// httpServer.getServerConfiguration().addHttpHandler(
-	// new StaticHttpHandler("/var/www/html/cloud"),
-	// "/cloud");
-	//
-	// httpServer.getServerConfiguration().addHttpHandler(
-	// new CLStaticHttpHandler(
-	// Main.class.getClassLoader(), "/"));
-	//
-	// // configure a network listener with our configuration
-	// NetworkListener listener = new NetworkListener("grizzly2",
-	// CliConfSingleton.ip, CliConfSingleton.port);
-	// httpServer.addListener(listener);
-	//
-	// // finally, deploy the webapp
-	// webappContext.deploy(httpServer);
-	//
-	//
-	// return httpServer;
-	// }
-
-	// public static void main(String[] args) throws IOException,
-	// InterruptedException {
-	// // Properties
-	//
-	// initConfSingleton(args);
-	//
-	// LOGGER.info("the box ID is : {}", CliConfSingleton.boxID);
-	//
-	// // Grizzly 2 initialization
-	// new Thread(new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	//
-	// try {
-	//
-	// HttpServer httpServer = startServer();
-	//
-	// } catch (IOException e) {
-	// throw Throwables.propagate(e);
-	// }
-	// }
-	// }).start();
-	//
-	// try {
-	// Thread.currentThread().join();
-	// } catch (InterruptedException e) {
-	// Thread.currentThread().interrupt();
-	// throw e;
-	// }
-	//
-	// // httpServer.stop();
-	// }
 
 	/**
 	 * @param args
@@ -294,16 +159,12 @@ public class Main {
 					CliConfiguration.class, args);
 
 			CliConfSingleton.boxID = cliconf.getBoxID();
-			CliConfSingleton.centralURL = cliconf.getCentralURL();
 			CliConfSingleton.contentPath = cliconf.getContentPath();
 			CliConfSingleton.appHostName = cliconf.getIp();
 			CliConfSingleton.publicAddr = cliconf.getPublicAddr();
-			// CliConfSingleton.dbHostname = cliconf.getDbHostname();
-			// CliConfSingleton.dbPort = cliconf.getDbPort();
 			CliConfSingleton.rabbitHostname = cliconf.getRabbitHost();
 			CliConfSingleton.rabbitPort = cliconf.getRabbitPort();
 			CliConfSingleton.appPort = cliconf.getPort();
-			CliConfSingleton.snapmail_host = cliconf.getSnapmail_Host();
 			CliConfSingleton.database_password = cliconf.getDatabasePassword();
 			CliConfSingleton.database_url = cliconf.getDatabaseURL();
 			CliConfSingleton.database_username = cliconf.getDatabaseUserName();
@@ -342,12 +203,7 @@ public class Main {
 			if (CliConfSingleton.publicAddr == null)
 				CliConfSingleton.publicAddr = ApplicationContext
 						.getProperties().getProperty("publicAddr");
-			// if (CliConfSingleton.dbHostname == null)
-			// CliConfSingleton.dbHostname = ApplicationContext
-			// .getProperties().getProperty("dbHostname");
-			// if (CliConfSingleton.dbPort == null)
-			// CliConfSingleton.dbPort = Integer.valueOf(ApplicationContext
-			// .getProperties().getProperty("dbPort"));
+
 			if (CliConfSingleton.rabbitHostname == null)
 				CliConfSingleton.rabbitHostname = ApplicationContext
 						.getProperties().getProperty("rabbitHostname");
@@ -406,28 +262,14 @@ interface CliConfiguration {
 	@Option(longName = "content-path", description = "path of content", defaultToNull = true)
 	String getContentPath();
 
-	@Option(shortName = "c", longName = "central-addr", description = "the http addr of central server", defaultToNull = true)
-	String getCentralURL();
-
 	@Option(shortName = "a", longName = "public-addr", description = "the http addr of curent box", defaultToNull = true)
 	String getPublicAddr();
-
-	// @Option(longName = "db-hostname", description =
-	// "the hostname of database", defaultToNull = true)
-	// String getDbHostname();
-	//
-	// @Option(longName = "db-port", description = "the port of database",
-	// defaultToNull = true)
-	// Integer getDbPort();
 
 	@Option(longName = "rabbit-host", description = "the host of rabbitMQ", defaultToNull = true)
 	String getRabbitHost();
 
 	@Option(longName = "rabbit-port", description = "the port of rabbitMQ", defaultToNull = true)
 	Integer getRabbitPort();
-
-	@Option(longName = "snapmail_host", description = "URL of Snapmail_Host", defaultToNull = true)
-	String getSnapmail_Host();
 
 	@Option(longName = "database_url", description = "The url of the database (jdbc:mysql://localhost:3306/mediahome)", defaultToNull = true)
 	String getDatabaseURL();

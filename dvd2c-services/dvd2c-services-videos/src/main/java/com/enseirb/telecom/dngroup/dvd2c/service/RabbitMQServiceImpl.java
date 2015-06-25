@@ -13,7 +13,7 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 
 @Service
-@Deprecated
+	@Deprecated
 public class RabbitMQServiceImpl implements MessageBrokerService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RabbitMQServiceImpl.class);

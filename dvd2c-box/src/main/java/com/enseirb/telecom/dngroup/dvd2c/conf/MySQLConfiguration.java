@@ -27,9 +27,6 @@ import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
 class MySQLConfiguration {
 
 	private static final String PROPERTY_NAME_DATABASE_DRIVER = "com.mysql.jdbc.Driver";
-//	private static final String PROPERTY_NAME_DATABASE_PASSWORD = "mediahome";
-//	private static final String PROPERTY_NAME_DATABASE_URL = "jdbc:mysql://localhost:3306/mediahome";
-//	private static final String PROPERTY_NAME_DATABASE_USERNAME = "mediahome";
 
 	private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "hibernate.dialect";
 	private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "hibernate.show_sql";

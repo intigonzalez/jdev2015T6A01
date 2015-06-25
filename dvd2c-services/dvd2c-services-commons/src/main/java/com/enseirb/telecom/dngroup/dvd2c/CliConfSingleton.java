@@ -1,5 +1,9 @@
 package com.enseirb.telecom.dngroup.dvd2c;
 
+import java.net.URI;
+
+import javax.ws.rs.core.UriBuilder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,4 +62,16 @@ public class CliConfSingleton {
 			database_username = "mediahome";
 
 	}
+
+	public static URI getBaseURI() {
+
+		return UriBuilder.fromUri("http://" + appHostName + ":" + appPort)
+				.build();
+	}
+
+	public static URI getBaseApiURI() {
+
+		return UriBuilder.fromUri(getBaseURI()).path("api").build();
+	}
+
 }

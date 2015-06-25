@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.net.URI;
 //import java.nio.file.Files;
 //import java.nio.file.Path;
 //import java.nio.file.StandardCopyOption;
@@ -43,19 +44,13 @@ public class ContentServiceImpl implements ContentService {
 			.getLogger(ContentServiceImpl.class);
 	@Inject
 	DocumentRepository documentRepository;
+
 	@Inject
 	MessageBrokerService rabbitMq;
 
 	static final Integer SUCCESS = 1;
 	static final Integer FAILURE = -1;
 	static final Integer INPROGRES = 0;
-
-	// private RequestUserService requetUserService = new
-	// RequestUserServiceImpl();
-
-	// public ContentServiceImpl() {
-	//
-	// }
 
 	@Override
 	public boolean contentExist(Integer contentsID) {
@@ -87,29 +82,6 @@ public class ContentServiceImpl implements ContentService {
 		}
 	}
 
-	// @Override
-	// public Content createContent(String userID,
-	// InputStream uploadedInputStream, String[] fileType, File upload)
-	// throws IOException {
-	// LOGGER.debug("New file write on system {}", upload.getAbsolutePath());
-	// writeToFile(uploadedInputStream, upload);
-	// LOGGER.debug("New file uploaded with the type {}", fileType[0]);
-	// Content content = new Content();
-	// content.setName(upload.getName());
-	// content.setActorID(userID);
-	// content.setStatus("In progress");
-	// content.setType(fileType[0]);
-	// UUID uuid = UUID.randomUUID();
-	// // content.setContentsID(uuid.toString().replace("-", ""));
-	// String link = "/videos/" + uuid.toString();
-	// content.setLink(link);
-	// long unixTime = System.currentTimeMillis() / 1000L;
-	// content.setUnixTime(unixTime);
-	//
-	// content = createContent(content, upload.getAbsolutePath());
-	// return content;
-	// }
-	//
 	@Override
 	public Content createContent(String userID,
 			InputStream uploadedInputStream, String contentDisposition)
@@ -117,19 +89,14 @@ public class ContentServiceImpl implements ContentService {
 
 		String filename;
 		String[] tmp = null;
-		if (contentDisposition != null)
-			tmp = contentDisposition.split("filename=");
 
-		if (tmp != null && tmp.length >= 2)
-			filename = tmp[1];
-		else
-			filename = userID;
+		filename = "original";
 
 		// Temporary until we find a better way to deal with filenames
 		filename = filename.replace(" ", "_");
 		UUID uuid = UUID.randomUUID();
 		File tempFile = File.createTempFile(uuid.toString(), null);
-		LOGGER.debug("Temporary file is here {}", tempFile.getAbsolutePath());
+		LOGGER.info("Temporary file is here {}", tempFile.getAbsolutePath());
 
 		writeToFile(uploadedInputStream, tempFile);
 		//
@@ -187,7 +154,7 @@ public class ContentServiceImpl implements ContentService {
 		try {
 			Files.move(tempFile, newFile);
 			LOGGER.debug("File moved");
-			content = createContent(content, newFile.getAbsolutePath());
+			content = createWorkTask(content, CliConfSingleton.getBaseApiURI());
 			return content;
 		} catch (IOException e) {
 			LOGGER.error("Can not create the file are you corect right ?");
@@ -196,7 +163,7 @@ public class ContentServiceImpl implements ContentService {
 
 	}
 
-	protected Content createContent(Content content, String srcfile)
+	protected Content createWorkTask(Content content, URI resourceURI)
 			throws IOException {
 		Document d = documentRepository.save(new Document(content));
 		switch (content.getType()) {
@@ -205,8 +172,8 @@ public class ContentServiceImpl implements ContentService {
 				Task task = new Task();
 				task.setTask("adaptation.commons.ddo");
 				task.setId(d.getId().toString());
-				task.getArgs().add(srcfile);
-				task.getArgs().add(content.getLink());
+				task.getArgs().add(
+						resourceURI.toString() + "/content/" + d.getId());
 
 				XStream xstream = new XStream(
 						new JsonHierarchicalStreamDriver() {
@@ -228,8 +195,9 @@ public class ContentServiceImpl implements ContentService {
 				Task task = new Task();
 				task.setTask("adaptation.commons.image_processing");
 				task.setId(d.getId().toString());
-				task.getArgs().add(srcfile);
-				task.getArgs().add(content.getLink());
+				task.getArgs().add(
+						resourceURI.toString() + "/content/"
+								+ content.getContentsID());
 
 				XStream xstream = new XStream(
 						new JsonHierarchicalStreamDriver() {
@@ -250,11 +218,6 @@ public class ContentServiceImpl implements ContentService {
 			LOGGER.info("Content without processing");
 			break;
 		}
-		// Initialise with public authorization by default !
-		// Authorization authorization = new Authorization();
-		// authorization.setGroupID(0);
-		// authorization.getAction().add("action");
-		// content.getAuthorization().add(authorization);
 
 		return d.toContent();
 	}
@@ -272,7 +235,9 @@ public class ContentServiceImpl implements ContentService {
 
 		try {
 			// NHE: we are not in C
+
 			ByteStreams.copy(uploadedInputStream, new FileOutputStream(dest));
+
 		} catch (IOException e) {
 
 			LOGGER.error("can not create file ", e);
@@ -301,61 +266,6 @@ public class ContentServiceImpl implements ContentService {
 		documentRepository.delete(contentsID);
 
 	}
-
-	// public List<Content> getAllContent(UUID userID, Contact relation) {
-	// // List that will be return.
-	// List<Content> listContent = new ArrayList<Content>();
-	//
-	// // Get all the content the UserID stores
-	// Iterable<Document> content =
-	// documentRepository.findByActorUUID(userID);// FromUser(userID);
-	//
-	//
-	// try {
-	// while (content.hasNext()) { // For each content
-	// Document document = content.next();
-	// search:
-	//
-	// if ((document.getActorId() != null)
-	// && (document.getActorId().equals(userID))) {
-	// // For each group the relation belongs to
-	// // RBAC: fix
-	// // for (int i = 0; i < relation.getRole().size(); i++) {
-	// // if (contentRepositoryObject.getMetadata() != null) {
-	// // if (contentRepositoryObject.getMetadata().size() == 0) {
-	// //
-	// // break search;
-	// // }
-	// // }
-	// // for (int j = 0; j < contentRepositoryObject
-	// // .getMetadata().size(); j++) {
-	// //
-	// // if (relation
-	// // .getRole()
-	// // .get(i)
-	// // .equals(contentRepositoryObject
-	// // .getMetadata().get(j))) {
-	// // contentRepositoryObject.getMetadata().clear();
-	// // contentRepositoryObject
-	// // .setLink(CliConfSingleton.publicAddr
-	// // + contentRepositoryObject
-	// // .getLink());
-	// // listContent.add(contentRepositoryObject
-	// // .toContent());
-	// // break search;
-	// // } else {
-	// // LOGGER.debug("Group is not the same. ");
-	// // }
-	// // }
-	// // }
-	// }
-	// }
-	// } catch (Exception e) {
-	// LOGGER.error("error for get contents", e);
-	// }
-	//
-	// return listContent;
-	// }
 
 	@Override
 	public void updateContent(String contentsID, Integer status) {

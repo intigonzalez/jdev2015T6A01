@@ -1,7 +1,12 @@
 package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -24,6 +29,7 @@ import javax.ws.rs.core.NoContentException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -39,9 +45,10 @@ import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
+import com.google.common.io.ByteStreams;
 
 // The Java class will be hosted at the URI path "/app/content"
-@Path("app/content")
+@Path("content")
 public class ContentEndPoints {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ContentEndPoints.class);
@@ -125,31 +132,35 @@ public class ContentEndPoints {
 	 */
 	@GET
 	@Path("{contentsID}")
-	@RolesAllowed({ "authenticated", "other" })
 	@Produces({ MediaType.WILDCARD })
 	public Response getContent(@PathParam("contentsID") Integer contentsID)
 			throws URISyntaxException {
-		String uuid = SecurityContextHolder.getContext().getAuthentication()
-				.getName();
+
 		Content content;
 		try {
 			content = cManager.getContent(contentsID);
+			File original = new File("/var/www/html" + content.getLink()
+					+ "/original");
 
-			if (content.getActorID().equals(uuid)) {
-				URI uri = new URI(CliConfSingleton.publicAddr
-						+ content.getLink() + "/" + content.getName());
-				return Response.seeOther(uri).build();
-			} else {
-				// No URL parameter idLanguage was sent
-				ResponseBuilder builder = Response
-						.status(Response.Status.FORBIDDEN);
-				builder.entity("This content doesn't belong to you ! ");
-				Response response = builder.build();
-				throw new WebApplicationException(response);
-			}
+			final FileInputStream fis = new FileInputStream(original);
+
+			return Response.ok(new StreamingOutput() {
+
+				@Override
+				public void write(OutputStream output) throws IOException,
+						WebApplicationException {
+					ByteStreams.copy(fis, output);
+					fis.close();
+
+				}
+			}, MediaType.APPLICATION_OCTET_STREAM_TYPE).build();
+
 		} catch (NoContentException e) {
 			throw new WebApplicationException(e.getLocalizedMessage(),
 					Status.NO_CONTENT);
+		} catch (FileNotFoundException e) {
+			throw new WebApplicationException(e.getLocalizedMessage(),
+					Status.NOT_FOUND);
 		}
 
 	}
@@ -172,7 +183,7 @@ public class ContentEndPoints {
 			content = cManager.getContent(contentsID);
 			rManager.getContentRole(content);
 			if (content.getActorID().equals(uuid)
-					&& content.getMetadata().contains("%Unreferenced")){
+					&& content.getMetadata().contains("%Unreferenced")) {
 				URI uri = new URI(CliConfSingleton.publicAddr
 						+ content.getLink() + "/" + content.getName());
 				return content;
@@ -262,16 +273,7 @@ public class ContentEndPoints {
 	public Response postContent2(InputStream iS,
 			@HeaderParam("Content-Disposition") String contentDisposition)
 			throws URISyntaxException, IOException {
-		String uuid = SecurityContextHolder.getContext().getAuthentication()
-				.getName();
-		// User user = null;
-		// try {
-		// user = uManager.findUserByEmail(userID);
-		// } catch (NoSuchUserException e1) {
-		//
-		// e1.printStackTrace();
-		// }
-		// UUID uuid=user.getId();
+		String uuid = UUID.randomUUID().toString();
 
 		LOGGER.debug("New local upload, Content-Disposition : "
 				+ contentDisposition);
@@ -283,7 +285,7 @@ public class ContentEndPoints {
 			LOGGER.debug("Content created :" + CliConfSingleton.publicAddr
 					+ "/api/app/content/" + content.getContentsID());
 			return Response.created(
-					new URI(CliConfSingleton.publicAddr + "/api/app/content/"
+					new URI(CliConfSingleton.getBaseApiURI() + "/content/"
 							+ content.getContentsID())).build();
 		} catch (IOException | SecurityException e) {
 			throw e;
