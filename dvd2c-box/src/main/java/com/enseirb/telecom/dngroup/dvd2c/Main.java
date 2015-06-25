@@ -74,10 +74,7 @@ public class Main {
 							ContextLoader.CONFIG_LOCATION_PARAM,
 							com.enseirb.telecom.dngroup.dvd2c.conf.SpringConfiguration.class
 									.getName());
-			webappContext.addFilter("springSecurityFilterChain",
-					new DelegatingFilterProxy("springSecurityFilterChain"))
-					.addMappingForUrlPatterns(null, false, "/*");
-
+			
 			// attache the jersey servlet to this context
 			ServletRegistration jerseyServlet = webappContext.addServlet(
 					"jersey-servlet", ServletContainer.class);

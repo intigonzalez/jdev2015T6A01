@@ -3,7 +3,6 @@ package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,11 +14,9 @@ import java.util.UUID;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -27,25 +24,20 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NoContentException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.UriBuilder;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
-import com.enseirb.telecom.dngroup.dvd2c.exception.NoSuchUserException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
-import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
-import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
-import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ThridPartyStorageService;
 import com.google.common.io.ByteStreams;
 
@@ -58,72 +50,10 @@ public class ContentEndPoints {
 	@Inject
 	protected ContentService cManager;
 
-	@Inject
-	protected RelationService rManager;
 
-	@Inject
-	protected AccountService uManager;
 
-	// ContentService uManager = new ContentServiceImpl(
-	// new ContentRepositoryMongo(), new RabbitMQServer());
 
-	/**
-	 * Get all contents for a user. This request only called by videos owners
-	 * 
-	 * @param userID
-	 * @return Content list
-	 */
-	@GET
-	@RolesAllowed("other")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<Content> getAllContentsFromUser() {
-		String uuid = SecurityContextHolder.getContext().getAuthentication()
-				.getName();
-
-		List<Content> contents = cManager.getAllContentsFromUser(UUID
-				.fromString(uuid));
-		for (Content content : contents) {
-			rManager.getContentRole(content);
-		}
-
-		return contents;
-	}
-
-	/**
-	 * Get a specific content from the owner
-	 * 
-	 * @param userID
-	 * @return Content list
-	 */
-	@GET
-	@Path("{contentsID}/metadata")
-	@RolesAllowed({ "authenticated", "other" })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Content getContentMetadata(
-			@PathParam("contentsID") Integer contentsID) {
-		String uuid = SecurityContextHolder.getContext().getAuthentication()
-				.getName();
-
-		Content content;
-		try {
-			content = cManager.getContent(contentsID);
-			if (content.getActorID().equals(uuid)) {
-				content.setLink(CliConfSingleton.publicAddr + content.getLink());
-				return content;
-			} else {
-				// No URL parameter idLanguage was sent
-				ResponseBuilder builder = Response
-						.status(Response.Status.FORBIDDEN);
-				builder.entity("This content doesn't belong to you ! ");
-				Response response = builder.build();
-				throw new WebApplicationException(response);
-			}
-		} catch (NoContentException e) {
-			throw new WebApplicationException(e.getLocalizedMessage(),
-					Status.NO_CONTENT);
-		}
-
-	}
+	
 
 	/**
 	 * Get a specific content from the owner
@@ -190,9 +120,8 @@ public class ContentEndPoints {
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail,
 			@FormDataParam("file") FormDataBodyPart body)
-			throws URISyntaxException, IOException, NoSuchUserException {
-		String uuid = SecurityContextHolder.getContext().getAuthentication()
-				.getName();
+			throws URISyntaxException, IOException {
+		String uuid = "anonymous";
 
 		String fileName = fileDetail.getFileName();
 		// LOGGER.info("New file {}", fileDetail);
@@ -310,69 +239,9 @@ public class ContentEndPoints {
 	// return Response.status(javax.ws.rs.core.Response.Status.OK).build();
 	// }
 
-	/**
-	 * Update information for the video
-	 * 
-	 * @param content
-	 *            the content
-	 * @param contentsID
-	 *            the id of the content
-	 * @return
-	 */
-	@PUT
-	@RolesAllowed({ "authenticated", "other" })
-	@Path("{contentsID}")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response putContent(Content content,
-			@PathParam("contentsID") Integer contentsID) {
-		String uuid = SecurityContextHolder.getContext().getAuthentication()
-				.getName();
-		if (!content.getActorID().equals(uuid)) {
-			return Response.status(Status.FORBIDDEN).build();
-		}
+	
 
-		// TODO: need to check the authentication of the user
-		content.setContentsID(contentsID);
-		// modify the content
-		if (cManager.contentExist(content.getContentsID()) == true) {
-			cManager.saveContent(content);
-			rManager.setContentRole(content);
-			return Response.status(200).build();
-		} else {
-			return Response.status(409).build();
-		}
-
-	}
-
-	/**
-	 * delete the contents with contentsID
-	 * 
-	 * @param contentsID
-	 *            the contentsID to delete
-	 * @return
-	 */
-	@DELETE
-	@RolesAllowed("other")
-	@Path("{contentsID}")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response deleteContent(@PathParam("contentsID") Integer contentsID) {
-		String uuid = SecurityContextHolder.getContext().getAuthentication()
-				.getName();
-
-		try {
-			Content contents = cManager.getContent(contentsID);
-			if (contents.getActorID().equals(uuid)) {
-				cManager.deleteContent(contentsID);
-				rManager.deleteActivityObject(contentsID);
-				return Response.status(200).build();
-			} else
-				throw new WebApplicationException(Status.FORBIDDEN);
-		} catch (NoContentException e) {
-			throw new WebApplicationException(e.getLocalizedMessage(),
-					Status.NO_CONTENT);
-		}
-
-	}
+	
 
 	@POST
 	@Path("{contentId}")
