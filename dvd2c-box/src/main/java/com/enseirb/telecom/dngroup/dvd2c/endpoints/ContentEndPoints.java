@@ -27,6 +27,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NoContentException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
@@ -45,6 +46,7 @@ import com.enseirb.telecom.dngroup.dvd2c.modeldb.User;
 import com.enseirb.telecom.dngroup.dvd2c.service.AccountService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
 import com.enseirb.telecom.dngroup.dvd2c.service.RelationService;
+import com.enseirb.telecom.dngroup.dvd2c.service.ThridPartyStorageService;
 import com.google.common.io.ByteStreams;
 
 // The Java class will be hosted at the URI path "/app/content"
@@ -165,49 +167,8 @@ public class ContentEndPoints {
 
 	}
 
-	@GET
-	@Path("/unsecure/{contentsID}/{userId}")
-	// @RolesAllowed({ "authenticated", "other" })
-	@Produces({ MediaType.WILDCARD })
-	public Content getContent(@PathParam("contentsID") Integer contentsID,
-			@PathParam("userId") String userID) throws URISyntaxException {
-		User user = null;
-		try {
-			user = uManager.findUserByEmail(userID);
-		} catch (NoSuchUserException e1) {
-			e1.printStackTrace();
-		}
-		String uuid = user.getId().toString();
-		Content content;
-		try {
-			content = cManager.getContent(contentsID);
-			rManager.getContentRole(content);
-			if (content.getActorID().equals(uuid)
-					&& content.getMetadata().contains("%Unreferenced")) {
-				URI uri = new URI(CliConfSingleton.publicAddr
-						+ content.getLink() + "/" + content.getName());
-				return content;
+	
 
-			} else {
-				// No URL parameter idLanguage was sent
-				ResponseBuilder builder = Response
-						.status(Response.Status.FORBIDDEN);
-				builder.entity("This content doesn't belong to you ! ");
-				Response response = builder.build();
-				throw new WebApplicationException(response);
-			}
-		} catch (NoContentException e) {
-			throw new WebApplicationException(e.getLocalizedMessage(),
-					Status.NO_CONTENT);
-		}
-
-	}
-
-	// @POST
-	// @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	// public Response postVideo(Content content) {
-	// return Response.status(Status.SERVICE_UNAVAILABLE).build();
-	// }
 
 	/**
 	 * post a file on the box for the userID
@@ -290,6 +251,30 @@ public class ContentEndPoints {
 		} catch (IOException | SecurityException e) {
 			throw e;
 		}
+	}
+
+	@Inject
+	ThridPartyStorageService tps;
+
+	@POST
+	@Path("{contentId}/{resolution}")
+	@Consumes(MediaType.WILDCARD)
+	public Response postNewResolution(@PathParam("contentId") String contentId,
+			@PathParam("resolution") String resolution, InputStream iS,
+			@HeaderParam("Content-Disposition") String contentDisposition)
+			throws URISyntaxException, IOException {
+
+		List<URI> altUri = tps.generateRedirectURUri(contentId);
+		if (altUri != null && altUri.size() > 0) {
+			return Response.temporaryRedirect(
+					UriBuilder.fromUri(altUri.get(0)).path(resolution).build())
+					.build();
+
+		} else {
+			throw new WebApplicationException(
+					"No Thirds Party Storage Provider registered", 404);
+		}
+
 	}
 
 	// @POST
@@ -392,7 +377,7 @@ public class ContentEndPoints {
 	@POST
 	@Path("{contentId}")
 	public Response postNewVersionOfContent(
-			@PathParam("contentId") String contentId,InputStream is) {
+			@PathParam("contentId") String contentId, InputStream is) {
 
 		throw new WebApplicationException(500);
 	}

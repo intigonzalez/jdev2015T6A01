@@ -1,7 +1,6 @@
 package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
@@ -18,7 +17,6 @@ import com.enseirb.telecom.dngroup.dvd2c.modeldb.ThirdPartyConfiguration;
 import com.enseirb.telecom.dngroup.dvd2c.repository.ThirdPartyStorageConfigRepository;
 import com.enseirb.telecom.dngroup.dvd2c.rest.model.ThirdPartyStorage;
 import com.enseirb.telecom.dngroup.dvd2c.service.ThridPartyStorageService;
-import com.google.gson.Gson;
 
 @Path("thirdpartystorage")
 public class ThridPartyStorageEndPoint {
