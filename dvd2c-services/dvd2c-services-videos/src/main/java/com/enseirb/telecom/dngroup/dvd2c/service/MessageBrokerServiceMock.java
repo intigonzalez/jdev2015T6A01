@@ -20,6 +20,12 @@ public class MessageBrokerServiceMock implements MessageBrokerService {
 
 	}
 
+	@Override
+	public void setupResultQueue() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 
 }

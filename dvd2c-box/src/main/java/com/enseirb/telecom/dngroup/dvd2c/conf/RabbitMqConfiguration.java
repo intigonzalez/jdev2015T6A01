@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,12 @@ import com.rabbitmq.client.Channel;
 public class RabbitMqConfiguration {
 
 	private String QUEUE_NAME = RabbitMQServiceImpl.QUEUE_NAME;
+	
+	@Bean
+	@Inject
+	public RabbitAdmin getAdmin(ConnectionFactory cf) {
+		return new RabbitAdmin(cf);
+	}
 
 	@Bean
 	@Inject
