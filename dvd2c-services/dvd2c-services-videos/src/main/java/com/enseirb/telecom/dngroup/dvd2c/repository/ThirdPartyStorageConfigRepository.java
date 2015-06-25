@@ -7,4 +7,7 @@ import com.enseirb.telecom.dngroup.dvd2c.modeldb.ThirdPartyConfiguration;
 
 public interface ThirdPartyStorageConfigRepository extends CrudRepository<ThirdPartyConfiguration, Integer>{
 
+	
+	public ThirdPartyConfiguration findByBaseUrl(String uri);
+	
 }

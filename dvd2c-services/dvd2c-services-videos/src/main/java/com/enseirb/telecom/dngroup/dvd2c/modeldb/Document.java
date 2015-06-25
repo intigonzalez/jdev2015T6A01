@@ -1,6 +1,7 @@
 package com.enseirb.telecom.dngroup.dvd2c.modeldb;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.*;
@@ -109,8 +110,19 @@ public class Document extends ActivityObject implements Serializable {
 		content.setLink(this.getFileLink());
 		content.setPreviewLink(this.getFilePreviewLink());
 		content.setStatus(this.getFileProcessing());
-		
+
 		return content;
+	}
+
+	@OneToMany(mappedBy = "document")
+	private List<DocumentAlternative> documentAlternative;
+
+	public List<DocumentAlternative> getDocumentAlternative() {
+		return documentAlternative;
+	}
+
+	public void setDocumentAlternative(List<DocumentAlternative> documentAlternative) {
+		this.documentAlternative = documentAlternative;
 	}
 
 }

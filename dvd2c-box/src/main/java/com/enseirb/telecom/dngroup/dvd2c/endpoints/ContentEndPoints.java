@@ -9,14 +9,15 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
-import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -24,47 +25,59 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NoContentException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.ext.MessageBodyReader;
+import javax.xml.bind.annotation.XmlRootElement;
 
+import jersey.repackaged.com.google.common.collect.Collections2;
+
+import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.jvnet.mimepull.MIMEPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
+import com.enseirb.telecom.dngroup.dvd2c.exception.AlternativeStorageException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
+import com.enseirb.telecom.dngroup.dvd2c.model.Resolution;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
-import com.enseirb.telecom.dngroup.dvd2c.service.ThridPartyStorageService;
+import com.google.common.base.Predicate;
 import com.google.common.io.ByteStreams;
+import com.google.gson.Gson;
 
-// The Java class will be hosted at the URI path "/app/content"
 @Path("content")
 public class ContentEndPoints {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ContentEndPoints.class);
 
 	@Inject
-	protected ContentService cManager;
+	ContentService cManager;
 
+	@GET
+	@Path("{contentsID}/metadata")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Content getContentMetadata(
+			@PathParam("contentsID") Integer contentsID)
+			throws URISyntaxException {
 
+		try {
+			return cManager.getContent(contentsID);
+		} catch (NoContentException e) {
+			throw new WebApplicationException(404);
+		}
 
+	}
 
-	
-
-	/**
-	 * Get a specific content from the owner
-	 * 
-	 * @param userID
-	 * @return Content list
-	 * @throws URISyntaxException
-	 */
 	@GET
 	@Path("{contentsID}")
-	@Produces({ MediaType.WILDCARD })
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getContent(@PathParam("contentsID") Integer contentsID)
 			throws URISyntaxException {
 
@@ -76,16 +89,19 @@ public class ContentEndPoints {
 
 			final FileInputStream fis = new FileInputStream(original);
 
-			return Response.ok(new StreamingOutput() {
+			return Response
+					.ok(new StreamingOutput() {
 
-				@Override
-				public void write(OutputStream output) throws IOException,
-						WebApplicationException {
-					ByteStreams.copy(fis, output);
-					fis.close();
+						@Override
+						public void write(OutputStream output)
+								throws IOException, WebApplicationException {
+							ByteStreams.copy(fis, output);
+							fis.close();
 
-				}
-			}, MediaType.APPLICATION_OCTET_STREAM_TYPE).build();
+						}
+					}, MediaType.APPLICATION_OCTET_STREAM_TYPE)
+					.header("content-disposition",
+							"attachment; filename = original.mp4").build();
 
 		} catch (NoContentException e) {
 			throw new WebApplicationException(e.getLocalizedMessage(),
@@ -97,83 +113,95 @@ public class ContentEndPoints {
 
 	}
 
-	
+	@GET
+	@Path("{contentsID}/{resolutionName}")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response getContent(
+			final @PathParam("contentsID") Integer contentsID,
+			final @PathParam("resolutionName") String resolutionName)
+			throws URISyntaxException, IOException {
 
+		Content content;
+		try {
+			content = cManager.getContent(contentsID);
+			for (Resolution res : content.getResolution()) {
+				if (res.getName().equals(resolutionName)) {
+					if (res.getUri() == null
+							|| res.getUri()
+									.startsWith(
+											CliConfSingleton.getBaseApiURI()
+													.toString())) {// we
+						// host
+						// the
+						// file
+						File original = new File("/var/www/html"
+								+ content.getLink() + "/" + resolutionName);
+						FileInputStream fis = new FileInputStream(original);
 
-	/**
-	 * post a file on the box for the userID
-	 * 
-	 * @param userID
-	 *            the sender of the request
-	 * @param uploadedInputStream
-	 * @param fileDetail
-	 * @param body
-	 * @return
-	 * @throws URISyntaxException
-	 * @throws IOException
-	 * @throws NoSuchUserException
-	 */
+						return Response
+								.ok(new StreamingOutput() {
+
+									@Override
+									public void write(OutputStream output)
+											throws IOException,
+											WebApplicationException {
+										ByteStreams.copy(fis, output);
+										// fis.close();
+
+									}
+								}, MediaType.APPLICATION_OCTET_STREAM)
+								.header("content-disposition",
+										"attachment; filename = "
+												+ resolutionName + ".mp4")
+								.build();
+
+					} else {
+						return Response.temporaryRedirect(
+								UriBuilder.fromUri(res.getUri()).build())
+								.build();
+					}
+
+				}
+			}
+
+			throw new WebApplicationException(404);
+
+		} catch (NoContentException e) {
+			throw new WebApplicationException(e.getLocalizedMessage(),
+					Status.NO_CONTENT);
+		} catch (FileNotFoundException e) {
+			throw new WebApplicationException(e.getLocalizedMessage(),
+					Status.NOT_FOUND);
+		}
+
+	}
+
 	@POST
-	@RolesAllowed({ "other", "authenticated" })
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response postContent(
+	public Response postFromForm(
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail,
 			@FormDataParam("file") FormDataBodyPart body)
 			throws URISyntaxException, IOException {
-		String uuid = "anonymous";
 
 		String fileName = fileDetail.getFileName();
-		// LOGGER.info("New file {}", fileDetail);
-		// String extension = Files.getFileExtension(fileName);
-		// MediaType fileMediaType = body.getMediaType();
-		// String fileTypeTemp = fileMediaType.toString();
-		// String[] fileType = fileTypeTemp.split("/");
-		//
-		// File upload = File.createTempFile(UUID.randomUUID().toString(), "."
-		// + extension, Files.createTempDir());
-		// Content content = cManager.createContent(uuid, uploadedInputStream,
-		// fileType, upload);
-		// // content.setLink(CliConfSingleton.publicAddr + content.getLink());
-		// // return content;
-		// // return Response.created(new
-		// // URI("app/content/"+content.getContentsID())).build();
-		// return Response.created(
-		// new URI(CliConfSingleton.publicAddr + "/api/app/content/"
-		// + content.getContentsID())).build();
-		return postContent2(uploadedInputStream, fileName);
+
+		return rawPost(uploadedInputStream, fileName);
 
 	}
 
-	/**
-	 * post a file on the box for the userID
-	 * 
-	 * @param userID
-	 *            the sender of the request
-	 * @param iS
-	 * @param fileDetail
-	 * @param body
-	 * @return
-	 * @throws URISyntaxException
-	 * @throws IOException
-	 */
 	@POST
-	@RolesAllowed({ "other", "authenticated" })
 	@Consumes(MediaType.WILDCARD)
-	public Response postContent2(InputStream iS,
+	public Response rawPost(InputStream iS,
 			@HeaderParam("Content-Disposition") String contentDisposition)
 			throws URISyntaxException, IOException {
 		String uuid = UUID.randomUUID().toString();
 
-		LOGGER.debug("New local upload, Content-Disposition : "
-				+ contentDisposition);
 		try {
 			Content content = cManager.createContent(uuid, iS,
 					contentDisposition);
 			content.setLink(CliConfSingleton.publicAddr + content.getLink());
 
-			LOGGER.debug("Content created :" + CliConfSingleton.publicAddr
-					+ "/api/app/content/" + content.getContentsID());
 			return Response.created(
 					new URI(CliConfSingleton.getBaseApiURI() + "/content/"
 							+ content.getContentsID())).build();
@@ -182,8 +210,26 @@ public class ContentEndPoints {
 		}
 	}
 
-	@Inject
-	ThridPartyStorageService tps;
+	@XmlRootElement
+	class MyURL {
+		public String url;
+	}
+
+	@PUT
+	@Path("{contentId}/{resolution}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response receiveNewURI(@PathParam("contentId") String contentId,
+			@PathParam("resolution") String resolution, String url) {
+		Gson gson = new Gson();
+		MyURL myurl = gson.fromJson(url, MyURL.class);
+		try {
+			cManager.updateContentWithUrl(contentId, resolution, myurl.url);
+			return Response.accepted().build();
+		} catch (NoContentException e) {
+			throw new WebApplicationException(404);
+		}
+
+	}
 
 	@POST
 	@Path("{contentId}/{resolution}")
@@ -193,62 +239,15 @@ public class ContentEndPoints {
 			@HeaderParam("Content-Disposition") String contentDisposition)
 			throws URISyntaxException, IOException {
 
-		List<URI> altUri = tps.generateRedirectURUri(contentId);
-		if (altUri != null && altUri.size() > 0) {
-			return Response.temporaryRedirect(
-					UriBuilder.fromUri(altUri.get(0)).path(resolution).build())
-					.build();
-
-		} else {
-			throw new WebApplicationException(
-					"No Thirds Party Storage Provider registered", 404);
+		try {
+			Content content = cManager.createNewContentResolution(contentId,
+					resolution, iS, contentDisposition);
+		} catch (AlternativeStorageException e) {
+			return Response.temporaryRedirect(e.getUri()).build();
 		}
 
-	}
+		return Response.noContent().build();
 
-	// @POST
-	// @Consumes(MediaType.APPLICATION_OCTET_STREAM)
-	// @Produces(MediaType.TEXT_PLAIN)
-	// public String postIf(InputStream is) throws IOException{
-	// java.nio.file.Path path = java.nio.file.Files.createTempFile(null, null);
-	// FileOutputStream fos = new FileOutputStream(path.toFile());
-	// ByteStreams.copy(is, fos);
-	// fos.close();
-	// is.close();
-	//
-	// TikaConfig config = TikaConfig.getDefaultConfig();
-	// Detector detector = config.getDetector();
-	//
-	// TikaInputStream stream = TikaInputStream.get(path.toFile());
-	//
-	// Metadata metadata = new Metadata();
-	// metadata.add(Metadata.RESOURCE_NAME_KEY, path.toString());
-	// org.apache.tika.mime.MediaType mediaType = detector.detect(stream,
-	// metadata);
-	//
-	// return mediaType.toString() + "   --   " + path.toString();
-	//
-	// }
-
-	// @GET
-	// @Path("get")
-	// @RolesAllowed({ "other", "authenticated" })
-	// public Response getTest() {
-	// // LOGGER.error("Is only from local not from {}", request);
-	//
-	// return Response.status(javax.ws.rs.core.Response.Status.OK).build();
-	// }
-
-	
-
-	
-
-	@POST
-	@Path("{contentId}")
-	public Response postNewVersionOfContent(
-			@PathParam("contentId") String contentId, InputStream is) {
-
-		throw new WebApplicationException(500);
 	}
 
 }

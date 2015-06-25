@@ -2,22 +2,22 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
-    <xs:include schemaLocation="propertyGroups.xsd"></xs:include>
-    <xs:include schemaLocation="comment.xsd"></xs:include>
-	
+	<xs:include schemaLocation="propertyGroups.xsd"></xs:include>
+	<xs:include schemaLocation="comment.xsd"></xs:include>
+
 	<xs:element name="content">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="contentsID" type="xs:int"
-					maxOccurs="1" minOccurs="0">
+				<xs:element name="contentsID" type="xs:int" maxOccurs="1"
+					minOccurs="0">
 				</xs:element>
 				<xs:element name="name" type="xs:string" maxOccurs="1"
 					minOccurs="0" />
-				<xs:element name="actorID" type="xs:string"
-					maxOccurs="1" minOccurs="0" />
+				<xs:element name="actorID" type="xs:string" maxOccurs="1"
+					minOccurs="0" />
 
-				<xs:element name="unix_time" type="xs:long"
-					maxOccurs="1" minOccurs="0" />
+				<xs:element name="unix_time" type="xs:long" maxOccurs="1"
+					minOccurs="0" />
 
 				<xs:element name="link" type="xs:anyURI" maxOccurs="1"
 					minOccurs="0" />
@@ -38,10 +38,27 @@
 					minOccurs="0">
 				</xs:element>
 
-<xs:element ref="propertyGroups" maxOccurs="unbounded" minOccurs="0"></xs:element>
-		
-				<xs:element name="metadata" type="xs:string" maxOccurs="unbounded" minOccurs="0"></xs:element>
+				<xs:element ref="resolution" maxOccurs="unbounded"
+					minOccurs="0">
+				</xs:element>
+
+
+
+				<xs:element ref="propertyGroups" maxOccurs="unbounded"
+					minOccurs="0"></xs:element>
+
+				<xs:element name="metadata" type="xs:string" maxOccurs="unbounded"
+					minOccurs="0"></xs:element>
 			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="resolution">
+
+		<xs:complexType>
+			<xs:attribute name="name" type="xs:string"></xs:attribute>
+			<xs:attribute name="uri" type="xs:string"></xs:attribute>
+
 		</xs:complexType>
 	</xs:element>
 

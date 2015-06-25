@@ -48,8 +48,7 @@ public class ThridPartyStorageEndPoint {
 	@RolesAllowed("other")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response registerTPS(ThirdPartyStorage tps) {
-		
-		
+
 		tpsService.register(tps.getUrl(), tps.getName());
 		return Response.noContent().build();
 	}

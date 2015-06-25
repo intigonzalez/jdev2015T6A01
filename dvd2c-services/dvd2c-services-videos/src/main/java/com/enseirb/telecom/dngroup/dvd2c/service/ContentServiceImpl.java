@@ -13,11 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javassist.bytecode.annotation.NoSuchClassError;
+
 import javax.inject.Inject;
+import javax.management.RuntimeErrorException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.NoContentException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
@@ -25,9 +31,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
+import com.enseirb.telecom.dngroup.dvd2c.exception.AlternativeStorageException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
+import com.enseirb.telecom.dngroup.dvd2c.model.Resolution;
 import com.enseirb.telecom.dngroup.dvd2c.model.Task;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Document;
+import com.enseirb.telecom.dngroup.dvd2c.modeldb.DocumentAlternative;
+import com.enseirb.telecom.dngroup.dvd2c.repository.DocumentAlternativeRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.DocumentRepository;
 import com.enseirb.telecom.dngroup.dvd2c.utils.FileService;
 import com.google.common.base.Throwables;
@@ -72,13 +82,31 @@ public class ContentServiceImpl implements ContentService {
 		return listContent;
 	}
 
+	@Inject
+	DocumentAlternativeRepository altRepo;
+
 	@Override
 	public Content getContent(Integer contentsID) throws NoContentException {
 		Document document = documentRepository.findOne(contentsID);
 		if (document == null) {
 			throw new NoContentException("Content ID can't be NULL");
 		} else {
-			return document.toContent();
+			Content res = document.toContent();
+			for (DocumentAlternative alt : altRepo.findByDocument(document)) {
+				Resolution resolution = new Resolution();
+				resolution.setName(alt.getResolution());
+				if (alt.getUri() == null) {
+					// that's us, generate our own UR
+					resolution.setUri(CliConfSingleton.getBaseApiURI()
+							+ "/content/" + contentsID + "/"
+							+ resolution.getName());
+				} else {
+					resolution.setUri(alt.getUri());
+				}
+				res.getResolution().add(resolution);
+
+			}
+			return res;
 		}
 	}
 
@@ -279,4 +307,64 @@ public class ContentServiceImpl implements ContentService {
 		}
 	}
 
+	@Inject
+	ThridPartyStorageService tps;
+
+	@Inject
+	DocumentAlternativeRepository alternativeRepo;
+
+	@Override
+	public Content createNewContentResolution(String contentId,
+			String resolutionName, InputStream iS, String contentDisposition)
+			throws AlternativeStorageException, IOException {
+
+		Document doc = documentRepository.findOne(Integer.valueOf(contentId));
+		if (doc == null)
+			throw new NoContentException("no content with contentId"
+					+ contentId);
+		List<URI> altUri = tps.generateRedirectURUri(contentId);
+		if (altUri != null && altUri.size() > 0) {
+			AlternativeStorageException ase = new AlternativeStorageException();
+			ase.setUri(UriBuilder.fromUri(altUri.get(0)).path(resolutionName)
+					.build());
+			throw ase;
+
+		} else {
+
+			List<DocumentAlternative> alts = doc.getDocumentAlternative();
+			if (alts == null) {
+				alts = new ArrayList<DocumentAlternative>();
+			}
+			DocumentAlternative alt = new DocumentAlternative();
+			alt.setDocument(doc);
+			alt.setResolution(resolutionName);
+			alt.setUri(null);
+
+			File newFile = new File("/var/www/html/" + doc.getFileLink() + "/"
+					+ resolutionName);
+			writeToFile(iS, newFile);
+
+			alternativeRepo.save(alt);
+			return doc.toContent();
+
+		}
+
+	}
+
+	@Override
+	public void updateContentWithUrl(String contentId, String resolution,
+			String url) throws NoContentException {
+
+		Document doc = documentRepository.findOne(Integer.valueOf(contentId));
+		if (doc == null) {
+			throw new NoContentException(contentId);
+		}
+		DocumentAlternative alt = new DocumentAlternative();
+		alt.setDocument(doc);
+		alt.setResolution(resolution);
+		alt.setUri(url);
+
+		alternativeRepo.save(alt);
+
+	}
 }

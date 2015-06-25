@@ -8,6 +8,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Document;
@@ -17,6 +19,9 @@ import com.enseirb.telecom.dngroup.dvd2c.repository.ThirdPartyStorageConfigRepos
 
 @Service
 public class ThridPartyStorageServiceImpl implements ThridPartyStorageService {
+
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(ThridPartyStorageServiceImpl.class);
 
 	@Inject
 	ThirdPartyStorageConfigRepository repo;
@@ -30,10 +35,14 @@ public class ThridPartyStorageServiceImpl implements ThridPartyStorageService {
 	 */
 	@Override
 	public void register(String baseUrL, String name) {
-		ThirdPartyConfiguration conf = new ThirdPartyConfiguration();
-		conf.setBaseUrl(baseUrL);
-		conf.setName(name);
-		repo.save(conf);
+		if (repo.findByBaseUrl(baseUrL) == null) {
+			ThirdPartyConfiguration conf = new ThirdPartyConfiguration();
+			conf.setBaseUrl(baseUrL);
+			conf.setName(name);
+			repo.save(conf);
+		} else {
+			LOGGER.debug("third party already registered");
+		}
 
 	}
 
