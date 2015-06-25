@@ -389,4 +389,12 @@ public class ContentEndPoints {
 
 	}
 
+	@POST
+	@Path("{contentId}")
+	public Response postNewVersionOfContent(
+			@PathParam("contentId") String contentId,InputStream is) {
+
+		throw new WebApplicationException(500);
+	}
+
 }
