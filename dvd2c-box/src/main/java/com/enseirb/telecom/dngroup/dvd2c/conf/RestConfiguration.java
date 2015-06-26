@@ -5,6 +5,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
 
+import com.enseirb.telecom.dngroup.dvd2c.CORSResponseFilter;
 import com.enseirb.telecom.dngroup.dvd2c.endpoints.ContentEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.endpoints.ThridPartyStorageEndPoint;
 
@@ -26,6 +27,7 @@ public class RestConfiguration extends ResourceConfig {
 		register(MultiPartFeature.class);
 		register(JettisonFeature.class);
 		register(RequestContextFilter.class);
+		register(CORSResponseFilter.class);
 
 	}
 }

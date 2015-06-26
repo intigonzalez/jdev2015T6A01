@@ -31,7 +31,6 @@ import com.lexicalscope.jewel.cli.Option;
  *
  */
 public class Main {
-	 
 
 	// Base URI the Grizzly HTTP server will listen on
 
@@ -46,7 +45,7 @@ public class Main {
 		// providers
 		// in org.cnrs.jdev package
 		final ResourceConfig rc = new ResourceConfig()
-				.packages("org.cnrs.jdev");
+				.packages("org.cnrs.jdev").register(CORSResponseFilter.class);
 
 		// create and start a new instance of grizzly http server
 		// exposing the Jersey application at BASE_URI

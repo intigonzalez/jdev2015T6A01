@@ -178,6 +178,7 @@ public class ContentEndPoints {
 
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces("text/plain")
 	public Response postFromForm(
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail,
@@ -192,6 +193,7 @@ public class ContentEndPoints {
 
 	@POST
 	@Consumes(MediaType.WILDCARD)
+	@Produces("text/plain")
 	public Response rawPost(InputStream iS,
 			@HeaderParam("Content-Disposition") String contentDisposition)
 			throws URISyntaxException, IOException {
@@ -202,9 +204,13 @@ public class ContentEndPoints {
 					contentDisposition);
 			content.setLink(CliConfSingleton.publicAddr + content.getLink());
 
-			return Response.created(
-					new URI(CliConfSingleton.getBaseApiURI() + "/content/"
-							+ content.getContentsID())).build();
+			return Response
+					.created(
+							new URI(CliConfSingleton.getBaseApiURI()
+									+ "/content/" + content.getContentsID()))
+					.entity(new URI(CliConfSingleton.getBaseApiURI()
+							+ "/content/" + content.getContentsID()).toString())
+					.build();
 		} catch (IOException | SecurityException e) {
 			throw e;
 		}
