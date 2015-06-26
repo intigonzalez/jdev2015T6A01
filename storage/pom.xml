@@ -3,11 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
-		<artifactId>dvd2c-parent</artifactId>
-		<version>0.8.0</version>
-	</parent>
+
 	<groupId>org.cnrs.jdev</groupId>
 	<artifactId>dummy-storage</artifactId>
 	<version>1.0-SNAPSHOT</version>
@@ -78,7 +74,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-	<finalName>${project.artifactId}-${project.version}</finalName>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 		<plugins>
 
 			<plugin>
@@ -109,7 +105,9 @@
 								</ports>
 
 								<cmd>
-									<shell>java -cp /maven/*:/maven/${project.build.finalName} org.cnrs.jdev.Main --myPort 8081 --myHostName localhost --vanillaStorageHostName localhost --vanillaStoragePort 8082
+									<shell>java -cp /maven/*:/maven/${project.build.finalName}
+										org.cnrs.jdev.Main --myPort 8081 --myHostName localhost
+										--vanillaStorageHostName localhost --vanillaStoragePort 8082
 									</shell>
 								</cmd>
 
@@ -119,7 +117,7 @@
 								<ports>
 									<port>localhost:8081:8081</port>
 								</ports>
-								
+
 							</run>
 						</image>
 					</images>
