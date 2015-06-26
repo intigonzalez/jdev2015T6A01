@@ -47,13 +47,13 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.12</version>
 		</dependency>
-		
+
 		<dependency>
-	<groupId>com.google.code.gson</groupId>
-	<artifactId>gson</artifactId>
-	<version>2.3.1</version>
-</dependency>
-		
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -78,7 +78,55 @@
 		</dependency>
 	</dependencies>
 	<build>
+	<finalName>${project.artifactId}-${project.version}</finalName>
 		<plugins>
+
+			<plugin>
+				<groupId>org.jolokia</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.12.0</version>
+				<configuration>
+					<finalName>frontend.jar</finalName>
+					<images>
+
+
+						<image>
+							<name>nherbaut/${project.artifactId}:latest</name>
+							<alias>frontend</alias>
+
+							<build>
+								<assembly>
+									<descriptorRef>artifact-with-dependencies</descriptorRef>
+								</assembly>
+								<from>java:8-jre</from>
+								<maintainer>nherbaut@labri.fr</maintainer>
+								<tags>
+									<tag>latest</tag>
+									<tag>${project.version}</tag>
+								</tags>
+								<ports>
+									<port>8080</port>
+								</ports>
+
+								<cmd>
+									<shell>java -cp /maven/*:/maven/${project.build.finalName} org.cnrs.jdev.Main --myPort 8081 --myHostName localhost --vanillaStorageHostName localhost --vanillaStoragePort 8082
+									</shell>
+								</cmd>
+
+							</build>
+
+							<run>
+								<ports>
+									<port>localhost:8081:8081</port>
+								</ports>
+								
+							</run>
+						</image>
+					</images>
+				</configuration>
+			</plugin>
+
+
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.5.1</version>
