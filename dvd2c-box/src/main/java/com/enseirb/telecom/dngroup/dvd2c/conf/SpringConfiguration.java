@@ -27,7 +27,7 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 		"com.enseirb.telecom.dngroup.dvd2c.endpoints",
 		"com.enseirb.telecom.dngroup.dvd2c.security",
 		"com.enseirb.telecom.dngroup.dvd2c.repository",
-		"com.enseirb.telecom.dngroup.dvd2c"})
+		"com.enseirb.telecom.dngroup.dvd2c" })
 @EnableTransactionManagement
 public class SpringConfiguration {
 
@@ -45,6 +45,6 @@ public class SpringConfiguration {
 	public Client client() {
 		Client client = ClientBuilder.newClient();
 		return client;
-		
+
 	}
 }

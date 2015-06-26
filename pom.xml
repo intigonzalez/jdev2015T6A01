@@ -23,11 +23,8 @@
   <modules>
     <module>dvd2c-box</module>
     <module>dvd2c-bom</module>
-    <module>dvd2c-central</module>
     <module>dvd2c-model</module>
     <module>dvd2c-services</module>
-    <module>incubator/snapmail</module>
-    <module>incubator/snapmailServer</module>
   </modules>
   <dependencyManagement>
     <dependencies>

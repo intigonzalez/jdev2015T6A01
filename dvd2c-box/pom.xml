@@ -2,32 +2,41 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
+	<version>0.8.0</version>
 	<artifactId>dvd2c-box</artifactId>
 	<packaging>jar</packaging>
-	<parent>
-		<groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
-		<artifactId>dvd2c-parent</artifactId>
-		<version>0.8.0</version>
-	</parent>
+
 	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.enseirb.telecom.dngroup.dvd2c</groupId>
-				<artifactId>dvd2c-bom</artifactId>
-				<version>0.8.0</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<dependencies>
 		<dependency>
-			<groupId>
-				com.enseirb.telecom.dngroup.dvd2c.services
-			</groupId>
-			<artifactId>dvd2c-services-videos</artifactId>
-			<version>0.8.0</version>
+			<groupId>io.spring.platform</groupId>
+			<artifactId>platform-bom</artifactId>
+			<version>1.0.3.RELEASE</version>
+			<type>pom</type>
+			<scope>import</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey</groupId>
+			<artifactId>jersey-bom</artifactId>
+			<version>2.15</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.grizzly</groupId>
+			<artifactId>grizzly-bom</artifactId>
+			<version>2.3.20</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+
+
+
+	</dependencies>
+	</dependencyManagement>
+	<dependencies>
+
 
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
@@ -56,6 +65,91 @@
 			<artifactId>jersey-spring3</artifactId>
 		</dependency>
 
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.amqp</groupId>
+			<artifactId>spring-rabbit</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.ext</groupId>
+			<artifactId>jersey-spring3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-jaxb-annotations</artifactId>
+			<version>2.3.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.amqp</groupId>
+			<artifactId>spring-rabbit</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+
+		</dependency>
+
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jettison</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.rabbitmq</groupId>
+			<artifactId>amqp-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.amqp</groupId>
+			<artifactId>spring-rabbit</artifactId>
+		</dependency>
+
+
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
@@ -64,6 +158,11 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.lexicalscope.jewelcli</groupId>
+			<artifactId>jewelcli</artifactId>
+			<version>0.8.9</version>
 		</dependency>
 
 
@@ -82,13 +181,61 @@
 
 	</dependencies>
 	<build>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/html</directory>
 			</resource>
 		</resources>
 		<plugins>
+			<plugin>
+				<groupId>org.jolokia</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.12.0</version>
+				<configuration>
+					<finalName>frontend.jar</finalName>
+					<images>
 
+
+						<image>
+							<name>nherbaut/${project.artifactId}:latest</name>
+							<alias>frontend</alias>
+
+							<build>
+								<assembly>
+									<descriptorRef>artifact-with-dependencies</descriptorRef>
+								</assembly>
+								<from>java:8-jre</from>
+								<maintainer>nherbaut@labri.fr</maintainer>
+								<tags>
+									<tag>latest</tag>
+									<tag>${project.version}</tag>
+								</tags>
+								<ports>
+									<port>8082</port>
+								</ports>
+
+								<cmd>
+									<shell>java -cp /maven/*:/maven/${project.build.finalName}
+										org.cnrs.jdev.Main -b nicolas --database_password root
+										--database_username root --database_url
+										jdbc:mysql://localhost:3306/mediahome -p 8081 --rabbit-host
+										localhost --rabbit-port 5672 --i=localhost
+									</shell>
+								</cmd>
+
+							</build>
+
+							<run>
+								<ports>
+									<port>localhost:8082:8082</port>
+								</ports>
+
+							</run>
+						</image>
+					</images>
+				</configuration>
+			</plugin>
 
 			<plugin>
 				<groupId>org.jolokia</groupId>
@@ -248,6 +395,49 @@
 					<mainClass>com.enseirb.telecom.s9.Main</mainClass>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/jaxb</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>xjc</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<packageName>com.enseirb.telecom.dngroup.dvd2c.model</packageName>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.2</version>
+				<configuration>
+					<skipAssembly>true</skipAssembly>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>
