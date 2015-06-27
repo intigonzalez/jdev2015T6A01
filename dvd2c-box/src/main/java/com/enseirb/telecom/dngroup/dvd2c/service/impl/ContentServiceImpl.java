@@ -1,6 +1,7 @@
 package com.enseirb.telecom.dngroup.dvd2c.service.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -217,5 +218,29 @@ public class ContentServiceImpl implements ContentService {
 
 		alternativeRepo.save(alt);
 
+	}
+
+	@Override
+	public FileInputStream getContentStream(Integer contentsID,
+			String resolutionName) throws AlternativeStorageException,
+			NoContentException {
+		Content content = this.getContent(contentsID);
+		for (Resolution res : content.getResolution()) {
+			if (res.getName().equals(resolutionName)) {
+				if (res.getUri() == null
+						|| res.getUri().startsWith(
+								CliConfSingleton.getBaseApiURI().toString())) {
+					return fsFacade.getContentStream(content, res);
+				} else {
+					AlternativeStorageException ase = new AlternativeStorageException();
+					ase.setUri(UriBuilder.fromUri(res.getUri()).build());
+					throw ase;
+				}
+			}
+
+		}
+
+		throw new NoContentException("failed to load " + contentsID
+				+ " with resolution " + resolutionName);
 	}
 }

@@ -1,4 +1,4 @@
-package com.enseirb.telecom.dngroup.dvd2c.service;
+package com.enseirb.telecom.dngroup.dvd2c.service.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,6 +7,9 @@ import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import com.enseirb.telecom.dngroup.dvd2c.service.FileTypeEnum;
+import com.enseirb.telecom.dngroup.dvd2c.service.FileTypeResolverFacade;
 
 @Service
 public class TikaFacadeImpl implements FileTypeResolverFacade {

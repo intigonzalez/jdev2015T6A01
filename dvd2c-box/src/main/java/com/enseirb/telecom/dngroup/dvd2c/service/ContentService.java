@@ -1,5 +1,6 @@
 package com.enseirb.telecom.dngroup.dvd2c.service;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -23,5 +24,8 @@ public interface ContentService {
 
 	public abstract void updateContentWithUrl(String contentId,
 			String resolution, String url) throws NoContentException;
+
+	public abstract FileInputStream getContentStream(Integer contentsID,
+			String resolutionName) throws AlternativeStorageException, NoContentException;
 
 }

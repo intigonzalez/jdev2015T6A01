@@ -49,7 +49,7 @@ public class ContentEndPoints {
 			.getLogger(ContentEndPoints.class);
 
 	@Inject
-	ContentService cManager;
+	ContentService contentService;
 
 	@GET
 	@Path("{contentsID}/metadata")
@@ -59,7 +59,7 @@ public class ContentEndPoints {
 			throws URISyntaxException {
 
 		try {
-			return cManager.getContent(contentsID);
+			return contentService.getContent(contentsID);
 		} catch (NoContentException e) {
 			throw new WebApplicationException(404);
 		}
@@ -74,7 +74,7 @@ public class ContentEndPoints {
 
 		Content content;
 		try {
-			content = cManager.getContent(contentsID);
+			content = contentService.getContent(contentsID);
 			File original = new File("/var/www/html" + content.getLink()
 					+ "/original");
 
@@ -113,54 +113,27 @@ public class ContentEndPoints {
 			final @PathParam("resolutionName") String resolutionName)
 			throws URISyntaxException, IOException {
 
-		Content content;
+		FileInputStream fis;
 		try {
-			content = cManager.getContent(contentsID);
-			for (Resolution res : content.getResolution()) {
-				if (res.getName().equals(resolutionName)) {
-					if (res.getUri() == null
-							|| res.getUri()
-									.startsWith(
-											CliConfSingleton.getBaseApiURI()
-													.toString())) {
-						File original = new File("/var/www/html"
-								+ content.getLink() + "/" + resolutionName);
-						FileInputStream fis = new FileInputStream(original);
 
-						return Response
-								.ok(new StreamingOutput() {
+			fis = contentService.getContentStream(contentsID, resolutionName);
+			return Response
+					.ok(new StreamingOutput() {
 
-									@Override
-									public void write(OutputStream output)
-											throws IOException,
-											WebApplicationException {
-										ByteStreams.copy(fis, output);
-										// fis.close();
+						@Override
+						public void write(OutputStream output)
+								throws IOException, WebApplicationException {
+							ByteStreams.copy(fis, output);
+							// fis.close();
 
-									}
-								}, MediaType.APPLICATION_OCTET_STREAM)
-								.header("content-disposition",
-										"attachment; filename = "
-												+ resolutionName + ".mp4")
-								.build();
+						}
+					}, MediaType.APPLICATION_OCTET_STREAM)
+					.header("content-disposition",
+							"attachment; filename = " + resolutionName + ".mp4")
+					.build();
 
-					} else {
-						return Response.temporaryRedirect(
-								UriBuilder.fromUri(res.getUri()).build())
-								.build();
-					}
-
-				}
-			}
-
-			throw new WebApplicationException(404);
-
-		} catch (NoContentException e) {
-			throw new WebApplicationException(e.getLocalizedMessage(),
-					Status.NO_CONTENT);
-		} catch (FileNotFoundException e) {
-			throw new WebApplicationException(e.getLocalizedMessage(),
-					Status.NOT_FOUND);
+		} catch (AlternativeStorageException ase) {
+			return Response.temporaryRedirect(ase.getUri()).build();
 		}
 
 	}
@@ -189,7 +162,7 @@ public class ContentEndPoints {
 		String uuid = UUID.randomUUID().toString();
 
 		try {
-			Content content = cManager.createContent(uuid, iS,
+			Content content = contentService.createContent(uuid, iS,
 					contentDisposition);
 			content.setLink(CliConfSingleton.publicAddr + content.getLink());
 
@@ -218,7 +191,8 @@ public class ContentEndPoints {
 		Gson gson = new Gson();
 		MyURL myurl = gson.fromJson(url, MyURL.class);
 		try {
-			cManager.updateContentWithUrl(contentId, resolution, myurl.url);
+			contentService.updateContentWithUrl(contentId, resolution,
+					myurl.url);
 			return Response.accepted().build();
 		} catch (NoContentException e) {
 			throw new WebApplicationException(404);
@@ -235,8 +209,8 @@ public class ContentEndPoints {
 			throws URISyntaxException, IOException {
 
 		try {
-			Content content = cManager.createNewContentResolution(contentId,
-					resolution, iS, contentDisposition);
+			Content content = contentService.createNewContentResolution(
+					contentId, resolution, iS, contentDisposition);
 			LOGGER.debug("new content resolution created {} (total:{})",
 					content.getContentsID(), content.getResolution().size());
 		} catch (AlternativeStorageException e) {

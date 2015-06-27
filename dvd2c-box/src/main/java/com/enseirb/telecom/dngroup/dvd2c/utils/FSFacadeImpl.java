@@ -1,6 +1,8 @@
 package com.enseirb.telecom.dngroup.dvd2c.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
+import com.enseirb.telecom.dngroup.dvd2c.model.Resolution;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.Document;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.DocumentAlternative;
 import com.google.common.base.Throwables;
@@ -81,7 +84,7 @@ public class FSFacadeImpl implements FSFacade {
 
 		try {
 			final Path path = Paths.get("/var/www/html", alt.getDocument()
-					.getFileLink(),  alt.getResolution());
+					.getFileLink(), alt.getResolution());
 			final FileOutputStream fos = new FileOutputStream(path.toFile());
 			ByteStreams.copy(iS, fos);
 			fos.close();
@@ -90,8 +93,22 @@ public class FSFacadeImpl implements FSFacade {
 			LOGGER.error(
 					"failed to create new resolution on the file system {}/{}",
 					alt.getDocument().getId(), alt.getResolution());
+			throw Throwables.propagate(e);
 		}
 
 	}
 
+	@Override
+	public FileInputStream getContentStream(Content content, Resolution res) {
+
+		try {
+			final Path path = Paths.get("/var/www/html", content.getLink(),
+					res.getName());
+			return new FileInputStream(path.toFile());
+		} catch (FileNotFoundException e) {
+			LOGGER.error("failed to get stream from file in the database");
+			throw Throwables.propagate(e);
+		}
+
+	}
 }
