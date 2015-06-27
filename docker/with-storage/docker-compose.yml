@@ -1,36 +1,46 @@
-box:
+--- 
+box: 
+  dns: 
+    - "8.8.8.8"
   image: nherbaut/dvd2c-box
-  links:
-  - broker:amqp
-  name: box
-  ports:
-    - 8081:8081
-   dns:
-    - 8.8.8.8
-broker:
-  image: rabbitmq:3.5.3
-  expose:
-    - "5672"
-  dns:
-    - 8.8.8.8
-worker1:
-  image: nherbaut/worker
-  links:
-  - broker:amqp
-  dns:
-    - 8.8.8.8
-worker2:
-  image: nherbaut/worker
-  links:
-  - broker:amqp
-  dns:
-    - 8.8.8.8
-frontend:
-  image: nherbaut/frontend 
   links: 
-    - box:box
+    - "broker:amqp"
+  name: box
+  ports: 
+    - "8081:8081"
+broker: 
+  dns: 
+    - "8.8.8.8"
+  expose: 
+    - "5672"
   ports:
-    - 8080:8080
-  dns:
-    - 8.8.8.8  
-   
+    - "5672:5672"
+  image: "rabbitmq:3.5.3"
+frontend: 
+  dns: 
+    - "8.8.8.8"
+  image: nherbaut/frontend
+  links: 
+    - "box:box"
+  ports: 
+    - "8080:8080"
+worker1: 
+  dns: 
+    - "8.8.8.8"
+  image: nherbaut/worker
+  links: 
+    - "broker:amqp"
+worker2: 
+  dns: 
+    - "8.8.8.8"
+  image: nherbaut/worker
+  links: 
+    - "broker:amqp"
+storage: 
+  dns: 
+    - "8.8.8.8"
+  image: nherbaut/dummy-storage
+  links: 
+    - "box:box"
+  ports: 
+    - "8082:8082"

@@ -11,13 +11,20 @@
 		</encoder>
 	</appender>
 
-	<logger name="com.enseirb.telecom.dngroup.dvd2c" level="INFO" />
-	<logger name="org.quartz" level="INFO" />
+	<logger name="com.enseirb.telecom.s9" level="INFO">
 
 
+	</logger>
+	<logger name="com.couchbase" level="WARNING">
 
 
-	<root level="INFO">
+	</logger>
+
+	<logger name="org.quartz">
+		<level value="info" />
+	</logger>
+
+	<root level="DEBUG">
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>
