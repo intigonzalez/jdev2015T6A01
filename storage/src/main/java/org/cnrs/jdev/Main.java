@@ -24,6 +24,7 @@ import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
 import com.lexicalscope.jewel.cli.CliFactory;
+import com.lexicalscope.jewel.cli.HelpRequestedException;
 import com.lexicalscope.jewel.cli.Option;
 
 /**
@@ -63,24 +64,27 @@ public class Main {
 	public static void main(String[] args) throws IOException,
 			SchedulerException {
 
-		CliConfiguration cliconf = CliFactory.parseArguments(
-				CliConfiguration.class, args);
+		try {
+			CliConfiguration cliconf = CliFactory.parseArguments(
+					CliConfiguration.class, args);
 
-		CliConfSingleton.myHostName = cliconf.getMyHostName();
-		CliConfSingleton.myPort = cliconf.getMyPort();
-		CliConfSingleton.vanillaHostName = cliconf.getVanillaHostName();
-		CliConfSingleton.vanillaPort = cliconf.getVanillaPort();
+			CliConfSingleton.myHostName = cliconf.getMyHostName();
+			CliConfSingleton.myPort = cliconf.getMyPort();
+			CliConfSingleton.vanillaHostName = cliconf.getVanillaHostName();
+			CliConfSingleton.vanillaPort = cliconf.getVanillaPort();
 
-		final HttpServer server = startServer();
+			final HttpServer server = startServer();
 
-		setupCron();
+			setupCron();
 
-		System.out.println(String.format(
-				"Jersey app started with WADL available at "
-						+ "%sapplication.wadl\nHit enter to stop it...",
-				CliConfSingleton.getBaseURI()));
-		System.in.read();
-		server.stop();
+			System.out.println(String.format(
+					"Jersey app started with WADL available at "
+							+ "%sapplication.wadl\nHit enter to stop it...",
+					CliConfSingleton.getBaseURI()));
+			Thread.currentThread().join();
+		} catch (HelpRequestedException | InterruptedException ios) {
+			System.out.println(ios.getMessage());
+		}
 	}
 
 	private static void setupCron() throws SchedulerException {

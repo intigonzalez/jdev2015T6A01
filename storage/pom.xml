@@ -88,7 +88,7 @@
 
 						<image>
 							<name>nherbaut/${project.artifactId}:latest</name>
-							<alias>frontend</alias>
+							<alias>storage</alias>
 
 							<build>
 								<assembly>
@@ -101,13 +101,11 @@
 									<tag>${project.version}</tag>
 								</tags>
 								<ports>
-									<port>8080</port>
+									<port>8082</port>
 								</ports>
 
 								<cmd>
-									<shell>java -cp /maven/*:/maven/${project.build.finalName}
-										org.cnrs.jdev.Main --myPort 8081 --myHostName localhost
-										--vanillaStorageHostName localhost --vanillaStoragePort 8082
+									<shell>java -cp /maven/*:/maven/${project.build.finalName} org.cnrs.jdev.Main --myPort 8082 --myHostName `getent hosts $HOSTNAME|cut -d' ' -f1` --vanillaStorageHostName $BOX_PORT_8081_TCP_ADDR --vanillaStoragePort $BOX_PORT_8081_TCP_PORT
 									</shell>
 								</cmd>
 
@@ -115,7 +113,7 @@
 
 							<run>
 								<ports>
-									<port>localhost:8081:8081</port>
+									<port>8082:8082</port>
 								</ports>
 
 							</run>
