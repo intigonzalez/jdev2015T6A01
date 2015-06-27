@@ -1,0 +1,25 @@
+
+frontend:
+  build: ../../frontend
+  ports:
+   - "8000:8000"
+  links:
+   - box
+
+box:
+  build: ../../dvd2c-box/target/docker/nherbaut/dvd2c-box/latest/build
+  ports:
+   - "8081:8081"
+  links:
+   - broker:amqp
+
+broker:
+  image: rabbitmq:3.5.3
+  ports:
+   - "5672:5672"  
+  
+worker1: 
+  image: nherbaut/worker
+  links:
+    - broker:amqp
+

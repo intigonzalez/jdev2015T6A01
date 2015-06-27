@@ -5,12 +5,11 @@ import urllib
 import shutil
 import json
 import copy
-import tempfile
-import zipfile
 import requests
 
 import pika
 from celery.utils.log import get_task_logger
+
 
 
 
@@ -127,13 +126,16 @@ def encode_workflow(self, url):
 
 @app.task()
 def send_results(context):
-    file = tempfile.TemporaryFile(suffix="zip")
-    zipf = zipfile.ZipFile(file, 'w')
-    zipdir(context["folder_out"], zipf)
-    zipf.close()
-    r=requests.post(context["url"]+"/bundle", files=file)
-    print r
+    os.listdir
 
+    headers = {'Content-type': 'application/octet-stream'}
+    for fileName in os.listdir(os.path.join(context["folder_out"], "encoding")):
+        with  open(os.path.join(context["folder_out"], "encoding", fileName), "r") as file:
+            r = requests.post(context["url"] + "/" + os.path.splitext(os.path.basename(fileName))[0],
+                              data=file.read())
+
+            if r.status_code >= 400:
+                break
 
 
 @app.task()

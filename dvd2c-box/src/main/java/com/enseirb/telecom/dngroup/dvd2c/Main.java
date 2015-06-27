@@ -271,7 +271,7 @@ interface CliConfiguration {
 	@Option(longName = "database_url", description = "The url of the database (jdbc:mysql://localhost:3306/mediahome)", defaultToNull = true)
 	String getDatabaseURL();
 
-	@Option(longName = "database_password", description = "The password of database", defaultToNull = true)
+	@Option(longName = "database_password", description = "The password of database", defaultValue="")
 	String getDatabasePassword();
 
 	@Option(longName = "database_username", description = "The Username of database", defaultToNull = true)

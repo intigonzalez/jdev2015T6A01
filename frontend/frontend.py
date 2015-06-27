@@ -1,26 +1,23 @@
-from flask import Flask, request, redirect, url_for, \
-    render_template
-from flask import session
-from flask import abort
-import json
-
-from settings import SECRET_KEY
+from flask import Flask, render_template
 
 
+global box_uri
 app = Flask(__name__)
-app.config.from_object(__name__)
-app.debug = True
+
+def bootstrap(abox_uri):
+    global box_uri 
+    box_uri = abox_uri
+    return app
 
 
 @app.route('/')
 def index():
+    
+    return render_template("index.html", box_uri=box_uri);
 
-    return redirect(url_for('static', filename='index.html'), code=302)
 
 
-if __name__ == '__main__':
-    app.secret_key = SECRET_KEY
-    app.run()
+
 
 
 

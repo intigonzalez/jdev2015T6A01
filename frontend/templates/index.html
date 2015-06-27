@@ -7,17 +7,17 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <style>
         body {
             padding-top: 50px;
             padding-bottom: 20px;
         }
     </style>
-    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/static/css/main.css">
 
-    <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    <script src="/static/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -45,7 +45,7 @@
         <h1>Upload a video and see it transcoded</h1>
 
 
-        <input id="fileupload" type="file" name="file" data-url="http://localhost:8081/api/content">
+        <input id="fileupload" type="file" name="file" data-url="{{ box_uri }}/api/content">
 
         <ul>
 
@@ -89,10 +89,10 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
 
-<script src="js/vendor/bootstrap.min.js"></script>
-<script src="js/vendor/jquery.ui.widget.js"></script>
-<script src="js/vendor/jquery.iframe-transport.js"></script>
-<script src="js/vendor/jquery.fileupload.js"></script>
+<script src="/static/js/vendor/bootstrap.min.js"></script>
+<script src="/static/js/vendor/jquery.ui.widget.js"></script>
+<script src="/static/js/vendor/jquery.iframe-transport.js"></script>
+<script src="/static/js/vendor/jquery.fileupload.js"></script>
 
 <script>
 
@@ -127,7 +127,7 @@
                         var theplacetobe = $("ul");
                         var urlToBe = request.responseText;
                         theplacetobe.append("<li><a href=' " + request.responseText + " '>originale</a></li>");
-                        theplacetobe.append("<img src='img/processing.gif' height='100' width='100' />");
+                        theplacetobe.append("<img src='/static/img/processing.gif' height='100' width='100' />");
                         timer = setInterval(
                                 function () {
                                     myTimer(urlToBe, theplacetobe)
