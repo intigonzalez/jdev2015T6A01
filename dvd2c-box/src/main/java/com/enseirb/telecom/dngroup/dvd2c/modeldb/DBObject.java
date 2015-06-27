@@ -19,6 +19,11 @@ import javax.persistence.TemporalType;
 //@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class DBObject implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2067644894979388034L;
+
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}

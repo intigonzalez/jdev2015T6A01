@@ -1,4 +1,4 @@
-package com.enseirb.telecom.dngroup.dvd2c;
+package com.enseirb.telecom.dngroup.dvd2c.model.jaxb;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

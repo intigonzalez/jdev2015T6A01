@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.enseirb.telecom.dngroup.dvd2c.CliConfSingleton;
-import com.enseirb.telecom.dngroup.dvd2c.service.RabbitMQServiceImpl;
+import com.enseirb.telecom.dngroup.dvd2c.service.impl.RabbitMQServiceImpl;
 import com.rabbitmq.client.Channel;
 
 @Configuration

@@ -4,6 +4,10 @@ import java.net.URI;
 
 public class AlternativeStorageException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1233915278253970239L;
 	URI uri;
 
 	public URI getUri() {

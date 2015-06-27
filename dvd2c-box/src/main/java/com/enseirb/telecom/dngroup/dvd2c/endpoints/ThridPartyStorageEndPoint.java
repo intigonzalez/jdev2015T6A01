@@ -13,9 +13,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.enseirb.telecom.dngroup.dvd2c.model.jaxb.ThirdPartyStorage;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ThirdPartyConfiguration;
 import com.enseirb.telecom.dngroup.dvd2c.repository.ThirdPartyStorageConfigRepository;
-import com.enseirb.telecom.dngroup.dvd2c.rest.model.ThirdPartyStorage;
 import com.enseirb.telecom.dngroup.dvd2c.service.ThridPartyStorageService;
 
 @Path("thirdpartystorage")

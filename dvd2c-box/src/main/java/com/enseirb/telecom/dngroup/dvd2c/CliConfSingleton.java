@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class CliConfSingleton {
+	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(CliConfSingleton.class);
 	public static String boxID;
@@ -22,8 +23,7 @@ public class CliConfSingleton {
 	public static String centralURL;
 	public static String contentPath;
 	public static String publicAddr;
-	// public static String dbHostname;
-	// public static Integer dbPort;
+
 	public static String rabbitHostname;
 	public static Integer rabbitPort;
 	public static String snapmail_host;

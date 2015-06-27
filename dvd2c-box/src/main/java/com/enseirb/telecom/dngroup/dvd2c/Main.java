@@ -16,7 +16,6 @@ import javax.ws.rs.core.Response;
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
-import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.grizzly.servlet.WebappContext;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
@@ -24,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.filter.DelegatingFilterProxy;
 
 import com.lexicalscope.jewel.cli.ArgumentValidationException;
 import com.lexicalscope.jewel.cli.CliFactory;
@@ -35,10 +33,7 @@ import com.lexicalscope.jewel.cli.Option;
 public class Main {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-	private static int getPort(int defaultPort) {
-		// grab port from environment, otherwise fall back to default port 9998
-		return CliConfSingleton.appPort;
-	}
+	
 
 	private static final String BASE_PATH = "api";
 
@@ -98,22 +93,7 @@ public class Main {
 			NetworkListener listener = new NetworkListener("grizzly2",
 					CliConfSingleton.appHostName, CliConfSingleton.appPort);
 			server.addListener(listener);
-			StaticHttpHandler videos = new StaticHttpHandlerCORS(
-					new String[] { "/var/www/html/videos" });
-			StaticHttpHandler pictures = new StaticHttpHandlerCORS(
-					new String[] { "/var/www/html/pictures" });
-			StaticHttpHandler cloud = new StaticHttpHandlerCORS(
-					new String[] { "/var/www/html/cloud" });
-
-			// set disable cache
-			videos.setFileCacheEnabled(false);
-			pictures.setFileCacheEnabled(false);
-			cloud.setFileCacheEnabled(false);
-
-			server.getServerConfiguration().addHttpHandler(videos, "/videos");
-			server.getServerConfiguration().addHttpHandler(pictures,
-					"/pictures");
-			server.getServerConfiguration().addHttpHandler(cloud, "/cloud");
+	
 			server.getServerConfiguration().addHttpHandler(
 					new CLStaticHttpHandler(Main.class.getClassLoader(), "/"));
 

@@ -1,4 +1,4 @@
-package com.enseirb.telecom.dngroup.dvd2c.service;
+package com.enseirb.telecom.dngroup.dvd2c.service.impl;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -16,6 +16,7 @@ import com.enseirb.telecom.dngroup.dvd2c.modeldb.Document;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.ThirdPartyConfiguration;
 import com.enseirb.telecom.dngroup.dvd2c.repository.DocumentRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.ThirdPartyStorageConfigRepository;
+import com.enseirb.telecom.dngroup.dvd2c.service.ThridPartyStorageService;
 
 @Service
 public class ThridPartyStorageServiceImpl implements ThridPartyStorageService {
@@ -24,7 +25,39 @@ public class ThridPartyStorageServiceImpl implements ThridPartyStorageService {
 			.getLogger(ThridPartyStorageServiceImpl.class);
 
 	@Inject
+	DocumentRepository docRepo;
+
+	@Inject
 	ThirdPartyStorageConfigRepository repo;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.enseirb.telecom.dngroup.dvd2c.service.ThridPartyStorage#
+	 * generateRedirectURUri(com.enseirb.telecom.dngroup.dvd2c.modeldb.Document)
+	 */
+	@Override
+	public List<URI> generateRedirectURUri(Document doc) {
+		List<URI> res = new ArrayList<URI>();
+		for (ThirdPartyConfiguration conf : repo.findAll()) {
+			if (thirdPartyDeployable(conf, doc.getType())) {
+				res.add(UriBuilder.fromPath(conf.getBaseUrl())
+						.path("" + doc.getId()).build());
+			}
+		}
+
+		return res;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<URI> generateRedirectURUri(String contentId) {
+		Document doc = docRepo.findOne(Integer.valueOf(contentId));
+		if (doc != null) {
+			return generateRedirectURUri(doc);
+		} else
+			return Collections.EMPTY_LIST;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -46,40 +79,9 @@ public class ThridPartyStorageServiceImpl implements ThridPartyStorageService {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.enseirb.telecom.dngroup.dvd2c.service.ThridPartyStorage#
-	 * generateRedirectURUri(com.enseirb.telecom.dngroup.dvd2c.modeldb.Document)
-	 */
-	@Override
-	public List<URI> generateRedirectURUri(Document doc) {
-		List<URI> res = new ArrayList<URI>();
-		for (ThirdPartyConfiguration conf : repo.findAll()) {
-			if (thirdPartyDeployable(conf, doc.getType())) {
-				res.add(UriBuilder.fromPath(conf.getBaseUrl())
-						.path("" + doc.getId()).build());
-			}
-		}
-
-		return res;
-	}
-
 	private boolean thirdPartyDeployable(ThirdPartyConfiguration conf,
 			String type) {
 		return true;
-	}
-
-	@Inject
-	DocumentRepository docRepo;
-
-	@Override
-	public List<URI> generateRedirectURUri(String contentId) {
-		Document doc = docRepo.findOne(Integer.valueOf(contentId));
-		if (doc != null) {
-			return generateRedirectURUri(doc);
-		} else
-			return Collections.EMPTY_LIST;
 	}
 
 }

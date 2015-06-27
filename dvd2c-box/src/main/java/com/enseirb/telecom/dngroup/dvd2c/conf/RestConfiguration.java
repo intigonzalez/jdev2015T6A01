@@ -5,7 +5,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
 
-import com.enseirb.telecom.dngroup.dvd2c.CORSResponseFilter;
+import com.enseirb.telecom.dngroup.dvd2c.endpoints.CORSResponseFilter;
 import com.enseirb.telecom.dngroup.dvd2c.endpoints.ContentEndPoints;
 import com.enseirb.telecom.dngroup.dvd2c.endpoints.ThridPartyStorageEndPoint;
 

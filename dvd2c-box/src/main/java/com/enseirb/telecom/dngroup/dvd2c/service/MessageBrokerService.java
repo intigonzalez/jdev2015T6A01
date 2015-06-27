@@ -15,9 +15,5 @@ public interface MessageBrokerService {
 	 */
 	public abstract void addTask(String task, String string)
 			throws UnsupportedEncodingException, IOException;
-	
-	public void setupResultQueue();
-
-
 
 }

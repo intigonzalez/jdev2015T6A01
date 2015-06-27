@@ -8,8 +8,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -28,18 +26,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.ext.MessageBodyReader;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import jersey.repackaged.com.google.common.collect.Collections2;
-
-import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.glassfish.jersey.media.multipart.MultiPart;
-import org.jvnet.mimepull.MIMEPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,12 +39,12 @@ import com.enseirb.telecom.dngroup.dvd2c.exception.AlternativeStorageException;
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Resolution;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
-import com.google.common.base.Predicate;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 
 @Path("content")
 public class ContentEndPoints {
+	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ContentEndPoints.class);
 
@@ -113,6 +104,7 @@ public class ContentEndPoints {
 
 	}
 
+	@SuppressWarnings("resource")
 	@GET
 	@Path("{contentsID}/{resolutionName}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -130,10 +122,7 @@ public class ContentEndPoints {
 							|| res.getUri()
 									.startsWith(
 											CliConfSingleton.getBaseApiURI()
-													.toString())) {// we
-						// host
-						// the
-						// file
+													.toString())) {
 						File original = new File("/var/www/html"
 								+ content.getLink() + "/" + resolutionName);
 						FileInputStream fis = new FileInputStream(original);
@@ -248,6 +237,8 @@ public class ContentEndPoints {
 		try {
 			Content content = cManager.createNewContentResolution(contentId,
 					resolution, iS, contentDisposition);
+			LOGGER.debug("new content resolution created {} (total:{})",
+					content.getContentsID(), content.getResolution().size());
 		} catch (AlternativeStorageException e) {
 			return Response.temporaryRedirect(e.getUri()).build();
 		}

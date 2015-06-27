@@ -1,6 +1,5 @@
 package com.enseirb.telecom.dngroup.dvd2c.modeldb;
 
-import javax.annotation.Generated;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

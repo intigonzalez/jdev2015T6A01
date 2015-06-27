@@ -2,14 +2,12 @@ package com.enseirb.telecom.dngroup.dvd2c.conf;
 
 import java.util.Properties;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -28,11 +26,11 @@ class MySQLConfiguration {
 
 	private static final String PROPERTY_NAME_DATABASE_DRIVER = "com.mysql.jdbc.Driver";
 
+	@SuppressWarnings("unused")
 	private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "hibernate.dialect";
+	@SuppressWarnings("unused")
 	private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "hibernate.show_sql";
 	private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "com.enseirb.telecom.dngroup.dvd2c";
-
-
 
 	@Bean
 	public DataSource dataSource() {
@@ -53,18 +51,17 @@ class MySQLConfiguration {
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		vendorAdapter.setGenerateDdl(true);
 		Properties props = new Properties();
-//		props.put("hibernate.hbm2ddl.auto", "create-drop");
 		props.put("hibernate.hbm2ddl.auto", "update");
-		
-		
+
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setJpaVendorAdapter(vendorAdapter);
 		factory.setPackagesToScan(PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN);
 		factory.setDataSource(dataSource());
 		factory.setJpaProperties(props);
 		factory.afterPropertiesSet();
-		
-		return factory.getObject();}
+
+		return factory.getObject();
+	}
 
 	@Bean
 	public PlatformTransactionManager transactionManager() {

@@ -1,4 +1,4 @@
-package com.enseirb.telecom.dngroup.dvd2c;
+package com.enseirb.telecom.dngroup.dvd2c.endpoints;
 
 import java.io.IOException;
 
