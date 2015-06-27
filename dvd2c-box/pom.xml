@@ -186,6 +186,10 @@
 			<resource>
 				<directory>src/main/html</directory>
 			</resource>
+			<resource>
+                                <directory>src/main/resources</directory>
+                        </resource>
+
 		</resources>
 		<plugins>
 
@@ -364,13 +368,6 @@
 				</executions>
 				<configuration>
 					<packageName>com.enseirb.telecom.dngroup.dvd2c.model</packageName>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.2</version>
-				<configuration>
-					<skipAssembly>true</skipAssembly>
 				</configuration>
 			</plugin>
 

@@ -105,7 +105,7 @@
 								</ports>
 
 								<cmd>
-									<shell>java -cp /maven/*:/maven/${project.build.finalName} org.cnrs.jdev.Main --myPort 8082 --myHostName `getent hosts $HOSTNAME|cut -d' ' -f1` --vanillaStorageHostName $BOX_PORT_8081_TCP_ADDR --vanillaStoragePort $BOX_PORT_8081_TCP_PORT
+									<shell>java -cp /maven/*:/maven/${project.build.finalName} org.cnrs.jdev.Main --myPort 8082 --myHostName `getent hosts $HOSTNAME|cut -d' ' -f1` --vanillaStorageHostName $BOX_PORT_8081_TCP_ADDR --vanillaStoragePort $BOX_PORT_8081_TCP_PORT 2>&amp;1|grep INFO
 									</shell>
 								</cmd>
 

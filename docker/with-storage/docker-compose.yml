@@ -1,10 +1,36 @@
-web:
-  build: .
-  ports:
-   - "5000:5000"
-  volumes:
-   - .:/code
+box:
+  image: nherbaut/dvd2c-box
   links:
-   - redis
-redis:
-  image: redis
+  - broker:amqp
+  name: box
+  ports:
+    - 8081:8081
+   dns:
+    - 8.8.8.8
+broker:
+  image: rabbitmq:3.5.3
+  expose:
+    - "5672"
+  dns:
+    - 8.8.8.8
+worker1:
+  image: nherbaut/worker
+  links:
+  - broker:amqp
+  dns:
+    - 8.8.8.8
+worker2:
+  image: nherbaut/worker
+  links:
+  - broker:amqp
+  dns:
+    - 8.8.8.8
+frontend:
+  image: nherbaut/frontend 
+  links: 
+    - box:box
+  ports:
+    - 8080:8080
+  dns:
+    - 8.8.8.8  
+   

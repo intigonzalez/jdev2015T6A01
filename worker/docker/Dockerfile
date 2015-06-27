@@ -52,6 +52,7 @@ RUn apt-get install mediainfo --yes
 RUN mkdir -p /var/www/in/
 RUN mkdir -p /var/www/out/
 VOLUME ["/worker"]
+COPY ./run-within-docker.sh /worker/
 COPY ./vhg_adaptation_worker-0.1-py2.7.egg /worker/
 RUN easy_install /worker/vhg_adaptation_worker-0.1-py2.7.egg
-CMD export C_FORCE_ROOT=true && celery -A adaptation.commons worker --loglevel=info --concurrency=1
+CMD /worker/run-within-docker.sh
