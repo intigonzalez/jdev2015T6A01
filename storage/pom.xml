@@ -94,7 +94,7 @@
 								<assembly>
 									<descriptorRef>artifact-with-dependencies</descriptorRef>
 								</assembly>
-								<from>java:8-jre</from>
+								<from>nherbaut/storage-base</from>
 								<maintainer>nherbaut@labri.fr</maintainer>
 								<tags>
 									<tag>latest</tag>

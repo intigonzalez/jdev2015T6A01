@@ -1,24 +1,38 @@
-frontend:
-  build: ../../frontend
+--- 
+box: 
+  dns: 
+    - "8.8.8.8"
+  image: nherbaut/dvd2c-box
+  links: 
+    - "broker:amqp"
+  name: box
+  ports: 
+    - "8081:8081"
+broker: 
+  dns: 
+    - "8.8.8.8"
+  expose: 
+    - "5672"
   ports:
-   - "8000:8000"
-  links:
-   - box
-
-box:
-  build: ../../dvd2c-box/target/docker/nherbaut/dvd2c-box/latest/build
-  ports:
-   - "8081:8081"
-  links:
-   - broker:amqp
-
-broker:
-  image: rabbitmq:3.5.3
-  ports:
-   - "5672:5672"  
-  
+    - "5672:5672"
+  image: "rabbitmq:3.5.3"
+frontend: 
+  dns: 
+    - "8.8.8.8"
+  image: nherbaut/frontend
+  links: 
+    - "box:box"
+  ports: 
+    - "8080:8080"
 worker1: 
+  dns: 
+    - "8.8.8.8"
   image: nherbaut/worker
-  links:
-    - broker:amqp
-
+  links: 
+    - "broker:amqp"
+worker2: 
+  dns: 
+    - "8.8.8.8"
+  image: nherbaut/worker
+  links: 
+    - "broker:amqp"

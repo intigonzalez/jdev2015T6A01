@@ -113,14 +113,14 @@ def encode_workflow(self, url):
         context_loop["name"] = name
         context_loop = compute_target_size(context_loop, target_height=target_height)
         context_loop = transcode(context_loop, bitrate=bitrate, segtime=4, name=name)
-        context_loop = notify(context_loop, main_task_id=main_task_id, quality=name)
+        #context_loop = notify(context_loop, main_task_id=main_task_id, quality=name)
         context_loop = chunk_hls(context_loop, segtime=4)
         context_loop = add_playlist_info(context_loop)
 
     context = add_playlist_footer(context)
     context = chunk_dash(context, segtime=4, )
     context = edit_dash_playlist(context)
-    context = notify(context, complete=True, main_task_id=main_task_id)
+    #context = notify(context, complete=True, main_task_id=main_task_id)
     send_results(context)
 
 
