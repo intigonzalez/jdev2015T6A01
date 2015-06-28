@@ -77,14 +77,75 @@
 		<finalName>${project.artifactId}-${project.version}</finalName>
 		<plugins>
 
+
+
+
 			<plugin>
 				<groupId>org.jolokia</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 				<version>0.12.0</version>
 				<configuration>
-					<finalName>frontend.jar</finalName>
-					<images>
 
+					<images>
+						<image>
+							<name>rabbitmq:3.5.3</name>
+							<alias>broker</alias>
+							<run>
+
+								<ports>
+									<port>5672:5672</port>
+								</ports>
+							</run>
+
+						</image>
+
+						<image>
+							<name>nherbaut/frontend</name>
+							<alias>frontend</alias>
+
+							<run>
+								<ports>
+									<port>localhost:8080:8080</port>
+								</ports>
+
+								<links>
+									<link> box:box
+									</link>
+
+								</links>
+
+							</run>
+
+						</image>
+
+						<image>
+							<name>nherbaut/worker</name>
+							<alias>worker1</alias>
+							<run>
+								<links>
+									<link> broker:amqp
+									</link>
+
+								</links>
+							</run>
+
+						</image>
+
+						<image>
+							<name>nherbaut/dvd2c-box:latest</name>
+							<alias>box</alias>
+
+							<run>
+								<ports>
+									<port>localhost:8081:8081</port>
+								</ports>
+								<links>
+									<link> broker:amqp
+									</link>
+
+								</links>
+							</run>
+						</image>
 
 						<image>
 							<name>nherbaut/${project.artifactId}:latest</name>
@@ -105,7 +166,7 @@
 								</ports>
 
 								<cmd>
-									<shell>java -cp /maven/*:/maven/${project.build.finalName} org.cnrs.jdev.Main --myPort 8082 --myHostName `getent hosts $HOSTNAME|cut -d' ' -f1` --vanillaStorageHostName $BOX_PORT_8081_TCP_ADDR --vanillaStoragePort $BOX_PORT_8081_TCP_PORT 2>&amp;1|grep INFO
+									<shell>java -cp /maven/*:/maven/${project.build.finalName}  org.cnrs.jdev.Main --myPort 8082 --myHostName `getent hosts  $HOSTNAME|cut -d' ' -f1` --vanillaStorageHostName  $BOX_PORT_8081_TCP_ADDR --vanillaStoragePort  $BOX_PORT_8081_TCP_PORT 2>&amp;1|grep INFO
 									</shell>
 								</cmd>
 
@@ -113,14 +174,39 @@
 
 							<run>
 								<ports>
-									<port>8082:8082</port>
+									<port>localhost:8082:8082</port>
 								</ports>
+								<links>
+									<link> box:box
+									</link>
 
+								</links>
 							</run>
 						</image>
+
 					</images>
 				</configuration>
+
+				<executions>
+					<execution>
+						<id>start</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<!-- "build" should be used to create the images with the artefacts -->
+							<goal>build</goal>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>stop</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
+
 
 
 			<plugin>
@@ -147,6 +233,54 @@
 					<mainClass>org.cnrs.jdev.Main</mainClass>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.18.1</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>2.18.1</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<includes>
+						<include>**/*.class</include>
+					</includes>
+					<excludedGroups>org.cnrs.jdev.IntegrationTest</excludedGroups>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.18.1</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>2.18.1</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<groups>com.enseirb.telecom.dngroup.dvd2c.IntegrationTest</groups>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<include>**/*.class</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
 		</plugins>
 	</build>
 </project>
