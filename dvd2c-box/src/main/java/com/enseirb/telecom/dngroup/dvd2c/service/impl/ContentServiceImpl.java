@@ -152,7 +152,7 @@ public class ContentServiceImpl implements ContentService {
 			try {
 				Task task = new Task();
 				task.setTask("adaptation.commons.ddo");
-
+				task.setId(UUID.randomUUID().toString());
 				task.getArgs().add(
 						resourceURI.toString() + "/content/" + d.getId());
 

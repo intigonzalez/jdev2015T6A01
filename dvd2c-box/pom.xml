@@ -39,6 +39,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+
 			<scope>test</scope>
 		</dependency>
 
@@ -213,6 +214,53 @@
 		<plugins>
 
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.18.1</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>2.18.1</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<includes>
+						<include>**/*.class</include>
+					</includes>
+					<excludedGroups>com.enseirb.telecom.dngroup.dvd2c.IntegrationTest</excludedGroups>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.18.1</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>2.18.1</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<groups>com.enseirb.telecom.dngroup.dvd2c.IntegrationTest</groups>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<include>**/*.class</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<plugin>
 				<groupId>org.jolokia</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 				<version>0.12.0</version>
@@ -223,9 +271,7 @@
 							<name>rabbitmq:3.5.3</name>
 							<alias>broker</alias>
 							<run>
-								<wait>
-									<time>2000</time>
-								</wait>
+
 								<ports>
 									<port>5672:5672</port>
 								</ports>
@@ -234,17 +280,16 @@
 						</image>
 
 						<image>
-							<name>nherbaut/box-frontend</name>
+							<name>nherbaut/frontend</name>
 							<alias>frontend</alias>
 
 							<run>
 								<ports>
-									<port>localhost:8000:8000</port>
+									<port>localhost:8080:8080</port>
 								</ports>
 
 								<links>
-									<link>
-										box:box
+									<link>  box:box
 									</link>
 
 								</links>
@@ -258,8 +303,7 @@
 							<alias>worker1</alias>
 							<run>
 								<links>
-									<link>
-										broker:amqp
+									<link>  broker:amqp
 									</link>
 
 								</links>
@@ -287,14 +331,7 @@
 								</ports>
 
 								<cmd>
-									<shell>service mysql start &amp;&amp; mysql -u root -e "create
-										database mediahome;" &amp;&amp; java -cp
-										/maven/*:/maven/${project.build.finalName}
-										com.enseirb.telecom.dngroup.dvd2c.Main -i `getent hosts
-										$HOSTNAME|cut -d' ' -f1` -p 8081 --rabbit-host
-										$AMQP_PORT_5672_TCP_ADDR --rabbit-port
-										$AMQP_PORT_5672_TCP_PORT --database_url
-										jdbc:mysql://localhost:3306/mediahome --database_username root
+									<shell>service mysql start &amp;&amp; mysql -u root -e "create database mediahome;" &amp;&amp; java -cp  /maven/*:/maven/${project.build.finalName}  com.enseirb.telecom.dngroup.dvd2c.Main -i `getent hosts  $HOSTNAME|cut -d' ' -f1` -p 8081 --rabbit-host  $AMQP_PORT_5672_TCP_ADDR --rabbit-port  $AMQP_PORT_5672_TCP_PORT --database_url  jdbc:mysql://localhost:3306/mediahome --database_username root
 									</shell>
 								</cmd>
 
@@ -305,8 +342,7 @@
 									<port>localhost:8081:8081</port>
 								</ports>
 								<links>
-									<link>
-										broker:amqp
+									<link>  broker:amqp
 									</link>
 
 								</links>
