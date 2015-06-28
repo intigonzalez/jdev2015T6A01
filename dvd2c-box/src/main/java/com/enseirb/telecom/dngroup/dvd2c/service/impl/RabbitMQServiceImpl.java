@@ -53,7 +53,7 @@ public class RabbitMQServiceImpl implements MessageBrokerService {
 	 * .lang.String, java.lang.String)
 	 */
 	@Override
-	public void addTask(String task, String id)
+	public void addTask(String task)
 			throws UnsupportedEncodingException, IOException {
 
 		channel.basicPublish("", QUEUE_NAME, new AMQP.BasicProperties.Builder()

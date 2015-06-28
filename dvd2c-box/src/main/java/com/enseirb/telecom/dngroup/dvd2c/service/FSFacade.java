@@ -1,7 +1,8 @@
-package com.enseirb.telecom.dngroup.dvd2c.utils;
+package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -18,11 +19,10 @@ public interface FSFacade {
 	public abstract void placeContentInTargetFolder(Content content,
 			File tempFile);
 
-	public abstract void deleteDocumentOnFS(Document document);
 
 	public abstract void saveNewResolution(DocumentAlternative alt,
 			InputStream iS);
 
-	public abstract FileInputStream getContentStream(Content content, Resolution res);
+	public abstract FileInputStream getContentStream(Content content, Resolution res) throws FileNotFoundException;
 
 }

@@ -72,22 +72,18 @@ public class ContentEndPoints {
 	public Response getContent(@PathParam("contentsID") Integer contentsID)
 			throws URISyntaxException {
 
-		Content content;
 		try {
-			content = contentService.getContent(contentsID);
-			File original = new File("/var/www/html" + content.getLink()
-					+ "/original");
 
-			final FileInputStream fis = new FileInputStream(original);
-
+			final InputStream is = contentService.getContentStream(contentsID,
+					"original");
 			return Response
 					.ok(new StreamingOutput() {
 
 						@Override
 						public void write(OutputStream output)
 								throws IOException, WebApplicationException {
-							ByteStreams.copy(fis, output);
-							fis.close();
+							ByteStreams.copy(is, output);
+							is.close();
 
 						}
 					}, MediaType.APPLICATION_OCTET_STREAM_TYPE)
@@ -97,9 +93,8 @@ public class ContentEndPoints {
 		} catch (NoContentException e) {
 			throw new WebApplicationException(e.getLocalizedMessage(),
 					Status.NO_CONTENT);
-		} catch (FileNotFoundException e) {
-			throw new WebApplicationException(e.getLocalizedMessage(),
-					Status.NOT_FOUND);
+		} catch (AlternativeStorageException e) {
+			return Response.seeOther(e.getUri()).build();
 		}
 
 	}
@@ -113,7 +108,7 @@ public class ContentEndPoints {
 			final @PathParam("resolutionName") String resolutionName)
 			throws URISyntaxException, IOException {
 
-		FileInputStream fis;
+		InputStream fis;
 		try {
 
 			fis = contentService.getContentStream(contentsID, resolutionName);
@@ -142,28 +137,23 @@ public class ContentEndPoints {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces("text/plain")
 	public Response postFromForm(
-			@FormDataParam("file") InputStream uploadedInputStream,
-			@FormDataParam("file") FormDataContentDisposition fileDetail,
-			@FormDataParam("file") FormDataBodyPart body)
-			throws URISyntaxException, IOException {
+			@FormDataParam("file") InputStream uploadedInputStream
 
-		String fileName = fileDetail.getFileName();
+	) throws URISyntaxException, IOException {
 
-		return rawPost(uploadedInputStream, fileName);
+		return rawPost(uploadedInputStream);
 
 	}
 
 	@POST
 	@Consumes(MediaType.WILDCARD)
 	@Produces("text/plain")
-	public Response rawPost(InputStream iS,
-			@HeaderParam("Content-Disposition") String contentDisposition)
-			throws URISyntaxException, IOException {
-		String uuid = UUID.randomUUID().toString();
+	public Response rawPost(InputStream iS) throws URISyntaxException,
+			IOException {
+		String userId = "anonymous";
 
 		try {
-			Content content = contentService.createContent(uuid, iS,
-					contentDisposition);
+			Content content = contentService.createContent(userId, iS);
 			content.setLink(CliConfSingleton.publicAddr + content.getLink());
 
 			return Response
@@ -204,13 +194,12 @@ public class ContentEndPoints {
 	@Path("{contentId}/{resolution}")
 	@Consumes(MediaType.WILDCARD)
 	public Response postNewResolution(@PathParam("contentId") String contentId,
-			@PathParam("resolution") String resolution, InputStream iS,
-			@HeaderParam("Content-Disposition") String contentDisposition)
+			@PathParam("resolution") String resolution, InputStream iS)
 			throws URISyntaxException, IOException {
 
 		try {
 			Content content = contentService.createNewContentResolution(
-					contentId, resolution, iS, contentDisposition);
+					contentId, resolution, iS);
 			LOGGER.debug("new content resolution created {} (total:{})",
 					content.getContentsID(), content.getResolution().size());
 		} catch (AlternativeStorageException e) {

@@ -9,7 +9,7 @@ public interface ThridPartyStorageService {
 
 	public abstract void register(String baseUrL, String name);
 
-	public abstract List<URI> generateRedirectURUri(String contentId);
-	public abstract List<URI> generateRedirectURUri(Document doc);
+	public abstract List<URI> generateRedirectUri(String contentId);
+	
 
 }

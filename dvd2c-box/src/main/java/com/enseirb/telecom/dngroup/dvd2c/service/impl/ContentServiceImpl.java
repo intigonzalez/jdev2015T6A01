@@ -2,6 +2,7 @@ package com.enseirb.telecom.dngroup.dvd2c.service.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -30,12 +31,14 @@ import com.enseirb.telecom.dngroup.dvd2c.modeldb.Document;
 import com.enseirb.telecom.dngroup.dvd2c.modeldb.DocumentAlternative;
 import com.enseirb.telecom.dngroup.dvd2c.repository.DocumentAlternativeRepository;
 import com.enseirb.telecom.dngroup.dvd2c.repository.DocumentRepository;
+import com.enseirb.telecom.dngroup.dvd2c.service.AbstractFSFacade;
 import com.enseirb.telecom.dngroup.dvd2c.service.ContentService;
+import com.enseirb.telecom.dngroup.dvd2c.service.FSFacade;
 import com.enseirb.telecom.dngroup.dvd2c.service.FileTypeEnum;
 import com.enseirb.telecom.dngroup.dvd2c.service.FileTypeResolverFacade;
 import com.enseirb.telecom.dngroup.dvd2c.service.MessageBrokerService;
 import com.enseirb.telecom.dngroup.dvd2c.service.ThridPartyStorageService;
-import com.enseirb.telecom.dngroup.dvd2c.utils.FSFacade;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
@@ -46,38 +49,36 @@ import com.thoughtworks.xstream.io.json.JsonWriter;
 public class ContentServiceImpl implements ContentService {
 	static final Integer FAILURE = -1;
 	static final Integer INPROGRES = 0;
+	static final Integer SUCCESS = 1;
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ContentServiceImpl.class);
 
-	static final Integer SUCCESS = 1;
+	@Inject
+	protected DocumentAlternativeRepository alternativeRepo;
 
 	@Inject
-	DocumentAlternativeRepository alternativeRepo;
+	protected DocumentRepository documentRepository;
 
 	@Inject
-	DocumentAlternativeRepository altRepo;
+	protected FileTypeResolverFacade fileTypeResolverFacade;
 
 	@Inject
-	DocumentRepository documentRepository;
+	protected AbstractFSFacade fsFacade;
 
 	@Inject
-	FileTypeResolverFacade fileTypeResolverFacade;
+	protected MessageBrokerService brockerService;
 
 	@Inject
-	FSFacade fsFacade;
-
-	@Inject
-	MessageBrokerService rabbitMq;
-
-	@Inject
-	ThridPartyStorageService tps;
+	protected ThridPartyStorageService tps;
 
 	@Override
-	public Content createContent(String userID,
-			InputStream uploadedInputStream, String contentDisposition)
+	public Content createContent(String userID, InputStream uploadedInputStream)
 			throws IOException, SecurityException {
 
+		if (Strings.isNullOrEmpty(userID)) {
+			throw new IllegalArgumentException("userId should be nonnull");
+		}
 		UUID uuid = UUID.randomUUID();
 		File tempFile = fsFacade.dumpToTempFile(uuid.toString(),
 				uploadedInputStream);
@@ -109,14 +110,14 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public Content createNewContentResolution(String contentId,
-			String resolutionName, InputStream iS, String contentDisposition)
+			String resolutionName, InputStream iS)
 			throws AlternativeStorageException, IOException {
 
 		Document doc = documentRepository.findOne(Integer.valueOf(contentId));
 		if (doc == null)
-			throw new NoContentException("no content with contentId"
+			throw new IllegalArgumentException("no content with contentId"
 					+ contentId);
-		List<URI> altUri = tps.generateRedirectURUri(contentId);
+		List<URI> altUri = tps.generateRedirectUri(contentId);
 		if (altUri != null && altUri.size() > 0) {
 			AlternativeStorageException ase = new AlternativeStorageException();
 			ase.setUri(UriBuilder.fromUri(altUri.get(0)).path(resolutionName)
@@ -151,7 +152,7 @@ public class ContentServiceImpl implements ContentService {
 			try {
 				Task task = new Task();
 				task.setTask("adaptation.commons.ddo");
-				task.setId(d.getId().toString());
+
 				task.getArgs().add(
 						resourceURI.toString() + "/content/" + d.getId());
 
@@ -163,7 +164,7 @@ public class ContentServiceImpl implements ContentService {
 										JsonWriter.DROP_ROOT_MODE);
 							}
 						});
-				rabbitMq.addTask(xstream.toXML(task), task.getId());
+				brockerService.addTask(xstream.toXML(task));
 
 			} catch (IOException e) {
 				LOGGER.error("can't connect to rabitMQ", e);
@@ -179,13 +180,16 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public Content getContent(Integer contentsID) throws NoContentException {
+	public Content getContent(Integer contentsID)
+			throws IllegalArgumentException {
+
 		Document document = documentRepository.findOne(contentsID);
 		if (document == null) {
-			throw new NoContentException("Content ID can't be NULL");
+			throw new IllegalArgumentException("Content ID can't be NULL");
 		} else {
 			Content res = document.toContent();
-			for (DocumentAlternative alt : altRepo.findByDocument(document)) {
+			for (DocumentAlternative alt : alternativeRepo
+					.findByDocument(document)) {
 				Resolution resolution = new Resolution();
 				resolution.setName(alt.getResolution());
 				if (alt.getUri() == null) {
@@ -221,26 +225,39 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public FileInputStream getContentStream(Integer contentsID,
+	public InputStream getContentStream(Integer contentsID,
 			String resolutionName) throws AlternativeStorageException,
 			NoContentException {
-		Content content = this.getContent(contentsID);
-		for (Resolution res : content.getResolution()) {
-			if (res.getName().equals(resolutionName)) {
-				if (res.getUri() == null
-						|| res.getUri().startsWith(
-								CliConfSingleton.getBaseApiURI().toString())) {
-					return fsFacade.getContentStream(content, res);
-				} else {
-					AlternativeStorageException ase = new AlternativeStorageException();
-					ase.setUri(UriBuilder.fromUri(res.getUri()).build());
-					throw ase;
-				}
-			}
 
+		try {
+			Content content = this.getContent(contentsID);
+			for (Resolution res : content.getResolution()) {
+				if (res.getName().equals(resolutionName)) {
+					if (res.getUri() == null
+							|| res.getUri()
+									.startsWith(
+											CliConfSingleton.getBaseApiURI()
+													.toString())) {
+						return fsFacade.getContentStream(content, res);
+					} else {
+						AlternativeStorageException ase = new AlternativeStorageException();
+						ase.setUri(UriBuilder.fromUri(res.getUri()).build());
+						throw ase;
+					}
+				}
+
+			}
+			return fsFacade.getContentStream(content);
+		} catch (FileNotFoundException e) {
+			throw new NoContentException(e.getMessage());
 		}
 
-		throw new NoContentException("failed to load " + contentsID
-				+ " with resolution " + resolutionName);
+	}
+
+	@Override
+	public InputStream getContentStream(Integer contentsID)
+			throws AlternativeStorageException, NoContentException {
+		return this.getContentStream(contentsID,
+				this.fsFacade.getOriginalName());
 	}
 }

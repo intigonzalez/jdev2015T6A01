@@ -36,7 +36,26 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
 
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+
+			<groupId>com.agileapes.utils</groupId>
+			<artifactId>spring-data-mock</artifactId>
+			<version>1.0</version>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
@@ -187,8 +206,8 @@
 				<directory>src/main/html</directory>
 			</resource>
 			<resource>
-                                <directory>src/main/resources</directory>
-                        </resource>
+				<directory>src/main/resources</directory>
+			</resource>
 
 		</resources>
 		<plugins>
@@ -217,19 +236,19 @@
 						<image>
 							<name>nherbaut/box-frontend</name>
 							<alias>frontend</alias>
-							
+
 							<run>
 								<ports>
 									<port>localhost:8000:8000</port>
 								</ports>
-								
+
 								<links>
 									<link>
 										box:box
 									</link>
 
 								</links>
-								
+
 							</run>
 
 						</image>
@@ -268,7 +287,15 @@
 								</ports>
 
 								<cmd>
-									<shell>service mysql start &amp;&amp; mysql -u root -e "create database mediahome;" &amp;&amp; java -cp /maven/*:/maven/${project.build.finalName} com.enseirb.telecom.dngroup.dvd2c.Main -i `getent hosts $HOSTNAME|cut -d' ' -f1` -p 8081 --rabbit-host $AMQP_PORT_5672_TCP_ADDR --rabbit-port $AMQP_PORT_5672_TCP_PORT --database_url jdbc:mysql://localhost:3306/mediahome --database_username root 									</shell>
+									<shell>service mysql start &amp;&amp; mysql -u root -e "create
+										database mediahome;" &amp;&amp; java -cp
+										/maven/*:/maven/${project.build.finalName}
+										com.enseirb.telecom.dngroup.dvd2c.Main -i `getent hosts
+										$HOSTNAME|cut -d' ' -f1` -p 8081 --rabbit-host
+										$AMQP_PORT_5672_TCP_ADDR --rabbit-port
+										$AMQP_PORT_5672_TCP_PORT --database_url
+										jdbc:mysql://localhost:3306/mediahome --database_username root
+									</shell>
 								</cmd>
 
 							</build>

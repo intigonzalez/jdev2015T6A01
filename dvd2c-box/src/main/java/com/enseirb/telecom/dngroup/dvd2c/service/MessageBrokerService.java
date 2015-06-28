@@ -13,7 +13,7 @@ public interface MessageBrokerService {
 	 * @throws UnsupportedEncodingException
 	 * @throws IOException
 	 */
-	public abstract void addTask(String task, String string)
+	public abstract void addTask(String task)
 			throws UnsupportedEncodingException, IOException;
 
 }

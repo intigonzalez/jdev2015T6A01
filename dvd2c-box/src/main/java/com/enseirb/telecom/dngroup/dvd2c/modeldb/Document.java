@@ -89,7 +89,7 @@ public class Document extends ActivityObject implements Serializable {
 	public Document(Content content) {
 		if (content.getContentsID() != null)
 			setId(Integer.valueOf(content.getContentsID()));
-		setActorId(UUID.fromString(content.getActorID()));
+		setActorId(content.getActorID());
 		setTitle(content.getName());
 		setType(content.getType());
 		if (content.getUnixTime() != null)
@@ -104,7 +104,8 @@ public class Document extends ActivityObject implements Serializable {
 		content.setContentsID(this.getId());
 		content.setName(this.getTitle());
 		content.setType(this.getType());
-		content.setActorID(this.getActorId().toString());
+		content.setActorID(this.getActorId() != null ? this.getActorId()
+				.toString() : null);
 		if (getCreatedAt() != null)
 			content.setUnixTime(this.getCreatedAt().getTime() / 1000);
 		content.setLink(this.getFileLink());
@@ -121,7 +122,8 @@ public class Document extends ActivityObject implements Serializable {
 		return documentAlternative;
 	}
 
-	public void setDocumentAlternative(List<DocumentAlternative> documentAlternative) {
+	public void setDocumentAlternative(
+			List<DocumentAlternative> documentAlternative) {
 		this.documentAlternative = documentAlternative;
 	}
 

@@ -9,15 +9,14 @@ import org.hibernate.annotations.Type;
 import java.util.List;
 import java.util.UUID;
 
-
 /**
  * The persistent class for the activity_objects database table.
  * 
  */
 @Entity
-@Table(name="activity_objects")
-@NamedQuery(name="ActivityObject.findAll", query="SELECT a FROM ActivityObject a")
-@Inheritance(strategy=InheritanceType.JOINED)
+@Table(name = "activity_objects")
+@NamedQuery(name = "ActivityObject.findAll", query = "SELECT a FROM ActivityObject a")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class ActivityObject extends DBObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -25,30 +24,29 @@ public class ActivityObject extends DBObject implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@Column(name="actor_id")
-	@Type(type="uuid-char")
-	private UUID actorId;
-	
+	@Column(name = "actor_id")
+	private String actorId;
+
 	@Lob
 	private String description;
 
-	@Column(name="object_type")
+	@Column(name = "object_type")
 	private String objectType;
 
 	private String title;
 
-	//bi-directional many-to-one association to ActivityAction
-	@OneToMany(mappedBy="activityObject")
+	// bi-directional many-to-one association to ActivityAction
+	@OneToMany(mappedBy = "activityObject")
 	private List<ActivityAction> activityActions;
 
-	//bi-directional many-to-one association to ActivityObjectProperty
-	@OneToMany(mappedBy="activityObject1")
+	// bi-directional many-to-one association to ActivityObjectProperty
+	@OneToMany(mappedBy = "activityObject1")
 	private List<ActivityObjectProperty> activityObjectProperties1;
 
-	//bi-directional many-to-one association to ActivityObjectProperty
-	@OneToMany(mappedBy="activityObject2")
+	// bi-directional many-to-one association to ActivityObjectProperty
+	@OneToMany(mappedBy = "activityObject2")
 	private List<ActivityObjectProperty> activityObjectProperties2;
-	
+
 	public ActivityObject() {
 	}
 
@@ -60,11 +58,11 @@ public class ActivityObject extends DBObject implements Serializable {
 		this.id = id;
 	}
 
-	public UUID getActorId() {
+	public String getActorId() {
 		return this.actorId;
 	}
 
-	public void setActorId(UUID actorId) {
+	public void setActorId(String actorId) {
 		this.actorId = actorId;
 	}
 
@@ -118,18 +116,21 @@ public class ActivityObject extends DBObject implements Serializable {
 		return this.activityObjectProperties1;
 	}
 
-	public void setActivityObjectProperties1(List<ActivityObjectProperty> activityObjectProperties1) {
+	public void setActivityObjectProperties1(
+			List<ActivityObjectProperty> activityObjectProperties1) {
 		this.activityObjectProperties1 = activityObjectProperties1;
 	}
 
-	public ActivityObjectProperty addActivityObjectProperties1(ActivityObjectProperty activityObjectProperties1) {
+	public ActivityObjectProperty addActivityObjectProperties1(
+			ActivityObjectProperty activityObjectProperties1) {
 		getActivityObjectProperties1().add(activityObjectProperties1);
 		activityObjectProperties1.setActivityObject1(this);
 
 		return activityObjectProperties1;
 	}
 
-	public ActivityObjectProperty removeActivityObjectProperties1(ActivityObjectProperty activityObjectProperties1) {
+	public ActivityObjectProperty removeActivityObjectProperties1(
+			ActivityObjectProperty activityObjectProperties1) {
 		getActivityObjectProperties1().remove(activityObjectProperties1);
 		activityObjectProperties1.setActivityObject1(null);
 
@@ -140,22 +141,25 @@ public class ActivityObject extends DBObject implements Serializable {
 		return this.activityObjectProperties2;
 	}
 
-	public void setActivityObjectProperties2(List<ActivityObjectProperty> activityObjectProperties2) {
+	public void setActivityObjectProperties2(
+			List<ActivityObjectProperty> activityObjectProperties2) {
 		this.activityObjectProperties2 = activityObjectProperties2;
 	}
 
-	public ActivityObjectProperty addActivityObjectProperties2(ActivityObjectProperty activityObjectProperties2) {
+	public ActivityObjectProperty addActivityObjectProperties2(
+			ActivityObjectProperty activityObjectProperties2) {
 		getActivityObjectProperties2().add(activityObjectProperties2);
 		activityObjectProperties2.setActivityObject2(this);
 
 		return activityObjectProperties2;
 	}
 
-	public ActivityObjectProperty removeActivityObjectProperties2(ActivityObjectProperty activityObjectProperties2) {
+	public ActivityObjectProperty removeActivityObjectProperties2(
+			ActivityObjectProperty activityObjectProperties2) {
 		getActivityObjectProperties2().remove(activityObjectProperties2);
 		activityObjectProperties2.setActivityObject2(null);
 
 		return activityObjectProperties2;
 	}
-	
+
 }

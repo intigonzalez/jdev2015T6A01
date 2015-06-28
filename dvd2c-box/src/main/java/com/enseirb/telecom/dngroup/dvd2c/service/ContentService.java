@@ -15,17 +15,20 @@ public interface ContentService {
 			throws NoContentException;
 
 	public abstract Content createContent(String userID,
-			InputStream uploadedInputStream, String contentDisposition)
-			throws IOException;
+			InputStream uploadedInputStream) throws IOException;
 
 	public abstract Content createNewContentResolution(String contentId,
-			String resolutionName, InputStream iS, String contentDisposition)
+			String resolutionName, InputStream iS)
 			throws AlternativeStorageException, IOException;
 
 	public abstract void updateContentWithUrl(String contentId,
 			String resolution, String url) throws NoContentException;
 
-	public abstract FileInputStream getContentStream(Integer contentsID,
-			String resolutionName) throws AlternativeStorageException, NoContentException;
+	public abstract InputStream getContentStream(Integer contentsID)
+			throws AlternativeStorageException, NoContentException;
+
+	public abstract InputStream getContentStream(Integer contentsID,
+			String resolutionName) throws AlternativeStorageException,
+			NoContentException;
 
 }

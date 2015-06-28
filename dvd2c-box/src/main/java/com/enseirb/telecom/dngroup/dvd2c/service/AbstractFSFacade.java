@@ -1,4 +1,4 @@
-package com.enseirb.telecom.dngroup.dvd2c.utils;
+package com.enseirb.telecom.dngroup.dvd2c.service;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.enseirb.telecom.dngroup.dvd2c.model.Resolution;
@@ -22,10 +21,28 @@ import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
-@Service
-public class FSFacadeImpl implements FSFacade {
+public abstract class AbstractFSFacade implements FSFacade {
+
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(FSFacadeImpl.class);
+			.getLogger(AbstractFSFacade.class);
+
+	public abstract String getFSRoot();
+
+	public abstract String getOriginalName();
+
+	private static void deleteFolder(File folder) {
+		File[] files = folder.listFiles();
+		if (files != null) { // some JVMs return null for empty dirs
+			for (File f : files) {
+				if (f.isDirectory()) {
+					deleteFolder(f);
+				} else {
+					f.delete();
+				}
+			}
+		}
+		folder.delete();
+	}
 
 	@Override
 	public File dumpToTempFile(final String string,
@@ -47,7 +64,8 @@ public class FSFacadeImpl implements FSFacade {
 	@Override
 	public void placeContentInTargetFolder(Content content, File tempFile) {
 
-		Path target = Paths.get("/var/www/html", content.getLink(), "original");
+		Path target = Paths.get(this.getFSRoot(), content.getLink(),
+				this.getOriginalName());
 		try {
 			Files.createParentDirs(target.toFile());
 			Files.move(tempFile, target.toFile());
@@ -59,23 +77,13 @@ public class FSFacadeImpl implements FSFacade {
 
 	public void deleteDocumentOnFS(Document document) {
 
-		deleteFolder(Paths.get("/var/www/html", document.toContent().getLink())
-				.toFile());
+		deleteFolder(Paths
+				.get(this.getFSRoot(), document.toContent().getLink()).toFile());
 
 	}
 
-	private static void deleteFolder(File folder) {
-		File[] files = folder.listFiles();
-		if (files != null) { // some JVMs return null for empty dirs
-			for (File f : files) {
-				if (f.isDirectory()) {
-					deleteFolder(f);
-				} else {
-					f.delete();
-				}
-			}
-		}
-		folder.delete();
+	public AbstractFSFacade() {
+		super();
 	}
 
 	@Override
@@ -83,8 +91,9 @@ public class FSFacadeImpl implements FSFacade {
 			final InputStream iS) {
 
 		try {
-			final Path path = Paths.get("/var/www/html", alt.getDocument()
+			final Path path = Paths.get(this.getFSRoot(), alt.getDocument()
 					.getFileLink(), alt.getResolution());
+			Files.createParentDirs(path.toFile());
 			final FileOutputStream fos = new FileOutputStream(path.toFile());
 			ByteStreams.copy(iS, fos);
 			fos.close();
@@ -99,16 +108,30 @@ public class FSFacadeImpl implements FSFacade {
 	}
 
 	@Override
-	public FileInputStream getContentStream(Content content, Resolution res) {
+	public FileInputStream getContentStream(Content content, Resolution res)
+			throws FileNotFoundException {
 
 		try {
-			final Path path = Paths.get("/var/www/html", content.getLink(),
+			final Path path = Paths.get(this.getFSRoot(), content.getLink(),
 					res.getName());
 			return new FileInputStream(path.toFile());
 		} catch (FileNotFoundException e) {
-			LOGGER.error("failed to get stream from file in the database");
-			throw Throwables.propagate(e);
+			LOGGER.warn("failed to get stream from file in the database");
+			throw e;
 		}
 
 	}
+
+	public InputStream getContentStream(Content content)
+			throws FileNotFoundException {
+		try {
+			final Path path = Paths.get(this.getFSRoot(), content.getLink(),
+					this.getOriginalName());
+			return new FileInputStream(path.toFile());
+		} catch (FileNotFoundException e) {
+			LOGGER.warn("failed to get stream from file in the database");
+			throw e;
+		}
+	}
+
 }

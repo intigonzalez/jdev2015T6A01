@@ -30,14 +30,7 @@ public class ThridPartyStorageServiceImpl implements ThridPartyStorageService {
 	@Inject
 	ThirdPartyStorageConfigRepository repo;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.enseirb.telecom.dngroup.dvd2c.service.ThridPartyStorage#
-	 * generateRedirectURUri(com.enseirb.telecom.dngroup.dvd2c.modeldb.Document)
-	 */
-	@Override
-	public List<URI> generateRedirectURUri(Document doc) {
+	private List<URI> generateRedirectUri(Document doc) {
 		List<URI> res = new ArrayList<URI>();
 		for (ThirdPartyConfiguration conf : repo.findAll()) {
 			if (thirdPartyDeployable(conf, doc.getType())) {
@@ -51,10 +44,10 @@ public class ThridPartyStorageServiceImpl implements ThridPartyStorageService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<URI> generateRedirectURUri(String contentId) {
+	public List<URI> generateRedirectUri(String contentId) {
 		Document doc = docRepo.findOne(Integer.valueOf(contentId));
 		if (doc != null) {
-			return generateRedirectURUri(doc);
+			return generateRedirectUri(doc);
 		} else
 			return Collections.EMPTY_LIST;
 	}
