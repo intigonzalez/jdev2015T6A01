@@ -24,26 +24,37 @@ import com.enseirb.telecom.dngroup.dvd2c.model.Content;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
 
+// this annotation indicate that the test will only be run in an integration-test phase
 @Category(IntegrationTest.class)
 public class FullStackIntegrationTest {
 
+        //we use regular junit tests, asserts...
 	@Test
 	public void longRunningServiceTest() throws Exception {
 
+                //create a REST Client
 		Client client = ClientBuilder.newClient();
 
-		// push file to server
+		// we store local resources in the test folder. We have our input and output for
+		// which we will compute a hash and compare with the expected result
+		
+		// that's our input
 		URL originalURL = getClass().getResource("/marseille.3gp");
+		//that's the output
 		URL mediumURL = getClass().getResource("/medium.mp4");
+		
+		
+		//we now compute the hashes
 		Path originalPath = Paths.get(originalURL.toURI());
 		Path mediumPath = Paths.get(mediumURL.toURI());
-
 		String originalSha1 = com.google.common.io.Files.hash(
 				originalPath.toFile(), Hashing.sha1()).toString();
 
 		String mediumSha1 = com.google.common.io.Files.hash(
 				mediumPath.toFile(), Hashing.sha1()).toString();
 
+
+                //send the original file to the server
 		FileInputStream fis = new FileInputStream(originalPath.toFile());
 
 		Response res = client.target("http://localhost:8081/api/content")
@@ -51,12 +62,15 @@ public class FullStackIntegrationTest {
 				.post(Entity.entity(fis, MediaType.APPLICATION_OCTET_STREAM));
 
 		fis.close();
+		
+		//check if the response is correct
 		Assert.assertEquals(201, res.getStatus());
 		URI location = UriBuilder.fromUri(res.getHeaderString("Location"))
 				.build();
 
 		Thread.sleep(2000);
-		// get original file
+		
+		//retrieve an input stream to the original file
 		{
 			InputStream is = client.target(location).request()
 					.accept(MediaType.APPLICATION_OCTET_STREAM)
@@ -73,7 +87,8 @@ public class FullStackIntegrationTest {
 							Hashing.sha1()).toString());
 		}
 
-		// wait 20 s for the file to be transcoded
+		
+		//wait for the file to be transcoded
 		Thread.sleep(20000);
 		Content content = client
 				.target(UriBuilder.fromUri(location).path("metadata"))
@@ -83,6 +98,7 @@ public class FullStackIntegrationTest {
 		// check if we have the 3 resolutions
 		Assert.assertEquals(3, content.getResolution().size());
 
+                // retrieve the medium resolution and compare it to the previously hashed one
 		{
 			InputStream is = client
 					.target(UriBuilder.fromUri(location).path("medium"))
