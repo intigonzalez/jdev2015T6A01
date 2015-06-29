@@ -1,27 +1,24 @@
 jdev2015T6A01
 =============
 
-jdev2015T6A01
-
- 
 
 Le but de cette partie est de décentraliser la partie storage de la box vers un
-autre conteneur affin de libéré de la place.
+autre conteneur affin de libérer de la place.
 
 
-les endpoints
+Les points d'entrée REST
 -------------
 
-### Inscription (coter Box)
+### Inscription (côté Box)
 
 La partie storage va devoir « s’inscrire » sur la box afin que celle-ci soit au
 courant de son existence. On utilisera le endpoints « api/thirdpartystorage »
 affin de poster à la box l’adresse de redirection de la partie storage (comme
-l’exemple si dissous) afin que celle si remarque qu’une partie storage est déjà
-implémenter.
+l’exemple si dessous) afin que celle-ci soit informée qu'un storage alternatif
+est présent.
 
 \- Cette adresse de redirection sera donc utilisée par la box afin de dire au
-worker ou envoyé les vidéos traités.
+worker ou envoyer les vidéos traitées.
 
 \- Elle sera aussi utilisée par la box en cas de requête de la part du front-end
 afin d’obtenir les fichiers traités (le fichier original restera sur la box).
@@ -36,7 +33,7 @@ afin d’obtenir les fichiers traités (le fichier original restera sur la box).
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-### Stockage API
+### API de Stockage 
 
 La partie stockage devra donc pouvoir répondre aux requêtes faites par la box.  
 La première sera de répondre au POST fait par le worker via l’adresse que vous
@@ -58,4 +55,4 @@ front-end.
 ### Le Code
 
 Le code devra simplement sauvegarder les données et bien sûr pouvoir les
-récupérer
+récupérer.
