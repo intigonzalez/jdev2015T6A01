@@ -27,13 +27,13 @@ frontend:
 worker1: 
   dns: 
     - "8.8.8.8"
-  image: nherbaut/worker
-  links: 
-    - "broker:amqp"
+  image: nherbaut/worker:jdev
+  environment:
+    - "CELERY_BROKER_URL=amqp://localhost:5676"
 worker2: 
   dns: 
     - "8.8.8.8"
-  image: nherbaut/worker
+  image: nherbaut/worker:jdev
   links: 
     - "broker:amqp"
 storage: 

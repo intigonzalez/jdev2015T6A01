@@ -27,12 +27,12 @@ frontend:
 worker1: 
   dns: 
     - "8.8.8.8"
-  image: nherbaut/worker
+  image: nherbaut/worker:jdev
   links: 
     - "broker:amqp"
 worker2: 
   dns: 
     - "8.8.8.8"
-  image: nherbaut/worker
+  image: nherbaut/worker:jdev
   links: 
     - "broker:amqp"
