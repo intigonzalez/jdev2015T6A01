@@ -3,10 +3,12 @@ MAINTAINER Inti-Gonzalez
 
 # dependencies
 RUN apt-get update
-# build-essential gunicorn
+
 RUN apt-get install python-pip --yes
 RUN pip install --upgrade pip
 RUN pip install flask
+
+# add gunicorn for making it production ready (nginx should also be added)
 
 # source code
 COPY . /opt/frontend
