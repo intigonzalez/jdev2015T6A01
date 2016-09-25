@@ -50,13 +50,13 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
+		<!--<dependency>
 
 			<groupId>com.agileapes.utils</groupId>
 			<artifactId>spring-data-mock</artifactId>
 			<version>1.0</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency>-->
 
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
@@ -255,118 +255,6 @@
 								<include>**/*.class</include>
 							</includes>
 						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-
-			<plugin>
-				<groupId>org.jolokia</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.12.0</version>
-				<configuration>
-					<finalName>box.jar</finalName>
-					<images>
-						<image>
-							<name>rabbitmq:3.5.3</name>
-							<alias>broker</alias>
-							<run>
-
-								<ports>
-									<port>5672:5672</port>
-								</ports>
-							</run>
-
-						</image>
-
-						<image>
-							<name>nherbaut/frontend</name>
-							<alias>frontend</alias>
-
-							<run>
-								<ports>
-									<port>localhost:8080:8080</port>
-								</ports>
-
-								<links>
-									<link> box:box
-									</link>
-
-								</links>
-
-							</run>
-
-						</image>
-
-						<image>
-							<name>nherbaut/worker</name>
-							<alias>worker1</alias>
-							<run>
-								<links>
-									<link> broker:amqp
-									</link>
-
-								</links>
-							</run>
-
-						</image>
-
-						<image>
-							<name>nherbaut/${project.artifactId}:latest</name>
-							<alias>box</alias>
-
-							<build>
-								<assembly>
-									<descriptorRef>artifact-with-dependencies</descriptorRef>
-
-								</assembly>
-								<from>nherbaut/box-base</from>
-								<maintainer>nherbaut@labri.fr</maintainer>
-								<tags>
-									<tag>latest</tag>
-									<tag>${project.version}</tag>
-								</tags>
-								<ports>
-									<port>8081</port>
-								</ports>
-
-								<cmd>
-									<shell>service mysql start &amp;&amp; mysql -u root -e "create  database mediahome;" &amp;&amp; java -cp  /maven/*:/maven/${project.build.finalName}  com.enseirb.telecom.dngroup.dvd2c.Main -i `getent hosts  $HOSTNAME|cut -d' ' -f1` -p 8081 --rabbit-host  $AMQP_PORT_5672_TCP_ADDR --rabbit-port  $AMQP_PORT_5672_TCP_PORT --database_url  jdbc:mysql://localhost:3306/mediahome --database_username root
-									</shell>
-								</cmd>
-
-							</build>
-
-							<run>
-								<ports>
-									<port>localhost:8081:8081</port>
-								</ports>
-								<links>
-									<link> broker:amqp
-									</link>
-
-								</links>
-							</run>
-						</image>
-					</images>
-				</configuration>
-
-				<executions>
-					<execution>
-						<id>start</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<!-- "build" should be used to create the images with the artefacts -->
-							<goal>build</goal>
-							<goal>start</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>stop</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>stop</goal>
-						</goals>
 					</execution>
 				</executions>
 			</plugin>

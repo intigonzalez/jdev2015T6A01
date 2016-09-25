@@ -1,16 +1,16 @@
-FROM openjdk:8-jdk
+FROM maven:3-jdk-8
 MAINTAINER Inti-Gonzalez
 
-# dependencies
-RUN apt-get update
-RUN apt-get install maven --yes
-RUN apt-get autoremove
-
 # source code
-COPY . /opt/box
-WORKDIR /opt/box
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+COPY . /usr/src/app
 
 # compile source
-RUN cd /opt/box && mvn install
+RUN mvn install -Djavax.xml.accessExternalSchema=all -Dmaven.test.skip=true
 
-CMD ls -l
+# runtime parameters
+EXPOSE 8081
+
+# command
+ENTRYPOINT ["java", "-jar", "target/dvd2c-box-0.8.0-jar-with-dependencies.jar"]
