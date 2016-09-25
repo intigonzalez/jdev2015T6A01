@@ -1,0 +1,28 @@
+version: '2'
+services:
+  frontend:
+    build:
+      context: ./frontend
+    image: re351/frontend:latest
+    ports:
+    - "8080:8080"
+    links:
+    - box
+  broker:
+    container_name: broker
+    image: rabbitmq
+  box:
+    container_name: box
+    build:
+      context: ./dvd2c-box
+    image: re351/box:latest
+    links:
+    - broker
+  worker:
+    build:
+      context: ./worker
+    image: re351/worker:latest
+    links:
+    - broker
+    environment: 
+      AMQP_PORT_5672_TCP_ADDR: "broker"

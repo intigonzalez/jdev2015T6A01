@@ -14,5 +14,5 @@ WORKDIR /opt/frontend
 
 # runtime parameters
 EXPOSE 8080
-CMD python frontend.py pepe
+CMD ./wait-for-it.sh box:8081 -- python frontend.py box
 
