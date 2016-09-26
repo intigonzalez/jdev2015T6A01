@@ -53,7 +53,7 @@ RUN apt-get purge --yes --auto-remove git
 
 # runtime parameters
 # require environment variable AMQP_PORT_5672_TCP_ADDR
-CMD export C_FORCE_ROOT=true && ./wait-for-it.sh box:5672 -- celery -A adaptation.commons worker --loglevel=info --concurrency=1
+CMD export C_FORCE_ROOT=true && ./wait-for-it.sh broker:5672 -- celery -A adaptation.commons worker --loglevel=info --concurrency=1
 
 
 

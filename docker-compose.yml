@@ -1,5 +1,6 @@
 version: '2'
 services:
+
   frontend:
     build:
       context: ./frontend
@@ -8,9 +9,11 @@ services:
     - "8080:8080"
     links:
     - box
+
   broker:
     container_name: broker
     image: rabbitmq
+
   box:
     container_name: box
     build:
@@ -18,6 +21,7 @@ services:
     image: re351/box:latest
     links:
     - broker
+
   worker:
     build:
       context: ./worker
@@ -25,4 +29,14 @@ services:
     links:
     - broker
     environment: 
-      AMQP_PORT_5672_TCP_ADDR: "broker"
+      AMQP_PORT_5672_TCP_ADDR: broker
+
+  storage:
+    container_name: storage
+    build:
+      context: ./storage
+    image: re351/storage
+    ports: 
+    - "8082:8082"
+    links:
+    - box

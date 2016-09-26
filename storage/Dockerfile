@@ -11,6 +11,7 @@ RUN mvn install -Djavax.xml.accessExternalSchema=all -Dmaven.test.skip=true
 
 # runtime parameters
 EXPOSE 8082
+RUN mkdir -p /var/www/dummy
 
 # command
-ENTRYPOINT ["java", "-jar", "target/dummy-storage-1.0-SNAPSHOT-jar-with-dependencies.jar"]
+CMD ./wait-for-it.sh box:8081 -- java -jar target/dummy-storage-1.0-SNAPSHOT-jar-with-dependencies.jar --myPort 8082 --myHostName `getent hosts $HOSTNAME|cut -d' ' -f1` --vanillaStorageHostName box --vanillaStoragePort 8081
