@@ -4,7 +4,7 @@ services:
   frontend:
     build:
       context: ./frontend
-    image: re351/frontend:latest
+    image: re355/frontend:latest
     ports:
     - "8080:8080"
     links:
@@ -18,25 +18,25 @@ services:
     container_name: box
     build:
       context: ./dvd2c-box
-    image: re351/box:latest
+    image: re355/box:latest
     links:
     - broker
 
   worker:
     build:
       context: ./worker
-    image: re351/worker:latest
+    image: intiglez/worker:latest
     links:
     - broker
-    environment: 
+    environment:
       AMQP_PORT_5672_TCP_ADDR: broker
 
   storage:
     container_name: storage
     build:
       context: ./storage
-    image: re351/storage
-    ports: 
+    image: re355/storage
+    ports:
     - "8082:8082"
     links:
     - box
